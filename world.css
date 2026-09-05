@@ -30,3 +30,26 @@ footer p { margin: 3px 0; } footer small { display: block; color: #a2b3c7; }
 .world-dialog h2 {margin:0 0 8px;color:#ffe3a3;font-size:20px}.world-dialog p{line-height:1.4}.world-dialog div{display:flex;gap:8px;flex-wrap:wrap}.world-dialog[data-busy="true"] button{pointer-events:none;opacity:.55}
 .danger {border-color:#b86c6c;color:#ffd2d2} details{margin-top:6px} details summary{cursor:pointer;color:#a2b3c7} details button{margin:6px 6px 0 0;min-height:32px;padding:5px 8px}#local-world-control-status{color:#f2b7a0}
 @media(max-height:450px) {#primary-attack {bottom:12px;right:calc(16px + var(--world-safe-right));height:72px;width:104px;}}
+
+/* R4 player follow-up: one responsive bottom bar; canvas remains a flex sibling. */
+header[hidden] { display: none; }
+#world-app { container-type: inline-size; }
+#world-hud { --footer-y: 4px; --footer-x: 10px; display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 6px; }
+#world-hud-title { min-width: 0; }
+#world-hud-title strong { display: block; color: #e5bd69; font-size: 12px; letter-spacing: .07em; white-space: nowrap; }
+#space-label { display: block; margin: 0; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#world-hud-vitals { min-width: 0; font-size: 11px; }
+#world-health { display: block; margin: 0; white-space: nowrap; }
+#world-status { margin: 0; min-height: 0; line-height: 16px; }
+#world-hud-movement { white-space: nowrap; font-size: 11px; }
+#world-hud-movement select { min-height: 40px; padding: 6px 8px; font-size: 12px; }
+#local-world-controls { margin: 0; min-width: 0; grid-column: 4; grid-row: 1; }
+#local-world-controls summary { min-height: 40px; line-height: 40px; white-space: nowrap; }
+#local-world-controls[open] { grid-column: 1 / -1; grid-row: 2; }
+#retry-travel { grid-column: 1 / -1; }
+#world-generation { overflow-wrap: anywhere; }
+.playtest-label-full { display: none; }
+.playtest-label-short { display: inline; }
+@container (max-width: 600px) { #world-hud-movement > span { display: none; } }
+@container (max-width: 360px) { #world-hud { --footer-x: 6px; gap: 4px; } #world-hud-title strong, #space-label { font-size: 10px; } }
+@media (min-width: 601px) and (max-height: 450px) { #world-hud { --footer-y: 2px; } #primary-attack { width: 96px; height: 64px; } }

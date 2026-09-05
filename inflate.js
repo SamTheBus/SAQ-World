@@ -3,4 +3,4 @@ if (!encoded) throw new Error("Missing bundled SAQ module data");
 const compressed = Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0));
 const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream("gzip"));
 globalThis.__SAQ_MODULES__ = JSON.parse(await new Response(stream).text());
-await import("./game.js?v=807a436b58737f91");
+await import("./game.js?v=00be02bfb142206c");
