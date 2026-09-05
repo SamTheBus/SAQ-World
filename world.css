@@ -20,4 +20,7 @@ footer p { margin: 3px 0; } footer small { display: block; color: #a2b3c7; }
 #primary-attack strong {display:block;font-size:19px;} #primary-attack small {display:block;font-size:10px;margin-top:4px;}
 #primary-attack[data-held="true"] { background:#75522b; box-shadow:0 0 0 4px #e5bd6930; }
 #primary-attack:disabled {opacity:.45;} #primary-attack[hidden] {display:none;}
+.world-dialog { position:absolute; z-index:5; width:min(520px,calc(100% - 32px)); left:50%; top:50%; transform:translate(-50%,-50%); padding:20px; border:1px solid #d3ae68; border-radius:9px; background:#101927f5; box-shadow:0 14px 50px #000b; }
+.world-dialog h2 {margin:0 0 8px;color:#ffe3a3;font-size:20px}.world-dialog p{line-height:1.4}.world-dialog div{display:flex;gap:8px;flex-wrap:wrap}.world-dialog[data-busy="true"] button{pointer-events:none;opacity:.55}
+.danger {border-color:#b86c6c;color:#ffd2d2} details{margin-top:6px} details summary{cursor:pointer;color:#a2b3c7} details button{margin:6px 6px 0 0;min-height:32px;padding:5px 8px}#local-world-control-status{color:#f2b7a0}
 @media(max-height:450px) {#primary-attack {bottom:12px;right:16px;height:72px;width:104px;}}
