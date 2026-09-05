@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>SAQ World — Alderwatch &amp; Oldward Wood</title>
+    <link rel="stylesheet" href="./world.css">
+  </head>
+  <body>
+    <header><div><strong>SAQ WORLD</strong><span id="space-label">Starting local campaign…</span></div>
+      <label>Movement <select id="control-mode"><option value="joystick">Joystick</option><option value="cursor">Cursor</option></select></label></header>
+    <main><canvas id="world-view" aria-label="Alderwatch and Oldward Wood. Move with WASD, arrows or pointer. Approach an edge marker and tap its prompt to travel."></canvas><button id="primary-attack" aria-label="Primary Attack. Tap once or hold to chain." aria-pressed="false" disabled><strong>Attack</strong><small>Space · Hold to chain</small></button></main>
+    <footer><p id="world-status" role="status">Preparing the local authority…</p><button id="retry-travel" hidden>Reconcile save</button>
+      <p>WASD / arrows · Drag to move · Space / Attack · Tap an edge prompt to travel</p>
+      <small><span id="world-metrics"></span> · <span id="control-provenance"></span></small>
+      <small>Sword proof: north from town, then east twice to Fern Hollow. Enter the clearing ring.</small></footer>
+    <script src="./modules-01.js"></script>
+    <script src="./modules-02.js"></script>
+    <script src="./modules-03.js"></script>
+    <script src="./modules-04.js"></script>
+    <script src="./modules-05.js"></script>
+    <script src="./modules-06.js"></script>
+    <script src="./modules-07.js"></script>
+    <script src="./modules-08.js"></script>
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>
