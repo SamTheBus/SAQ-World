@@ -46,3 +46,15 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 #world-hud p { margin: 3px 0; } #world-hud small { display: block; color: #a2b3c7; }
 #world-hud #world-health, #world-hud #world-status { margin: 0; }
 #local-world-controls[open] { max-height: min(28dvh, 230px); overflow-y: auto; overscroll-behavior: contain; }
+
+/* D3 compact progression within the accepted top vitals; game remains full bleed. */
+#world-progression { font-size:10px; line-height:13px; white-space:nowrap; }
+#world-progression[hidden] { display:none; }
+#world-level { color:#eed286; font-weight:700; }
+#world-xp { color:#c6def4; }
+#world-xp-bar { display:block; width:100%; min-width:80px; height:3px; margin:2px 0; border:0; border-radius:2px; overflow:hidden; background:#304153; accent-color:#6dc8ed; }
+#world-xp-bar::-webkit-progress-bar { background:#304153; }
+#world-xp-bar::-webkit-progress-value { background:#6dc8ed; }
+#world-xp-bar::-moz-progress-bar { background:#6dc8ed; }
+#world-level-up { position:absolute; z-index:3; pointer-events:none; top:12px; left:calc(12px + var(--world-safe-left)); right:calc(12px + var(--world-safe-right)); margin:auto; width:fit-content; max-width:calc(100% - 24px - var(--world-safe-left) - var(--world-safe-right)); padding:8px 12px; border:1px solid #b49d57; border-radius:6px; background:#162533ed; color:#ffe5a3; font-size:12px; text-align:center; }
+#world-level-up[hidden] { display:none; }
