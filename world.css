@@ -58,3 +58,15 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 #world-xp-bar::-moz-progress-bar { background:#6dc8ed; }
 #world-level-up { position:absolute; z-index:3; pointer-events:none; top:12px; left:calc(12px + var(--world-safe-left)); right:calc(12px + var(--world-safe-right)); margin:auto; width:fit-content; max-width:calc(100% - 24px - var(--world-safe-left) - var(--world-safe-right)); padding:8px 12px; border:1px solid #b49d57; border-radius:6px; background:#162533ed; color:#ffe5a3; font-size:12px; text-align:center; }
 #world-level-up[hidden] { display:none; }
+
+/* D3-R participant-local recovery; the world and top HUD remain visible. */
+#world-death {width:min(360px,calc(100% - 32px - var(--world-safe-left) - var(--world-safe-right)));text-align:center;}
+#world-death[hidden] {display:none;}
+#world-death h2 {letter-spacing:.08em;}
+#world-death p {margin:8px 0;font-size:13px;}
+#world-death .death-policy {color:#a8dac4;font-weight:600;}
+#world-death #world-death-anchor {color:#a2b3c7;font-size:12px;}
+#world-respawn {min-height:48px;min-width:160px;margin-top:6px;border-color:#e5bd69;background:#344b60;font-weight:700;font-size:16px;}
+#world-respawn:disabled {opacity:.55;}
+#world-death-status:empty {display:none;}
+@media(max-height:450px) {#world-death {padding:12px 16px;}#world-death p {margin:5px 0;}#world-death h2 {margin-bottom:5px;}}
