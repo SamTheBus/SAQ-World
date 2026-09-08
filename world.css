@@ -203,3 +203,25 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 
 #world-wallet {justify-self:start;}
 @media(min-width:601px) and (max-height:450px){#world-hud {grid-template-columns:auto minmax(0,1fr) auto auto;}#world-hud-title {display:flex;grid-column:2;grid-row:1;flex-direction:column;align-items:flex-start;}#world-hud-movement {grid-column:3;}#local-world-controls {grid-column:4;}}
+
+/* Dungeon Forge hierarchy and source colors, within the accepted Hero Crest shell. */
+#world-materials-view,#world-forge-view{display:none;}
+#world-inventory[data-section=materials] #world-bag-browse,#world-inventory[data-section=forge] #world-bag-browse{display:none;}
+#world-inventory[data-section=materials] #world-materials-view,#world-inventory[data-section=forge] #world-forge-view{display:block;}
+.bag-section-tabs{overflow-x:auto;flex-shrink:0;}.bag-section-tabs button{white-space:nowrap;min-height:44px;}
+.forge-banner{padding:12px 15px;border:1px solid #8c6d3b;border-radius:7px;background:linear-gradient(115deg,#20132e,#101b2d);}
+.forge-banner small{color:#f4bc48;letter-spacing:2px;}.forge-banner h3{color:#ffdf68;margin:4px 0;}.forge-subtitle{color:#38bdf8;margin:0;}
+.forge-access,.forge-review-label{font-size:12px;line-height:1.5;}.forge-review-label{color:#ffdd73;border-left:3px solid #eab548;padding:7px 10px;background:#392919;}
+.forge-layout{display:grid;grid-template-columns:minmax(175px,1fr) minmax(240px,1.3fr);gap:12px;}.forge-slots{display:flex;flex-direction:column;gap:7px;}
+#world-inventory .forge-slot-card{display:flex;align-items:center;gap:8px;text-align:left;min-height:65px;padding:8px;background:linear-gradient(#22182f,#110d1b);border:1px solid #4c3c5d;border-left:4px solid #8c749d;border-radius:7px;color:#fff;}#world-inventory .forge-slot-card[aria-pressed=true]{border-color:#38bdf8;background:linear-gradient(#213750,#141b30);}.forge-rank{font:12px monospace;color:#ffdc76;white-space:nowrap;}
+.forge-details{padding:14px;border:1px solid #635035;border-radius:7px;background:#0e101a;align-self:start;}.forge-details h4{color:#38bdf8;margin:0 0 8px;}.forge-details progress{width:100%;height:10px;accent-color:#f59e0b;}.forge-requirements,.forge-preview{padding:12px;margin:13px 0;border:1px solid #334155;border-radius:6px;background:#101824;overflow-wrap:anywhere;}.forge-requirements p,.forge-preview p{margin:8px 0;font:13px monospace;}.forge-requirements small{color:#cbd5e1;}#world-inventory .forge-anvil-button{width:100%;min-height:48px;border:2px solid #38bdf8;background:linear-gradient(#087ca5,#123650);color:#fff;font-weight:bold;border-radius:6px;}#world-inventory .forge-anvil-button:disabled{opacity:.5;}.forge-deferred{color:#e5bb72;font-size:12px;}.material-card{display:flex;align-items:center;gap:12px;min-height:76px;padding:12px;border:1px solid #4c3c5d;border-left:4px solid #a0aec0;border-radius:7px;background:linear-gradient(#22182f,#110d1b);}.material-card .item-sub{white-space:normal;line-height:1.5;}
+@media(max-width:600px){.forge-layout{grid-template-columns:1fr;}.forge-slots{display:grid;grid-template-columns:1fr 1fr;gap:6px;}#world-inventory .forge-slot-card{min-height:64px;padding:7px;gap:5px;}#world-inventory .forge-slot-card img{width:27px;height:27px;}#world-inventory .forge-slot-card strong{font-size:11px;}#world-inventory .forge-slot-card .item-sub{font-size:9px;}.forge-rank{font-size:10px;}.forge-banner{padding:10px;}.forge-details{padding:12px;}.bag-section-tabs button{font-size:11px;padding:9px 10px;}}
+
+/* Physical review: compact Crest heading preserves the close touch target. */
+#world-inventory .bag-heading{min-height:44px;padding:3px 8px;gap:8px;border-width:0 0 1px;box-shadow:none;background:transparent;border-radius:0;}
+#world-inventory .bag-heading small{display:none;}
+#world-inventory .bag-heading h2{font-size:13px;margin:0;letter-spacing:1px;}
+#world-inventory #world-bag-close{min-width:44px;min-height:44px;width:44px;height:44px;padding:0;font-size:0;}
+
+#world-inventory .forge-banner{padding:6px 8px;}#world-inventory .forge-banner>small,#world-inventory .forge-subtitle{display:none;}#world-inventory .forge-banner h3{margin:0;padding:0;border:0;font-size:13px;}
+#world-inventory .tooltip-card .tt-title{margin-top:0;padding-top:0;}
