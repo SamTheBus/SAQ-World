@@ -275,3 +275,8 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 .subweapon-hud[data-family="shield"]{display:flex;align-items:center;gap:7px}.subweapon-hud[hidden]{display:none}
 .guard-pressure-pips{display:inline-flex;gap:4px}.guard-pressure-pips i{display:block;width:7px;height:12px;border:1px solid #86734b;border-radius:2px;background:#2c2534}.guard-pressure-pips i[data-filled="true"]{background:#f1c65e;border-color:#ffe7a3;box-shadow:inset 0 2px #fff0ba}
 .shadow-dash svg{display:block;margin:0 auto 2px}.shadow-dash span{display:block;white-space:pre-line}
+
+/* Shield-only held action. Steel/gold resource is separate from Pressure pips. */
+.shield-guard{position:absolute;right:calc(152px + var(--world-safe-right));bottom:calc(24px + var(--world-safe-bottom));width:104px;min-height:76px;border:2px solid #d7b65d;border-radius:20px;color:#fff0bf;background:linear-gradient(to top,#536679 var(--guard-fill,100%),#1a1c29 var(--guard-fill,100%));font:bold 13px/1.5 system-ui;white-space:pre-line;touch-action:none;user-select:none;z-index:8;box-shadow:0 3px 7px #0008}
+.shield-guard[data-raised="true"]{border-color:#fff0b0;box-shadow:0 0 0 2px #dfbc6550,0 3px 7px #0008}.shield-guard[data-empty="true"]{color:#e6afa1;border-color:#95655a}.shield-guard[hidden]{display:none}
+@media(max-height:450px){.shield-guard{bottom:16px;right:126px;width:92px;min-height:64px}}
