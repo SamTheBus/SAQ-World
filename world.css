@@ -271,3 +271,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 .base-provisions button{font-size:13px;line-height:1.4;padding:9px 12px}.base-provisions .equipment-icon{flex-shrink:0}
 
 .subweapon-hud[data-ready="true"]{border-color:#ffe174;box-shadow:0 0 9px #eebf4266}.subweapon-hud[data-family="shield"]{color:#ffe174}
+
+.subweapon-hud[data-family="shield"]{display:flex;align-items:center;gap:7px}.subweapon-hud[hidden]{display:none}
+.guard-pressure-pips{display:inline-flex;gap:4px}.guard-pressure-pips i{display:block;width:7px;height:12px;border:1px solid #86734b;border-radius:2px;background:#2c2534}.guard-pressure-pips i[data-filled="true"]{background:#f1c65e;border-color:#ffe7a3;box-shadow:inset 0 2px #fff0ba}
+.shadow-dash svg{display:block;margin:0 auto 2px}.shadow-dash span{display:block;white-space:pre-line}
