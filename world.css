@@ -225,3 +225,26 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 
 #world-inventory .forge-banner{padding:6px 8px;}#world-inventory .forge-banner>small,#world-inventory .forge-subtitle{display:none;}#world-inventory .forge-banner h3{margin:0;padding:0;border:0;font-size:13px;}
 #world-inventory .tooltip-card .tt-title{margin-top:0;padding-top:0;}
+
+/* D5-R: station modal; inventory navigation is not Forge access. */
+#world-inventory[data-section=forge] .bag-section-tabs,
+#world-inventory[data-section=forge] #world-bag-summary,
+#world-inventory[data-section=forge] #world-bag-stats{display:none;}
+#world-inventory[data-section=forge] .bag-body{padding-top:6px;}
+#world-inventory .forge-slot-card[aria-pressed=true]{border:2px solid #ffc645;border-left:5px solid #ffe889;background:linear-gradient(115deg,#613616,#24192d);box-shadow:inset 0 1px #ffce7460,0 0 9px #ed9e1320;}
+#world-inventory .forge-slot-card img{flex-shrink:0;filter:drop-shadow(0 2px 2px #000);}
+.forge-requirements p,.forge-preview p{display:flex;align-items:center;gap:8px;}
+.forge-requirements img,.forge-preview img{flex-shrink:0;object-fit:contain;}
+.forge-preview p span{flex:1;color:#cbc1d6;font:12px system-ui;}
+.forge-preview p strong{white-space:nowrap;}
+.forge-details{border-color:#8c6d3b;background:linear-gradient(#211a26,#100d17);}
+.forge-details progress{height:12px;border:1px solid #946b2d;border-radius:4px;background:#08080e;}
+.forge-details progress::-webkit-progress-value{background:linear-gradient(#fff1ad,#e99821);}
+#world-inventory .forge-anvil-button{border-color:#ffcf55;background:linear-gradient(#ad570e,#76320a);box-shadow:inset 0 1px #ffe2a780,0 3px 0 #321a0c;letter-spacing:1px;}
+#world-inventory .forge-anvil-button:disabled{background:#26202c;border-color:#66556d;box-shadow:none;opacity:.65;}
+.forge-review-label{padding:3px 7px;font-size:10px;background:transparent;border-left:2px solid #8c6d3b;color:#baa888;margin:2px 0 8px;}
+.material-card>strong{font:700 23px ui-monospace,monospace;color:#f7eddb;margin-left:auto;}
+.material-card .item-info strong{color:#c2cfdf;}
+@media(max-width:600px){.forge-slots{display:flex;flex-direction:row;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:5px;}#world-inventory .forge-slot-card{min-width:142px;min-height:62px;scroll-snap-align:start;}.forge-layout{gap:6px;}.forge-details{padding:10px;}.forge-requirements,.forge-preview{margin:9px 0;padding:9px;}.forge-details h4{font-size:12px;}.forge-preview p{margin:7px 0;}.forge-rank{margin-left:auto;}}
+
+.forge-details progress::-webkit-progress-bar{background:#0a0710;border-radius:3px;}
