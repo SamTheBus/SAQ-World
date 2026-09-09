@@ -280,3 +280,16 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 .shield-guard{position:absolute;right:calc(152px + var(--world-safe-right));bottom:calc(24px + var(--world-safe-bottom));width:104px;min-height:76px;border:2px solid #d7b65d;border-radius:20px;color:#fff0bf;background:linear-gradient(to top,#536679 var(--guard-fill,100%),#1a1c29 var(--guard-fill,100%));font:bold 13px/1.5 system-ui;white-space:pre-line;touch-action:none;user-select:none;z-index:8;box-shadow:0 3px 7px #0008}
 .shield-guard[data-raised="true"]{border-color:#fff0b0;box-shadow:0 0 0 2px #dfbc6550,0 3px 7px #0008}.shield-guard[data-empty="true"]{color:#e6afa1;border-color:#95655a}.shield-guard[hidden]{display:none}
 @media(max-height:450px){.shield-guard{bottom:16px;right:126px;width:92px;min-height:64px}}
+
+/* D7: item identity, not a panel-wide glow. */
+.rarity-item .item-title,.rarity-item>.tt-title{color:var(--rarity,#fff)}
+.stash-card.rarity-item,.paperdoll-slot.rarity-item{border-left:3px solid var(--rarity,#fff)}
+.rarity-item .equipment-icon{border-color:var(--rarity,#fff)}
+.tooltip-card.rarity-item{border-color:var(--rarity,#aaa)}
+.gear-effects{border-top:1px solid #ffffff20;margin-top:8px;padding-top:6px;color:#d7dae3;font-size:12px}
+.gear-effects p{margin:3px 0}.action-salvage{background:#712725!important;border:1px solid #e77966!important;color:#fff!important}
+.salvage-confirmation{padding:12px;margin-top:12px;border:1px solid #e77966;border-radius:8px;background:#211318}
+.salvage-confirmation h4{color:#ffbe9f;margin:0 0 6px}.salvage-confirmation p{font-size:13px;line-height:1.4}
+.salvage-output{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:13px}.salvage-confirmation button{min-height:40px;margin:8px 5px 0 0}
+
+.salvage-only{display:block!important}.salvage-item-heading{display:grid;grid-template-columns:44px 1fr;gap:4px 8px;padding:10px 24px 8px 4px}.salvage-item-heading img{grid-row:span 2;width:40px;height:40px}.salvage-item-heading strong{color:var(--rarity)}.salvage-item-heading small{color:#bfc6d2}.salvage-only .salvage-confirmation{margin-top:4px}
