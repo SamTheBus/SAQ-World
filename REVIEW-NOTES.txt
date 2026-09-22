@@ -1,0 +1,6 @@
+SAQ World D10.1 Woodland Fort phone review
+Runtime: 8354991ac01911f8
+Based on accepted D9 runtime: b578d0e7dfd5740c
+Physical phone acceptance: pending
+
+Start a fresh campaign. The first eligible Woodland site binds the unchanged Overgrown Ruin. A second eligible Woodland road socket binds Woodland Fort. Explore the road network, enter the Fort through its gate, clear the courtyard encounter, claim the chest, leave, save, reopen, and revisit. Use ?profile=1 for diagnostics if recording is stopped.
