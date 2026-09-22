@@ -1,6 +1,19 @@
-SAQ World D10.1 Woodland Fort phone review
-Runtime: 8354991ac01911f8
+SAQ World D10.1 Woodland Fort phone review — replacement package
+Runtime ID: 5769437b144ae3e3
 Based on accepted D9 runtime: b578d0e7dfd5740c
 Physical phone acceptance: pending
 
-Start a fresh campaign. The first eligible Woodland site binds the unchanged Overgrown Ruin. A second eligible Woodland road socket binds Woodland Fort. Explore the road network, enter the Fort through its gate, clear the courtyard encounter, claim the chest, leave, save, reopen, and revisit. Use ?profile=1 for diagnostics if recording is stopped.
+Fresh-campaign URL: index.html?seed=text%3AD10-FORT-WALK-011&profile=1&evidence=1
+Text seed: text:D10-FORT-WALK-011
+Stored seed hex: 5de430b8bd4302765d587b9a29f9c02f
+Use fresh browser/site storage so an existing campaign resume does not override the seed. No old D9 campaign is needed for this review.
+
+Walking route (32-pixel route tiles; north is up):
+1. From Alderwatch, follow the road east about 9 tiles, north 6, east 3, north 7, then east 1 to the northbound road through Old Pine Reach. Continue north through the genuine north origin exit into Mosswood. The first site is 24 road tiles beyond that exit: continue north about 4 tiles outside, then east about 20. Total from the historical start is 75 road tiles. Enter the first Unidentified Woodland Site; it binds as Overgrown Ruin. Leave by its entrance path. Its map label is Overgrown Ruin · Active.
+2. From the Ruin, follow the connected Mosswood road west 38 tiles, north 3, west 24, south 3, then west 9. The second socket is 77 road tiles from the Ruin. Enter the second Unidentified Woodland Site; it binds as Woodland Fort. Both procedural legs stay in Mosswood · Minimum Lv. 1.
+3. In the Fort, walk north through the gate, defeat the two courtyard enemies with ordinary Attack, then continue north to the chest by the Keep. Open it and pick up any gear that appears. Walk south to the gate and leave. Save campaign, reopen, and enter again. The Fort map label is Woodland Fort · Completed; the cleared courtyard remains empty.
+
+Packaged browser walking proof: Chrome phone viewport 390 × 844, exact runtime above, ordinary movement and combat, no site-state injection, relocation, invulnerability, or route bypass. It confirmed separate stable site IDs, both site identities in the reopened saved root, Ruin active, Fort cleared, completion chest consumed, reward claimed when gear appeared, successful manual save/reopen, and Fort revisit. See review-evidence/walking-proof.json and screenshots.
+Browser JavaScript errors: none. One console 404 was the test server's automatic /favicon.ico request; gameplay resources loaded.
+
+The D10.1 direct-position tests cover collection migration and site logic. They did not establish a physical walking route. The packaged walking proof above is separate evidence.
