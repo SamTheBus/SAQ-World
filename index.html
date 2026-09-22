@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-world-release="45b7ed0f2a6467c3" data-performance-review="true">
+<html lang="en" data-world-release="55aeee1ee5b9a016" data-performance-review="true">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -14,7 +14,7 @@
   <body>
     <div id="world-app">
     <header id="world-hud"><div id="world-hud-title"><strong>SAQ WORLD</strong><span id="space-label">Starting local campaign…</span></div><div id="world-hud-vitals"><div class="hero-crest" aria-hidden="true"><svg viewBox="0 0 32 38"><path d="M3 3h26v19L16 35 3 22Z" fill="#e9ae32" stroke="#100c19" stroke-width="3"/><path d="M7 7h18v13l-9 9-9-9Z" fill="#6841a2"/><path d="m16 9 3 6 6 1-5 5 1 6-5-3-5 3 1-6-5-5 6-1Z" fill="#fff2ab"/></svg></div><div class="vital-bars"><div class="hp-track"><progress id="world-hp-bar" max="100" value="100" aria-label="Health"></progress><p id="world-health"></p></div><div id="world-progression" hidden><span id="world-level"></span><progress id="world-xp-bar" max="100" value="0" aria-label="XP toward next level"></progress><span id="world-xp"></span></div></div><div id="world-wallet" aria-label="Gold"><svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="10" fill="#b96d17" stroke="#140d20" stroke-width="2.5"/><ellipse cx="11" cy="10" rx="6" ry="7" fill="#ffd43c"/><path d="M7 5h5v3H7Z" fill="#fff4a4"/><path d="M13 10h3v7h-3Z" fill="#d88a17"/></svg><span id="world-gold">0</span><span id="world-gold-gain" hidden aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="10" fill="#b96d17" stroke="#140d20" stroke-width="2.5"/><ellipse cx="11" cy="10" rx="6" ry="7" fill="#ffd43c"/><path d="M7 5h5v3H7Z" fill="#fff4a4"/><path d="M13 10h3v7h-3Z" fill="#d88a17"/></svg><span id="world-gold-gain-amount"></span></span></div><p id="world-status" role="status">Starting...</p></div><label id="world-hud-movement"><span>Movement </span><select id="control-mode" aria-label="Movement mode"><option value="joystick">Joystick</option><option value="cursor">Cursor</option></select></label><button id="retry-travel" hidden>Reconcile save</button>
-      <div id="world-gate-alert" role="alert" hidden><span id="world-gate-alert-text"></span><button id="world-gate-reopen" type="button" hidden>Reopen last saved</button></div><details id="local-world-controls" hidden open><summary><span class="playtest-label-full">Local playtest data</span><span class="playtest-label-short">Playtest</span></summary>
+      <div id="world-gate-alert" role="alert" hidden><span id="world-gate-alert-text"></span><button id="world-gate-copy" type="button" hidden>Copy fatal diagnostic</button><button id="world-gate-download" type="button" hidden>Download fatal diagnostic</button><button id="world-gate-reopen" type="button" hidden>Reopen last saved</button></div><details id="local-world-controls" hidden open><summary><span class="playtest-label-full">Local playtest data</span><span class="playtest-label-short">Playtest</span></summary>
       <p id="world-status-detail"></p>
       <p>WASD / arrows · Drag to move · Space / Attack · Internal boundaries are seamless</p>
       <small id="world-generation"></small>
@@ -33,51 +33,51 @@
       <section id="startup-recovery" class="world-dialog" hidden aria-live="polite"><h2 id="startup-recovery-title">World could not start</h2><p id="startup-recovery-detail"></p><div><button id="startup-retry">Retry</button><button id="startup-new">Start New Campaign</button><button id="startup-forget">Forget Saved Resume</button><button id="startup-reset" class="danger">Reset Local World Data</button></div></section></main><canvas id="reward-effects" aria-hidden="true"></canvas>
 
     </div>
-    <script src="./data-01.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-02.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-03.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-04.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-05.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-06.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-07.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-08.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-09.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-10.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-11.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-12.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-13.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-14.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-15.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-16.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-17.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-18.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-19.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-20.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-21.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-22.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-23.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-24.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-25.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-26.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-27.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-28.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-29.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-30.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-31.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-32.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-33.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-34.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-35.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-36.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-37.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-38.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-39.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-40.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-41.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-42.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-43.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-44.js?v=45b7ed0f2a6467c3"></script>
-    <script src="./data-45.js?v=45b7ed0f2a6467c3"></script>
-    <script type="module" src="./inflate.js?v=45b7ed0f2a6467c3"></script>
+    <script src="./data-01.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-02.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-03.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-04.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-05.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-06.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-07.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-08.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-09.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-10.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-11.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-12.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-13.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-14.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-15.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-16.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-17.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-18.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-19.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-20.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-21.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-22.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-23.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-24.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-25.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-26.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-27.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-28.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-29.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-30.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-31.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-32.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-33.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-34.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-35.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-36.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-37.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-38.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-39.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-40.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-41.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-42.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-43.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-44.js?v=55aeee1ee5b9a016"></script>
+    <script src="./data-45.js?v=55aeee1ee5b9a016"></script>
+    <script type="module" src="./inflate.js?v=55aeee1ee5b9a016"></script>
   </body>
 </html>
