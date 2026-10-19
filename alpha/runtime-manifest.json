@@ -1,0 +1,2558 @@
+{
+  "runtimeId": "db4f2670ae0f3170",
+  "runtimeSha256": "db4f2670ae0f317067b79583ba4e1d87c391f474a6c1af9d8ee3c1020e45fac5",
+  "parentRuntimeId": "c224c9e8b940ebab",
+  "changedRuntimeFiles": [
+    "index.html",
+    "src/client/cave_art_d10.js",
+    "src/client/site_environment_presentation.js",
+    "src/dev/planned_world_review_v1.js",
+    "src/entrypoints/activity_save_worker.js",
+    "src/entrypoints/playable_browser.js",
+    "src/host/activity_client_port.js",
+    "src/shared/content/fort_family_runtime_v1.js",
+    "src/shared/content/ruin_family_runtime_v1.js",
+    "src/shared/content/site_family_runtime_d12_2.js",
+    "src/shared/contracts/functional_site_d9.js",
+    "src/shared/contracts/planned_fort_v1.js",
+    "src/shared/contracts/planned_ruin_v1.js",
+    "src/shared/generation/planned_world_foundation_v1.js",
+    "src/storage/planned_world_assets_v1.js",
+    "world-cumulative-dev.html"
+  ],
+  "addedRuntimeFiles": [
+    "src/shared/content/multiroom_policy_v1.js",
+    "src/shared/contracts/multiroom_v1.js",
+    "src/shared/generation/multiroom_cave_v1.js",
+    "src/shared/generation/multiroom_v1.js"
+  ],
+  "unchangedRuntimeFiles": [
+    "assets/alpha-site-population-v1.json",
+    "assets/hybrid-art-pilot-v1/journey.json",
+    "assets/hybrid-art-pilot-v1/kit-manifest.json",
+    "assets/hybrid-art-pilot-v1/woodland-atlas-source.png",
+    "assets/hybrid-art-v2/bush-sprites-source.png",
+    "assets/hybrid-art-v2/kit-manifest.json",
+    "assets/hybrid-art-v2/material-atlas-source.png",
+    "assets/planned-world-water-v3/alpha.json",
+    "assets/planned-world-water-v3/crypt-large-fixture-binding.json",
+    "assets/planned-world-water-v3/crypt-large-fixture.json",
+    "assets/planned-world-water-v3/fort-deep-fixture-binding.json",
+    "assets/planned-world-water-v3/fort-deep-fixture.json",
+    "assets/planned-world-water-v3/registry.json",
+    "assets/planned-world-water-v3/ruin-deep-fixture-binding.json",
+    "assets/planned-world-water-v3/ruin-deep-fixture.json",
+    "assets/ruin-storybook-v1/entrance-source.png",
+    "assets/ruin-storybook-v1/grove-clean-source.png",
+    "assets/ruin-storybook-v1/kit-manifest.json",
+    "assets/ruin-storybook-v1/materials-source.png",
+    "assets/ruin-storybook-v1/modular-thin-source.png",
+    "assets/ruin-storybook-v1/provenance.json",
+    "assets/ruin-storybook-v1/vertical-thin-source.png",
+    "manifest.webmanifest",
+    "save-worker.js",
+    "src/client/activity_save_bridge.js",
+    "src/client/actor_status_presentation.js",
+    "src/client/authority_clock.js",
+    "src/client/barrier_impact.js",
+    "src/client/boss_presentation_d12_5.js",
+    "src/client/browser_loop_health.js",
+    "src/client/civilian_context_input.js",
+    "src/client/combat_feedback.js",
+    "src/client/combat_text_layout.js",
+    "src/client/combat_vfx.js",
+    "src/client/command_adapter.js",
+    "src/client/completion_art_preparation.js",
+    "src/client/context_action_input.js",
+    "src/client/creature_presentation_d11.js",
+    "src/client/death_presentation.js",
+    "src/client/diagnostic_download_d9.js",
+    "src/client/diagnostic_overlays.js",
+    "src/client/diagnostic_samples.js",
+    "src/client/dungeon_combat_icons.js",
+    "src/client/economy_resource_presentation.js",
+    "src/client/elite_presentation_d12_4.js",
+    "src/client/environment_cache.js",
+    "src/client/environment_layout.js",
+    "src/client/environment_motifs.js",
+    "src/client/environment_presentation.js",
+    "src/client/equipment_art.js",
+    "src/client/extraction_portal_presentation_d12_5c.js",
+    "src/client/filtered_creature_surface.js",
+    "src/client/forge_art.js",
+    "src/client/forge_presentation.js",
+    "src/client/forge_station_art.js",
+    "src/client/fort_art_d10.js",
+    "src/client/fort_equipment_display.js",
+    "src/client/generated_equipment_art.js",
+    "src/client/ground_item_presentation.js",
+    "src/client/hero_presentation.js",
+    "src/client/hybrid_art_binding.js",
+    "src/client/hybrid_art_pilot_v1.js",
+    "src/client/hybrid_art_v2.js",
+    "src/client/interior_light_clips.js",
+    "src/client/interior_light_field.js",
+    "src/client/inventory_presentation.js",
+    "src/client/iron_chest_art.js",
+    "src/client/lighting_presentation.js",
+    "src/client/local_launch_policy.js",
+    "src/client/mastery_art.js",
+    "src/client/ordinary_enemy_presentation.js",
+    "src/client/performance_probe.js",
+    "src/client/planned_cartography_v2.js",
+    "src/client/planned_ruin_exterior_presentation.js",
+    "src/client/planned_town_presentation_v1.js",
+    "src/client/planned_world_materials_v1.js",
+    "src/client/playable_client.js",
+    "src/client/presentation_state.js",
+    "src/client/primary_input.js",
+    "src/client/progression_copy.js",
+    "src/client/progression_icons.js",
+    "src/client/progression_presentation.js",
+    "src/client/reward_feedback.js",
+    "src/client/road_presentation.js",
+    "src/client/ruin_art_d11_3.js",
+    "src/client/ruin_storybook_art_v1.js",
+    "src/client/salvage_material_art.js",
+    "src/client/settlement_building_presentation.js",
+    "src/client/settlement_interior_presentation.js",
+    "src/client/shield_guard_input.js",
+    "src/client/site_navigator_d12_4c.js",
+    "src/client/space_preparation_gate.js",
+    "src/client/stat_number.js",
+    "src/client/subweapon_art.js",
+    "src/client/subweapon_hero_art.js",
+    "src/client/subweapon_hud.js",
+    "src/client/tavern_exterior_presentation.js",
+    "src/client/tome_element_art.js",
+    "src/client/viewport_shell.js",
+    "src/client/wallet_display.js",
+    "src/client/world_browser_client.js",
+    "src/client/world_depth_presentation.js",
+    "src/client/world_input.js",
+    "src/client/world_map_d9.js",
+    "src/client/world_renderer.js",
+    "src/client/world_worker_bridge_d9.js",
+    "src/client/xp_display.js",
+    "src/dev/natural_cluster_review_v1.js",
+    "src/entrypoints/browser_boot.js",
+    "src/entrypoints/world_browser.js",
+    "src/host/activity_authority.js",
+    "src/host/campaign_authority.js",
+    "src/host/combat_presentation_projection.js",
+    "src/host/command_gateway_core.js",
+    "src/host/developer_projection_port.js",
+    "src/host/diagnostic_gateway.js",
+    "src/host/exact_cut_authority_core.js",
+    "src/host/functional_site_activation_d9.js",
+    "src/host/identity_allocation.js",
+    "src/host/local_activity_session.js",
+    "src/host/local_authority_host.js",
+    "src/host/local_endless_session_d9.js",
+    "src/host/local_world_session.js",
+    "src/host/paged_world_authority_d9.js",
+    "src/host/planned_campaign_binding_v1.js",
+    "src/host/site_content_binding_d9.js",
+    "src/host/site_truth_presentation_cache.js",
+    "src/host/world_client_port.js",
+    "src/host/world_residency_d9.js",
+    "src/host/world_terrain_projection_d9.js",
+    "src/shared/content/active_spaces.js",
+    "src/shared/content/affix_range_d9.js",
+    "src/shared/content/alpha_population_reservations_v1.js",
+    "src/shared/content/alpha_population_retention_v1.js",
+    "src/shared/content/alpha_site_population_v1.js",
+    "src/shared/content/boss_review_fixture_d12_5.js",
+    "src/shared/content/bosses_d12_5.js",
+    "src/shared/content/constellations.js",
+    "src/shared/content/creature_presentation_d11_1.js",
+    "src/shared/content/creatures_d11.js",
+    "src/shared/content/crypt_family_runtime_v1.js",
+    "src/shared/content/crypt_family_runtime_v2.js",
+    "src/shared/content/crypt_population_v3.js",
+    "src/shared/content/dungeon_item_bases.js",
+    "src/shared/content/dungeon_item_bases_d9.js",
+    "src/shared/content/dungeon_item_bases_v1.js",
+    "src/shared/content/dungeon_rarity.js",
+    "src/shared/content/economy_rewards.js",
+    "src/shared/content/elite_affixes_d12_4.js",
+    "src/shared/content/elite_review_fixture_d12_4.js",
+    "src/shared/content/encounter_motion_d11_2.js",
+    "src/shared/content/equipment.js",
+    "src/shared/content/equipment_d4_legacy.js",
+    "src/shared/content/forge.js",
+    "src/shared/content/forge_material_costs.js",
+    "src/shared/content/forge_review.js",
+    "src/shared/content/functional_site_registry_d10.js",
+    "src/shared/content/gear_numbers_d9.js",
+    "src/shared/content/generated_gear.js",
+    "src/shared/content/generated_gear_d7_v2.js",
+    "src/shared/content/generated_gear_d9.js",
+    "src/shared/content/generated_gear_migration.js",
+    "src/shared/content/generated_gear_v1.js",
+    "src/shared/content/index.js",
+    "src/shared/content/interior_navigation_d12_3a.js",
+    "src/shared/content/manual_primary.js",
+    "src/shared/content/oldward_wood.js",
+    "src/shared/content/open_town_template_v1.js",
+    "src/shared/content/ordinary_enemies.js",
+    "src/shared/content/overworld_fixture_catalog.js",
+    "src/shared/content/planned_cave_policy_v1.js",
+    "src/shared/content/planned_cave_population_v2.js",
+    "src/shared/content/planned_crypt_policy_v1.js",
+    "src/shared/content/planned_crypt_policy_v2.js",
+    "src/shared/content/planned_fort_policy_v1.js",
+    "src/shared/content/planned_fort_policy_v2.js",
+    "src/shared/content/planned_ruin_exterior_v2.js",
+    "src/shared/content/planned_ruin_exterior_v3.js",
+    "src/shared/content/planned_ruin_exterior_v4.js",
+    "src/shared/content/planned_ruin_policy_v1.js",
+    "src/shared/content/planned_ruin_policy_v2.js",
+    "src/shared/content/planned_ruin_standard_kit_v1.js",
+    "src/shared/content/procedural_catalog.js",
+    "src/shared/content/reward_modifiers.js",
+    "src/shared/content/reward_progression.js",
+    "src/shared/content/reward_progression_d9.js",
+    "src/shared/content/ruin_modular_kit_v1.js",
+    "src/shared/content/site_definition_runtime_d10.js",
+    "src/shared/content/site_families_d12.js",
+    "src/shared/content/site_families_d12_1.js",
+    "src/shared/content/site_families_d12_2.js",
+    "src/shared/content/site_family_runtime_d12.js",
+    "src/shared/content/site_family_runtime_d12_1.js",
+    "src/shared/content/subweapons.js",
+    "src/shared/content/tavern_interior_v1.js",
+    "src/shared/content/tome_profiles.js",
+    "src/shared/content/woodland_cave_d10.js",
+    "src/shared/content/woodland_cave_formations_d12_2.js",
+    "src/shared/content/woodland_cave_modules_d12_1.js",
+    "src/shared/content/woodland_fort_d10.js",
+    "src/shared/content/woodland_region_names_d12_2.js",
+    "src/shared/content/woodland_ruin_d9.js",
+    "src/shared/content/woodland_sites_d11.js",
+    "src/shared/content/world_profile_d9.js",
+    "src/shared/content/world_runtime_policy_d9.js",
+    "src/shared/contracts/activity_fixture.js",
+    "src/shared/contracts/activity_state.js",
+    "src/shared/contracts/actor_geometry_d9.js",
+    "src/shared/contracts/actor_residency.js",
+    "src/shared/contracts/alpha_population_v1.js",
+    "src/shared/contracts/attack_haste.js",
+    "src/shared/contracts/boss_combat_d12_5.js",
+    "src/shared/contracts/boss_completion_reward_d12_5d.js",
+    "src/shared/contracts/boss_extraction_d12_5c.js",
+    "src/shared/contracts/cadence_compatibility.js",
+    "src/shared/contracts/campaign_tavern_v1.js",
+    "src/shared/contracts/checkpoint.js",
+    "src/shared/contracts/client_fixture.js",
+    "src/shared/contracts/combat.js",
+    "src/shared/contracts/combat_amount.js",
+    "src/shared/contracts/combat_attribution.js",
+    "src/shared/contracts/combat_integer.js",
+    "src/shared/contracts/combat_integer_migration.js",
+    "src/shared/contracts/command_context.js",
+    "src/shared/contracts/commands.js",
+    "src/shared/contracts/content_numeric_admission_d9.js",
+    "src/shared/contracts/d9_numeric_expression.js",
+    "src/shared/contracts/economy_amount.js",
+    "src/shared/contracts/elite_combat_d12_4.js",
+    "src/shared/contracts/encounter_economy.js",
+    "src/shared/contracts/encounter_progression.js",
+    "src/shared/contracts/encounter_proof.js",
+    "src/shared/contracts/endless_formula.js",
+    "src/shared/contracts/episode_progression_d9.js",
+    "src/shared/contracts/events.js",
+    "src/shared/contracts/forge_economy.js",
+    "src/shared/contracts/forge_stations.js",
+    "src/shared/contracts/gear_salvage.js",
+    "src/shared/contracts/geography.js",
+    "src/shared/contracts/hashing.js",
+    "src/shared/contracts/hero_progression_d9.js",
+    "src/shared/contracts/history.js",
+    "src/shared/contracts/identities.js",
+    "src/shared/contracts/index.js",
+    "src/shared/contracts/integer_domain.js",
+    "src/shared/contracts/large_number.js",
+    "src/shared/contracts/local_world_frames_d9.js",
+    "src/shared/contracts/major_place_names.js",
+    "src/shared/contracts/mastery_causality.js",
+    "src/shared/contracts/mastery_combat.js",
+    "src/shared/contracts/mastery_stats.js",
+    "src/shared/contracts/multiplayer.js",
+    "src/shared/contracts/ordinary_population.js",
+    "src/shared/contracts/origin_egress_d9.js",
+    "src/shared/contracts/overworld.js",
+    "src/shared/contracts/paged_collision_d9.js",
+    "src/shared/contracts/participant_progression.js",
+    "src/shared/contracts/participant_progression_d9.js",
+    "src/shared/contracts/planned_cave_v1.js",
+    "src/shared/contracts/planned_crypt_v1.js",
+    "src/shared/contracts/planned_crypt_v2.js",
+    "src/shared/contracts/planned_fort_v2.js",
+    "src/shared/contracts/planned_ruin_v2.js",
+    "src/shared/contracts/player_inventory.js",
+    "src/shared/contracts/player_inventory_d4_legacy.js",
+    "src/shared/contracts/player_inventory_perf1r_legacy.js",
+    "src/shared/contracts/player_progression.js",
+    "src/shared/contracts/player_respawn.js",
+    "src/shared/contracts/player_stats.js",
+    "src/shared/contracts/player_stats_d9.js",
+    "src/shared/contracts/primary.js",
+    "src/shared/contracts/procedural_encounter_d9.js",
+    "src/shared/contracts/progression_commands.js",
+    "src/shared/contracts/progression_integer.js",
+    "src/shared/contracts/renewable_inventory.js",
+    "src/shared/contracts/rng.js",
+    "src/shared/contracts/seed.js",
+    "src/shared/contracts/settlement_interiors.js",
+    "src/shared/contracts/shield_guard.js",
+    "src/shared/contracts/site_content_d9.js",
+    "src/shared/contracts/site_definition_d13a.js",
+    "src/shared/contracts/site_finale_completion_d13d.js",
+    "src/shared/contracts/site_finale_d13d.js",
+    "src/shared/contracts/site_interiors.js",
+    "src/shared/contracts/site_reset_d13c.js",
+    "src/shared/contracts/site_run_episode_d13b.js",
+    "src/shared/contracts/site_truth_d12_4c.js",
+    "src/shared/contracts/snapshot.js",
+    "src/shared/contracts/stat_presentation.js",
+    "src/shared/contracts/state.js",
+    "src/shared/contracts/subweapon_combat.js",
+    "src/shared/contracts/subweapon_inventory.js",
+    "src/shared/contracts/threat_power.js",
+    "src/shared/contracts/threat_power_d9.js",
+    "src/shared/contracts/tome_cast.js",
+    "src/shared/contracts/travel.js",
+    "src/shared/contracts/versions.js",
+    "src/shared/contracts/wire.js",
+    "src/shared/contracts/world_address.js",
+    "src/shared/contracts/world_chunk_delta_d9.js",
+    "src/shared/contracts/world_ground_occupancy_d9.js",
+    "src/shared/contracts/world_navigation_contract_d9.js",
+    "src/shared/contracts/world_navigation_d9.js",
+    "src/shared/contracts/world_paging_d9.js",
+    "src/shared/contracts/world_patch_d9.js",
+    "src/shared/contracts/world_root_contract_d9.js",
+    "src/shared/contracts/world_root_d9.js",
+    "src/shared/contracts/world_runtime_d9.js",
+    "src/shared/contracts/world_stream_capture_d9.js",
+    "src/shared/generation/alpha_population_overlay_v1.js",
+    "src/shared/generation/alpha_population_runtime_v1.js",
+    "src/shared/generation/crypt_family_v1.js",
+    "src/shared/generation/crypt_family_v2.js",
+    "src/shared/generation/endless_world_d9.js",
+    "src/shared/generation/fort_family_v1.js",
+    "src/shared/generation/fort_family_v2.js",
+    "src/shared/generation/local_shoreline_v2.js",
+    "src/shared/generation/local_water_geometry_v3.js",
+    "src/shared/generation/natural_clusters_v1.js",
+    "src/shared/generation/outdoor_bridge_v1.js",
+    "src/shared/generation/planned_cave_v1.js",
+    "src/shared/generation/planned_crypt_v1.js",
+    "src/shared/generation/planned_crypt_v2.js",
+    "src/shared/generation/planned_fort_v1.js",
+    "src/shared/generation/planned_fort_v2.js",
+    "src/shared/generation/planned_ruin_v1.js",
+    "src/shared/generation/planned_ruin_v2.js",
+    "src/shared/generation/planned_town_v1.js",
+    "src/shared/generation/planned_world_chunks_v1.js",
+    "src/shared/generation/procedural_overworld.js",
+    "src/shared/generation/ruin_family_v1.js",
+    "src/shared/generation/ruin_family_v2.js",
+    "src/shared/generation/ruin_groves_v1.js",
+    "src/shared/generation/settlement_geometry_v1.js",
+    "src/shared/generation/site_discovery_d9.js",
+    "src/shared/generation/site_interiors.js",
+    "src/shared/generation/woodland_cave_family_d12.js",
+    "src/shared/generation/woodland_cave_family_d12_1.js",
+    "src/shared/generation/woodland_cave_family_d12_2.js",
+    "src/shared/generation/woodland_cave_family_placement_d12.js",
+    "src/shared/generation/woodland_cave_family_placement_d12_1.js",
+    "src/shared/generation/woodland_cave_placement_d10.js",
+    "src/shared/generation/woodland_cave_region_placement_d12_2.js",
+    "src/shared/generation/woodland_fort_placement_d10.js",
+    "src/shared/generation/woodland_ruin_exterior_d11_3_2.js",
+    "src/shared/generation/world_identity_d9.js",
+    "src/shared/rules/attack_speed_contract.js",
+    "src/shared/rules/combat_scaling.js",
+    "src/shared/rules/index.js",
+    "src/shared/rules/world_geometry.js",
+    "src/simulation/activity_combat_legality.js",
+    "src/simulation/activity_progression.js",
+    "src/simulation/activity_scheduler.js",
+    "src/simulation/activity_simulation.js",
+    "src/simulation/activity_spatial.js",
+    "src/simulation/boss_combat_d12_5.js",
+    "src/simulation/combat_rules.js",
+    "src/simulation/elite_combat_d12_4.js",
+    "src/simulation/encounter_containment_d11_2.js",
+    "src/simulation/interior_navigation_d12_3a.js",
+    "src/simulation/mastery_awards.js",
+    "src/simulation/mastery_effects.js",
+    "src/simulation/mastery_transient.js",
+    "src/simulation/melee_assist.js",
+    "src/simulation/ordinary_evade.js",
+    "src/simulation/ordinary_separation.js",
+    "src/simulation/primary_rules.js",
+    "src/simulation/settlement_interior_transitions.js",
+    "src/simulation/subweapon_rules.js",
+    "src/simulation/subweapon_simulation.js",
+    "src/simulation/tome_element_rules.js",
+    "src/simulation/tome_sustain.js",
+    "src/simulation/tome_targeting.js",
+    "src/simulation/trusted_combat_rules.js",
+    "src/simulation/world_simulation.js",
+    "src/storage/activity_campaign_store.js",
+    "src/storage/activity_save_task.js",
+    "src/storage/campaign_store.js",
+    "src/storage/campaign_store_core.js",
+    "src/storage/local_indexeddb_campaign_store.js",
+    "src/storage/navigation_summary_v2.js",
+    "src/storage/paged_world_store.js",
+    "src/storage/world_cold_deadlines_d9.js",
+    "src/storage/world_deadlines_d9.js",
+    "src/storage/world_encounter_task_d9.js",
+    "src/storage/world_gear_knowledge_d9.js",
+    "src/storage/world_gear_pages_d9.js",
+    "src/storage/world_ground_residency_d9.js",
+    "src/storage/world_ground_window_d9.js",
+    "src/storage/world_navigation_pages_d9.js",
+    "src/storage/world_page_buffer_d9.js",
+    "src/storage/world_page_diff_d9.js",
+    "src/storage/world_page_publication_d9.js",
+    "src/storage/world_page_refs_d9.js",
+    "src/storage/world_residency_task_d9.js",
+    "src/storage/world_save_task_d9.js",
+    "src/storage/world_snapshot_d9.js",
+    "src/storage/world_transition_d9.js",
+    "src/storage/world_transition_pages_d9.js",
+    "src/storage/world_worker_task_d9.js",
+    "world-crypt-large-v2-dev.html",
+    "world-fort-deep-v2-dev.html",
+    "world-ruin-deep-v2-dev.html",
+    "world.css"
+  ],
+  "omittedRuntimePaths": [],
+  "files": [
+    {
+      "path": "assets/alpha-site-population-v1.json",
+      "bytes": 140762,
+      "sha256": "e2f7df0763c70e35143d4f032257b28fa9aefd0bc9326c0d140f150575406d2e"
+    },
+    {
+      "path": "assets/hybrid-art-pilot-v1/journey.json",
+      "bytes": 18448,
+      "sha256": "452601819b2d7eb533f4732004a078ecc8fb5cbb86d18b5f17d3565f34115989"
+    },
+    {
+      "path": "assets/hybrid-art-pilot-v1/kit-manifest.json",
+      "bytes": 3339,
+      "sha256": "04981276c72260bfbfd36b9cac2c7ab45669679e6608dbcbe06c6f9864b12141"
+    },
+    {
+      "path": "assets/hybrid-art-pilot-v1/woodland-atlas-source.png",
+      "bytes": 1623361,
+      "sha256": "ed9fea4aecd769896e04990ee43506c95d96f55c74cf373ec1f88b182e21a5f7"
+    },
+    {
+      "path": "assets/hybrid-art-v2/bush-sprites-source.png",
+      "bytes": 940431,
+      "sha256": "b4e6660339cfe9d4ea70eea9074917799ae211f2ceeb216387c0e89a3a91d0ab"
+    },
+    {
+      "path": "assets/hybrid-art-v2/kit-manifest.json",
+      "bytes": 2063,
+      "sha256": "d28eecd8c03e5849a4e6c76292d26fac61a177de626f231764036f0f8a870024"
+    },
+    {
+      "path": "assets/hybrid-art-v2/material-atlas-source.png",
+      "bytes": 1751166,
+      "sha256": "f95347584d69cbe0b29cf552a6f8596ff7110fee9f187377d0fb7eddf5840b98"
+    },
+    {
+      "path": "assets/planned-world-water-v3/alpha.json",
+      "bytes": 3204953,
+      "sha256": "476acfb7307b20243b081588dd885a64dff6f20e90227020011cde946fe7293a"
+    },
+    {
+      "path": "assets/planned-world-water-v3/crypt-large-fixture-binding.json",
+      "bytes": 554,
+      "sha256": "5d3950af492256a5f8076642e747454fc8e40857f2fbc48bebf2967fbee6084f"
+    },
+    {
+      "path": "assets/planned-world-water-v3/crypt-large-fixture.json",
+      "bytes": 3205276,
+      "sha256": "e67a50da6187bdfeb8c91060f47e522c238cefc0530d56c46af312dcae838e1f"
+    },
+    {
+      "path": "assets/planned-world-water-v3/fort-deep-fixture-binding.json",
+      "bytes": 550,
+      "sha256": "48c23bdb00a92c2ca787b398cf63369f28274b87fc152b947f72062296413be8"
+    },
+    {
+      "path": "assets/planned-world-water-v3/fort-deep-fixture.json",
+      "bytes": 3205267,
+      "sha256": "166e56d979d1c187a7354ab69ec362e9e65adaf954acc455d4634e01d352907b"
+    },
+    {
+      "path": "assets/planned-world-water-v3/registry.json",
+      "bytes": 562,
+      "sha256": "a5809efed1707681186767efde93b088d76bef890177216048edea69e08e90ac"
+    },
+    {
+      "path": "assets/planned-world-water-v3/ruin-deep-fixture-binding.json",
+      "bytes": 550,
+      "sha256": "88296e24e8242f712af382922914c5d91836565a3e00aa81841a182162297e6c"
+    },
+    {
+      "path": "assets/planned-world-water-v3/ruin-deep-fixture.json",
+      "bytes": 3205273,
+      "sha256": "08afec90bd4984e8e503c77571d6864a8473da7cf4158e7f0c20af09232be523"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/entrance-source.png",
+      "bytes": 1269861,
+      "sha256": "d49d7de3b715a086ace39d3bafe3680a6a906227407b5f5357b384876d7ae92c"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/grove-clean-source.png",
+      "bytes": 1803272,
+      "sha256": "d6626d8a6a04c6b1a5a447379b15d874cb9de4a82a0e103b7d098fabdd1ea461"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/kit-manifest.json",
+      "bytes": 8548,
+      "sha256": "01fafed84c87911c6808a5a1c461660fdcf85760dd58701339fdbd6105668fd7"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/materials-source.png",
+      "bytes": 1629836,
+      "sha256": "5534fd20c780154f7977385655bf4f7e83bec1d2ad843638b0fef00a3f52446a"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/modular-thin-source.png",
+      "bytes": 1376494,
+      "sha256": "b15c2534086fc153e4a34f040ca353ddcb8a0f431e9caeb9b89baff7ffce6fc5"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/provenance.json",
+      "bytes": 9754,
+      "sha256": "5031b97670823a1842b6f5297db245eded4cec3ebe05dc047423c2d1efe890bb"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/vertical-thin-source.png",
+      "bytes": 472319,
+      "sha256": "2910127c5761a334c166a2a92779bba69676302a2fb2d913ee850216a790e4ae"
+    },
+    {
+      "path": "index.html",
+      "bytes": 7086,
+      "sha256": "a8cbd46498937921c78d526222650eb4aab491983e4ae0818fc91f59b42b9f19"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 195,
+      "sha256": "9256b4a8863f6c1ce6d6846b9db558386298902e06e20a2bde38891d0adb9646"
+    },
+    {
+      "path": "save-worker.js",
+      "bytes": 104,
+      "sha256": "b3e2360f0d2e438d47e2ca37ab1e6999b9ac7c801a6da4ff8870bbca8daf6ac6"
+    },
+    {
+      "path": "src/client/activity_save_bridge.js",
+      "bytes": 1449,
+      "sha256": "9d432fa6ac345ec09d93d4f76cc1747ecfda365094a2b0f63e05bbdbe391c5ba"
+    },
+    {
+      "path": "src/client/actor_status_presentation.js",
+      "bytes": 14785,
+      "sha256": "52aa761fde01a2be9df03fe9188b5a55e8c57ec17c0565085841905d6d03ffd4"
+    },
+    {
+      "path": "src/client/authority_clock.js",
+      "bytes": 2854,
+      "sha256": "48b992f7d1c774ca17dff3e594c566e99e1746b6c22f7b07d02b29a8f3022180"
+    },
+    {
+      "path": "src/client/barrier_impact.js",
+      "bytes": 2233,
+      "sha256": "9851ae8d9fa424149a4936f16c3b6db53805641093de2ed5bcc53a83d85acc1f"
+    },
+    {
+      "path": "src/client/boss_presentation_d12_5.js",
+      "bytes": 10587,
+      "sha256": "aa71882acce932c4d79d8e273d146f777e599e53365eb9fbc5d51c1bc2eb4b18"
+    },
+    {
+      "path": "src/client/browser_loop_health.js",
+      "bytes": 1334,
+      "sha256": "79cdf137e6c46838cf3d2694570c2fc564b416fcb2af0aa9e0218a22af72b3ad"
+    },
+    {
+      "path": "src/client/cave_art_d10.js",
+      "bytes": 23852,
+      "sha256": "aa37957bcec5b824703b81ce23ab15e65a97ad99c2e418c24b99591600209819"
+    },
+    {
+      "path": "src/client/civilian_context_input.js",
+      "bytes": 629,
+      "sha256": "3985b6c13ddc926555844dcb1e21485e15a21bb4fa98b7c6f65c4d8841f4ebe5"
+    },
+    {
+      "path": "src/client/combat_feedback.js",
+      "bytes": 11637,
+      "sha256": "01c94edf828dfa0d45d52d8bdfa930e84110a4be01537ae14d0ee7f1cacc2715"
+    },
+    {
+      "path": "src/client/combat_text_layout.js",
+      "bytes": 2016,
+      "sha256": "0e3dcc91111ecd52b4b097baf8dfc505d2789a1f2b02749c836dd9b0c42da5bd"
+    },
+    {
+      "path": "src/client/combat_vfx.js",
+      "bytes": 15548,
+      "sha256": "3e292f4c0939f138dbd96973e6d10c4dc858d19f23a43b4d7150b33a5924af68"
+    },
+    {
+      "path": "src/client/command_adapter.js",
+      "bytes": 725,
+      "sha256": "5bfa60bd4d793551bce8679ec7ba89dae6d2258645b5431a6f41552075c4ce97"
+    },
+    {
+      "path": "src/client/completion_art_preparation.js",
+      "bytes": 1962,
+      "sha256": "8c40e7ccfec9653dd0e091bbc99f8de033fbc5caf060aafb7c4bab7f38ffb2f1"
+    },
+    {
+      "path": "src/client/context_action_input.js",
+      "bytes": 1285,
+      "sha256": "5edc5f372388cc759cb703a67d438cb94d4a0a1b7bbf0e635796cecd04b5e272"
+    },
+    {
+      "path": "src/client/creature_presentation_d11.js",
+      "bytes": 31126,
+      "sha256": "e6eba9f7b62613fd482648a1d51e571f80d1abb0397420259d8d7aae3a53faad"
+    },
+    {
+      "path": "src/client/death_presentation.js",
+      "bytes": 2119,
+      "sha256": "4ae78b37360346660da7bfd96cc7b190990355f4d1eeb92fb30ad7fade578616"
+    },
+    {
+      "path": "src/client/diagnostic_download_d9.js",
+      "bytes": 1496,
+      "sha256": "3c9d040116680a2991f546a5a3525573dde01a12a7c496df68d6b39abffec3db"
+    },
+    {
+      "path": "src/client/diagnostic_overlays.js",
+      "bytes": 9565,
+      "sha256": "9cc81bb62759a0a58bc38958d2854c7aed324f43379185f515a8a2d2ed29617e"
+    },
+    {
+      "path": "src/client/diagnostic_samples.js",
+      "bytes": 2068,
+      "sha256": "ffdd0b8d00d60319b75aca4f365cc11e0c044b036e1a9e0acfaf5d9f686107d5"
+    },
+    {
+      "path": "src/client/dungeon_combat_icons.js",
+      "bytes": 1697,
+      "sha256": "8ee5e0afffbfb39a08e3a919f116c0c170cc61f7661a61dcbdb35c7859ef988b"
+    },
+    {
+      "path": "src/client/economy_resource_presentation.js",
+      "bytes": 5331,
+      "sha256": "9715eeb7b7b028ad0bd4d22fe4c4b9238c7cb904b15e9579cc3b8fd784f34c31"
+    },
+    {
+      "path": "src/client/elite_presentation_d12_4.js",
+      "bytes": 43133,
+      "sha256": "1a63c84decce361f647e17304c2cab6173692b2b824eb94c89d7a4eb8cb89602"
+    },
+    {
+      "path": "src/client/environment_cache.js",
+      "bytes": 23304,
+      "sha256": "a6127b51db29a8bfb58229a9950552a369a25674d698dffcbaec2179e7036a47"
+    },
+    {
+      "path": "src/client/environment_layout.js",
+      "bytes": 6742,
+      "sha256": "cbdc5a50c0832056c5882aeb31bbe318dcf1a742c1ac4929e4813465fc0be283"
+    },
+    {
+      "path": "src/client/environment_motifs.js",
+      "bytes": 21661,
+      "sha256": "65fd92dd266f218e6e68b9fb2172cc2247b4eda69723d7d6e42adf4e2fd48bec"
+    },
+    {
+      "path": "src/client/environment_presentation.js",
+      "bytes": 50017,
+      "sha256": "f8eb732cf99be7d26d6846e0edf7e26f309f8514afae4e9be61841cac289be40"
+    },
+    {
+      "path": "src/client/equipment_art.js",
+      "bytes": 38948,
+      "sha256": "2e6e5e33b1ee49e220afd712a45b8ba38f907e0685fe1f6fbca42518c7a31358"
+    },
+    {
+      "path": "src/client/extraction_portal_presentation_d12_5c.js",
+      "bytes": 2815,
+      "sha256": "50a33d13deb0da39fe038571d5f741baffd0293c30fe36f9716006238301a442"
+    },
+    {
+      "path": "src/client/filtered_creature_surface.js",
+      "bytes": 2080,
+      "sha256": "84ef73af3abf8d585c65c9ba4287b1d129f69d4c1557b06748bc5f8a538846bd"
+    },
+    {
+      "path": "src/client/forge_art.js",
+      "bytes": 790,
+      "sha256": "a1d8453824ecbd697df499a96aba60c150e0ef8008dd0bab8c01e37513d3f1aa"
+    },
+    {
+      "path": "src/client/forge_presentation.js",
+      "bytes": 7386,
+      "sha256": "3c702886c33c1a03d837304b57f240798c1a69013e721489b11fefda879408c9"
+    },
+    {
+      "path": "src/client/forge_station_art.js",
+      "bytes": 7149,
+      "sha256": "ccff32efe678f8398f81614a6c290f346db1bad3782962056803b165cc567fe7"
+    },
+    {
+      "path": "src/client/fort_art_d10.js",
+      "bytes": 15132,
+      "sha256": "14c5e8bf4cea0ecdc62fb5b4778216c526cfcbf70e0d516352540aad933101b8"
+    },
+    {
+      "path": "src/client/fort_equipment_display.js",
+      "bytes": 2934,
+      "sha256": "06c06b0644e7e2a0becf7c5eba67c62c023fafbdb8dadff598e4fb25071ff809"
+    },
+    {
+      "path": "src/client/generated_equipment_art.js",
+      "bytes": 1092952,
+      "sha256": "4309e3f3fcaaab36b68fb30836601c612b5e29ac9618d31291608da9cb4b4df8"
+    },
+    {
+      "path": "src/client/ground_item_presentation.js",
+      "bytes": 7766,
+      "sha256": "a767b317462eaacdc1262a6fa0c8c4128e598f00a70acc2ac1b7aa719f23a550"
+    },
+    {
+      "path": "src/client/hero_presentation.js",
+      "bytes": 4843,
+      "sha256": "be5b28f88840792e162936cbf5e6fd8ad4f550e4ddaa88bed43d78b3590c4d39"
+    },
+    {
+      "path": "src/client/hybrid_art_binding.js",
+      "bytes": 685,
+      "sha256": "7439aedd3ccf533f8dfd4b06bdd67209b41d7f5be04924d4c03da71f0366eca8"
+    },
+    {
+      "path": "src/client/hybrid_art_pilot_v1.js",
+      "bytes": 6741,
+      "sha256": "52c487d9e182ed1efb7ec4842c3bf84df63ab3ca3b4b9f946641a938a27c1494"
+    },
+    {
+      "path": "src/client/hybrid_art_v2.js",
+      "bytes": 10835,
+      "sha256": "bb84653581cbeaa6c4ee152e036b97a74544e2adf509daeed0bd50cd02df0746"
+    },
+    {
+      "path": "src/client/interior_light_clips.js",
+      "bytes": 3389,
+      "sha256": "ef3dd4e743d79213a6d4f1f30b81f9bd09048d74cddd4859f8020c39bca22ec8"
+    },
+    {
+      "path": "src/client/interior_light_field.js",
+      "bytes": 2715,
+      "sha256": "c3d3a63a1e8055398b0759c79ace826c53dde751a1e0bd33d2f38e941c15b973"
+    },
+    {
+      "path": "src/client/inventory_presentation.js",
+      "bytes": 32462,
+      "sha256": "ae213a66fb0d66b1bb16184b745f7043c5c1e24314cc282950ae83947920167b"
+    },
+    {
+      "path": "src/client/iron_chest_art.js",
+      "bytes": 16679,
+      "sha256": "1f42e4944af9d50780113c766fea6eb93bf01ccf36b3b8dd144e64c2615a184a"
+    },
+    {
+      "path": "src/client/lighting_presentation.js",
+      "bytes": 12421,
+      "sha256": "1054f487edc9c6d09f4f57d78165ed04a0e78b0085afb8d495c9d33ebb5d82a2"
+    },
+    {
+      "path": "src/client/local_launch_policy.js",
+      "bytes": 5396,
+      "sha256": "e59cf2639961609081b4eb5e0479d9fccb0b5d2416f6ebdf4ee912a2952ecb3d"
+    },
+    {
+      "path": "src/client/mastery_art.js",
+      "bytes": 4931,
+      "sha256": "b8d436b7395f251dfcb1300533e7e4065cfabdc8ca3b5445ca9f683ddd476474"
+    },
+    {
+      "path": "src/client/ordinary_enemy_presentation.js",
+      "bytes": 255,
+      "sha256": "205ed31082861d54df6a06fcb056914e4b633fc2d6f24a58350af19a95e1c20d"
+    },
+    {
+      "path": "src/client/performance_probe.js",
+      "bytes": 4325,
+      "sha256": "fe78578ba15dd8550338af3a9097ba329c0d8512eca05dd4d73932e2598be9eb"
+    },
+    {
+      "path": "src/client/planned_cartography_v2.js",
+      "bytes": 2214,
+      "sha256": "bcea2f454f0be3f423fcc8a0917e655b8b8b822b5c6b7d64c9defe1d3b9e1e8e"
+    },
+    {
+      "path": "src/client/planned_ruin_exterior_presentation.js",
+      "bytes": 5791,
+      "sha256": "e01ab31b0c0f9d0073b78eb0472d9f75a938735d6a3c99c9d25fe21b8b251297"
+    },
+    {
+      "path": "src/client/planned_town_presentation_v1.js",
+      "bytes": 2765,
+      "sha256": "bbd9234b4d8ba35d74f4ba09dc2f4d79c7b84fecf0a1e0b1fa4a78df7afaf945"
+    },
+    {
+      "path": "src/client/planned_world_materials_v1.js",
+      "bytes": 2440,
+      "sha256": "f8aff02264a92d0b8573fbe02070d97aacc93661c8c8a085320a6a488965cfaf"
+    },
+    {
+      "path": "src/client/playable_client.js",
+      "bytes": 20031,
+      "sha256": "8c9fe6f3b550270db67c189f438fc5e30cdb806cc9fd8364c77244f53f68ffec"
+    },
+    {
+      "path": "src/client/presentation_state.js",
+      "bytes": 6697,
+      "sha256": "4ef6dcd3cf24e164931020d58b8b1553d0b9979207e557cecd4e16eb5d81d932"
+    },
+    {
+      "path": "src/client/primary_input.js",
+      "bytes": 3904,
+      "sha256": "baa8d8a8415e6f22bddb9af906a132488d9996f6d82a41b6374bb5ad20e68dd8"
+    },
+    {
+      "path": "src/client/progression_copy.js",
+      "bytes": 13409,
+      "sha256": "e4f0d9d0e20ffea25327fbede4127389b8232e3f56096761e6d2db89c25f6009"
+    },
+    {
+      "path": "src/client/progression_icons.js",
+      "bytes": 21076,
+      "sha256": "113467e4980e060576b3c33668fcf971cbb1e8e0bdf5bc80d86cc24d2b9aee48"
+    },
+    {
+      "path": "src/client/progression_presentation.js",
+      "bytes": 12297,
+      "sha256": "65625f7207ec927d1c37bcead339b8be1c107c2a0e39783d502591d8bb304374"
+    },
+    {
+      "path": "src/client/reward_feedback.js",
+      "bytes": 9557,
+      "sha256": "8fe82647bbc1a08447544e624b05b099ec86ba130a2274695c8da5a89f607ef5"
+    },
+    {
+      "path": "src/client/road_presentation.js",
+      "bytes": 3916,
+      "sha256": "a18934c91a25b268b0fd601de53650f5d7a68fa8d414bfa1098b9950badb675e"
+    },
+    {
+      "path": "src/client/ruin_art_d11_3.js",
+      "bytes": 21125,
+      "sha256": "7fe00ccec520e198e95f7e702e101bdb24c7412830ffa63b7fea299fc4835e2c"
+    },
+    {
+      "path": "src/client/ruin_storybook_art_v1.js",
+      "bytes": 12432,
+      "sha256": "86f81669d822687fcd917026e843d9a05b5c2b2014ab88ffdf2466d4f89b8f93"
+    },
+    {
+      "path": "src/client/salvage_material_art.js",
+      "bytes": 5761,
+      "sha256": "c88bdb009d1f30e441ee2442f5d21d0c8f4f56058679fe81f965d773054a7a99"
+    },
+    {
+      "path": "src/client/settlement_building_presentation.js",
+      "bytes": 4375,
+      "sha256": "37712e772e555a7c2cc2169ed17e275aaa8e290e09b61811cc0b8eb91b221a98"
+    },
+    {
+      "path": "src/client/settlement_interior_presentation.js",
+      "bytes": 4979,
+      "sha256": "18a03c88f39af46eb649638c47b7801f5b65075a792c96aca30a482da33bbf20"
+    },
+    {
+      "path": "src/client/shield_guard_input.js",
+      "bytes": 3077,
+      "sha256": "03810c2bd159362b7a2b9265dddce3175b39d572bf8c46d47ea765d389b11965"
+    },
+    {
+      "path": "src/client/site_environment_presentation.js",
+      "bytes": 16984,
+      "sha256": "5edd7b12ea5942d23149553a6e6acdaa00209770b028ba401de48324bd52f338"
+    },
+    {
+      "path": "src/client/site_navigator_d12_4c.js",
+      "bytes": 7909,
+      "sha256": "715354ad45fc425cdddf1de069a442ef6264e7e90fef95e976fdcddc4430ee70"
+    },
+    {
+      "path": "src/client/space_preparation_gate.js",
+      "bytes": 899,
+      "sha256": "d81817b334556345f25ccfbbbbf3c2430a7091345dd63f6fb5f154952873fe2a"
+    },
+    {
+      "path": "src/client/stat_number.js",
+      "bytes": 116,
+      "sha256": "6f8d51026f23fe8709a5ee2afdfbdd7ac778074eb815a3984cf5571de46027a6"
+    },
+    {
+      "path": "src/client/subweapon_art.js",
+      "bytes": 3779,
+      "sha256": "a706b56139da513b85d6602d6f835d06f67abec9a4699042649985afd3fe8f3c"
+    },
+    {
+      "path": "src/client/subweapon_hero_art.js",
+      "bytes": 2146,
+      "sha256": "8cea58e4ae18e37b5b0dbd98a0fb81649895257e36254e797c063cbb76a85f39"
+    },
+    {
+      "path": "src/client/subweapon_hud.js",
+      "bytes": 5658,
+      "sha256": "ae0e7c13f41bd51548e4cf1f7a05e45819cbe22fc3874919a53d18be0d628e81"
+    },
+    {
+      "path": "src/client/tavern_exterior_presentation.js",
+      "bytes": 749,
+      "sha256": "50284b4bb0c8df88e8a832fa61f0aea9d0d2d6a1885e6759ea80b3a76b95e51d"
+    },
+    {
+      "path": "src/client/tome_element_art.js",
+      "bytes": 4298,
+      "sha256": "1aac0a15b8b180db450efcd4773c5f7d5e5dc39271ea901c667f62b5f337838d"
+    },
+    {
+      "path": "src/client/viewport_shell.js",
+      "bytes": 2211,
+      "sha256": "195348d78f495f43652b69099b1b776b1bd17d75c8dc6bd6c5b62eaf52c9ea23"
+    },
+    {
+      "path": "src/client/wallet_display.js",
+      "bytes": 1331,
+      "sha256": "ba60c016ac59eb7cbd0bf39a45029d84067fa0f998353fc78da6c7331ce86fcd"
+    },
+    {
+      "path": "src/client/world_browser_client.js",
+      "bytes": 643,
+      "sha256": "015b659531c566a3bacf28f05fdd121df3df485757b799b0df7b5eb8defd97c3"
+    },
+    {
+      "path": "src/client/world_depth_presentation.js",
+      "bytes": 754,
+      "sha256": "fc7439097e203e24047a6626e577ae326e56a0209c5c7e0221a7f289a0d7ef51"
+    },
+    {
+      "path": "src/client/world_input.js",
+      "bytes": 7429,
+      "sha256": "d31ba1c526b198cb485e86458a8c140abad139e06c5ee2ccc517a278c2de4895"
+    },
+    {
+      "path": "src/client/world_map_d9.js",
+      "bytes": 22174,
+      "sha256": "73660b242d17e84094ab134b8d683da166a18efaea3bfb0dc529026c950323b5"
+    },
+    {
+      "path": "src/client/world_renderer.js",
+      "bytes": 17539,
+      "sha256": "035ace7a89f503654a50263186b68d05c4e6ee5661393c6f644fc5593e37ca61"
+    },
+    {
+      "path": "src/client/world_worker_bridge_d9.js",
+      "bytes": 3694,
+      "sha256": "ee717d49fee1296e032c24ef15a964a81773b49c60d07403bbed82285ba0a888"
+    },
+    {
+      "path": "src/client/xp_display.js",
+      "bytes": 2061,
+      "sha256": "b4c8feed9b4a9a9ce40d872a210467410feaf1f56c6b4a78c199518e14547d4b"
+    },
+    {
+      "path": "src/dev/natural_cluster_review_v1.js",
+      "bytes": 1243,
+      "sha256": "54df1f04a2d161dc130884dbce84639f5202729ff91bb05acf2c3dc1762f2b67"
+    },
+    {
+      "path": "src/dev/planned_world_review_v1.js",
+      "bytes": 17168,
+      "sha256": "18443b15509cb67d56a570147cb77af5457bd1fb9e025d6fc3149996b2ce3a91"
+    },
+    {
+      "path": "src/entrypoints/activity_save_worker.js",
+      "bytes": 4758,
+      "sha256": "8a1eebd21a7d6aee3cdeec7f6c27f403e5b66d4c432f134fd51d3ac37050a18e"
+    },
+    {
+      "path": "src/entrypoints/browser_boot.js",
+      "bytes": 377,
+      "sha256": "6c01832dccd665f2c31f0ec61409da68f9d4dce6a88612a3ea91fa7bc28417ab"
+    },
+    {
+      "path": "src/entrypoints/playable_browser.js",
+      "bytes": 29724,
+      "sha256": "8969ef9565904973e13236e80edb06d4161974f1b02bae5829d97a8748a00fab"
+    },
+    {
+      "path": "src/entrypoints/world_browser.js",
+      "bytes": 519,
+      "sha256": "e4ebfc1aee46eedf2114535247fb4b6de3dbe85710e166b8490316c239f19073"
+    },
+    {
+      "path": "src/host/activity_authority.js",
+      "bytes": 1827,
+      "sha256": "97d7116d4c269009808358a93622018a63c4fa10d82ad2acff5631c76a8cabab"
+    },
+    {
+      "path": "src/host/activity_client_port.js",
+      "bytes": 29403,
+      "sha256": "38b3e3be20230c0fc570c6f46b6d50a327404330a87f10be3ab37e54f904e275"
+    },
+    {
+      "path": "src/host/campaign_authority.js",
+      "bytes": 26381,
+      "sha256": "f8b2283142fe7a7b0d3041ca19a0f224745c8936772429b57d7c02f4f689ec0e"
+    },
+    {
+      "path": "src/host/combat_presentation_projection.js",
+      "bytes": 2591,
+      "sha256": "e9e928b7263f749959ce72b8748df2aee9652f6359b61da3a20a03cd9e89b486"
+    },
+    {
+      "path": "src/host/command_gateway_core.js",
+      "bytes": 9585,
+      "sha256": "278d32e284233d97fdca77c7f950835395aa97a6ba17446a11c78aace9bcb381"
+    },
+    {
+      "path": "src/host/developer_projection_port.js",
+      "bytes": 597,
+      "sha256": "f866756254ca4a57481f56a13a2f240e8640816c322b7e9a5e3474e3f792e9d8"
+    },
+    {
+      "path": "src/host/diagnostic_gateway.js",
+      "bytes": 702,
+      "sha256": "503ae011e1cf6ff639cef8e536262aadb36d3f5e7f467f99875f51547e19a0dd"
+    },
+    {
+      "path": "src/host/exact_cut_authority_core.js",
+      "bytes": 12957,
+      "sha256": "583d08fd9e862a760333d778d8994c9eeb6abc88c632ffd8fdbeefb46d5a450f"
+    },
+    {
+      "path": "src/host/functional_site_activation_d9.js",
+      "bytes": 5225,
+      "sha256": "d579c92dfd11f18cadc9c7611ea959ea0bed6e52419b68c9abf44972ca8a8650"
+    },
+    {
+      "path": "src/host/identity_allocation.js",
+      "bytes": 1502,
+      "sha256": "b715ddd13e1898461b92acf3612ad11e543d4d2071ebc5b7ca3013403b9b1a23"
+    },
+    {
+      "path": "src/host/local_activity_session.js",
+      "bytes": 5622,
+      "sha256": "a56feeace130d90d8507e946bb8891a6eea56a7ceadb5878b7254b887d80ea60"
+    },
+    {
+      "path": "src/host/local_authority_host.js",
+      "bytes": 992,
+      "sha256": "89ad263174a4a367c4b16d058c3b11de7dfd4c52fc8720a64b5ec56b1a92f133"
+    },
+    {
+      "path": "src/host/local_endless_session_d9.js",
+      "bytes": 38242,
+      "sha256": "32e3a617d6e6b032e29299d7bdb8ddeb5d9f53b5dc61cbb4275c68b3657eb131"
+    },
+    {
+      "path": "src/host/local_world_session.js",
+      "bytes": 3571,
+      "sha256": "90e2b7880b75fa8318359f49917e7a4ce0ecad978865adad4f5168b55cf70389"
+    },
+    {
+      "path": "src/host/paged_world_authority_d9.js",
+      "bytes": 4147,
+      "sha256": "7b4e53994940a034d7d684661c0499936936cfa09446af19ebae315ec763075b"
+    },
+    {
+      "path": "src/host/planned_campaign_binding_v1.js",
+      "bytes": 3914,
+      "sha256": "69869ede0509b74dd95cf75165e47ae0912bed8435479d2c5991fa15c67f7840"
+    },
+    {
+      "path": "src/host/site_content_binding_d9.js",
+      "bytes": 14039,
+      "sha256": "6781b242684347c082fcac7b59d6cb631aef7b53e1d00793aae7d86e5c8faa92"
+    },
+    {
+      "path": "src/host/site_truth_presentation_cache.js",
+      "bytes": 1211,
+      "sha256": "5515c0cc050950e301b8ff81d636c5003550cc2cacb1f383e221826958c080eb"
+    },
+    {
+      "path": "src/host/world_client_port.js",
+      "bytes": 6498,
+      "sha256": "ff6b1b2f04c554467750de2f10b72658056dff398fdff9edf30be4a2e3768402"
+    },
+    {
+      "path": "src/host/world_residency_d9.js",
+      "bytes": 32176,
+      "sha256": "75801e71cd90fe57663374216684ef3f6eb15f3376c9111d4a44abfff43f504a"
+    },
+    {
+      "path": "src/host/world_terrain_projection_d9.js",
+      "bytes": 4273,
+      "sha256": "f2dd750b7e8240757db0bbb879953b38b8e97ea01a3732a4a35d57895ae1b65a"
+    },
+    {
+      "path": "src/shared/content/active_spaces.js",
+      "bytes": 1453,
+      "sha256": "c2e1a7ba37d93a3afe171a1b3767cd482d2b93cc7d7d7407cafe6e409a014300"
+    },
+    {
+      "path": "src/shared/content/affix_range_d9.js",
+      "bytes": 2241,
+      "sha256": "a725a7c6c05e89e863457410de0fba7543d6604037c0c1f953558a4a35782657"
+    },
+    {
+      "path": "src/shared/content/alpha_population_reservations_v1.js",
+      "bytes": 99492,
+      "sha256": "6497505ae46497d86cfc44a88211d7fa3a48142060f77e16dd627f606d23218e"
+    },
+    {
+      "path": "src/shared/content/alpha_population_retention_v1.js",
+      "bytes": 1584,
+      "sha256": "2926c34f76bac6c9fda47e3f441f0d3821d24e1d62de3dc5a9353c79923c1aa4"
+    },
+    {
+      "path": "src/shared/content/alpha_site_population_v1.js",
+      "bytes": 13181,
+      "sha256": "aceec7dc65cbbfcd389d713ec6e624ae5899241a130ae2087d3fe786f5210e32"
+    },
+    {
+      "path": "src/shared/content/boss_review_fixture_d12_5.js",
+      "bytes": 2108,
+      "sha256": "4722d937c133ebae1aa0611eb4bb2986d3b5d1fb075f977b084ea1dc4d04da72"
+    },
+    {
+      "path": "src/shared/content/bosses_d12_5.js",
+      "bytes": 1453,
+      "sha256": "ca44c50c023c244159481215aee3c9268244594eae2d689e831b8ba30e1091fd"
+    },
+    {
+      "path": "src/shared/content/constellations.js",
+      "bytes": 21390,
+      "sha256": "a3a20c039261d28df3d2e15acf2d981cb50ee009425b42f8f15a1484482da89a"
+    },
+    {
+      "path": "src/shared/content/creature_presentation_d11_1.js",
+      "bytes": 3940,
+      "sha256": "14a6b2c7e12dce8094047c486db794409d9cdc47907786af33134bb3d0f5b447"
+    },
+    {
+      "path": "src/shared/content/creatures_d11.js",
+      "bytes": 3873,
+      "sha256": "e8a1e33d7fbadf77cd283e42973154ee1491856c9b8a94119e2df512b8e8d23c"
+    },
+    {
+      "path": "src/shared/content/crypt_family_runtime_v1.js",
+      "bytes": 914,
+      "sha256": "5e04b75563fb7a0191de856f1763b8aa93aca6af1e5be9408c63f22729ea7842"
+    },
+    {
+      "path": "src/shared/content/crypt_family_runtime_v2.js",
+      "bytes": 1798,
+      "sha256": "5b81d488d8ea49957a7e55f4b839896ca69f1dfb2616095c4cc59cd68c666e47"
+    },
+    {
+      "path": "src/shared/content/crypt_population_v3.js",
+      "bytes": 1703,
+      "sha256": "d1cc687a2c21ad8d33cb538448213cb910f113b94e5bfa91354dc88e84ac6ae6"
+    },
+    {
+      "path": "src/shared/content/dungeon_item_bases.js",
+      "bytes": 13814,
+      "sha256": "b8a5728f5786eb46100297fc2ea1919a9eb449c3e6b94762e65041864197795e"
+    },
+    {
+      "path": "src/shared/content/dungeon_item_bases_d9.js",
+      "bytes": 14694,
+      "sha256": "a6c43b6a301d4020353b0484d550db55b948c022899aa9e53eb23f4760c81ddc"
+    },
+    {
+      "path": "src/shared/content/dungeon_item_bases_v1.js",
+      "bytes": 13708,
+      "sha256": "f63ac005e1c1dbe7c4d8bf2dbae26ff305157c73d07fece96d343ff33a1e9db7"
+    },
+    {
+      "path": "src/shared/content/dungeon_rarity.js",
+      "bytes": 5195,
+      "sha256": "4b085a2764d8b26cc759b0af5738000bee917743bd8936cda35998b03f79251c"
+    },
+    {
+      "path": "src/shared/content/economy_rewards.js",
+      "bytes": 5730,
+      "sha256": "7c6459f00bc3a4b2020517c31d49a108a3250d200629e292f3e261be86d8d5ca"
+    },
+    {
+      "path": "src/shared/content/elite_affixes_d12_4.js",
+      "bytes": 6731,
+      "sha256": "73f1c1c9b10f1553f0eb3c7c02d02ed7ef2c6453f9f906a8a849eaa4cfadcab9"
+    },
+    {
+      "path": "src/shared/content/elite_review_fixture_d12_4.js",
+      "bytes": 14533,
+      "sha256": "8d686d1f1f99d198cc717783711db8f44327741e5ecd515f314592b41d9723f3"
+    },
+    {
+      "path": "src/shared/content/encounter_motion_d11_2.js",
+      "bytes": 1116,
+      "sha256": "c07795b8ef4de4f0124566846d3290d76768f87a3554e48d03ee21c3a8daf3e4"
+    },
+    {
+      "path": "src/shared/content/equipment.js",
+      "bytes": 3938,
+      "sha256": "11ec9bfd941cbc633405f85313b8eeab63d53c0a048343038d9efadca822a4be"
+    },
+    {
+      "path": "src/shared/content/equipment_d4_legacy.js",
+      "bytes": 1278,
+      "sha256": "a61ea6510f95e5b1c9fb44df45385f3e771f3b5fcedd6c10e5d68b46d29a5f17"
+    },
+    {
+      "path": "src/shared/content/forge.js",
+      "bytes": 2574,
+      "sha256": "c46f7f379c17813fbdc2902315bd1619783250b6267fb768da47b588a016e586"
+    },
+    {
+      "path": "src/shared/content/forge_material_costs.js",
+      "bytes": 5805,
+      "sha256": "48f2ee4940d4cb25f71c1de03d444ce2bd7f968f893dc124d562a7a64897087e"
+    },
+    {
+      "path": "src/shared/content/forge_review.js",
+      "bytes": 253,
+      "sha256": "d64e66b9d200518e3ab4de9545f8292406b021b0243551b0c1dd8d12e0a32c4d"
+    },
+    {
+      "path": "src/shared/content/fort_family_runtime_v1.js",
+      "bytes": 7412,
+      "sha256": "9ea6a9ab0ac8f225caa47a23ca783d56e48aef98b588b319249614c8201ab639"
+    },
+    {
+      "path": "src/shared/content/functional_site_registry_d10.js",
+      "bytes": 3013,
+      "sha256": "1e372e4dcdf9f06f2e10d9c7e4e0f22d264696cc97a34bdb93383de0b2a53bbc"
+    },
+    {
+      "path": "src/shared/content/gear_numbers_d9.js",
+      "bytes": 2024,
+      "sha256": "03c73148ae35bff8e94eb20ab34335c98a0901d4ecd3d34e05b1cca0701ae097"
+    },
+    {
+      "path": "src/shared/content/generated_gear.js",
+      "bytes": 10628,
+      "sha256": "894e3fcbccd50696977e3a14ffca878551dfa10114095cdafd9671ed454ac33c"
+    },
+    {
+      "path": "src/shared/content/generated_gear_d7_v2.js",
+      "bytes": 7962,
+      "sha256": "433d51baf94e44fd332c3173753d1565b04ba6a92b5fb26b1ab8cdfa195651dc"
+    },
+    {
+      "path": "src/shared/content/generated_gear_d9.js",
+      "bytes": 8888,
+      "sha256": "37c5b9980f9da1ee2999d442957262aeee5af7b89942885993c9bb857cedab57"
+    },
+    {
+      "path": "src/shared/content/generated_gear_migration.js",
+      "bytes": 1611,
+      "sha256": "c92e80b6dbfb521609ac6b7ac1b36db2455dc02ab67c43a6d10f53877465a6ce"
+    },
+    {
+      "path": "src/shared/content/generated_gear_v1.js",
+      "bytes": 7076,
+      "sha256": "739c987707a1fbcb9ea50c313e0125d68eb88f934251e4cccf97242bdeec4520"
+    },
+    {
+      "path": "src/shared/content/index.js",
+      "bytes": 7547,
+      "sha256": "0cf1fce373123a8fda445eaf98c84449e9e3321a39d7463d727cd211f923a88f"
+    },
+    {
+      "path": "src/shared/content/interior_navigation_d12_3a.js",
+      "bytes": 630,
+      "sha256": "9a908c222e89e4d1bd77da546e936f3fe37283e9d26cc7e985a64334ca6f6050"
+    },
+    {
+      "path": "src/shared/content/manual_primary.js",
+      "bytes": 1065,
+      "sha256": "0884788d23355874e1ea38414256689edc148d45e31587b09004bd686e6ca088"
+    },
+    {
+      "path": "src/shared/content/multiroom_policy_v1.js",
+      "bytes": 1361,
+      "sha256": "8a77167ff0b0e4d9e6ac2ed7219cb45c117302738ba7ee7a65b3b170728af5c4"
+    },
+    {
+      "path": "src/shared/content/oldward_wood.js",
+      "bytes": 10887,
+      "sha256": "8ea2e874d60e9f274db57ae4536451178318dca2946b02def829306d7740ccd3"
+    },
+    {
+      "path": "src/shared/content/open_town_template_v1.js",
+      "bytes": 19967,
+      "sha256": "8bec5669e4d7de769001437461c09eb3db27ee00fc482ddec93948ccf0fcc2a1"
+    },
+    {
+      "path": "src/shared/content/ordinary_enemies.js",
+      "bytes": 5465,
+      "sha256": "558579f097b6f19f370f256db2b9cc2c3882621c39f3686fc529c0a82fd4c842"
+    },
+    {
+      "path": "src/shared/content/overworld_fixture_catalog.js",
+      "bytes": 1410,
+      "sha256": "928a63cbbc5b4c373a28802e0a3bb78e4e3bb4d56ddbf8aebcc271e2828a534d"
+    },
+    {
+      "path": "src/shared/content/planned_cave_policy_v1.js",
+      "bytes": 510,
+      "sha256": "425e942601be583c069b6caf95453cf44b450a15f75a794e04f53579cc66027c"
+    },
+    {
+      "path": "src/shared/content/planned_cave_population_v2.js",
+      "bytes": 2380,
+      "sha256": "663270de615804d2f880866d6d6be8878bb0bce37f487af992e08d3929c86509"
+    },
+    {
+      "path": "src/shared/content/planned_crypt_policy_v1.js",
+      "bytes": 1796,
+      "sha256": "7f8f294abe57d32ff95916519bf6fbeb0d1f7b1a07b6b9d84cc6c0d78ce9e8d4"
+    },
+    {
+      "path": "src/shared/content/planned_crypt_policy_v2.js",
+      "bytes": 2746,
+      "sha256": "781d48a4ac2fe9fbbdfd382faa9b857783cea58c18ec44f95e4619d5d49e6005"
+    },
+    {
+      "path": "src/shared/content/planned_fort_policy_v1.js",
+      "bytes": 3239,
+      "sha256": "5c64ded65c1b29ac2945f29fb6aa9f82f51a376ab8370e952fac8fae259d3e1e"
+    },
+    {
+      "path": "src/shared/content/planned_fort_policy_v2.js",
+      "bytes": 1839,
+      "sha256": "9f05d22b6b37f91b11e977f4dddb1e8cd4547aa63b6580f9409f8f853629ddbc"
+    },
+    {
+      "path": "src/shared/content/planned_ruin_exterior_v2.js",
+      "bytes": 910,
+      "sha256": "c032ee4a932ed87580f7439457603938a989e444fb83ea554e7e58a80b96f5d4"
+    },
+    {
+      "path": "src/shared/content/planned_ruin_exterior_v3.js",
+      "bytes": 923,
+      "sha256": "78616d78d9c40966ff37983965cc85b2708fcca9d79bc966db4f30d42f76d4e3"
+    },
+    {
+      "path": "src/shared/content/planned_ruin_exterior_v4.js",
+      "bytes": 1001,
+      "sha256": "c554e27d7b4aee7865b6e373c2c0431b21f1f74a3cb252693c253b3faa7da139"
+    },
+    {
+      "path": "src/shared/content/planned_ruin_policy_v1.js",
+      "bytes": 2610,
+      "sha256": "278d29e6f91967c2309c4614e2caff7c7d0df9873b719f253347635acfc011a3"
+    },
+    {
+      "path": "src/shared/content/planned_ruin_policy_v2.js",
+      "bytes": 2947,
+      "sha256": "6225c18eaddef92db98a0afb46294a33f3522994c42160dde1e351058af2bedb"
+    },
+    {
+      "path": "src/shared/content/planned_ruin_standard_kit_v1.js",
+      "bytes": 240,
+      "sha256": "bd102b9b55e85f9f251cdf7d044f696603bcaa16f15133695eef4814dba99edf"
+    },
+    {
+      "path": "src/shared/content/procedural_catalog.js",
+      "bytes": 2331,
+      "sha256": "4dbdc1925ba9c1a2cf06a972c48bd8544334c7b7e3007fe0509be0bed2492bf9"
+    },
+    {
+      "path": "src/shared/content/reward_modifiers.js",
+      "bytes": 702,
+      "sha256": "254f63bef085d60e81036af0e34784f98a6be2ae4e78899a62227e729a3ebccb"
+    },
+    {
+      "path": "src/shared/content/reward_progression.js",
+      "bytes": 1765,
+      "sha256": "14fcdb590aa4c66a984d8d779a8c2a6b4e4dcafedfb4388ada55097eac227050"
+    },
+    {
+      "path": "src/shared/content/reward_progression_d9.js",
+      "bytes": 1321,
+      "sha256": "f81e665e5f9dc7c14b4c1446237dec275dc92b48726cd3c261ed092f8c0e9128"
+    },
+    {
+      "path": "src/shared/content/ruin_family_runtime_v1.js",
+      "bytes": 6956,
+      "sha256": "d76f63a4d0bc7850dae77af8ffa7500384896dcc5bd2e223975bcdce98bbd1f0"
+    },
+    {
+      "path": "src/shared/content/ruin_modular_kit_v1.js",
+      "bytes": 2148,
+      "sha256": "b5049125119e11053983a4e00686a16866b0d48026195e8c15e4177c401d170b"
+    },
+    {
+      "path": "src/shared/content/site_definition_runtime_d10.js",
+      "bytes": 10631,
+      "sha256": "721ba238a33a362b66fee22dc0a8f679322597823ef481671a142d042a258dbb"
+    },
+    {
+      "path": "src/shared/content/site_families_d12.js",
+      "bytes": 2468,
+      "sha256": "afff1cc2c1b7b31a48ac64451565a86c532262cd3b5dada15573c3b651c657f1"
+    },
+    {
+      "path": "src/shared/content/site_families_d12_1.js",
+      "bytes": 2415,
+      "sha256": "f9e1a8a8b8c5aab11541ac80f13355854062441cbd972bd5426c5f150c55653e"
+    },
+    {
+      "path": "src/shared/content/site_families_d12_2.js",
+      "bytes": 2706,
+      "sha256": "1ff46e860be8b5a3ef1581ad3edd6f4ae697fcfe19e960cbc76c6ab57d14c0c9"
+    },
+    {
+      "path": "src/shared/content/site_family_runtime_d12.js",
+      "bytes": 8338,
+      "sha256": "3f6a5ce879b7702caa48d9bf2bcee7ccc28ead1d394754a7af3a386f7b1eec62"
+    },
+    {
+      "path": "src/shared/content/site_family_runtime_d12_1.js",
+      "bytes": 8544,
+      "sha256": "85bda8c86d8f36a89f073cbf85bf08e637e765430f92c96de205544d906dd570"
+    },
+    {
+      "path": "src/shared/content/site_family_runtime_d12_2.js",
+      "bytes": 14985,
+      "sha256": "03eea2fb7cfa7582e8c205adcb348414eaf2143b9482e640cf49eece98dd13e9"
+    },
+    {
+      "path": "src/shared/content/subweapons.js",
+      "bytes": 1011,
+      "sha256": "d3b08bdbf32e2463f593fa898dd0d6c6268930eab820f23591da25e5b734ca9f"
+    },
+    {
+      "path": "src/shared/content/tavern_interior_v1.js",
+      "bytes": 2512,
+      "sha256": "7e20e65630782ccec906caba7bbb1961443f1bdd6598b3ac871aaf4e1bb34dfb"
+    },
+    {
+      "path": "src/shared/content/tome_profiles.js",
+      "bytes": 1950,
+      "sha256": "a177fbc2f3d64f7d5b4d8580cdaeee62ada6dd50f82e9233d97d8b29450456bc"
+    },
+    {
+      "path": "src/shared/content/woodland_cave_d10.js",
+      "bytes": 4562,
+      "sha256": "8b9629e7d7300579c4e4ace013b6297307c4bf7ffd99c4bb0d66855dca13da3a"
+    },
+    {
+      "path": "src/shared/content/woodland_cave_formations_d12_2.js",
+      "bytes": 6445,
+      "sha256": "b30eab82a09e9537377ae2b6562560754af4b21c2906032c5a379854c99c6cf5"
+    },
+    {
+      "path": "src/shared/content/woodland_cave_modules_d12_1.js",
+      "bytes": 4329,
+      "sha256": "708d808857bb72239b551f5493438d25d6bdefa6cc0c173f06edc88f98b782c1"
+    },
+    {
+      "path": "src/shared/content/woodland_fort_d10.js",
+      "bytes": 7966,
+      "sha256": "a808b43640b8c565d5b0355bc6bb88c1f834776e0cc453c1cc26d86798d53284"
+    },
+    {
+      "path": "src/shared/content/woodland_region_names_d12_2.js",
+      "bytes": 771,
+      "sha256": "9f41cfb45ac68bb3f629b280ffec8a1421691e2968c6cedec65746a917cfeb06"
+    },
+    {
+      "path": "src/shared/content/woodland_ruin_d9.js",
+      "bytes": 7107,
+      "sha256": "8dff9187937fec76b71e0ecc422069585d405795160a89c4feeaf63979a25baa"
+    },
+    {
+      "path": "src/shared/content/woodland_sites_d11.js",
+      "bytes": 8762,
+      "sha256": "e2e342a551cdc98057595ab392369081389c2316cf4cfee5444d6dc9978c365d"
+    },
+    {
+      "path": "src/shared/content/world_profile_d9.js",
+      "bytes": 798,
+      "sha256": "0b32fdcb8fbc00600d676f2b7e47beca249c6b9c5e848999d0984247363509a3"
+    },
+    {
+      "path": "src/shared/content/world_runtime_policy_d9.js",
+      "bytes": 737,
+      "sha256": "543bf8e67c71eb31e04fb5449b2b424fe5bd681cdbc28672b3c105d350c508ec"
+    },
+    {
+      "path": "src/shared/contracts/activity_fixture.js",
+      "bytes": 9663,
+      "sha256": "5750df7c5523a37447aa01fb8a6df71f81be7e8c262d9fb90d949667a79706ef"
+    },
+    {
+      "path": "src/shared/contracts/activity_state.js",
+      "bytes": 33391,
+      "sha256": "32ae47f26f2644194da4ebd401865e0239301a39f4fa74ab2ce63b88c7243221"
+    },
+    {
+      "path": "src/shared/contracts/actor_geometry_d9.js",
+      "bytes": 5021,
+      "sha256": "8dda27b46d4f70348f8c88ed5369a86a906bdca2617586be1acb8592014211e0"
+    },
+    {
+      "path": "src/shared/contracts/actor_residency.js",
+      "bytes": 660,
+      "sha256": "4f4739aafcea4e20942042cf545f90fcd05dcbc2ba9d28871f74d3e4b6844897"
+    },
+    {
+      "path": "src/shared/contracts/alpha_population_v1.js",
+      "bytes": 2311,
+      "sha256": "1aaeee17c7763598b7bfac216885801a8c5d5aee69a5710d1f5a4b90b0be0b0e"
+    },
+    {
+      "path": "src/shared/contracts/attack_haste.js",
+      "bytes": 1397,
+      "sha256": "0f9410cf3293e5fee97342862942ea47c4fcfbbf2017d334651aad988c922cab"
+    },
+    {
+      "path": "src/shared/contracts/boss_combat_d12_5.js",
+      "bytes": 11896,
+      "sha256": "4c4a2c0af88c2665813320bf54aa66e4eefb6ccfa8886fa850aa0228d6a95f20"
+    },
+    {
+      "path": "src/shared/contracts/boss_completion_reward_d12_5d.js",
+      "bytes": 1788,
+      "sha256": "1cac39f0e78c9e4f0f010b3cc5602cfa9c0bc56d8d5ac5d6209e49f8018bcc73"
+    },
+    {
+      "path": "src/shared/contracts/boss_extraction_d12_5c.js",
+      "bytes": 2602,
+      "sha256": "8ce43a7e5e3b5c820681a8a02dd47e47cf707dfcadcccbd101b68c9ee89ebd3d"
+    },
+    {
+      "path": "src/shared/contracts/cadence_compatibility.js",
+      "bytes": 397,
+      "sha256": "a3d5fe19b76026800243bf0b561d6199c982051dcae418d08b56a322870e2ce4"
+    },
+    {
+      "path": "src/shared/contracts/campaign_tavern_v1.js",
+      "bytes": 6321,
+      "sha256": "97ec7377d996ed31bbfd9a32479eb07e02fc5e878382fbf57ddaf403213c1c09"
+    },
+    {
+      "path": "src/shared/contracts/checkpoint.js",
+      "bytes": 22964,
+      "sha256": "2b410d37724d1515cc0a16afa7615957f8437bb0fb6b7e1d7747ddbabb378a48"
+    },
+    {
+      "path": "src/shared/contracts/client_fixture.js",
+      "bytes": 6381,
+      "sha256": "b251524474d0ae130a0c7007129c8feb2028041ac2aadbcecc3f1e85a3053da2"
+    },
+    {
+      "path": "src/shared/contracts/combat.js",
+      "bytes": 2185,
+      "sha256": "7b4dc580a1118249586bc689da54fee89d143d0e2a18663743686a517908360e"
+    },
+    {
+      "path": "src/shared/contracts/combat_amount.js",
+      "bytes": 3530,
+      "sha256": "044f64a39ce9508c0a6b424c198b486c18cacad562fe154139170b032cf44f74"
+    },
+    {
+      "path": "src/shared/contracts/combat_attribution.js",
+      "bytes": 1017,
+      "sha256": "0afa63ebc1ce543e05e67c04b4b3278e5bd46c5db7ce668d558b11fdfb2ecd41"
+    },
+    {
+      "path": "src/shared/contracts/combat_integer.js",
+      "bytes": 2286,
+      "sha256": "13e733640b5e93068188d2d8eb55c6eae76f9f95a60525cb340ed70513c97c8d"
+    },
+    {
+      "path": "src/shared/contracts/combat_integer_migration.js",
+      "bytes": 1812,
+      "sha256": "6f2fa9f16ba76cb61ac0d72b24d97bd70191bbf193cda1f683b94ebd39263ce9"
+    },
+    {
+      "path": "src/shared/contracts/command_context.js",
+      "bytes": 2146,
+      "sha256": "389408fdddb7139c339954099bc8b262cfe113dc13c164713efc314ea7669f0d"
+    },
+    {
+      "path": "src/shared/contracts/commands.js",
+      "bytes": 8196,
+      "sha256": "edae1037b8492e53d12d180576cd77cfa0f34f8f7263c0fd01e2cc41fcebdf55"
+    },
+    {
+      "path": "src/shared/contracts/content_numeric_admission_d9.js",
+      "bytes": 947,
+      "sha256": "c102a57db4e93a7b344ff6a426bd6fdbd35a6ac4b519a3737bb0c518f2ceeeb2"
+    },
+    {
+      "path": "src/shared/contracts/d9_numeric_expression.js",
+      "bytes": 4098,
+      "sha256": "ed1a7d12c28b985eadf839f83ddacf31f831221312174015365aadbf1fc3149a"
+    },
+    {
+      "path": "src/shared/contracts/economy_amount.js",
+      "bytes": 1809,
+      "sha256": "56e737acac9c041b18b978e91705494aa6f1a34cf581e81506f70c9463cc026c"
+    },
+    {
+      "path": "src/shared/contracts/elite_combat_d12_4.js",
+      "bytes": 42273,
+      "sha256": "4d12249a6b0a2d200fbda8fdb1469dc77300eab8fed18a3a3a13367f636528b6"
+    },
+    {
+      "path": "src/shared/contracts/encounter_economy.js",
+      "bytes": 19790,
+      "sha256": "3dcf77474bbd2f06ceed4f13bc5d858f820f743942b9532d6a34890367c55ca8"
+    },
+    {
+      "path": "src/shared/contracts/encounter_progression.js",
+      "bytes": 3944,
+      "sha256": "956b90933f4d80af12539a5a7b9cc4d63b305ff7952967ab541d46f64421dc95"
+    },
+    {
+      "path": "src/shared/contracts/encounter_proof.js",
+      "bytes": 9534,
+      "sha256": "f0903365b3bb9e41c51d762cd9187b5fb04ed3c29b02f38c3200b8ef6b92a666"
+    },
+    {
+      "path": "src/shared/contracts/endless_formula.js",
+      "bytes": 2876,
+      "sha256": "3be2ef0990c81a80ade6380ce1637b7f3dd087ae0d0e74af0709d564352f521d"
+    },
+    {
+      "path": "src/shared/contracts/episode_progression_d9.js",
+      "bytes": 3077,
+      "sha256": "ffb5acaf5934ec4f63e5443ca23ab46501da029111b8735139a4d46f03b44652"
+    },
+    {
+      "path": "src/shared/contracts/events.js",
+      "bytes": 12254,
+      "sha256": "e948487255c4e579333ba2f35870fd165730d65f06ddaa348a4c9856d5e6375f"
+    },
+    {
+      "path": "src/shared/contracts/forge_economy.js",
+      "bytes": 8668,
+      "sha256": "8d2df22a3969c0194b0ef5d1d314cf511bd2c95d0fb87355cbf9c2988e5676ed"
+    },
+    {
+      "path": "src/shared/contracts/forge_stations.js",
+      "bytes": 2572,
+      "sha256": "c5b3de8f2d3f3b7d09affaf530054fe74a1de5b7a4adb7e5f081e91b83fe6b31"
+    },
+    {
+      "path": "src/shared/contracts/functional_site_d9.js",
+      "bytes": 25448,
+      "sha256": "7c230014cf75fba2f86db12c69f734bf47308108c143436026ce53f846f528a9"
+    },
+    {
+      "path": "src/shared/contracts/gear_salvage.js",
+      "bytes": 10521,
+      "sha256": "fa3a5fc01881604ba6cf18219cd481cb0f1a87f845e75797788eb71ad95391f9"
+    },
+    {
+      "path": "src/shared/contracts/geography.js",
+      "bytes": 3694,
+      "sha256": "568bd7eb951b5c8b9c70aa5871cd1e128c92316c559965dadefa17e976bb94c9"
+    },
+    {
+      "path": "src/shared/contracts/hashing.js",
+      "bytes": 3233,
+      "sha256": "783d97ce7fdcbc447ca433b2a480d7296b2248e45f4c4ade7c6a3f4eccd6d5f2"
+    },
+    {
+      "path": "src/shared/contracts/hero_progression_d9.js",
+      "bytes": 1773,
+      "sha256": "275d26322f245e00ea9f8edeb940b3764bf06e6da36eaf97181aef74aba7e454"
+    },
+    {
+      "path": "src/shared/contracts/history.js",
+      "bytes": 16997,
+      "sha256": "2b6e26b29bc7135dcaa7e57079bedf69996f153259dae6735547b1812fbbd06a"
+    },
+    {
+      "path": "src/shared/contracts/identities.js",
+      "bytes": 2420,
+      "sha256": "0a5b531f9124e65f3f707aeb9fbea70eaff7f69424321fcb3b74b1d0c0fe5290"
+    },
+    {
+      "path": "src/shared/contracts/index.js",
+      "bytes": 537,
+      "sha256": "f515a05e1f454804d9b622410004963ac9a82e90ee83fd7e5c24ebaa1ec538e9"
+    },
+    {
+      "path": "src/shared/contracts/integer_domain.js",
+      "bytes": 2534,
+      "sha256": "35aab0122c62acf3a64b0b7e7f30192f67b4f586c8275db13d6f019255e6bcd3"
+    },
+    {
+      "path": "src/shared/contracts/large_number.js",
+      "bytes": 1590,
+      "sha256": "8409daabde896921823b6059df003e4d312694de77fe3abe5e28d7617421ed98"
+    },
+    {
+      "path": "src/shared/contracts/local_world_frames_d9.js",
+      "bytes": 4235,
+      "sha256": "1504be694a6e77e2fa4ff9f62b0459db51da5b566eb4fc06eb900d0715901dd6"
+    },
+    {
+      "path": "src/shared/contracts/major_place_names.js",
+      "bytes": 1768,
+      "sha256": "0395a1f9d1edce1f8a851c3a6923b98cb50675ba608931d354384de10c5875e7"
+    },
+    {
+      "path": "src/shared/contracts/mastery_causality.js",
+      "bytes": 919,
+      "sha256": "947b9febb1bbe4b1f3e1030fc9120143bcbbaf1add9cb16f794e007c30ce3da0"
+    },
+    {
+      "path": "src/shared/contracts/mastery_combat.js",
+      "bytes": 2995,
+      "sha256": "12a3e7be8862e38b78334493128db0ec038afe04c66e72bb5a1f8e9bbda86dcf"
+    },
+    {
+      "path": "src/shared/contracts/mastery_stats.js",
+      "bytes": 5389,
+      "sha256": "55b56d84e1189949be0b40c3eb3df12e6e8a463d7d81b4f85cd9188b995380aa"
+    },
+    {
+      "path": "src/shared/contracts/multiplayer.js",
+      "bytes": 5759,
+      "sha256": "2c70c2ffaf67800fb1efe36a6893389f235d06e556754f1361c70338da3a5635"
+    },
+    {
+      "path": "src/shared/contracts/multiroom_v1.js",
+      "bytes": 2695,
+      "sha256": "8be0e6944a4805645b7916aea67989cc3a2b73a538730805c637b9c3e0552bd4"
+    },
+    {
+      "path": "src/shared/contracts/ordinary_population.js",
+      "bytes": 6639,
+      "sha256": "ff04d64b4e013d7d4a25dc28633754e97f7a61a765df86e34f6a2fa930c4af0f"
+    },
+    {
+      "path": "src/shared/contracts/origin_egress_d9.js",
+      "bytes": 3616,
+      "sha256": "46ac160017c43f6db90f80a3ae5ea733c98ce0baadd0aee9366f931e6905f15c"
+    },
+    {
+      "path": "src/shared/contracts/overworld.js",
+      "bytes": 42715,
+      "sha256": "622a742542689a6805f207c6fbc52a3360e1b3e51e46ddbd846bbabbe901b685"
+    },
+    {
+      "path": "src/shared/contracts/paged_collision_d9.js",
+      "bytes": 3380,
+      "sha256": "9c001d0ee39ea88ebf18f6c9660405c4f6a9ff393121908cb5763bb721cdcf6a"
+    },
+    {
+      "path": "src/shared/contracts/participant_progression.js",
+      "bytes": 15065,
+      "sha256": "6d2800c9d9f4ede20c26802e314d95e718d1a8d6f1b8da231b63fbca0b5e49b3"
+    },
+    {
+      "path": "src/shared/contracts/participant_progression_d9.js",
+      "bytes": 1608,
+      "sha256": "e7d197b5ecc69dca7719138c1fe14a8f5857f10066c7064d1ba13c1a9a8f3cf6"
+    },
+    {
+      "path": "src/shared/contracts/planned_cave_v1.js",
+      "bytes": 4939,
+      "sha256": "0b1a3d1b81bc78fb33cc481be53f6ad8b8862a7b05d4f288262a50768ba0bfc2"
+    },
+    {
+      "path": "src/shared/contracts/planned_crypt_v1.js",
+      "bytes": 4037,
+      "sha256": "de15e42ed62b0f62618ed14b7c72e67762b2b1ccee99237a42234688bbb8e232"
+    },
+    {
+      "path": "src/shared/contracts/planned_crypt_v2.js",
+      "bytes": 2995,
+      "sha256": "e9b3f9772e2648cf73893611cd5b0812264ebafebfe1ee63a137d97a4ba01aa4"
+    },
+    {
+      "path": "src/shared/contracts/planned_fort_v1.js",
+      "bytes": 10688,
+      "sha256": "ee8a85d6747f5d37d2d3f811b975c8a27c7ccf28adec2bffeff3a4a16884c1b5"
+    },
+    {
+      "path": "src/shared/contracts/planned_fort_v2.js",
+      "bytes": 2134,
+      "sha256": "59c9b118f9445b823b27b178b684524026ccc67edf3502eaa65dacdca17cf894"
+    },
+    {
+      "path": "src/shared/contracts/planned_ruin_v1.js",
+      "bytes": 10981,
+      "sha256": "570edac308c5e46acdb6bee25ba7516dc9326b3ccc0adf3841830617f1fee2ba"
+    },
+    {
+      "path": "src/shared/contracts/planned_ruin_v2.js",
+      "bytes": 3601,
+      "sha256": "8267119c3730fb3a27f3010706fb62551da675a0690fbc9c3b966ac899b67d61"
+    },
+    {
+      "path": "src/shared/contracts/player_inventory.js",
+      "bytes": 15628,
+      "sha256": "cc46695610b52235001c7c1efcba63fab3f4812c6acc761dd2148ec0a3dc1655"
+    },
+    {
+      "path": "src/shared/contracts/player_inventory_d4_legacy.js",
+      "bytes": 10781,
+      "sha256": "fd92544b95079849c847c6c5f24a707fa9f837e209cf207b9cc66885eadc7b94"
+    },
+    {
+      "path": "src/shared/contracts/player_inventory_perf1r_legacy.js",
+      "bytes": 13038,
+      "sha256": "5b3515b516ace616da6b36c7c97f8225551b1884f202c84f7564f7e89f77f2c4"
+    },
+    {
+      "path": "src/shared/contracts/player_progression.js",
+      "bytes": 2427,
+      "sha256": "cd41db9051839b538281a2ca2b4e91846f8724e378ddefabace60d961c61dba6"
+    },
+    {
+      "path": "src/shared/contracts/player_respawn.js",
+      "bytes": 6151,
+      "sha256": "e5b911f2f31067140c330b4350a77db96efefa88897eed009e666c8abbc304c1"
+    },
+    {
+      "path": "src/shared/contracts/player_stats.js",
+      "bytes": 8288,
+      "sha256": "e2e6c341c78272c5e0113f0e6a633a847e2a2fa984f8720f48ac80c5ad69ddd8"
+    },
+    {
+      "path": "src/shared/contracts/player_stats_d9.js",
+      "bytes": 5262,
+      "sha256": "4dcc86d983e4c35a8d27b7f2dded80cf36d3be073e27f431adad739b89d68875"
+    },
+    {
+      "path": "src/shared/contracts/primary.js",
+      "bytes": 11731,
+      "sha256": "45110b348574db5794c191606711bedc6578e9726129ca0bac7c73e2b7c8de75"
+    },
+    {
+      "path": "src/shared/contracts/procedural_encounter_d9.js",
+      "bytes": 9595,
+      "sha256": "d818d4fa5b4d48de0492b021ab911e377d601def6eca61433f408a3a52f8f2eb"
+    },
+    {
+      "path": "src/shared/contracts/progression_commands.js",
+      "bytes": 2315,
+      "sha256": "8ebea9aa8f0b21de11952534309c9e00429428c81e685c4ac3a3f9cce798487d"
+    },
+    {
+      "path": "src/shared/contracts/progression_integer.js",
+      "bytes": 1199,
+      "sha256": "8d1d8bc4272f1b2ba01e3e0a1d722c37f52bee8537d7103fcdd4a2e2cb92f706"
+    },
+    {
+      "path": "src/shared/contracts/renewable_inventory.js",
+      "bytes": 28021,
+      "sha256": "067d388f8e27907b828fa637d8197c913119d714177ffc61b45b728e2ec89660"
+    },
+    {
+      "path": "src/shared/contracts/rng.js",
+      "bytes": 4952,
+      "sha256": "f69fc1318aabd5ded069bd703fad48db7bdbfbb259543ce91427a82ff06cf967"
+    },
+    {
+      "path": "src/shared/contracts/seed.js",
+      "bytes": 2187,
+      "sha256": "3fc8803f23c6d36e77c78603e43d112cdd649dc8871d908b79ea7fcf876bbb80"
+    },
+    {
+      "path": "src/shared/contracts/settlement_interiors.js",
+      "bytes": 1951,
+      "sha256": "b0912befaf6af4b3ebf9fe11f50d3a71cdfd68273f587fdee4a9ea2a4373c7e0"
+    },
+    {
+      "path": "src/shared/contracts/shield_guard.js",
+      "bytes": 3425,
+      "sha256": "51b347160bc993d70385f441e65f029745cf8b47ba37b16f4f1174847d53ee45"
+    },
+    {
+      "path": "src/shared/contracts/site_content_d9.js",
+      "bytes": 9692,
+      "sha256": "73b2b9746fc3fc3baf02b019dfd05b3f0d4f7f01a71c271e6f3237ad2740d84d"
+    },
+    {
+      "path": "src/shared/contracts/site_definition_d13a.js",
+      "bytes": 14592,
+      "sha256": "8e6421b2ac3077566ec9c7b1a12bd9afa97a6ceb5837104dbe61bf701e24c5fa"
+    },
+    {
+      "path": "src/shared/contracts/site_finale_completion_d13d.js",
+      "bytes": 16976,
+      "sha256": "70b6bb500c8449002648d53aea4aca1c221394b15f5a2e7f0054cffcedb4f464"
+    },
+    {
+      "path": "src/shared/contracts/site_finale_d13d.js",
+      "bytes": 45037,
+      "sha256": "e5e2295b78dd7ad76a43738390f2fe8022401deef53881398b7c7a2cdccb4345"
+    },
+    {
+      "path": "src/shared/contracts/site_interiors.js",
+      "bytes": 9856,
+      "sha256": "2d15db875f65e1a1e21017090044b3ad6361e458fbb7e253cd2bdd47ea626010"
+    },
+    {
+      "path": "src/shared/contracts/site_reset_d13c.js",
+      "bytes": 12913,
+      "sha256": "b18b5edac082aa1ab2937f77a82ac72b1ebdb4c443d73f4e935dfe5c963207dd"
+    },
+    {
+      "path": "src/shared/contracts/site_run_episode_d13b.js",
+      "bytes": 35235,
+      "sha256": "2cbd8e72a131ca6ef30c35c9ab304eeba7d040f120d48a6bb5553e7582f8c551"
+    },
+    {
+      "path": "src/shared/contracts/site_truth_d12_4c.js",
+      "bytes": 10381,
+      "sha256": "9594a77ce416d1b8781385918bd5a27b96fc2da53c5f8c5b4e022bc79774468c"
+    },
+    {
+      "path": "src/shared/contracts/snapshot.js",
+      "bytes": 1123,
+      "sha256": "afd334336334d5491722c09a10fab1dcd92e90e032a7607d40b9df10701e2504"
+    },
+    {
+      "path": "src/shared/contracts/stat_presentation.js",
+      "bytes": 1548,
+      "sha256": "35fce0d37973303f3553d36e769c0df86a2e8584706ea539670d06c3ff11a1a0"
+    },
+    {
+      "path": "src/shared/contracts/state.js",
+      "bytes": 33836,
+      "sha256": "b9402f7d7753032c29ebdc00c02275a2b0f3e4c30c5a09218fdfd47aa2ea1c49"
+    },
+    {
+      "path": "src/shared/contracts/subweapon_combat.js",
+      "bytes": 9845,
+      "sha256": "570deccbe2934bce746d60ecf10ebbc076510a14d41a28e6ddfd8b9913c97060"
+    },
+    {
+      "path": "src/shared/contracts/subweapon_inventory.js",
+      "bytes": 3728,
+      "sha256": "dcdd549934662851d6bd00400d09c38e2cdbb4f42069421430c27610af5ed9a9"
+    },
+    {
+      "path": "src/shared/contracts/threat_power.js",
+      "bytes": 960,
+      "sha256": "39560999166956c9a96865928bc8fda40ac65a1c353ab046b2a279e3875d81f2"
+    },
+    {
+      "path": "src/shared/contracts/threat_power_d9.js",
+      "bytes": 707,
+      "sha256": "d3ae7899d4d3e28844dc5876b375db929e02994a7a8a0d6a0ecfa8505e29e712"
+    },
+    {
+      "path": "src/shared/contracts/tome_cast.js",
+      "bytes": 2532,
+      "sha256": "75b98f7c8334a26c37b924ccf46fc4ccd9ff322bb07b4d64a10be07f6ae5a381"
+    },
+    {
+      "path": "src/shared/contracts/travel.js",
+      "bytes": 8015,
+      "sha256": "3ead3f52899b9853a66c1721abddaddb801e37bf201aee0d47335dcad8792d26"
+    },
+    {
+      "path": "src/shared/contracts/versions.js",
+      "bytes": 366,
+      "sha256": "9be3c8d691cb5692f37c9a506b89bee0ffe711987fab6efc46bccb6b1031adfd"
+    },
+    {
+      "path": "src/shared/contracts/wire.js",
+      "bytes": 5134,
+      "sha256": "ad11ac5c9fdc346bb0b25be3c6460692eb117ca0b877049e577c114eb95a0338"
+    },
+    {
+      "path": "src/shared/contracts/world_address.js",
+      "bytes": 2751,
+      "sha256": "4b4ecf2e0467aaacc0c470704f25dee538d8af0b245996f7fab41d1ae89b8e5f"
+    },
+    {
+      "path": "src/shared/contracts/world_chunk_delta_d9.js",
+      "bytes": 9781,
+      "sha256": "e89c74f92dddd04efcbba53605ce8aec658746a407b1661e1b0ba09392782c41"
+    },
+    {
+      "path": "src/shared/contracts/world_ground_occupancy_d9.js",
+      "bytes": 5463,
+      "sha256": "1e19b0c6ebc83a284c89613d8d149688fa745232d586bf104ce2718a801e54cf"
+    },
+    {
+      "path": "src/shared/contracts/world_navigation_contract_d9.js",
+      "bytes": 1473,
+      "sha256": "e55c6697c1297775519e2831fb9d8a504b3c52d6a0bc04dbcd439c4193457f85"
+    },
+    {
+      "path": "src/shared/contracts/world_navigation_d9.js",
+      "bytes": 8153,
+      "sha256": "52c6a6f617692e7f20d16007faa26fceae5eaa32e110253ff94bf05b7f448dde"
+    },
+    {
+      "path": "src/shared/contracts/world_paging_d9.js",
+      "bytes": 11434,
+      "sha256": "b23380d9c027379f371a9c7afee4a8b7f532f950e8279f24be7b42adf2b0c19e"
+    },
+    {
+      "path": "src/shared/contracts/world_patch_d9.js",
+      "bytes": 7708,
+      "sha256": "9aafcae6deee1c6a0cc9cab9c0ea04449e8f9da906bfc6075094303f34dd057e"
+    },
+    {
+      "path": "src/shared/contracts/world_root_contract_d9.js",
+      "bytes": 8225,
+      "sha256": "8a1f4119429ca3364e5169e393cf1ffb7a8688710eb97baea6b33b89fe5f842a"
+    },
+    {
+      "path": "src/shared/contracts/world_root_d9.js",
+      "bytes": 4812,
+      "sha256": "715af4bc587573e226899ed5ff17c5f7e08132a2a703c8787bb7dd27408136d5"
+    },
+    {
+      "path": "src/shared/contracts/world_runtime_d9.js",
+      "bytes": 5054,
+      "sha256": "23d9429412ae41475e4dee4e154753b2272654bf123063da4dd3bde968e75e2a"
+    },
+    {
+      "path": "src/shared/contracts/world_stream_capture_d9.js",
+      "bytes": 3325,
+      "sha256": "c773ba4c9f9c420c5c91af9509fbc6424afe5d814bc96e786740f77755e0816d"
+    },
+    {
+      "path": "src/shared/generation/alpha_population_overlay_v1.js",
+      "bytes": 2402,
+      "sha256": "2e882ce5c6008483f25c18be6c93a25253c592e86acf0821ef2aedde538d3dc3"
+    },
+    {
+      "path": "src/shared/generation/alpha_population_runtime_v1.js",
+      "bytes": 4233,
+      "sha256": "3557f8ad4ce5572cd29646dda25ed29861241192d856e89830ebade6c341671d"
+    },
+    {
+      "path": "src/shared/generation/crypt_family_v1.js",
+      "bytes": 2155,
+      "sha256": "fe3f452908d841af68a5fcfeeb9305fd671a0d23201c45d4f61a95dded5fd0d8"
+    },
+    {
+      "path": "src/shared/generation/crypt_family_v2.js",
+      "bytes": 3945,
+      "sha256": "c0d40bf58d67da7dab8293cda9a58fdb3a14fabe49aa930356d8a4af2a01c391"
+    },
+    {
+      "path": "src/shared/generation/endless_world_d9.js",
+      "bytes": 12764,
+      "sha256": "48bd04fe434b0af4e58fa52a3c7054f0f7c1346fc084607b1e4c3d682a385d50"
+    },
+    {
+      "path": "src/shared/generation/fort_family_v1.js",
+      "bytes": 3317,
+      "sha256": "c0ac83f7ae0b668b5a6f0ca68ad4a741d3d220d6304932a3acaf87236c451d2c"
+    },
+    {
+      "path": "src/shared/generation/fort_family_v2.js",
+      "bytes": 3648,
+      "sha256": "8a892617ffce13b83ee7a613a9e75332fa0ad7d837a9b9d71e97b38d721ce2e9"
+    },
+    {
+      "path": "src/shared/generation/local_shoreline_v2.js",
+      "bytes": 3575,
+      "sha256": "845a6a5fc1db24b4802e141b25a8f6a1f689eb6bbd166a1ad48347665c804ede"
+    },
+    {
+      "path": "src/shared/generation/local_water_geometry_v3.js",
+      "bytes": 11121,
+      "sha256": "02c99a3501d2b70f4ab0f3c44e6a5ffc60a4d141803be3da1ca63e078cfcd743"
+    },
+    {
+      "path": "src/shared/generation/multiroom_cave_v1.js",
+      "bytes": 2866,
+      "sha256": "eee5dfcc948098fa04d7b9d241c8b056d69557cdcc8781fbd0eba5e2bb0e0f9d"
+    },
+    {
+      "path": "src/shared/generation/multiroom_v1.js",
+      "bytes": 10292,
+      "sha256": "b9f42f92d06bfcd986c761757ee8880552691fcc9a9e4b5e106caf2fa51a0fda"
+    },
+    {
+      "path": "src/shared/generation/natural_clusters_v1.js",
+      "bytes": 4509,
+      "sha256": "ea0d7e6e68bd516932c60cadc03cc895fdb0faf9f8e4317d7d9f6669eb45361b"
+    },
+    {
+      "path": "src/shared/generation/outdoor_bridge_v1.js",
+      "bytes": 1525,
+      "sha256": "13ff937fe78bf6021136c7501e5e7a5e3af612db1f710a3d5f9a94ee7b651ca2"
+    },
+    {
+      "path": "src/shared/generation/planned_cave_v1.js",
+      "bytes": 6142,
+      "sha256": "661045a1cddf0dc240a0608bba2d25f19c66bf22b6658c6f83ab15e7def8de64"
+    },
+    {
+      "path": "src/shared/generation/planned_crypt_v1.js",
+      "bytes": 5594,
+      "sha256": "1d87d1e1a0a182b1a05fc176b53eafc7f34a79a959366ef6cd94b13a5ff7ddc7"
+    },
+    {
+      "path": "src/shared/generation/planned_crypt_v2.js",
+      "bytes": 5724,
+      "sha256": "68d4a910db5f47f1a5469738b9d62eea3a4847eb1dae5c1b048390aa959e6d5c"
+    },
+    {
+      "path": "src/shared/generation/planned_fort_v1.js",
+      "bytes": 8961,
+      "sha256": "af0c83123e0e1f766556fb8649376ca37fadc0e2ee86c62cb69f20eec0bd7401"
+    },
+    {
+      "path": "src/shared/generation/planned_fort_v2.js",
+      "bytes": 5896,
+      "sha256": "360bd98ff247bbb96e6d6f84b89f9befce210ec9ba8460fb482994fa591d8c28"
+    },
+    {
+      "path": "src/shared/generation/planned_ruin_v1.js",
+      "bytes": 13863,
+      "sha256": "85193b75151510943c69c34627e0ebafff7569fd60986ab6b8a0e7f23b0191dd"
+    },
+    {
+      "path": "src/shared/generation/planned_ruin_v2.js",
+      "bytes": 4301,
+      "sha256": "d53611bf5702e3e0056ce6f0cef714dae1d76119e63e512d4c1ffe55cc4aff7e"
+    },
+    {
+      "path": "src/shared/generation/planned_town_v1.js",
+      "bytes": 3693,
+      "sha256": "c742f9ffa935df729ffafae01cdb78d9b0fa384a431d7b3ee608e293f5e723de"
+    },
+    {
+      "path": "src/shared/generation/planned_world_chunks_v1.js",
+      "bytes": 16531,
+      "sha256": "a0dace3056008572a6c207370d4801cdbac22f687e22ea43db85d9b7ae7592d1"
+    },
+    {
+      "path": "src/shared/generation/planned_world_foundation_v1.js",
+      "bytes": 12963,
+      "sha256": "77817589863dca73981a9dad8de6aa18fb9aed3dcbd3fe006c4b3a6546ddfe00"
+    },
+    {
+      "path": "src/shared/generation/procedural_overworld.js",
+      "bytes": 18802,
+      "sha256": "c5acfcc19b964cde5d7579f2fece1c06c65b5d7176d8399b28530609ebc6bcf7"
+    },
+    {
+      "path": "src/shared/generation/ruin_family_v1.js",
+      "bytes": 3010,
+      "sha256": "2306cbaf591ae40ddd489fbb36a79036f02c97a6acc25e90c3bcce511c48308b"
+    },
+    {
+      "path": "src/shared/generation/ruin_family_v2.js",
+      "bytes": 4278,
+      "sha256": "150494f86b828f73aa05454bf5027f31280b6fee9e6026c60988b49f89c9adb1"
+    },
+    {
+      "path": "src/shared/generation/ruin_groves_v1.js",
+      "bytes": 5717,
+      "sha256": "2242e777d75856f65aed21513871aab7268d2e2553cdb9e190c6694404e37119"
+    },
+    {
+      "path": "src/shared/generation/settlement_geometry_v1.js",
+      "bytes": 2834,
+      "sha256": "4b97db4300cfadb2ef6519c0778e3336503498db15d03231363fd3156283933b"
+    },
+    {
+      "path": "src/shared/generation/site_discovery_d9.js",
+      "bytes": 13218,
+      "sha256": "a8983b21c1f28a8771c30b8888bd9394fdedc81ad1c5474f459cf1e598622179"
+    },
+    {
+      "path": "src/shared/generation/site_interiors.js",
+      "bytes": 3387,
+      "sha256": "d68021e64560d379d0fc62df4585c01c42a495851aac774fb990e1d49d48c8a8"
+    },
+    {
+      "path": "src/shared/generation/woodland_cave_family_d12.js",
+      "bytes": 9273,
+      "sha256": "e533d20b888fa12d1e4e1c7cf0644fe47a80c885d69fdf2013bb9c222d79ab12"
+    },
+    {
+      "path": "src/shared/generation/woodland_cave_family_d12_1.js",
+      "bytes": 17465,
+      "sha256": "cfabdb0d7d4b1ee49460384105e8ae502230d89588aed1349a123ab72c052744"
+    },
+    {
+      "path": "src/shared/generation/woodland_cave_family_d12_2.js",
+      "bytes": 29135,
+      "sha256": "d5dd87bd00a45e92300c26bf2a4edb37f9512479baa4d3e4a0a8c6d3bcf7194a"
+    },
+    {
+      "path": "src/shared/generation/woodland_cave_family_placement_d12.js",
+      "bytes": 2738,
+      "sha256": "15375fe12e9ed033cb206aa65ab8ec68cfbbd2d1111b277fef061553ab795088"
+    },
+    {
+      "path": "src/shared/generation/woodland_cave_family_placement_d12_1.js",
+      "bytes": 5357,
+      "sha256": "3380530faca57727618172dedf0e6a72d48d65f896b74dc53e2f47cb0670fa27"
+    },
+    {
+      "path": "src/shared/generation/woodland_cave_placement_d10.js",
+      "bytes": 8172,
+      "sha256": "a7b7f736f9697c7f5ead36cbf2869d47b725ddab40917fd5c2882a8de5aa4c49"
+    },
+    {
+      "path": "src/shared/generation/woodland_cave_region_placement_d12_2.js",
+      "bytes": 9335,
+      "sha256": "bf87b19405670b82bf1bf5878f4173aa87d994a948dfb9a13df3ee35c8d498a1"
+    },
+    {
+      "path": "src/shared/generation/woodland_fort_placement_d10.js",
+      "bytes": 8068,
+      "sha256": "749151b4cbaab249a7254fc14a48419dd2c0e7736e65f96fc285d9737886d78a"
+    },
+    {
+      "path": "src/shared/generation/woodland_ruin_exterior_d11_3_2.js",
+      "bytes": 3208,
+      "sha256": "5e8326be7b4990ed70e814c637ff24cf282cdef3ac40e1865eb93a6148d3f92c"
+    },
+    {
+      "path": "src/shared/generation/world_identity_d9.js",
+      "bytes": 391,
+      "sha256": "8f0637ae0ffec76e2546f2251f360d7004fe6cddb04da876ca3a5aca4b67a6ea"
+    },
+    {
+      "path": "src/shared/rules/attack_speed_contract.js",
+      "bytes": 1648,
+      "sha256": "b03dadf2db0091cf7033c2b8ff9c5cc58f29b32fce90531d8a842cd3355d3be9"
+    },
+    {
+      "path": "src/shared/rules/combat_scaling.js",
+      "bytes": 1051,
+      "sha256": "bdd50b1c10096c520240d142e07e2193f7b0dc9ea285c73f8facdaa2529b4ede"
+    },
+    {
+      "path": "src/shared/rules/index.js",
+      "bytes": 512,
+      "sha256": "8ce24c58d65d7c3198864600e0d84a1f25ff6c4ea655a10be49de7719bf6518c"
+    },
+    {
+      "path": "src/shared/rules/world_geometry.js",
+      "bytes": 2772,
+      "sha256": "c3da8ae5ff4341f1bf079bffd385f73969b215902e7d867c35823c4aa1d466e3"
+    },
+    {
+      "path": "src/simulation/activity_combat_legality.js",
+      "bytes": 1028,
+      "sha256": "51d05008f12fac02b3589650a560a01febe72afedb9743f15e40d30afa1aee5a"
+    },
+    {
+      "path": "src/simulation/activity_progression.js",
+      "bytes": 12169,
+      "sha256": "4582d6fd332bc8c233abf82afbaa38baafbd7990a8c4bae2f41dd1e3870669bf"
+    },
+    {
+      "path": "src/simulation/activity_scheduler.js",
+      "bytes": 5808,
+      "sha256": "cd88e9b445de14e789fa3068f096da2f13466b433b68bfc31f2cd4b48a4359d8"
+    },
+    {
+      "path": "src/simulation/activity_simulation.js",
+      "bytes": 42032,
+      "sha256": "02ed3ec6c6aac2cc3f440d2047c01e824002705073199d290d60b0c98f726293"
+    },
+    {
+      "path": "src/simulation/activity_spatial.js",
+      "bytes": 1072,
+      "sha256": "d555d72a8edb14e27e213c204f26a8d84375fd4728ae5a01b63cb1ca6a83a937"
+    },
+    {
+      "path": "src/simulation/boss_combat_d12_5.js",
+      "bytes": 11583,
+      "sha256": "aa27a9f16b212fb23f72ac67da6404196a0870cdb94b1046da3fb0aa2c886da7"
+    },
+    {
+      "path": "src/simulation/combat_rules.js",
+      "bytes": 1383,
+      "sha256": "839d3cf660eeffaa27efb913985cefb01a4019ca886f63f02fba3c0919d23f3e"
+    },
+    {
+      "path": "src/simulation/elite_combat_d12_4.js",
+      "bytes": 41666,
+      "sha256": "98cc30868277cc6f523d5afe02be174f6635929163363ba7d7cb8a45ee6b078c"
+    },
+    {
+      "path": "src/simulation/encounter_containment_d11_2.js",
+      "bytes": 5391,
+      "sha256": "0ee2bd45b4b6c1f7a6b2efbe8357a82aaf4881f3c145a56032bfd740fc0a1b7d"
+    },
+    {
+      "path": "src/simulation/interior_navigation_d12_3a.js",
+      "bytes": 15987,
+      "sha256": "b9b43b128eab7bd7e1da4f97883b7f3ca339cffbbf802c61d5a69ee188170c14"
+    },
+    {
+      "path": "src/simulation/mastery_awards.js",
+      "bytes": 3414,
+      "sha256": "e4e018e9068719775e17d020aec084f8c13ac657ef9460ade135252083060614"
+    },
+    {
+      "path": "src/simulation/mastery_effects.js",
+      "bytes": 9644,
+      "sha256": "2f7bb0a52672504bdff26641ffa9d3663ecc0d760d3f9e8107c5a6a0a74c507f"
+    },
+    {
+      "path": "src/simulation/mastery_transient.js",
+      "bytes": 1736,
+      "sha256": "806e5ce557dce20a7cd7408bd9e8b35d10d0c89173312d06920f783c277b6d5e"
+    },
+    {
+      "path": "src/simulation/melee_assist.js",
+      "bytes": 2147,
+      "sha256": "7e79d3bcaf908ad44f782a9d74edccc614322af3cd0585998ca14cedb42e7c94"
+    },
+    {
+      "path": "src/simulation/ordinary_evade.js",
+      "bytes": 3787,
+      "sha256": "ba114e24e5d3277493d628a63df6b2211c0b0cc78974fc50939be79743147525"
+    },
+    {
+      "path": "src/simulation/ordinary_separation.js",
+      "bytes": 2965,
+      "sha256": "e79adfcdd6977bcb6ba2f00c5f3194e34f0cd4f28859d4d9cdaed30e2d1fb240"
+    },
+    {
+      "path": "src/simulation/primary_rules.js",
+      "bytes": 7977,
+      "sha256": "59ddf7ef2f07c4c68e9ec3659c64deebe103a4c6d4ad8d8f8d6c02d5740abcb4"
+    },
+    {
+      "path": "src/simulation/settlement_interior_transitions.js",
+      "bytes": 4080,
+      "sha256": "32aab9a11b38253a8dc05e561fda6f6012b7e908432172f2c2d9fe2acb2a2258"
+    },
+    {
+      "path": "src/simulation/subweapon_rules.js",
+      "bytes": 8295,
+      "sha256": "3c1b687328896e1c8031d840e54f2a2109c55c213e0ca3a0f9312e5f7d877e30"
+    },
+    {
+      "path": "src/simulation/subweapon_simulation.js",
+      "bytes": 9433,
+      "sha256": "ff9ad7b305b407e0a19ef75f02edaf1516a1b0ca854c821013cfdd4f102722fd"
+    },
+    {
+      "path": "src/simulation/tome_element_rules.js",
+      "bytes": 3575,
+      "sha256": "91c8e2807fdc1c3a28f943f06114b6419c59ce155f8b1d690c4102909701e877"
+    },
+    {
+      "path": "src/simulation/tome_sustain.js",
+      "bytes": 1213,
+      "sha256": "408230364a14aa1f42edcc19daee107eebd7777d3d4f3bc39b3f7c0950c9f709"
+    },
+    {
+      "path": "src/simulation/tome_targeting.js",
+      "bytes": 755,
+      "sha256": "84c0205c46d2b67e08e488014638e5088279aabf8c2aa0d5255d417a03a1abd3"
+    },
+    {
+      "path": "src/simulation/trusted_combat_rules.js",
+      "bytes": 3939,
+      "sha256": "77a2e6ea14588223cfd904989ce8595610703af2b2c52ecba7efda24ed6be771"
+    },
+    {
+      "path": "src/simulation/world_simulation.js",
+      "bytes": 19942,
+      "sha256": "8889b8685224b005cdc2eff2d72aa5bde78df72086c8d064a0afe51fea245fb8"
+    },
+    {
+      "path": "src/storage/activity_campaign_store.js",
+      "bytes": 11297,
+      "sha256": "6de60f5a1d4b1638d198420fa45d9c4228f0fcebed2b783520d2dca63d08c97b"
+    },
+    {
+      "path": "src/storage/activity_save_task.js",
+      "bytes": 4257,
+      "sha256": "e95b51562ecd2cf954bbef01da94749a227454c9c667b13d61f9dc9f65f6b165"
+    },
+    {
+      "path": "src/storage/campaign_store.js",
+      "bytes": 1898,
+      "sha256": "bf16379350f9023a68f2322139cd4bd7b64191bab3c02ea486256c0786f9bb41"
+    },
+    {
+      "path": "src/storage/campaign_store_core.js",
+      "bytes": 5745,
+      "sha256": "e2d747e7d6c4e76b455bde95330011bb790d57be8de47316ec0ab8358d5f94bb"
+    },
+    {
+      "path": "src/storage/local_indexeddb_campaign_store.js",
+      "bytes": 15613,
+      "sha256": "4f7895072670116b0241e52498f470cd5221429ba2b0aaf8e76029e034eff13b"
+    },
+    {
+      "path": "src/storage/navigation_summary_v2.js",
+      "bytes": 1062,
+      "sha256": "941208c1808e1efdd263a87bc23380807eabfc922d6be074836ebf7a5ffe5495"
+    },
+    {
+      "path": "src/storage/paged_world_store.js",
+      "bytes": 6625,
+      "sha256": "a0d1fa84d89ba66d344be5580125c5804fd3806363641eac80e8b81d6bb301f8"
+    },
+    {
+      "path": "src/storage/planned_world_assets_v1.js",
+      "bytes": 2631,
+      "sha256": "3d087f39dffcd3e00942877c01adfc36c2184b2784020d209cdd1a547efb131d"
+    },
+    {
+      "path": "src/storage/world_cold_deadlines_d9.js",
+      "bytes": 5820,
+      "sha256": "26581dcda579f3241691324c1e44b728df64aad7ec9c2f3e9f8e3d712edaf6e7"
+    },
+    {
+      "path": "src/storage/world_deadlines_d9.js",
+      "bytes": 2482,
+      "sha256": "68ef16f55f80abc6caafe1d7abf25d4de706300e858890920ec5bb26a66228ad"
+    },
+    {
+      "path": "src/storage/world_encounter_task_d9.js",
+      "bytes": 3415,
+      "sha256": "8b79c9742fa0f451c814b21c69178e5fc9864915fa70e742a35039eb62ebc45f"
+    },
+    {
+      "path": "src/storage/world_gear_knowledge_d9.js",
+      "bytes": 4093,
+      "sha256": "f6d9ab3c0cd7125e9c61255bc6b102cff69567b06eff4e5c481524572b76532b"
+    },
+    {
+      "path": "src/storage/world_gear_pages_d9.js",
+      "bytes": 14165,
+      "sha256": "8c4898b78e459346db86cca1b740692d89abbaa2c35e2cbe4a84acff244bbddf"
+    },
+    {
+      "path": "src/storage/world_ground_residency_d9.js",
+      "bytes": 5618,
+      "sha256": "9b2c8e4819ee45c93aab638a0d4d634d8f860bfd2980c532228fdd00b2bc3fdf"
+    },
+    {
+      "path": "src/storage/world_ground_window_d9.js",
+      "bytes": 5034,
+      "sha256": "e487de381f38b0cafd24ccb9ee8c1fb31e0db3661a7b6a93c954ce7331a7522d"
+    },
+    {
+      "path": "src/storage/world_navigation_pages_d9.js",
+      "bytes": 4214,
+      "sha256": "66d1fb2803a11f4d479996a98d3007719b7096b37b54b3cfbb220b44b29f5111"
+    },
+    {
+      "path": "src/storage/world_page_buffer_d9.js",
+      "bytes": 3852,
+      "sha256": "78fc0a65d181f690b70d1abcf44e5ae894e99917a4bc46a5fcc5efe84db9d3c8"
+    },
+    {
+      "path": "src/storage/world_page_diff_d9.js",
+      "bytes": 1984,
+      "sha256": "b1126cfbbf54a7a474cdbd0a4f2ea48cbd0085780a83af3d4e55ba6c594e192e"
+    },
+    {
+      "path": "src/storage/world_page_publication_d9.js",
+      "bytes": 7440,
+      "sha256": "3750860e9550dc466c12d3da9d73ee67a5a465c912e5fd80c87182d668163f65"
+    },
+    {
+      "path": "src/storage/world_page_refs_d9.js",
+      "bytes": 3412,
+      "sha256": "056fddc205fc6fd661e30888b1b8239b1b7ae7f7d8168674c94858e4b5edb067"
+    },
+    {
+      "path": "src/storage/world_residency_task_d9.js",
+      "bytes": 5782,
+      "sha256": "c907f3f6784df3acf0f8f3baea09241ecc216eb3b944c0cba2bc5a8026d50593"
+    },
+    {
+      "path": "src/storage/world_save_task_d9.js",
+      "bytes": 4412,
+      "sha256": "68188c45c01463e4803a51705321f8feee99db92a8b3237e1a475edb411002cd"
+    },
+    {
+      "path": "src/storage/world_snapshot_d9.js",
+      "bytes": 11565,
+      "sha256": "2bba493f6211e99e4c8121721992fce05557638a2c6c3bb484cdee131e0df0a7"
+    },
+    {
+      "path": "src/storage/world_transition_d9.js",
+      "bytes": 8889,
+      "sha256": "d9d1d56d783c8e1340a0bfa7d3bc7e768592821265246858cb25358e2d95dfa3"
+    },
+    {
+      "path": "src/storage/world_transition_pages_d9.js",
+      "bytes": 4821,
+      "sha256": "49b170fd5cd2f9ba52933a71e65ba922633dbaa542bbabcae20ac0ec8cd39ab1"
+    },
+    {
+      "path": "src/storage/world_worker_task_d9.js",
+      "bytes": 5375,
+      "sha256": "ef893e1518038d7012ae767b60c840842160f0aa46216658a75ea2f6cb6fcc5f"
+    },
+    {
+      "path": "world-crypt-large-v2-dev.html",
+      "bytes": 7012,
+      "sha256": "62550ee33050fa7c9a6f512c7bf4e816905756f0361bafb3ec436111fda10713"
+    },
+    {
+      "path": "world-cumulative-dev.html",
+      "bytes": 7086,
+      "sha256": "a8cbd46498937921c78d526222650eb4aab491983e4ae0818fc91f59b42b9f19"
+    },
+    {
+      "path": "world-fort-deep-v2-dev.html",
+      "bytes": 6867,
+      "sha256": "81538bde98e880d8317e51fdeeb54d1556299c12afde4991227d90a07a92ae63"
+    },
+    {
+      "path": "world-ruin-deep-v2-dev.html",
+      "bytes": 6958,
+      "sha256": "9edea91278269966046947d01ca2c6536f6c98bf2678519dc67bd9303664eeb0"
+    },
+    {
+      "path": "world.css",
+      "bytes": 44140,
+      "sha256": "4632038d4c6620018511538ee7eb44cbf79136f53c5e2726e6ccde27bf115a51"
+    }
+  ]
+}
