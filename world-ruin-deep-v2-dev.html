@@ -1,0 +1,40 @@
+<!doctype html>
+<html data-runtime-manifest="runtime-manifest.json" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="data:,">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAQ World">
+    <meta name="theme-color" content="#080d16">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <title>Isolated Deep Ruin V2 · SAQ World — Development Candidate</title>
+    <link rel="stylesheet" href="./world.css">
+  </head>
+  <body data-planned-world-review="true" data-shoreline-review="true" data-water-review="true" data-art-pilot="true" data-art-v2="true" data-storybook="true" data-town-review="false" data-cave-review="false" data-cave-population="false" data-ruin-review="true" data-ruin-version="v2" data-fort-version="v2" data-ruin-fixture="deep">
+    <div id="world-app">
+    <header id="world-hud"><div id="world-hud-title"><strong>SAQ WORLD</strong><span id="space-label">Starting local campaign…</span></div><div id="world-hud-vitals"><div class="hero-crest" aria-hidden="true"><svg viewBox="0 0 32 38"><path d="M3 3h26v19L16 35 3 22Z" fill="#e9ae32" stroke="#100c19" stroke-width="3"/><path d="M7 7h18v13l-9 9-9-9Z" fill="#6841a2"/><path d="m16 9 3 6 6 1-5 5 1 6-5-3-5 3 1-6-5-5 6-1Z" fill="#fff2ab"/></svg></div><div class="vital-bars"><div class="hp-track"><progress id="world-hp-bar" max="100" value="100" aria-label="Health"></progress><p id="world-health"></p></div><div id="world-progression" hidden><span id="world-level"></span><progress id="world-xp-bar" max="100" value="0" aria-label="XP toward next level"></progress><span id="world-xp"></span></div></div><div id="world-wallet" aria-label="Gold"><svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="10" fill="#b96d17" stroke="#140d20" stroke-width="2.5"/><ellipse cx="11" cy="10" rx="6" ry="7" fill="#ffd43c"/><path d="M7 5h5v3H7Z" fill="#fff4a4"/><path d="M13 10h3v7h-3Z" fill="#d88a17"/></svg><span id="world-gold">0</span><span id="world-gold-gain" hidden aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="10" fill="#b96d17" stroke="#140d20" stroke-width="2.5"/><ellipse cx="11" cy="10" rx="6" ry="7" fill="#ffd43c"/><path d="M7 5h5v3H7Z" fill="#fff4a4"/><path d="M13 10h3v7h-3Z" fill="#d88a17"/></svg><span id="world-gold-gain-amount"></span></span></div><p id="world-status" role="status">Starting...</p></div><label id="world-hud-movement"><span>Movement </span><select id="control-mode" aria-label="Movement mode"><option value="joystick">Joystick</option><option value="cursor">Cursor</option></select></label><button id="retry-travel" hidden>Reconcile save</button>
+      <div id="world-gate-alert" role="alert" hidden><span id="world-gate-alert-text"></span><button id="world-gate-copy" type="button" hidden>Copy fatal diagnostic</button><button id="world-gate-download" type="button" hidden>Download fatal diagnostic</button><button id="world-gate-reopen" type="button" hidden>Reopen last saved</button></div><details id="local-world-controls" hidden><summary><span class="playtest-label-full">Local playtest data</span><span class="playtest-label-short">Playtest</span></summary>
+      <p id="world-status-detail"></p>
+      <p>WASD / arrows · Drag to move · Space / Attack · Internal boundaries are seamless</p>
+      <small id="world-generation"></small>
+      <small><span id="world-metrics"></span> · <span id="control-provenance"></span></small>
+      <small>Each campaign keeps its generated regions, roads, sites and artifact assignments permanently.</small>
+      <button id="start-new-campaign">Start New Campaign</button><button id="reset-local-world-data" class="danger">Reset Local World Data</button><span id="local-world-control-status" role="status"></span></details></header>
+    <main><div id="world-level-up" role="status" aria-live="polite" hidden></div><canvas id="world-view" tabindex="-1" aria-label="Generated campaign overworld. Move with WASD, arrows, joystick or pointer."></canvas><button id="primary-attack" aria-label="Primary Attack. Tap once or hold to chain." aria-pressed="false" disabled><strong>Attack</strong><small>Space · Hold to chain</small></button>
+      <button id="world-bag" type="button" aria-label="Open inventory" hidden>Bag · 0 gold</button><button id="world-pickup" type="button" hidden>Pick up</button><div id="world-loot-notice" role="status" aria-live="polite" hidden></div>
+      <section id="world-inventory" role="dialog" aria-modal="true" aria-labelledby="world-bag-title" hidden>
+        <header class="bag-heading"><div><small>SAQ WORLD</small><h2 id="world-bag-title">HERO CREST</h2></div><button id="world-bag-close" type="button" aria-label="Close inventory">Close</button></header>
+        <div id="world-bag-summary"></div><p id="world-bag-stats"></p>
+        <nav class="bag-section-tabs" aria-label="Inventory sections"><button id="world-equipment-tab" type="button" aria-pressed="true">ARMORY</button><button id="world-bag-tab" type="button" aria-pressed="false">CARRIED GEAR</button><button id="world-materials-tab" type="button" aria-pressed="false">MATERIALS</button></nav><div class="bag-body"><div id="world-bag-browse" class="inventory-scroll"><section><h3>EQUIPPED GEAR</h3><div id="world-equipment"></div></section><section><h3>CARRIED GEAR <small id="world-carried-count"></small></h3><div id="world-items"></div></section></div><section id="world-materials-view" class="inventory-scroll"></section><section id="world-forge-view" class="inventory-scroll"></section><aside id="world-comparison" aria-label="Item tooltip" hidden></aside></div>
+        <p id="world-inventory-status" role="status"></p>
+      </section>
+      <section id="world-death" class="world-dialog" role="region" aria-labelledby="world-death-title" hidden><h2 id="world-death-title">DEFEATED</h2><p id="world-death-level"></p><p id="world-death-xp"></p><p class="death-policy">No XP lost</p><p id="world-death-anchor"></p><button id="world-respawn" type="button">Respawn</button><p id="world-death-status" role="status"></p></section>
+      <section id="startup-recovery" class="world-dialog" hidden aria-live="polite"><h2 id="startup-recovery-title">World could not start</h2><p id="startup-recovery-detail"></p><div><button id="startup-retry">Retry</button><button id="startup-new">Start New Campaign</button><button id="startup-forget">Forget Saved Resume</button><button id="startup-reset" class="danger">Reset Local World Data</button></div></section></main><canvas id="reward-effects" aria-hidden="true"></canvas>
+
+    </div>
+    <script type="module" src="./src/entrypoints/browser_boot.js"></script>
+  </body>
+</html>
+
