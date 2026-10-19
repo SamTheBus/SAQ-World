@@ -6,8 +6,8 @@ import {freezeWire,requireContract as check} from './wire.js';
 // atlas cells so the existing local hull/attack algorithms remain unchanged.
 const FRAME_CHUNKS=64,STRIDE=FRAME_CHUNKS*2*P.chunkWidth;
 const abs=n=>n<0n?-n:n;
-export function planLocalFramesD9(participants,{keepOrigin=false}={}){
- check(participants.length>=Number(!keepOrigin)&&participants.length<=4,'D9 participant frame bound');
+export function planLocalFramesD9(participants,{keepOrigin=false,preparationAnchor=false}={}){
+ check(participants.length>=Number(!keepOrigin)&&participants.length<=(preparationAnchor?5:4)&&(!preparationAnchor||participants.filter(p=>p.playerId==='destination-preparation').length===1),'D9 participant frame bound');
  const sorted=[...participants].sort((a,b)=>a.playerId.localeCompare(b.playerId));for(const p of sorted)validateWorldPosition(p.position);
  const parent=sorted.map((_,i)=>i),find=i=>parent[i]===i?i:(parent[i]=find(parent[i]));
  const mergeChunks=2*P.preloadRadiusChunks+2;

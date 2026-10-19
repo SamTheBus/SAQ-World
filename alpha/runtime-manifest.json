@@ -1,30 +1,37 @@
 {
-  "runtimeId": "db4f2670ae0f3170",
-  "runtimeSha256": "db4f2670ae0f317067b79583ba4e1d87c391f474a6c1af9d8ee3c1020e45fac5",
-  "parentRuntimeId": "c224c9e8b940ebab",
+  "runtimeId": "4a5ce83aa8f2408b",
+  "runtimeSha256": "4a5ce83aa8f2408b733ce94d3448cfb25d8cb4ab68bc5ed92c97a555424d1743",
+  "parentRuntimeId": "db4f2670ae0f3170",
   "changedRuntimeFiles": [
     "index.html",
-    "src/client/cave_art_d10.js",
-    "src/client/site_environment_presentation.js",
+    "src/client/environment_presentation.js",
+    "src/client/playable_client.js",
+    "src/client/world_input.js",
+    "src/client/world_map_d9.js",
+    "src/client/world_renderer.js",
     "src/dev/planned_world_review_v1.js",
     "src/entrypoints/activity_save_worker.js",
     "src/entrypoints/playable_browser.js",
     "src/host/activity_client_port.js",
-    "src/shared/content/fort_family_runtime_v1.js",
-    "src/shared/content/ruin_family_runtime_v1.js",
-    "src/shared/content/site_family_runtime_d12_2.js",
-    "src/shared/contracts/functional_site_d9.js",
-    "src/shared/contracts/planned_fort_v1.js",
-    "src/shared/contracts/planned_ruin_v1.js",
+    "src/host/local_endless_session_d9.js",
+    "src/host/world_residency_d9.js",
+    "src/shared/contracts/activity_state.js",
+    "src/shared/contracts/commands.js",
+    "src/shared/contracts/local_world_frames_d9.js",
+    "src/shared/contracts/world_navigation_d9.js",
+    "src/shared/contracts/world_root_contract_d9.js",
+    "src/shared/generation/planned_world_chunks_v1.js",
     "src/shared/generation/planned_world_foundation_v1.js",
+    "src/simulation/activity_simulation.js",
     "src/storage/planned_world_assets_v1.js",
     "world-cumulative-dev.html"
   ],
   "addedRuntimeFiles": [
-    "src/shared/content/multiroom_policy_v1.js",
-    "src/shared/contracts/multiroom_v1.js",
-    "src/shared/generation/multiroom_cave_v1.js",
-    "src/shared/generation/multiroom_v1.js"
+    "src/client/ferry_menu_v1.js",
+    "src/client/ferry_presentation_v1.js",
+    "src/shared/content/ferry_plan_v1.js",
+    "src/shared/contracts/ferry_travel_v1.js",
+    "src/shared/generation/ferry_overlay_v1.js"
   ],
   "unchangedRuntimeFiles": [
     "assets/alpha-site-population-v1.json",
@@ -57,6 +64,7 @@
     "src/client/barrier_impact.js",
     "src/client/boss_presentation_d12_5.js",
     "src/client/browser_loop_health.js",
+    "src/client/cave_art_d10.js",
     "src/client/civilian_context_input.js",
     "src/client/combat_feedback.js",
     "src/client/combat_text_layout.js",
@@ -75,7 +83,6 @@
     "src/client/environment_cache.js",
     "src/client/environment_layout.js",
     "src/client/environment_motifs.js",
-    "src/client/environment_presentation.js",
     "src/client/equipment_art.js",
     "src/client/extraction_portal_presentation_d12_5c.js",
     "src/client/filtered_creature_surface.js",
@@ -103,7 +110,6 @@
     "src/client/planned_ruin_exterior_presentation.js",
     "src/client/planned_town_presentation_v1.js",
     "src/client/planned_world_materials_v1.js",
-    "src/client/playable_client.js",
     "src/client/presentation_state.js",
     "src/client/primary_input.js",
     "src/client/progression_copy.js",
@@ -117,6 +123,7 @@
     "src/client/settlement_building_presentation.js",
     "src/client/settlement_interior_presentation.js",
     "src/client/shield_guard_input.js",
+    "src/client/site_environment_presentation.js",
     "src/client/site_navigator_d12_4c.js",
     "src/client/space_preparation_gate.js",
     "src/client/stat_number.js",
@@ -129,9 +136,6 @@
     "src/client/wallet_display.js",
     "src/client/world_browser_client.js",
     "src/client/world_depth_presentation.js",
-    "src/client/world_input.js",
-    "src/client/world_map_d9.js",
-    "src/client/world_renderer.js",
     "src/client/world_worker_bridge_d9.js",
     "src/client/xp_display.js",
     "src/dev/natural_cluster_review_v1.js",
@@ -148,14 +152,12 @@
     "src/host/identity_allocation.js",
     "src/host/local_activity_session.js",
     "src/host/local_authority_host.js",
-    "src/host/local_endless_session_d9.js",
     "src/host/local_world_session.js",
     "src/host/paged_world_authority_d9.js",
     "src/host/planned_campaign_binding_v1.js",
     "src/host/site_content_binding_d9.js",
     "src/host/site_truth_presentation_cache.js",
     "src/host/world_client_port.js",
-    "src/host/world_residency_d9.js",
     "src/host/world_terrain_projection_d9.js",
     "src/shared/content/active_spaces.js",
     "src/shared/content/affix_range_d9.js",
@@ -183,6 +185,7 @@
     "src/shared/content/forge.js",
     "src/shared/content/forge_material_costs.js",
     "src/shared/content/forge_review.js",
+    "src/shared/content/fort_family_runtime_v1.js",
     "src/shared/content/functional_site_registry_d10.js",
     "src/shared/content/gear_numbers_d9.js",
     "src/shared/content/generated_gear.js",
@@ -193,6 +196,7 @@
     "src/shared/content/index.js",
     "src/shared/content/interior_navigation_d12_3a.js",
     "src/shared/content/manual_primary.js",
+    "src/shared/content/multiroom_policy_v1.js",
     "src/shared/content/oldward_wood.js",
     "src/shared/content/open_town_template_v1.js",
     "src/shared/content/ordinary_enemies.js",
@@ -213,6 +217,7 @@
     "src/shared/content/reward_modifiers.js",
     "src/shared/content/reward_progression.js",
     "src/shared/content/reward_progression_d9.js",
+    "src/shared/content/ruin_family_runtime_v1.js",
     "src/shared/content/ruin_modular_kit_v1.js",
     "src/shared/content/site_definition_runtime_d10.js",
     "src/shared/content/site_families_d12.js",
@@ -220,6 +225,7 @@
     "src/shared/content/site_families_d12_2.js",
     "src/shared/content/site_family_runtime_d12.js",
     "src/shared/content/site_family_runtime_d12_1.js",
+    "src/shared/content/site_family_runtime_d12_2.js",
     "src/shared/content/subweapons.js",
     "src/shared/content/tavern_interior_v1.js",
     "src/shared/content/tome_profiles.js",
@@ -233,7 +239,6 @@
     "src/shared/content/world_profile_d9.js",
     "src/shared/content/world_runtime_policy_d9.js",
     "src/shared/contracts/activity_fixture.js",
-    "src/shared/contracts/activity_state.js",
     "src/shared/contracts/actor_geometry_d9.js",
     "src/shared/contracts/actor_residency.js",
     "src/shared/contracts/alpha_population_v1.js",
@@ -251,7 +256,6 @@
     "src/shared/contracts/combat_integer.js",
     "src/shared/contracts/combat_integer_migration.js",
     "src/shared/contracts/command_context.js",
-    "src/shared/contracts/commands.js",
     "src/shared/contracts/content_numeric_admission_d9.js",
     "src/shared/contracts/d9_numeric_expression.js",
     "src/shared/contracts/economy_amount.js",
@@ -264,6 +268,7 @@
     "src/shared/contracts/events.js",
     "src/shared/contracts/forge_economy.js",
     "src/shared/contracts/forge_stations.js",
+    "src/shared/contracts/functional_site_d9.js",
     "src/shared/contracts/gear_salvage.js",
     "src/shared/contracts/geography.js",
     "src/shared/contracts/hashing.js",
@@ -273,12 +278,12 @@
     "src/shared/contracts/index.js",
     "src/shared/contracts/integer_domain.js",
     "src/shared/contracts/large_number.js",
-    "src/shared/contracts/local_world_frames_d9.js",
     "src/shared/contracts/major_place_names.js",
     "src/shared/contracts/mastery_causality.js",
     "src/shared/contracts/mastery_combat.js",
     "src/shared/contracts/mastery_stats.js",
     "src/shared/contracts/multiplayer.js",
+    "src/shared/contracts/multiroom_v1.js",
     "src/shared/contracts/ordinary_population.js",
     "src/shared/contracts/origin_egress_d9.js",
     "src/shared/contracts/overworld.js",
@@ -288,7 +293,9 @@
     "src/shared/contracts/planned_cave_v1.js",
     "src/shared/contracts/planned_crypt_v1.js",
     "src/shared/contracts/planned_crypt_v2.js",
+    "src/shared/contracts/planned_fort_v1.js",
     "src/shared/contracts/planned_fort_v2.js",
+    "src/shared/contracts/planned_ruin_v1.js",
     "src/shared/contracts/planned_ruin_v2.js",
     "src/shared/contracts/player_inventory.js",
     "src/shared/contracts/player_inventory_d4_legacy.js",
@@ -329,10 +336,8 @@
     "src/shared/contracts/world_chunk_delta_d9.js",
     "src/shared/contracts/world_ground_occupancy_d9.js",
     "src/shared/contracts/world_navigation_contract_d9.js",
-    "src/shared/contracts/world_navigation_d9.js",
     "src/shared/contracts/world_paging_d9.js",
     "src/shared/contracts/world_patch_d9.js",
-    "src/shared/contracts/world_root_contract_d9.js",
     "src/shared/contracts/world_root_d9.js",
     "src/shared/contracts/world_runtime_d9.js",
     "src/shared/contracts/world_stream_capture_d9.js",
@@ -345,6 +350,8 @@
     "src/shared/generation/fort_family_v2.js",
     "src/shared/generation/local_shoreline_v2.js",
     "src/shared/generation/local_water_geometry_v3.js",
+    "src/shared/generation/multiroom_cave_v1.js",
+    "src/shared/generation/multiroom_v1.js",
     "src/shared/generation/natural_clusters_v1.js",
     "src/shared/generation/outdoor_bridge_v1.js",
     "src/shared/generation/planned_cave_v1.js",
@@ -355,7 +362,6 @@
     "src/shared/generation/planned_ruin_v1.js",
     "src/shared/generation/planned_ruin_v2.js",
     "src/shared/generation/planned_town_v1.js",
-    "src/shared/generation/planned_world_chunks_v1.js",
     "src/shared/generation/procedural_overworld.js",
     "src/shared/generation/ruin_family_v1.js",
     "src/shared/generation/ruin_family_v2.js",
@@ -380,7 +386,6 @@
     "src/simulation/activity_combat_legality.js",
     "src/simulation/activity_progression.js",
     "src/simulation/activity_scheduler.js",
-    "src/simulation/activity_simulation.js",
     "src/simulation/activity_spatial.js",
     "src/simulation/boss_combat_d12_5.js",
     "src/simulation/combat_rules.js",
@@ -546,8 +551,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 7086,
-      "sha256": "a8cbd46498937921c78d526222650eb4aab491983e4ae0818fc91f59b42b9f19"
+      "bytes": 7111,
+      "sha256": "a3653713c2768d8db175382af742dfb0a8db932b44e4615aa98bf682f89b2c4f"
     },
     {
       "path": "manifest.webmanifest",
@@ -686,8 +691,8 @@
     },
     {
       "path": "src/client/environment_presentation.js",
-      "bytes": 50017,
-      "sha256": "f8eb732cf99be7d26d6846e0edf7e26f309f8514afae4e9be61841cac289be40"
+      "bytes": 50040,
+      "sha256": "cba2dcceb506122c653bf46c6a6aab8a2ab8568b8bc41c484b4163d674783481"
     },
     {
       "path": "src/client/equipment_art.js",
@@ -698,6 +703,16 @@
       "path": "src/client/extraction_portal_presentation_d12_5c.js",
       "bytes": 2815,
       "sha256": "50a33d13deb0da39fe038571d5f741baffd0293c30fe36f9716006238301a442"
+    },
+    {
+      "path": "src/client/ferry_menu_v1.js",
+      "bytes": 1537,
+      "sha256": "ad3ed9294894a264292d6869cd9914f20663658080b25be93c55b6e989ff58df"
+    },
+    {
+      "path": "src/client/ferry_presentation_v1.js",
+      "bytes": 1483,
+      "sha256": "8201b4f97e7130a5d859c1975dfde448189b3af71af75d75194419472bcce139"
     },
     {
       "path": "src/client/filtered_creature_surface.js",
@@ -826,8 +841,8 @@
     },
     {
       "path": "src/client/playable_client.js",
-      "bytes": 20031,
-      "sha256": "8c9fe6f3b550270db67c189f438fc5e30cdb806cc9fd8364c77244f53f68ffec"
+      "bytes": 20353,
+      "sha256": "ce617b97377938785c9a119f129352a94fa5911bb0302c641928db42dff9b8ce"
     },
     {
       "path": "src/client/presentation_state.js",
@@ -961,18 +976,18 @@
     },
     {
       "path": "src/client/world_input.js",
-      "bytes": 7429,
-      "sha256": "d31ba1c526b198cb485e86458a8c140abad139e06c5ee2ccc517a278c2de4895"
+      "bytes": 7526,
+      "sha256": "8dd44f487655737a9e7bbea7d2f516a4ff89741d3b566f77b9b239290cea2adf"
     },
     {
       "path": "src/client/world_map_d9.js",
-      "bytes": 22174,
-      "sha256": "73660b242d17e84094ab134b8d683da166a18efaea3bfb0dc529026c950323b5"
+      "bytes": 22361,
+      "sha256": "adf3bc148028bbe4012dbdff9e16675ab78dec62c5147ae330565a7fa963d7c7"
     },
     {
       "path": "src/client/world_renderer.js",
-      "bytes": 17539,
-      "sha256": "035ace7a89f503654a50263186b68d05c4e6ee5661393c6f644fc5593e37ca61"
+      "bytes": 17671,
+      "sha256": "92be70b6af4878b04aa3f94807974432b00f4105de0ad3beaf3d570fbdd79907"
     },
     {
       "path": "src/client/world_worker_bridge_d9.js",
@@ -991,13 +1006,13 @@
     },
     {
       "path": "src/dev/planned_world_review_v1.js",
-      "bytes": 17168,
-      "sha256": "18443b15509cb67d56a570147cb77af5457bd1fb9e025d6fc3149996b2ce3a91"
+      "bytes": 17584,
+      "sha256": "fd1cc3e2425f41908f272353bce7cd5421d2a58bb4275fc65299a972db00a47e"
     },
     {
       "path": "src/entrypoints/activity_save_worker.js",
-      "bytes": 4758,
-      "sha256": "8a1eebd21a7d6aee3cdeec7f6c27f403e5b66d4c432f134fd51d3ac37050a18e"
+      "bytes": 4853,
+      "sha256": "8c41289372ac9ba92aac6c4b0f99b6b86a2b7c33e6c1242205ade1ab568705eb"
     },
     {
       "path": "src/entrypoints/browser_boot.js",
@@ -1006,8 +1021,8 @@
     },
     {
       "path": "src/entrypoints/playable_browser.js",
-      "bytes": 29724,
-      "sha256": "8969ef9565904973e13236e80edb06d4161974f1b02bae5829d97a8748a00fab"
+      "bytes": 29905,
+      "sha256": "b263efd9c21a82529f1ed8eb75c659b9034cbf0ce61eff78436939e4c72bb15f"
     },
     {
       "path": "src/entrypoints/world_browser.js",
@@ -1021,8 +1036,8 @@
     },
     {
       "path": "src/host/activity_client_port.js",
-      "bytes": 29403,
-      "sha256": "38b3e3be20230c0fc570c6f46b6d50a327404330a87f10be3ab37e54f904e275"
+      "bytes": 29498,
+      "sha256": "886108baf5f9cb739721e545adc443dd49f00887d071c2f047180b12637937be"
     },
     {
       "path": "src/host/campaign_authority.js",
@@ -1076,8 +1091,8 @@
     },
     {
       "path": "src/host/local_endless_session_d9.js",
-      "bytes": 38242,
-      "sha256": "32e3a617d6e6b032e29299d7bdb8ddeb5d9f53b5dc61cbb4275c68b3657eb131"
+      "bytes": 39724,
+      "sha256": "a8632ae81ced6129ba7b50fa020fcd3ba8611fe7fe6aac57a4d40f3838d6fd80"
     },
     {
       "path": "src/host/local_world_session.js",
@@ -1111,8 +1126,8 @@
     },
     {
       "path": "src/host/world_residency_d9.js",
-      "bytes": 32176,
-      "sha256": "75801e71cd90fe57663374216684ef3f6eb15f3376c9111d4a44abfff43f504a"
+      "bytes": 32964,
+      "sha256": "0c5cade3f570e4ed801cca23ed730342db6bfea245e40933fd31cfd45c5cc40c"
     },
     {
       "path": "src/host/world_terrain_projection_d9.js",
@@ -1233,6 +1248,11 @@
       "path": "src/shared/content/equipment_d4_legacy.js",
       "bytes": 1278,
       "sha256": "a61ea6510f95e5b1c9fb44df45385f3e771f3b5fcedd6c10e5d68b46d29a5f17"
+    },
+    {
+      "path": "src/shared/content/ferry_plan_v1.js",
+      "bytes": 12721,
+      "sha256": "f1cc55ab21d728e76535680f7aebfbc365047ee3dc866e1f1be1ed4078791bbd"
     },
     {
       "path": "src/shared/content/forge.js",
@@ -1521,8 +1541,8 @@
     },
     {
       "path": "src/shared/contracts/activity_state.js",
-      "bytes": 33391,
-      "sha256": "32ae47f26f2644194da4ebd401865e0239301a39f4fa74ab2ce63b88c7243221"
+      "bytes": 33617,
+      "sha256": "c664b17e5bc08fa39831abbaadba0c1fd71a6202c3ddc4d8f7b2838521a7ab4a"
     },
     {
       "path": "src/shared/contracts/actor_geometry_d9.js",
@@ -1611,8 +1631,8 @@
     },
     {
       "path": "src/shared/contracts/commands.js",
-      "bytes": 8196,
-      "sha256": "edae1037b8492e53d12d180576cd77cfa0f34f8f7263c0fd01e2cc41fcebdf55"
+      "bytes": 8603,
+      "sha256": "7feee397d1e16747d5b8faecdffcdbbc00d7e9aed03746b3026706b81f8614ba"
     },
     {
       "path": "src/shared/contracts/content_numeric_admission_d9.js",
@@ -1663,6 +1683,11 @@
       "path": "src/shared/contracts/events.js",
       "bytes": 12254,
       "sha256": "e948487255c4e579333ba2f35870fd165730d65f06ddaa348a4c9856d5e6375f"
+    },
+    {
+      "path": "src/shared/contracts/ferry_travel_v1.js",
+      "bytes": 3271,
+      "sha256": "85d9b0a7fb9800295b77967bfa9854e7d9614b3036f00e1365a31b598795e064"
     },
     {
       "path": "src/shared/contracts/forge_economy.js",
@@ -1726,8 +1751,8 @@
     },
     {
       "path": "src/shared/contracts/local_world_frames_d9.js",
-      "bytes": 4235,
-      "sha256": "1504be694a6e77e2fa4ff9f62b0459db51da5b566eb4fc06eb900d0715901dd6"
+      "bytes": 4406,
+      "sha256": "a3aa83abf74e7ccbf4ddd4ed6650378110234875232704ba0206a664fa78705a"
     },
     {
       "path": "src/shared/contracts/major_place_names.js",
@@ -2021,8 +2046,8 @@
     },
     {
       "path": "src/shared/contracts/world_navigation_d9.js",
-      "bytes": 8153,
-      "sha256": "52c6a6f617692e7f20d16007faa26fceae5eaa32e110253ff94bf05b7f448dde"
+      "bytes": 8505,
+      "sha256": "a1b0c8630f9de2de143cb2def5d729e344421ebd873a0f3026d4faa8c5a626e9"
     },
     {
       "path": "src/shared/contracts/world_paging_d9.js",
@@ -2036,8 +2061,8 @@
     },
     {
       "path": "src/shared/contracts/world_root_contract_d9.js",
-      "bytes": 8225,
-      "sha256": "8a1f4119429ca3364e5169e393cf1ffb7a8688710eb97baea6b33b89fe5f842a"
+      "bytes": 8320,
+      "sha256": "06679d9606daf6fc5414081cbc1369f56e8fae307ec76c4b106ec3db6c85caa0"
     },
     {
       "path": "src/shared/contracts/world_root_d9.js",
@@ -2078,6 +2103,11 @@
       "path": "src/shared/generation/endless_world_d9.js",
       "bytes": 12764,
       "sha256": "48bd04fe434b0af4e58fa52a3c7054f0f7c1346fc084607b1e4c3d682a385d50"
+    },
+    {
+      "path": "src/shared/generation/ferry_overlay_v1.js",
+      "bytes": 815,
+      "sha256": "cbb7d46ff748bd70819bde04f76cc2cf5e70e995319f665f811ce22fd2407f0b"
     },
     {
       "path": "src/shared/generation/fort_family_v1.js",
@@ -2161,13 +2191,13 @@
     },
     {
       "path": "src/shared/generation/planned_world_chunks_v1.js",
-      "bytes": 16531,
-      "sha256": "a0dace3056008572a6c207370d4801cdbac22f687e22ea43db85d9b7ae7592d1"
+      "bytes": 16726,
+      "sha256": "0273481994e601a1f3519a79e08d8aa7450853edb52532615e5e235daa247033"
     },
     {
       "path": "src/shared/generation/planned_world_foundation_v1.js",
-      "bytes": 12963,
-      "sha256": "77817589863dca73981a9dad8de6aa18fb9aed3dcbd3fe006c4b3a6546ddfe00"
+      "bytes": 13270,
+      "sha256": "2d40e53037944d980cdcc168f563763e60d30d025ddb930f089456926d541b2c"
     },
     {
       "path": "src/shared/generation/procedural_overworld.js",
@@ -2291,8 +2321,8 @@
     },
     {
       "path": "src/simulation/activity_simulation.js",
-      "bytes": 42032,
-      "sha256": "02ed3ec6c6aac2cc3f440d2047c01e824002705073199d290d60b0c98f726293"
+      "bytes": 42210,
+      "sha256": "9acc07e61d93a7450b81363e99b51473fc8f8b7c8ce86253cb6da2d92ed35ab1"
     },
     {
       "path": "src/simulation/activity_spatial.js",
@@ -2436,8 +2466,8 @@
     },
     {
       "path": "src/storage/planned_world_assets_v1.js",
-      "bytes": 2631,
-      "sha256": "3d087f39dffcd3e00942877c01adfc36c2184b2784020d209cdd1a547efb131d"
+      "bytes": 2667,
+      "sha256": "d974a1d6fee9d4231cbe662df9d7a126fef694fec6a181e2725179c92902b961"
     },
     {
       "path": "src/storage/world_cold_deadlines_d9.js",
@@ -2536,8 +2566,8 @@
     },
     {
       "path": "world-cumulative-dev.html",
-      "bytes": 7086,
-      "sha256": "a8cbd46498937921c78d526222650eb4aab491983e4ae0818fc91f59b42b9f19"
+      "bytes": 7111,
+      "sha256": "a3653713c2768d8db175382af742dfb0a8db932b44e4615aa98bf682f89b2c4f"
     },
     {
       "path": "world-fort-deep-v2-dev.html",

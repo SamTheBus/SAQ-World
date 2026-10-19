@@ -221,7 +221,7 @@ export function* prepareEnvironmentDrawing(ctx,space,viewport=null,layout=create
   for(const f of plannedRuinEntranceFrames(space))if(f.x>=bounds.x-192&&f.y>=bounds.y-192&&f.x<=bounds.x+bounds.width+192&&f.y<=bounds.y+bounds.height+192)drawPlannedRuinEntranceGround(ctx,f,pilot);
   // Exit signage occupies a passable marker, not a solid door or wall.
   for(const exit of space.exits) {
-    if(exit.siteKind==='civilian-tavern')continue; // Building art owns the door/sign; the standard context prompt supplies text.
+    if(exit.ferryLandingId||exit.siteKind==='civilian-tavern')continue; // Building art owns the door/sign; the standard context prompt supplies text.
     const exitPaintMargin=exit.siteKind==='woodland-ruin'?192:32;
     if(exit.x<bounds.x-exitPaintMargin||exit.y<bounds.y-exitPaintMargin||exit.x>bounds.x+bounds.width+exitPaintMargin||exit.y>bounds.y+bounds.height+exitPaintMargin)continue;
     if(exit.siteAction){

@@ -1,3 +1,4 @@
+import {ferryExits} from '../shared/contracts/ferry_travel_v1.js';
 import {statValue} from '../shared/contracts/stat_presentation.js';
 
 import {revealRadiusD9} from '../shared/contracts/world_navigation_contract_d9.js';
@@ -170,7 +171,7 @@ export function createActivityClientPort({authority,localPlayerId,measure=(_n,fn
 
       const station=nearbyForge(state,player);
 
-      exits.push(...campaignTavernExits(state,local));
+      exits.push(...campaignTavernExits(state,local),...ferryExits(state,local));
 
       if(inOverworld)for(const s of state.campaign.forgeStations?.stations??[])exits.push({exitId:s.stationId,forgeAction:true,x:s.interaction.x,y:s.interaction.y,radius:FORGE_INTERACTION_RADIUS,available:s.stationId===station?.stationId,label:'Use Forge'});
 

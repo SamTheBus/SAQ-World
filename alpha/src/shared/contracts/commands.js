@@ -63,6 +63,8 @@ export function validateCommand(command) {
     closedRecord(command.payload,['aim']);validatePrimaryAim(command.payload.aim);
   } else if(command.kind==='player.respawn') {
     closedRecord(command.payload,[]);
+  } else if(command.kind==='ferry.travel') {
+    closedRecord(command.payload,['fromLandingId','toLandingId']);requireContract([command.payload.fromLandingId,command.payload.toLandingId].every(id=>/^ferry:alpha:0[0-7]$/.test(id))&&command.payload.fromLandingId!==command.payload.toLandingId,'Invalid ferry connection');
   } else if(command.kind==='site.transition') {
     closedRecord(command.payload,['siteId','direction'],['transitionId','extractionId']);requireContract(/^loc:[a-f0-9]{32}$/.test(command.payload.siteId)||/^site:[a-f0-9]{32}$/.test(command.payload.siteId),'Invalid site transition identity');
     requireContract(['enter','exit','up','down','extract'].includes(command.payload.direction),'Invalid site transition direction');if(['up','down'].includes(command.payload.direction))requireContract(typeof command.payload.transitionId==='string'&&command.payload.transitionId.length<=180&&command.payload.extractionId===undefined,'Missing floor transition identity');else if(command.payload.direction==='extract')requireContract(typeof command.payload.extractionId==='string'&&command.payload.extractionId.length<=180&&command.payload.transitionId===undefined,'Missing extraction identity');else requireContract(command.payload.transitionId===undefined&&command.payload.extractionId===undefined,'Unexpected site transition identity');

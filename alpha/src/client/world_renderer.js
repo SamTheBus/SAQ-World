@@ -1,3 +1,4 @@
+import {drawFerryLandings} from './ferry_presentation_v1.js';
 import {createCompletionArtPreparation} from './completion_art_preparation.js';
 import {drawPlannedTownGround,plannedTownDepthItems} from './planned_town_presentation_v1.js';
 import {drawTavernGround,tavernDepthItems} from './settlement_interior_presentation.js';
@@ -119,11 +120,12 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
        ctx.restore();
       }}));
     }
+    drawFerryLandings(ctx,model.space.exits);
     drawDepthItems(ctx,depthItems);
     combatVfx.draw(ctx,model,time,viewport);if(performanceProbe)performanceProbe.measure("combatFeedback",()=>feedback.draw(ctx,time,equipmentArt,viewport));else feedback.draw(ctx,time,equipmentArt,viewport);
     ctx.restore();
     drawArachnidTreantBossHudD12_5A(ctx,canvas,model);
-    const available = Boolean(exit)&&((exit.siteAction||exit.forgeAction)?exit.available&&["safe","encounter"].includes(model.persistence.phase):model.persistence.phase === "safe") && Math.hypot(actor.position.x-exit.x, actor.position.y-exit.y) <= exit.radius;
+    const available = Boolean(exit)&&((exit.siteAction||exit.forgeAction||exit.ferryLandingId)?exit.available&&["safe","encounter"].includes(model.persistence.phase):model.persistence.phase === "safe") && Math.hypot(actor.position.x-exit.x, actor.position.y-exit.y) <= exit.radius;
     if (available) {
       const label = exit.label ?? (model.space.label.endsWith("A") ? "Enter test room B" : "Return to test field A");
       const compactKeep=exit.siteKind==='woodland-fort'&&label==='Leave Keep',caveMouth=exit.siteKind==='woodland-cave'&&label==='Enter Woodland Cave';

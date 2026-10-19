@@ -1,0 +1,7 @@
+// Gameplay UI: only sends the public, proximity-validated authority command.
+// It has no developer relocation or inspection-travel dependency.
+export function createFerryMenu({document:doc,adapter,clearInput,restoreFocus,reportError}){
+ const panel=doc.createElement('dialog');panel.id='ferry-destinations';panel.style.cssText='max-width:90vw;width:430px;background:#172a32;color:#f4e6c4;border:2px solid #ba9961;border-radius:12px;padding:22px;font:16px system-ui';doc.body.append(panel);
+ const close=()=>{panel.close();restoreFocus();};
+ return Object.freeze({isOpen:()=>panel.open,open(landing){clearInput();panel.replaceChildren();const h=doc.createElement('h2');h.textContent=landing.label.replace('Ferry · ','');panel.append(h);const note=doc.createElement('p');note.textContent='Choose a coastal landing. Travel loads the destination and saves your arrival.';panel.append(note);for(const d of landing.destinations){const b=doc.createElement('button');b.dataset.ferryDestination=d.id;b.style.cssText='display:block;width:100%;padding:14px;margin:10px 0;text-align:left';b.textContent=d.name+' · '+d.biome+' · Band '+d.band;b.onclick=()=>{close();try{const result=adapter.issue('ferry.travel',{fromLandingId:landing.ferryLandingId,toLandingId:d.id});Promise.resolve(result).catch(e=>reportError(e.message));}catch(e){reportError(e.message);}};panel.append(b);}const cancel=doc.createElement('button');cancel.textContent='Stay here';cancel.onclick=close;panel.append(cancel);panel.showModal();},destroy(){panel.remove();}});
+}
