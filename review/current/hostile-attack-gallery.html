@@ -8,7 +8,8 @@
 <div class="controls"><button id="play" type="button">Play attack replay</button><span>Replay shows the actual phase durations at ½ speed, including recovery.</span></div>
 <div class="grid" id="gallery"><div></div><div class="heading">Idle</div><div class="heading">Windup</div><div class="heading" id="strike-label">Strike / contact</div></div>
 <footer>No routine ground lanes or source-to-target beams. Small family contact effects remain visible briefly after a confirmed hit. Special, elite and boss ground telegraphs remain separate.</footer></main>
-<script type="module">
+<script type="importmap">{"imports":{"../../src/client/hostile_melee_presentation.js":"../../src/client/hostile_melee_presentation.js?v=combat-v2.2","../../src/client/creature_presentation_d11.js":"../../src/client/creature_presentation_d11.js?v=combat-v2.2","../../src/client/combat_feedback.js":"../../src/client/combat_feedback.js?v=combat-v2.2"}}</script>
+    <script type="module">
 import {ORDINARY_ENEMIES} from '../../src/shared/content/ordinary_enemies.js';
 import {drawCreatureD11} from '../../src/client/creature_presentation_d11.js';
 import {drawHostileContact} from '../../src/client/hostile_melee_presentation.js';
