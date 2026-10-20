@@ -46,7 +46,7 @@ export function detachChunksRuntimeD9(state,transfers){
  for(const {delta} of transfers){
   state.d9World.paging.players=accounting(state,delta,1);
   for(const e of delta.encounters){const id=e.group.groupId,g=e.episode.geography;state.d9World.paging.originsByGroup[id]={groupId:id,episode:e.economy.episode,rank:g.rank,chunkX:g.chunkX,chunkY:g.chunkY,anchorOrdinal:g.anchorOrdinal,entityIds:[...e.group.entityIds],...(hasWorldCombat(state)?{combatHash:WORLD_COMBAT_HASH}:{})};
-   for(const a of e.actors)delete state.entitiesById[a.entityId];delete state.groupsById[id];delete state.encounterEconomy.groups[id];delete state.d9World.episodes[id];
+   for(const a of e.actors){delete state.entitiesById[a.entityId];if(state.hostileCombat)delete state.hostileCombat.actionsByEntityId[a.entityId];}delete state.groupsById[id];delete state.encounterEconomy.groups[id];delete state.d9World.episodes[id];
    for(const [pid,rows] of Object.entries(e.players)){const p=state.playersById[pid],i=p.inventory;for(const key of Object.keys(rows.rewards)){delete i.rewardsByEntityId[key];delete i.goldAwardsByEntityId[key];delete i.economy.soulAwardsByEntityId[key];}for(const key of Object.keys(rows.causalXp))delete p.d8.causalXp[key];for(const key of Object.keys(rows.salvaged))delete i.d7.salvaged[key];for(const key of Object.keys(rows.autoSalvaged))delete i.d7.autoSalvaged[key];}
   }
  }
@@ -64,6 +64,7 @@ export function attachChunkRuntimeD9(state,chunk,delta){
  runtime.chunks.push(copyWire(chunk));
  if(decoded)for(const e of decoded.encounters){
   const id=e.group.groupId;state.groupsById[id]=copyWire(e.group);state.encounterEconomy.groups[id]=copyWire(e.economy);state.d9World.episodes[id]=copyWire(e.episode);runtime.groups.push(copyWire(e.definition));runtime.resources.push(...e.resources.map(copyWire));for(const a of e.actors)state.entitiesById[a.entityId]=copyWire(a);
+  if(e.hostileActions){check(state.hostileCombat,'Cold ranged actions require hostile combat');Object.assign(state.hostileCombat.actionsByEntityId,copyWire(e.hostileActions));}
   for(const [pid,rows] of Object.entries(e.players)){const p=state.playersById[pid],i=p.inventory;Object.assign(i.rewardsByEntityId,copyWire(rows.rewards));Object.assign(i.goldAwardsByEntityId,copyWire(rows.gold));Object.assign(i.economy.soulAwardsByEntityId,copyWire(rows.souls));Object.assign(p.d8.causalXp,copyWire(rows.causalXp));Object.assign(i.d7.salvaged,copyWire(rows.salvaged));Object.assign(i.d7.autoSalvaged,copyWire(rows.autoSalvaged));}
  }
  if(!decoded&&chunk.compound){const fort=state.d9World.functionalSitesById[chunk.compound.siteId],initial=fort?.initial,home=initial?.episode.geography;

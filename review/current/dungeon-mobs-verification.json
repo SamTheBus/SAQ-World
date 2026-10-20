@@ -1,0 +1,14 @@
+{
+  "changedSourceModules": 40,
+  "syntaxChecksPassed": 40,
+  "relativeImportsResolved": 2244,
+  "protectedFilesUnchanged": 71,
+  "workerGraphFilesByteIdentical": 268,
+  "versionedDocuments": 4,
+  "checks": 104,
+  "allSitesPreserved": 35,
+  "allFloorsPreserved": 72,
+  "workerImportSmokeChecks": 2,
+  "workerWrapperImmutableFilename": true,
+  "runtimeId": "0a5d419b11f15b2d"
+}

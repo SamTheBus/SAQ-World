@@ -15,6 +15,7 @@ export async function reconcileWorldComparisonPagesD9(a,b,{readPage,sha256}){
   const id=e.group.groupId;if(target.groupsById[id])return;
   target.groupsById[id]=copyWire(e.group);target.encounterEconomy.groups[id]=copyWire(e.economy);target.d9World.episodes[id]=copyWire(e.episode);
   for(const actor of e.actors){check(!target.entitiesById[actor.entityId],'Cold actor collision');target.entitiesById[actor.entityId]=copyWire(actor);}
+  if(e.hostileActions){check(target.hostileCombat,'Cold ranged comparison requires hostile combat');Object.assign(target.hostileCombat.actionsByEntityId,copyWire(e.hostileActions));}
   for(const [pid,rows] of Object.entries(e.players)){
    const p=target.playersById[pid],i=p?.inventory;check(i,'Cold participant mismatch');
    const merge=(to,from)=>{for(const [id,v] of Object.entries(from)){check(!Object.hasOwn(to,id)||same(to[id],v),'Cold receipt contradicts live ownership');to[id]=copyWire(v);}};

@@ -1,0 +1,67 @@
+{
+  "sourceRepository": "SamTheBus/SAQ-Dungeon",
+  "sourceCommit": "387c78bfaf9f492fe7b6ff4539b956c12c2a7cdc",
+  "sourceFilesVerifiedAgainstGitBlobs": [
+    "bestiary_data.js",
+    "mob_renderer.js",
+    "mob_combat.js",
+    "lifecycle.js",
+    "projectile_update.js",
+    "opening_fairness.js",
+    "data.js",
+    "mob_pool_flask.js",
+    "game_render.js"
+  ],
+  "ordinarySourceFamilies": 32,
+  "previousWorldFamilies": 7,
+  "addedFamilies": [
+    "thorn_wyrm",
+    "wyrmling",
+    "magma_elemental",
+    "lava_serpent",
+    "hell_bat",
+    "slag_slime",
+    "swamp_basilisk",
+    "toxic_fly",
+    "marsh_ghost",
+    "corroded_golem",
+    "void_orb"
+  ],
+  "rangedMappings": {
+    "thorn_wyrm": "thorn",
+    "wyrmling": "frost",
+    "magma_elemental": "fireball",
+    "toxic_fly": "maelstrom",
+    "void_orb": "void"
+  },
+  "remainingOrdinaryFamilies": [
+    "gilded_scuttler",
+    "mimic_shield",
+    "void_crawler",
+    "void_spectre",
+    "void_wraith",
+    "rift_drifter",
+    "clockwork_scarab",
+    "star_weaver",
+    "coin_elemental",
+    "temporal_watcher",
+    "clockwork_drone",
+    "neon_spider",
+    "wireframe_orb",
+    "cyber_wraith"
+  ],
+  "worldAdaptation": {
+    "projectileSpeed": 4.2,
+    "projectileRadius": 6,
+    "castRange": 220,
+    "flightRange": 336,
+    "flightTicks": 80,
+    "cooldownTicks": 120,
+    "globalShotCap": 128,
+    "perSourceShotCap": 4,
+    "authority": "host simulation; copied client DTOs; same central damage, defense and level-gap rules",
+    "flight": "fixed aim at windup start; swept party/wall collision; no homing or hitscan",
+    "statusEffects": "Source ordinary projectile styles do not imply elemental status effects."
+  },
+  "preservation": "Original seven definitions and 28 profiles stay identical. Deterministic per-episode roster overlays retain actor IDs, counts and physical layouts. Previously fought, wounded, cleared or rewarded encounters keep their current episode."
+}

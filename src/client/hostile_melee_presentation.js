@@ -67,6 +67,36 @@ export function hostileMeleePose(actor, tick) {
       body.rotation=windup?aim*w+limb.sweep:impact?aim+limb.sweep:aim*r+limb.sweep;
       limb.extension=28.5;break;
     }
+    case 'lava_serpent': {
+      const reach=Math.max(0,contactReach-12),aim=turn(angle+Math.PI);
+      travel=windup?-4*w:impact?reach*(1-.12*p):reach*r;
+      body.rotation=windup?aim-.28*w:impact?aim+.12*p:aim*r;
+      body.scaleX=windup?1-.18*w:impact?1.08:1+.08*r;body.scaleY=windup?1+.13*w:impact?.94:1-.06*r;break;
+    }
+    case 'hell_bat': {
+      const reach=Math.max(0,contactReach-18),aim=turn(angle+Math.PI/2);
+      travel=windup?-3*w:impact?reach*(1-.08*p):reach*r;lift=windup?-4*w:impact?-2*(1-p):-2*r;
+      body.rotation=windup?aim*.7:impact?aim:aim*r;body.scaleX=windup?1+.18*w:impact?.88:1-.12*r;body.scaleY=windup?1-.08*w:impact?1.1:1+.1*r;break;
+    }
+    case 'slag_slime': {
+      const reach=Math.max(0,contactReach-16);travel=windup?-2.5*w:impact?reach:reach*r;lift=windup?2*w:impact?3*(1-p):2*r;
+      body.rotation=angle;body.scaleX=windup?1+.32*w:impact?1.2:1+.2*r;body.scaleY=windup?1-.38*w:impact?.82:1-.18*r;break;
+    }
+    case 'swamp_basilisk': {
+      const reach=Math.max(0,contactReach-13),aim=turn(angle+Math.PI);
+      travel=windup?-5*w:impact?reach*(1-.06*p):reach*r;lift=windup?-2*w:impact?1:0;
+      body.rotation=windup?aim+.22*w:impact?aim-.08*p:aim*r;body.scaleX=windup?1-.12*w:impact?1.12:1+.12*r;body.scaleY=windup?1+.18*w:impact?.9:1-.1*r;break;
+    }
+    case 'marsh_ghost': {
+      const reach=Math.max(0,contactReach-23),aim=turn(angle+Math.PI/2);
+      travel=windup?-2*w:impact?reach:reach*r;lift=windup?-7*w:impact?-1*(1-p):-r;
+      body.rotation=windup?aim*.55-.12*w:impact?aim:aim*r;body.scaleX=windup?1-.15*w:impact?.92:1-.08*r;body.scaleY=windup?1+.2*w:impact?1.08:1+.08*r;break;
+    }
+    case 'corroded_golem': {
+      const reach=Math.min(5,Math.max(0,contactReach-29));travel=windup?-1.5*w:impact?reach:reach*r;lift=windup?-2*w:impact?3*(1-p):r;
+      body.rotation=(windup?.1*w:impact?-.08:-.08*r)*(direction.x<0?-1:1);body.scaleY=windup?1+.06*w:impact?.94:1-.06*r;
+      limb.extension=windup?7-11*w:impact?contactReach-travel:(contactReach-reach)*r+7*(1-r);limb.open=windup?w:impact?1:r;break;
+    }
   }
   body.x=direction.x*travel;body.y=direction.y*travel+lift;
   return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,body,limb};
@@ -77,10 +107,12 @@ export function hostileMeleePose(actor, tick) {
 export function drawHostileMeleeLimb(c,pose,flash=false){
   if(!pose)return;
   const {family,body,limb}=pose;
-  if(!['golem','gargoyle','rust_nibbler','animated_armor'].includes(family))return;
+  if(!['golem','gargoyle','rust_nibbler','animated_armor','corroded_golem'].includes(family))return;
   c.save();c.translate(body.x,body.y-8);c.rotate(Math.atan2(pose.direction.y,pose.direction.x));
   c.lineJoin='round';c.lineCap='round';c.strokeStyle='#20272c';c.lineWidth=1.5;
-  if(family==='golem'){
+  if(family==='corroded_golem'){
+    for(const side of [-1,1]){c.save();c.translate(limb.extension-4.5,side*4.5);c.fillStyle=flash?'#fff':'#2c3e50';c.beginPath();c.roundRect(-4.5,-4.5,9,9,[2]);c.fill();c.stroke();c.strokeStyle=flash?'#fff':'#53b67a';c.lineWidth=1;c.beginPath();c.moveTo(-3,-2);c.lineTo(0,1);c.lineTo(2,-2);c.stroke();c.restore();}
+  }else if(family==='golem'){
     // One gauntlet stays braced; the punching fist is a separate stone mass.
     c.fillStyle=flash?'#fff':'#4a5568';c.save();c.translate(-3,8);c.rotate(-.25);c.beginPath();c.roundRect(-4,-4,8,9,[2]);c.fill();c.stroke();c.restore();
     const x=limb.extension-5.5;c.save();c.translate(x,0);c.rotate(limb.sweep);c.beginPath();c.roundRect(-5.5,-6,11,12,[2.5]);c.fill();c.stroke();
@@ -127,6 +159,12 @@ export function drawHostileContact(c,contact,age){
     case 'rust_nibbler':c.strokeStyle='#d59159';c.lineWidth=1.6;for(const side of [-1,1]){c.beginPath();c.moveTo(-3,side*(5+2*t));c.lineTo(1,side*2);c.lineTo(4,side*(4+2*t));c.stroke();}break;
     case 'animated_armor':c.strokeStyle='#d4e2dd';c.lineWidth=1.8;c.beginPath();c.moveTo(-5,-7);c.quadraticCurveTo(1,0,5,7);c.stroke();c.strokeStyle='#b99c6d';c.lineWidth=1;c.beginPath();c.moveTo(1,-3);c.lineTo(5,-5);c.moveTo(2,2);c.lineTo(6,3);c.stroke();break;
     case 'cursed_blade':c.strokeStyle='#b5a0cc';c.lineWidth=2;c.beginPath();c.moveTo(-5,0);c.lineTo(5,0);c.stroke();c.lineWidth=1;c.beginPath();c.moveTo(2,-4);c.lineTo(5,0);c.lineTo(2,4);c.stroke();break;
+    case 'lava_serpent':c.fillStyle='#e68837';for(let i=0;i<3;i++){c.save();c.translate(2+3*t,(i-1)*(3+2*t));c.rotate(i*.8);c.fillRect(-1,-2,2,4);c.restore();}break;
+    case 'hell_bat':c.strokeStyle='#c76d69';c.lineWidth=1.5;c.beginPath();c.moveTo(-4,-5);c.quadraticCurveTo(3,-2,4,4);c.moveTo(-1,-6);c.quadraticCurveTo(6,0,3,6);c.stroke();break;
+    case 'slag_slime':c.fillStyle='#6cbf72';c.beginPath();c.ellipse(1,0,3+2*t,2*(1-t)+1,.3,0,Math.PI*2);c.fill();c.fillStyle='#8a9590';c.save();c.translate(4,4*t);c.rotate(t);c.fillRect(-1.5,-1,3,2);c.restore();break;
+    case 'swamp_basilisk':c.strokeStyle='#b8d4a7';c.lineWidth=1.6;for(const side of [-1,1]){c.beginPath();c.moveTo(-2,side*5);c.lineTo(2,side*1.5);c.lineTo(4,side*4);c.stroke();}break;
+    case 'marsh_ghost':c.strokeStyle='#8ecabd';c.lineWidth=1.5;for(const side of [-1,1]){c.beginPath();c.moveTo(-5,side*4);c.bezierCurveTo(0,side*7,5,side*2,2,0);c.stroke();}break;
+    case 'corroded_golem':c.fillStyle='#66867b';for(const side of [-1,1]){c.save();c.translate(1+3*t,side*(3+2*t));c.rotate(side*.4+t);c.fillRect(-2,-2,4,4);c.restore();}c.strokeStyle='#7bc28d';c.lineWidth=1;c.beginPath();c.moveTo(-2,-3);c.lineTo(1,0);c.lineTo(-1,3);c.stroke();break;
     default:c.fillStyle='#f3c6ad';c.beginPath();c.arc(0,0,2.5*s+.7,0,Math.PI*2);c.fill();
   }
   c.restore();

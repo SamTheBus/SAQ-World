@@ -42,6 +42,9 @@ export { ordinaryEnemyForProfile } from '../content/ordinary_enemies.js';
 export { populationRegionAt } from './ordinary_population.js';
 import { validateOrdinaryPopulation } from '../contracts/ordinary_population.js';
 import {validateOriginHordes} from './origin_hordes_v1.js';
+import {validateOrdinaryRosterState} from './ordinary_roster_v1.js';
+import {validateOrdinaryCatalog} from './dungeon_mob_catalog_v1.js';
+import {validateHostileProjectiles} from './hostile_projectiles_v1.js';
 import { ORDINARY_ENEMIES, ORDINARY_PROFILES, ORDINARY_ACQUIRE_RANGE, ORDINARY_ACQUIRE_RANGES, ordinaryEnemyForProfile } from '../content/ordinary_enemies.js';
 import { compileBoundOverworld } from '../content/overworld_fixture_catalog.js';
 export { compileBoundOverworld } from '../content/overworld_fixture_catalog.js';
@@ -87,7 +90,7 @@ export function validateActivityCommandForState(c,s){validateActivityCommand(c);
   if(c.kind==='site.transition'){const actor=s.entitiesById[s.playersById[c.playerId].entityId],target=/^site:/.test(c.payload.siteId)?functionalSiteTransitionTargetD9(s,actor,c.payload):siteTransitionTarget(s,manifestForState(s),actor,c.payload);requireContract(target,'Site entrance unavailable: approach it and finish the current swing');}return c;}
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 export function validateActivityState(s){
-  validateWire(s);closedRecord(s,['format','protocolVersion','ticksPerSecond','tick','content','campaign','session','playersById','spacesByInstanceId','entitiesById','groupsById','primary','eventEmission','appliedCommandsById','appliedClientSequences','lastAppliedAuthorityOrder','identitySequence','overworldInstanceId','proofCase','residencyHistoryByEntityId','primaryContextsById'],['siteExitProtectionByEntityId','playerRespawnsById','encounterEconomy','subweaponCombat','d9World','eliteCombat','bossCombat']);
+  validateWire(s);closedRecord(s,['format','protocolVersion','ticksPerSecond','tick','content','campaign','session','playersById','spacesByInstanceId','entitiesById','groupsById','primary','eventEmission','appliedCommandsById','appliedClientSequences','lastAppliedAuthorityOrder','identitySequence','overworldInstanceId','proofCase','residencyHistoryByEntityId','primaryContextsById'],['siteExitProtectionByEntityId','playerRespawnsById','encounterEconomy','subweaponCombat','d9World','eliteCombat','bossCombat','hostileCombat']);
   validateCampaignTavern(s);
   const d9=Boolean(s.d9World);if(d9)validateD9Root(s.d9World);
   const d6=s.format===D6_ACTIVITY_FORMAT,legacyD4=s.format===LEGACY_D4_ACTIVITY_FORMAT,d4=d6||s.format===D4_ACTIVITY_FORMAT||legacyD4,d3=d4||s.format===D3_ACTIVITY_FORMAT;
@@ -108,7 +111,8 @@ export function validateActivityState(s){
   if(manifest.population){
     validateOrdinaryPopulation(origin,originCollision);
     if(d9)validateOriginHordes(s,origin,originCollision);
-    for(const p of [...ORDINARY_ENEMIES,...ORDINARY_PROFILES])requireContract(same(s.content.definitionsById[p.contentDefinitionId],p),'Ordinary content drift');
+    if(d9)validateOrdinaryRosterState(s);
+    validateOrdinaryCatalog(s);
   requireContract(same(Object.keys(s.groupsById).sort(),[...manifest.population.groups,...(manifest.siteInteriors??[]).flatMap(d=>d.groups)].map(g=>g.groupId).concat(functionalSitesD10(s).filter(f=>f.siteKind!=='woodland-fort').flatMap(functionalSiteGroupsD12)).sort()),'Population inventory mismatch');
     for(const g of manifest.population.groups){const live=s.groupsById[g.groupId];requireContract((live.siteId!==null||live.regionId===g.regionId)&&live.spaceInstanceId===s.overworldInstanceId&&same(live.entityIds,g.members.map(a=>a.entityId)),'Population group drift');
       for(const member of g.members){const a=s.entitiesById[member.entityId];requireContract(a?.contentDefinitionId===member.profileId&&ORDINARY_ACQUIRE_RANGES.includes(a.ai?.acquireRange),'Generated actor definition drift');}}
@@ -173,6 +177,7 @@ export function validateActivityState(s){
   if(s.playerRespawnsById!==undefined)requireContract(d3,'Respawn receipts need D3 progression');
   validatePlayerRespawns(s,manifest);
   if(d6)validateSubweaponCombat(s);else requireContract(s.subweaponCombat===undefined,'D6 combat requires version');
+  validateHostileProjectiles(s);
   return s;
 }
 export const createActivityState=s=>freezeWire(validateActivityState(s));

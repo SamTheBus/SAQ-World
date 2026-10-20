@@ -13,6 +13,7 @@ export function proceduralGroupPinnedD9(state,groupId){
  const group=state.groupsById[groupId],runtime=state.d9World.runtime,def=runtime.groups.find(g=>g.groupId===groupId);if(!group||!def)return true;
  if(group.containment&&group.containment.mode!=='guard'||group.entityIds.some(id=>state.entitiesById[id]?.ai?.melee&&state.entitiesById[id].ai.melee.phase!=='idle'))return true;
  const ids=new Set(group.entityIds),combat=state.subweaponCombat;
+ if(group.entityIds.some(id=>state.hostileCombat?.actionsByEntityId[id]?.phase&&state.hostileCombat.actionsByEntityId[id].phase!=='idle')||Object.values(state.hostileCombat?.projectiles??{}).some(b=>ids.has(b.sourceId)))return true;
  if(Object.values(combat.projectiles).some(b=>ids.has(b.intendedTargetId)||b.spaceInstanceId===group.spaceInstanceId&&group.entityIds.some(id=>{const a=state.entitiesById[id];return Math.hypot(a.position.x-b.position.x,a.position.y-b.position.y)<=b.remaining+a.hullRadius;})))return true;
  if([...Object.values(combat.effects),...Object.values(combat.controls??{})].some(e=>ids.has(e.targetId)))return true;
  for(const bucket of Object.values(combat.mastery??{}))for(const rows of Object.values(bucket))if(Object.values(rows).some(e=>ids.has(e.targetId)||e.hitIds?.some(id=>ids.has(id))||e.position&&e.spaceInstanceId===group.spaceInstanceId&&group.entityIds.some(id=>{const a=state.entitiesById[id];return Math.hypot(a.position.x-e.position.x,a.position.y-e.position.y)<=(e.radius??e.frames*8.5)+a.hullRadius;})))return true;
@@ -55,7 +56,8 @@ export function captureChunkDeltaD9(state,chunk){
    // Nested terminal reward receipts also contain physical source positions.
    for(const terminal of [...Object.values(players[p.playerId].salvaged),...Object.values(players[p.playerId].autoSalvaged)])if(terminal.reward)terminal.reward.position=encode(terminal.reward.position);
   }
-  encounters.push({group:storedGroup,economy:copyWire(state.encounterEconomy.groups[groupId]),episode:copyWire(episode),definition,actors,resources,players});
+  const hostileActions=choose(state.hostileCombat?.actionsByEntityId,(_a,id)=>entityIds.has(id));
+  encounters.push({group:storedGroup,economy:copyWire(state.encounterEconomy.groups[groupId]),episode:copyWire(episode),definition,actors,resources,players,...(Object.keys(hostileActions).length?{hostileActions}:{})});
  }
  const drops={};
  for(const p of Object.values(state.playersById)){
@@ -74,6 +76,7 @@ export function hydrateChunkDeltaD9(delta,chunk,frames){
  check(delta.version===CHUNK_DELTA_D9&&delta.chunkId===chunk.identity.id&&inChunk(delta,chunk),'Chunk delta identity mismatch');safeInteger(delta.savedTick);
  check(delta.encounters.length<=chunk.anchors.length+(chunk.compound?1:0),'Chunk encounter bound');const out=copyWire(delta),seen=new Set(),decode=p=>{validateWorldPosition(p);const local=projectToLocalFrameD9(p,frames);check(local,'Delta lies outside admitted local frame');return {x:local.x,y:local.y};};
  for(const e of out.encounters){
+  if(e.hostileActions){closedRecord(e.hostileActions,[],e.actors.map(a=>a.entityId));check(Object.values(e.hostileActions).every(a=>a.phase==='idle'),'Cold ranged action must be idle');}
   check(!seen.has(e.group.groupId),'Duplicated chunk encounter');seen.add(e.group.groupId);const anchor=chunk.anchors.find(a=>a.id===e.episode.anchorId);
   const fort=chunk.compound?.siteId&&e.group.groupId===`site:${chunk.compound.siteId}:fort-courtyard`;
   check(fort?e.group.siteId===chunk.compound.siteId&&e.group.spaceInstanceId===e.actors[0]?.residency.spaceInstanceId&&inChunk(e.episode.geography,chunk)&&e.actors.length===WOODLAND_FORT_TEMPLATE.encounter.members.length&&e.definition.members.length===e.actors.length:anchor&&e.group.groupId==='ordinary:'+anchor.id.split(':').at(-1)&&e.episode.geography.anchorOrdinal===anchor.ordinal&&inChunk(e.episode.geography,chunk)&&e.actors.length===anchor.members.length&&e.definition.members.length===anchor.members.length,'Delta encounter provenance');

@@ -205,7 +205,7 @@ export function retireSiteEpisodeAuthorityD13C1(state,groupIds,entityIds){
  state.d9World.runtime.groups=state.d9World.runtime.groups.filter(row=>!groups.has(row.groupId));state.d9World.runtime.resources=state.d9World.runtime.resources.filter(row=>!groups.has(row.groupId));
  for(const groupId of groups){delete state.groupsById[groupId];delete state.encounterEconomy.groups[groupId];delete state.d9World.episodes[groupId];delete state.d9World.paging?.coldObligations?.[groupId];}
  for(const player of Object.values(state.playersById))for(const entityId of actors)delete player.d8?.causalXp?.[entityId];
- for(const entityId of actors){delete state.entitiesById[entityId];delete state.d9World.positions?.[entityId];}
+ for(const entityId of actors){delete state.entitiesById[entityId];delete state.d9World.positions?.[entityId];if(state.hostileCombat){delete state.hostileCombat.actionsByEntityId[entityId];for(const [id,shot]of Object.entries(state.hostileCombat.projectiles))if(shot.sourceId===entityId||shot.intendedTargetId===entityId)delete state.hostileCombat.projectiles[id];}}
  state.d9World.runtime.revision++;state.encounterEconomy.revision++;
 }
 

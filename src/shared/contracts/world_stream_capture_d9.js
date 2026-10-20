@@ -24,7 +24,7 @@ export function captureWorldStreamStateD9(state,kind){
   session:copyWire(state.session),tick:state.tick,overworldInstanceId:state.overworldInstanceId,
   d9World:copyWire(state.d9World),playersById:copyWire(state.playersById),entitiesById:copyWire(state.entitiesById),
   groupsById:copyWire(state.groupsById),encounterEconomy:copyWire(state.encounterEconomy),
-  spacesByInstanceId,subweaponCombat:copyWire(state.subweaponCombat)
+  spacesByInstanceId,subweaponCombat:copyWire(state.subweaponCombat),...(state.hostileCombat?{hostileCombat:copyWire(state.hostileCombat)}:{})
  };
  // The live state already passed authority admission. Validation of this
  // private copied envelope occurs after structured clone in the Worker.
@@ -32,7 +32,7 @@ export function captureWorldStreamStateD9(state,kind){
 }
 
 export function validateWorldStreamCaptureD9(state,kind=state?.streamCapture?.kind){
- validateWire(state);closedRecord(state,['streamCapture','campaign','session','tick','overworldInstanceId','d9World','playersById','entitiesById','groupsById','encounterEconomy','spacesByInstanceId','subweaponCombat']);
+ validateWire(state);closedRecord(state,['streamCapture','campaign','session','tick','overworldInstanceId','d9World','playersById','entitiesById','groupsById','encounterEconomy','spacesByInstanceId','subweaponCombat'],['hostileCombat']);
  closedRecord(state.streamCapture,['version','kind']);check(state.streamCapture.version===WORLD_STREAM_CAPTURE_D9&&state.streamCapture.kind===kind&&KINDS.has(kind),'World stream capture version/kind');
  closedRecord(state.campaign,['campaignId','seed']);safeInteger(state.tick);check(state.session.campaignId===state.campaign.campaignId&&state.d9World&&state.spacesByInstanceId[state.overworldInstanceId],'World stream capture identity');
  check(Object.keys(state.playersById).length>=1&&Object.keys(state.playersById).length<=4,'World stream participant bound');

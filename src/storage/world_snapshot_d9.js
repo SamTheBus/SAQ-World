@@ -17,6 +17,7 @@ import {pageDigest} from './paged_world_store.js';
 import {validateId} from '../shared/contracts/identities.js';
 import {verifyRemoteGearKnowledgeD9} from './world_gear_knowledge_d9.js';
 import {readSiteBindingD9} from '../host/site_content_binding_d9.js';
+import {previousDungeonMobOriginDocument} from '../shared/contracts/dungeon_mob_catalog_v1.js';
 import {migrateLegacyFunctionalSitesD10,functionalSitesD10,functionalSiteSpaceIdsD12} from '../shared/contracts/functional_site_d9.js';
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 
@@ -31,7 +32,8 @@ export async function prepareWorldSnapshotD9(state,{sha256,previous=null,checkpo
  const pages=new Map(stagedPages.map(p=>[p.id,p]));
  const add=async value=>{const id=await pageDigest(value,sha256);pages.set(id,{id,value});return id;};
  const functionalIds=new Set([...functionalSitesD10(state).flatMap(functionalSiteSpaceIdsD12),...tavernSpaceIds(state)]),origin=worldDocument('origin',{version:'world-origin-static-d9-v1',content:copyWire(state.content),origin:copyWire(state.d9World.origin),collisions:Object.fromEntries(Object.entries(state.spacesByInstanceId).filter(([id])=>!functionalIds.has(id)).map(([id,s])=>[id,copyWire(id===state.overworldInstanceId?s.collision.origin:s.collision)]))});
- const originPage=await add(origin);check(!previous||previous.root.originPage===originPage,'Immutable historical origin changed');
+ const originPage=await add(origin);
+ if(previous&&previous.root.originPage!==originPage){const old=previousDungeonMobOriginDocument(state,origin);check(old&&await pageDigest(old,sha256)===previous.root.originPage,'Immutable historical origin changed');}
  const participantPages={};for(const [id,p] of Object.entries(state.playersById))participantPages[id]=await add(worldDocument('participant',{version:'world-participant-cut-d9-v1',player:copyWire(p)}));
  const geometry=[];for(const c of state.d9World.runtime.chunks)geometry.push({chunkX:c.chunkX,chunkY:c.chunkY,digest:c.identity.digest,contentHash:await pageDigest(c,sha256)});
  const lean=copyWire({...state,content:null,playersById:null,spacesByInstanceId:Object.fromEntries(Object.entries(state.spacesByInstanceId).map(([id,s])=>[id,{...s,collision:id===state.overworldInstanceId?{...s.collision,origin:null,pages:[]}:functionalIds.has(id)?s.collision:null}])),d9World:{...state.d9World,origin:null,runtime:{...state.d9World.runtime,chunks:[]}}});

@@ -1,0 +1,447 @@
+{
+  "pass": true,
+  "scope": "Actual old V2.2 modules construct all 35 retained sites with structural positioning and normal entry/exit. A parent bulk snapshot is published/reopened, then candidate normal save-task catalog append and safe roster adoption each commit and reopen. Structural wound/clear setup; actual normal chest and pickup commands create the protected gear receipt. No native combat or 35 sequential save-task publications claimed.",
+  "sites": 35,
+  "floors": 72,
+  "candidateDurablePublications": 2,
+  "adoptedGroups": 79,
+  "actorCount": 1872,
+  "groupCount": 87,
+  "spaceCount": 76,
+  "protected": {
+    "woundGroup": "site:site:4f56d59338391bf09150f20f6fc0a87b:ruin-small-floor-0",
+    "woundId": "ent:ed3ad09dadde6f8db820dc23786c6342",
+    "clearedSite": "site:ffe8b1fc8cecccfdb3fb9d44dd6a9aea",
+    "rewardSite": "site:800b36cde9b897db64bfa945cd595725",
+    "rewardSource": "ent:5df5e187ed58bca48498ceb59ce73352",
+    "protectedGroups": [
+      "site:site:4f56d59338391bf09150f20f6fc0a87b:ruin-small-floor-0",
+      "site:site:ffe8b1fc8cecccfdb3fb9d44dd6a9aea:fort-floor-0",
+      "site:site:800b36cde9b897db64bfa945cd595725:crypt-small-floor-0"
+    ]
+  },
+  "families": {
+    "rust_nibbler": 324,
+    "golem": 144,
+    "slime": 207,
+    "gargoyle": 418,
+    "toxic_fly": 100,
+    "corroded_golem": 87,
+    "cursed_blade": 168,
+    "marsh_ghost": 85,
+    "thorn_wyrm": 62,
+    "wyrmling": 53,
+    "animated_armor": 104,
+    "hell_bat": 8,
+    "slag_slime": 8,
+    "sprout": 50,
+    "magma_elemental": 16,
+    "lava_serpent": 8,
+    "void_orb": 16,
+    "swamp_basilisk": 7
+  },
+  "newFamiliesPresent": [
+    "thorn_wyrm",
+    "wyrmling",
+    "magma_elemental",
+    "lava_serpent",
+    "hell_bat",
+    "slag_slime",
+    "swamp_basilisk",
+    "toxic_fly",
+    "marsh_ghost",
+    "corroded_golem",
+    "void_orb"
+  ],
+  "newFamiliesAbsent": [],
+  "rows": [
+    {
+      "siteId": "site:d14106e89211e6856de651f731d9c01d",
+      "reservationId": "repeatable-slot:cave:woodland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        23
+      ],
+      "ms": 106
+    },
+    {
+      "siteId": "site:7eee18f257e1dd8e286abc31ffc936d1",
+      "reservationId": "repeatable-slot:cave:desert:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        21,
+        25
+      ],
+      "ms": 956
+    },
+    {
+      "siteId": "site:4e17e793c0cd89c98a40d4e56b2793ac",
+      "reservationId": "repeatable-slot:cave:upland:large:01",
+      "tier": "large",
+      "floors": 3,
+      "members": [
+        27,
+        29,
+        25
+      ],
+      "ms": 1624
+    },
+    {
+      "siteId": "site:d9c7701d9b9395e73e2f93278fdbf268",
+      "reservationId": "repeatable-slot:cave:tropical:deep:01",
+      "tier": "deep",
+      "floors": 4,
+      "members": [
+        28,
+        29,
+        27,
+        27
+      ],
+      "ms": 1411
+    },
+    {
+      "siteId": "site:187f55bf314156b61be3dba5aed40d01",
+      "reservationId": "repeatable-slot:cave:desert:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        23
+      ],
+      "ms": 1136
+    },
+    {
+      "siteId": "site:51e63e304f4ee8c65d9f27d2ea4ea6e3",
+      "reservationId": "repeatable-slot:cave:frostland:large:01",
+      "tier": "large",
+      "floors": 3,
+      "members": [
+        26,
+        28,
+        26
+      ],
+      "ms": 2092
+    },
+    {
+      "siteId": "site:b18cb1ff3b9b9dc5fe0f1ec018363ee8",
+      "reservationId": "repeatable-slot:cave:grassland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        23
+      ],
+      "ms": 1536
+    },
+    {
+      "siteId": "site:7121db385eb3eafd1d0de2f63b962b79",
+      "reservationId": "repeatable-slot:cave:upland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        21,
+        25
+      ],
+      "ms": 2185
+    },
+    {
+      "siteId": "site:d3c8467a6debcc243695dc42118afa16",
+      "reservationId": "repeatable-slot:cave:volcanic:deep:01",
+      "tier": "deep",
+      "floors": 4,
+      "members": [
+        27,
+        29,
+        26,
+        28
+      ],
+      "ms": 2140
+    },
+    {
+      "siteId": "site:7f2ef8e9733c98c8e4bbf16c74e83c11",
+      "reservationId": "repeatable-slot:cave:wetland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        23
+      ],
+      "ms": 1949
+    },
+    {
+      "siteId": "site:0a0d547d361f87391d8452e6f8396309",
+      "reservationId": "repeatable-slot:cave:wetland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        20,
+        18
+      ],
+      "ms": 2543
+    },
+    {
+      "siteId": "site:70f485b1862ac199814be0b2530e986a",
+      "reservationId": "repeatable-slot:cave:woodland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        21,
+        17
+      ],
+      "ms": 2994
+    },
+    {
+      "siteId": "site:ffe8b1fc8cecccfdb3fb9d44dd6a9aea",
+      "reservationId": "repeatable-slot:fort:grassland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        20
+      ],
+      "ms": 2745
+    },
+    {
+      "siteId": "site:11bfa3b7b65142fb1b16282ce202a296",
+      "reservationId": "repeatable-slot:fort:woodland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        21,
+        19
+      ],
+      "ms": 2836
+    },
+    {
+      "siteId": "site:dba6c6435b9bca6d810e5bb462e98f80",
+      "reservationId": "repeatable-slot:fort:tropical:large:01",
+      "tier": "large",
+      "floors": 3,
+      "members": [
+        27,
+        27,
+        29
+      ],
+      "ms": 3179
+    },
+    {
+      "siteId": "site:f4f18e33059ebae951c5efda7927adcd",
+      "reservationId": "repeatable-slot:fort:desert:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        20,
+        22
+      ],
+      "ms": 3370
+    },
+    {
+      "siteId": "site:008569b825d37f670bef85494852022f",
+      "reservationId": "repeatable-slot:fort:upland:deep:01",
+      "tier": "deep",
+      "floors": 4,
+      "members": [
+        29,
+        29,
+        29,
+        29
+      ],
+      "ms": 3776
+    },
+    {
+      "siteId": "site:02a269ea8794bf78db4404a2a38a323d",
+      "reservationId": "repeatable-slot:fort:upland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        21,
+        19
+      ],
+      "ms": 3628
+    },
+    {
+      "siteId": "site:0904c59ac05bc284028fc18b3029f7f3",
+      "reservationId": "repeatable-slot:fort:wetland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        21
+      ],
+      "ms": 3448
+    },
+    {
+      "siteId": "site:4f56d59338391bf09150f20f6fc0a87b",
+      "reservationId": "repeatable-slot:ruin:woodland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        21
+      ],
+      "ms": 2950
+    },
+    {
+      "siteId": "site:e0f695606062eb7a85ce00dd45b05b8a",
+      "reservationId": "repeatable-slot:ruin:upland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        22,
+        20
+      ],
+      "ms": 3277
+    },
+    {
+      "siteId": "site:4771323d4642197a072f5637cb1e7376",
+      "reservationId": "repeatable-slot:ruin:volcanic:large:01",
+      "tier": "large",
+      "floors": 3,
+      "members": [
+        29,
+        27,
+        27
+      ],
+      "ms": 3358
+    },
+    {
+      "siteId": "site:697285318a41d7cf65e88e0182d8c8cd",
+      "reservationId": "repeatable-slot:ruin:desert:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        21,
+        22
+      ],
+      "ms": 3126
+    },
+    {
+      "siteId": "site:0b4deace0faad9ece59d8e720f79da22",
+      "reservationId": "repeatable-slot:ruin:frostland:deep:01",
+      "tier": "deep",
+      "floors": 4,
+      "members": [
+        28,
+        27,
+        28,
+        27
+      ],
+      "ms": 3496
+    },
+    {
+      "siteId": "site:d08fd18faf311f7ffa05cfa8bde9aa11",
+      "reservationId": "repeatable-slot:ruin:frostland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        20,
+        19
+      ],
+      "ms": 3120
+    },
+    {
+      "siteId": "site:df07be841312306cd9aa2d6b4280f159",
+      "reservationId": "repeatable-slot:ruin:grassland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        21
+      ],
+      "ms": 3501
+    },
+    {
+      "siteId": "site:1cefe829831df323286a2462e554e4f3",
+      "reservationId": "repeatable-slot:ruin:tropical:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        21
+      ],
+      "ms": 3169
+    },
+    {
+      "siteId": "site:3efb34e4196ff2a0ef998fc7a70d3e06",
+      "reservationId": "repeatable-slot:ruin:wetland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        20
+      ],
+      "ms": 3054
+    },
+    {
+      "siteId": "site:800b36cde9b897db64bfa945cd595725",
+      "reservationId": "repeatable-slot:crypt:grassland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        21
+      ],
+      "ms": 3014
+    },
+    {
+      "siteId": "site:9de05c09fb01ec39abd41f273ac80306",
+      "reservationId": "repeatable-slot:crypt:upland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        20,
+        19
+      ],
+      "ms": 3107
+    },
+    {
+      "siteId": "site:6ec0a8b8de3eb59c3633478d2879932f",
+      "reservationId": "repeatable-slot:crypt:frostland:deep:01",
+      "tier": "deep",
+      "floors": 4,
+      "members": [
+        29,
+        29,
+        26,
+        30
+      ],
+      "ms": 3276
+    },
+    {
+      "siteId": "site:4cfe6569f91776f28741686d64ac7125",
+      "reservationId": "repeatable-slot:crypt:desert:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        21
+      ],
+      "ms": 3191
+    },
+    {
+      "siteId": "site:de6f521d5903c22f45195c330e85e6c3",
+      "reservationId": "repeatable-slot:crypt:frostland:large:01",
+      "tier": "large",
+      "floors": 3,
+      "members": [
+        28,
+        28,
+        28
+      ],
+      "ms": 3334
+    },
+    {
+      "siteId": "site:dd829cb154fad69e6c4bd1caac3a79fb",
+      "reservationId": "repeatable-slot:crypt:wetland:standard:01",
+      "tier": "standard",
+      "floors": 2,
+      "members": [
+        21,
+        22
+      ],
+      "ms": 3243
+    },
+    {
+      "siteId": "site:7fe72ebc439393ca1acd958facfe038f",
+      "reservationId": "repeatable-slot:crypt:woodland:small:01",
+      "tier": "small",
+      "floors": 1,
+      "members": [
+        21
+      ],
+      "ms": 3275
+    }
+  ],
+  "ms": 179938
+}

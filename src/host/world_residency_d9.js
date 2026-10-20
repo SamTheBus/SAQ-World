@@ -39,6 +39,11 @@ export function actorFootprintPinsD9(s){
   if(pageableHome&&chunkAddressKey(center.chunkX,center.chunkY)===pageableHome&&center.localX>=r&&center.localX<P.chunkWidth-r&&center.localY>=r&&center.localY<P.chunkHeight-r)continue;
   for(const x of [a.position.x-r,a.position.x+r])for(const y of [a.position.y-r,a.position.y+r]){const q=localFramePositionD9({x,y},w.runtime.frames),key=chunkAddressKey(q.chunkX,q.chunkY),historical=BigInt(q.chunkX)>=0n&&BigInt(q.chunkY)>=0n&&BigInt(q.chunkX)<BigInt(w.origin.width/P.chunkWidth)&&BigInt(q.chunkY)<BigInt(w.origin.height/P.chunkHeight);if(key!==pageableHome&&!historical)pinned.add(key);}
  }
+ // In-flight hostile geometry belongs to the authority window as well as its
+ // source actor; it cannot cross into a page that residency just discarded.
+ for(const b of Object.values(s.hostileCombat?.projectiles??{}))if(b.spaceInstanceId===s.overworldInstanceId){
+  for(const x of [b.position.x-b.radius,b.position.x+b.radius])for(const y of [b.position.y-b.radius,b.position.y+b.radius]){const q=localFramePositionD9({x,y},w.runtime.frames),historical=BigInt(q.chunkX)>=0n&&BigInt(q.chunkY)>=0n&&BigInt(q.chunkX)<BigInt(w.origin.width/P.chunkWidth)&&BigInt(q.chunkY)<BigInt(w.origin.height/P.chunkHeight);if(!historical)pinned.add(chunkAddressKey(q.chunkX,q.chunkY));}
+ }
  return pinned;
 }
 

@@ -1,6 +1,7 @@
 import {freezeWire,requireContract as check} from '../contracts/wire.js';
 import {ORDINARY_ENEMIES,ordinaryEnemyForProfile} from './ordinary_enemies.js';
 import {CREATURE_PRESENTATION_D11_1_VERSION,creaturePresentationD11_1} from './creature_presentation_d11_1.js';
+import {DUNGEON_MOBS_V1_METADATA,DUNGEON_MOBS_V1_VERSION,DUNGEON_MOBS_V1_SOURCE_COMMIT} from './dungeon_mobs_v1.js';
 
 export const CREATURE_BATCH_D11_VERSION='world-creature-foundation-d11-v1';
 
@@ -17,14 +18,16 @@ const added={
 };
 
 export const WORLD_CREATURES_D11=freezeWire(ORDINARY_ENEMIES.map(enemy=>{
- const meta=old[enemy.family]??added[enemy.family];check(meta&&meta.visualKey===enemy.visual,'Creature visual key mismatch');
+ const imported=DUNGEON_MOBS_V1_METADATA[enemy.family],meta=old[enemy.family]??added[enemy.family]??(imported?{...imported,visualKey:enemy.visual,sourceProvenance:enemy.source}:null);check(meta&&meta.visualKey===enemy.visual,'Creature visual key mismatch');
  const presentation=creaturePresentationD11_1(enemy.family);check(presentation,'Missing creature presentation');
- return {version:CREATURE_BATCH_D11_VERSION,presentationVersion:CREATURE_PRESENTATION_D11_1_VERSION,enemyDefinitionId:enemy.enemyDefinitionId,family:enemy.family,visualKey:meta.visualKey,name:enemy.name,
+ return {version:imported?DUNGEON_MOBS_V1_VERSION:CREATURE_BATCH_D11_VERSION,presentationVersion:CREATURE_PRESENTATION_D11_1_VERSION,enemyDefinitionId:enemy.enemyDefinitionId,family:enemy.family,visualKey:meta.visualKey,name:enemy.name,
   sourceProvenance:meta.sourceProvenance,body:{width:enemy.body.width,height:enemy.body.height,groundAnchorY:presentation.groundAnchor.y},
   collisionHull:enemy.body.hullRadius,combatHull:enemy.body.combatRadius,movement:{authority:'simpleMelee',speed:enemy.moveSpeed},
   attackTiming:{reach:enemy.attack.reach,delayTicks:enemy.attack.delayTicks,awareness:enemy.attack.awareness,stopDistance:enemy.attack.stopDistance},
   eligibility:meta.eligibility,threatCategory:meta.threatCategory,rewardCategory:meta.rewardCategory,
   presentation,
+  ...(enemy.ranged?{ranged:enemy.ranged}:{}),
+  ...(imported?{sourceCommit:DUNGEON_MOBS_V1_SOURCE_COMMIT}:{}),
   provenance:{spawn:'site-member-index + stable siteId hash',encounter:'immutable package roster + encounter groupId'}};
 }));
 

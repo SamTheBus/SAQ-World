@@ -14,7 +14,7 @@ export function startActivitySaveWorker(environment){
   const measure=(name,fn)=>{const start=environment.performance.now();try{return fn();}finally{timing(name,environment.performance.now()-start);}};
   const task=createActivitySaveTask({sha256,measure,measureAsync,storeFactory:options=>createLocalIndexedDbCampaignStore({...options,indexedDB:environment.indexedDB,databaseName,codec:activityCampaignCodec,
     observe:timing,now:()=>environment.performance.now()})});
-  const plannedAssets=createPlannedWorldAssetStore({sha256,readText:async file=>{const response=await environment.fetch(new URL('../../'+file,import.meta.url));if(!response.ok)throw new Error('Missing planned world asset');return response.text();}});
+  const plannedAssets=createPlannedWorldAssetStore({sha256,readText:async file=>{const response=await environment.fetch(new URL(file,environment.location.href));if(!response.ok)throw new Error('Missing planned world asset');return response.text();}});
   const worldTask=createWorldWorkerTaskD9({sha256,plannedAssets,store:createLocalIndexedDbCampaignStore({indexedDB:environment.indexedDB,sha256,databaseName,codec:activityCampaignCodec})});
   // Serialized work also keeps per-message timings separate if a caller posts
   // another request while hashing/IndexedDB yields.

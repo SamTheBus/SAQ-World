@@ -1,4 +1,5 @@
 import {D9_PROFILE as P} from '../content/world_profile_d9.js';
+import {ordinaryRosterDefinition} from './ordinary_roster_v1.js';
 import {projectToLocalFrameD9,localFramePositionD9} from './local_world_frames_d9.js';
 import {copyWire,requireContract as check} from './wire.js';
 import {assertNoNewActorGeometryFailureD9} from './actor_geometry_d9.js';
@@ -10,9 +11,9 @@ export function runtimeManifestD9(state,origin){
   chunks.push({chunkId:id,areaId:id,origin:{x:p.x,y:p.y},dimensions:{width:P.chunkWidth,height:P.chunkHeight},label:page.region.name,biome:page.region.biome,minimumLevel:copyWire(page.region.minimumLevel)});
   let region=regions.find(r=>r.regionId===regionId);if(!region){region={regionId,label:page.region.name,biome:page.region.biome,minimumLevel:copyWire(page.region.minimumLevel),chunkIds:[],discoveryId:regionId};regions.push(region);}region.chunkIds.push(id);
  }
- const originGroups=(origin.population?.groups??[]).map(g=>state.d9World.originHordes?.groupsById[g.groupId]?.definition??g);
- const siteInteriors=origin.siteInteriors?.map(site=>({...site,groups:site.groups.map(g=>state.d9World.originHordes?.groupsById[g.groupId]?.definition??g)}));
- const next={...origin,chunks,regions,population:{...origin.population,groups:[...originGroups,...runtime.groups]},...(siteInteriors?{siteInteriors}:{}),d9:true};
+ const originGroups=(origin.population?.groups??[]).map(g=>ordinaryRosterDefinition(state,state.d9World.originHordes?.groupsById[g.groupId]?.definition??g));
+ const siteInteriors=origin.siteInteriors?.map(site=>({...site,groups:site.groups.map(g=>ordinaryRosterDefinition(state,state.d9World.originHordes?.groupsById[g.groupId]?.definition??g))}));
+ const next={...origin,chunks,regions,population:{...origin.population,groups:[...originGroups,...runtime.groups.map(g=>ordinaryRosterDefinition(state,g))]},...(siteInteriors?{siteInteriors}:{}),d9:true};
  // Authority helpers may retain the projection identity while its bounded
  // membership changes. This is derived geometry, never a second campaign fact.
  if(cached){for(const key of Object.keys(cached.manifest))delete cached.manifest[key];Object.assign(cached.manifest,next);cached.revision=runtime.revision;}else{cached={manifest:next,revision:runtime.revision};views.set(state,cached);}return cached.manifest;
@@ -24,7 +25,7 @@ export function rebaseWorldRuntimeD9(state,newFrames){
  const changes=[];for(const a of Object.values(state.entitiesById))if(a.residency.spaceInstanceId===state.overworldInstanceId)changes.push([a,'position',project(a.position)]);
  for(const p of Object.values(state.playersById))for(const rows of [p.inventory.rewardsByEntityId,p.inventory.renewal.groundBySourceId])for(const value of Object.values(rows))if(value.spaceInstanceId===state.overworldInstanceId)changes.push([value,'position',project(value.position)]);
  for(const p of Object.values(state.playersById))for(const rows of [p.inventory.d7.salvaged,p.inventory.d7.autoSalvaged])for(const value of Object.values(rows))if(value.reward?.spaceInstanceId===state.overworldInstanceId)changes.push([value.reward,'position',project(value.reward.position)]);
- const effects=[...Object.values(state.subweaponCombat.projectiles),...Object.values(state.subweaponCombat.mastery??{}).flatMap(b=>[...Object.values(b.hazards??{}),...Object.values(b.razors??{})])];
+ const effects=[...Object.values(state.subweaponCombat.projectiles),...Object.values(state.hostileCombat?.projectiles??{}),...Object.values(state.subweaponCombat.mastery??{}).flatMap(b=>[...Object.values(b.hazards??{}),...Object.values(b.razors??{})])];
  for(const value of effects)if(value.spaceInstanceId===state.overworldInstanceId)changes.push([value,'position',project(value.position)]);
  for(const group of Object.values(state.groupsById))if(group.spaceInstanceId===state.overworldInstanceId&&group.containment){changes.push([group.containment,'homeAnchor',project(group.containment.homeAnchor)]);for(const id of Object.keys(group.containment.memberHomesById))changes.push([group.containment.memberHomesById,id,project(group.containment.memberHomesById[id])]);}
  for(const group of runtime.groups){changes.push([group,'anchor',project(group.anchor)]);for(const member of group.members)changes.push([member,'position',project(member.position)]);}

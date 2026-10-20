@@ -1,3 +1,4 @@
+import {drawOrdinaryHostileProjectile} from './ordinary_hostile_projectile_presentation.js';
 import {drawPlannedVillageGround,plannedVillageDepthItems} from './planned_village_presentation_v1.js';
 import {civilianDepthItems} from './settlement_civilians_v1.js';
 import {drawFerryLandings} from './ferry_presentation_v1.js';
@@ -103,6 +104,7 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
       ctx.fillStyle="#dce2ba";ctx.font="12px system-ui";ctx.fillText("Slime clearing",area.x-40,area.y-area.radius-10);
     }
     drawWebWeaverHazardsD12_4J(ctx,model,model.tick);drawSlagShaperHazardsD12_4K(ctx,model,model.tick);drawArachnidTreantGroundD12_5A(ctx,model,model.tick);groundItems.draw(ctx,model,time,viewport,equipmentArt);
+    for(const shot of model.hostileProjectiles??[])depthItems.push(depthItem({id:'hostile-shot/'+shot.id,anchorX:shot.position.x,anchorY:shot.position.y+4.5,draw:ctx=>drawOrdinaryHostileProjectile(ctx,shot,model.tick)}));
     const liveBolts=new Set((model.bolts??[]).map(b=>b.id));for(const id of boltOrigins.keys())if(!liveBolts.has(id))boltOrigins.delete(id);
     for(const bolt of model.bolts??[]){const source=model.entitiesById[bolt.sourceId],pose=heroPoses[bolt.sourceId];
       if(!boltOrigins.has(bolt.id)&&source&&pose){const focus=tomeFocusPosition(source,pose.facing,time,pose.primary,model.tick);boltOrigins.set(bolt.id,{x:focus.x-bolt.position.x,y:focus.y-bolt.position.y,frames:bolt.frames});}
