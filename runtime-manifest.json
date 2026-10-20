@@ -1,18 +1,19 @@
 {
-  "runtimeId": "fc99848ad64538d7",
-  "runtimeSha256": "fc99848ad64538d74d3412adaeed74351b96dee6a9c3fd02c96895d30db6e359",
-  "parentRuntimeId": "59939e7544f536fc",
-  "reviewRevision": 10,
+  "runtimeId": "01642e208e3c2496",
+  "runtimeSha256": "01642e208e3c2496a09295fa11310cd23b5be6ba77b157dd78d1acf3c6621d8f",
+  "parentRuntimeId": "fc99848ad64538d7",
+  "reviewRevision": 11,
   "changedRuntimeFiles": [
     "index.html",
     "src/client/creature_presentation_d11.js",
-    "src/client/creature_presentation_dungeon_mobs_v2a.js",
+    "src/client/creature_presentation_dungeon_mobs_v2b.js",
     "src/client/dungeon_mob_melee_presentation_v2b.js",
-    "src/client/hostile_melee_presentation.js",
     "world-cumulative-dev.html"
   ],
   "addedRuntimeFiles": [
-    "src/client/upright_attack_frame.js"
+    "src/client/creature_presentation_arthropods_v3.js",
+    "src/client/creature_presentation_clockwork_v3.js",
+    "src/client/creature_presentation_profiles_v3.js"
   ],
   "unchangedRuntimeFiles": [
     "assets/alpha-site-population-v1.json",
@@ -58,7 +59,7 @@
     "src/client/completion_art_preparation.js",
     "src/client/context_action_input.js",
     "src/client/creature_presentation_dungeon_mobs_v1.js",
-    "src/client/creature_presentation_dungeon_mobs_v2b.js",
+    "src/client/creature_presentation_dungeon_mobs_v2a.js",
     "src/client/death_presentation.js",
     "src/client/diagnostic_download_d9.js",
     "src/client/diagnostic_overlays.js",
@@ -84,6 +85,7 @@
     "src/client/generated_equipment_art.js",
     "src/client/ground_item_presentation.js",
     "src/client/hero_presentation.js",
+    "src/client/hostile_melee_presentation.js",
     "src/client/hybrid_art_binding.js",
     "src/client/hybrid_art_pilot_v1.js",
     "src/client/hybrid_art_v2.js",
@@ -128,6 +130,7 @@
     "src/client/subweapon_hud.js",
     "src/client/tavern_exterior_presentation.js",
     "src/client/tome_element_art.js",
+    "src/client/upright_attack_frame.js",
     "src/client/viewport_shell.js",
     "src/client/wallet_display.js",
     "src/client/world_browser_client.js",
@@ -1672,8 +1675,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 13122,
-      "sha256": "2f0799525ee6dec63fa072e828bd0f12b29b4cb4b79ce4e18db6096c88383604"
+      "bytes": 13533,
+      "sha256": "a3662cc4ed9152a8ca548ee7e96686ed69af86b1935661607e63e03e242d1bff"
     },
     {
       "path": "manifest.webmanifest",
@@ -1776,9 +1779,19 @@
       "sha256": "5edc5f372388cc759cb703a67d438cb94d4a0a1b7bbf0e635796cecd04b5e272"
     },
     {
+      "path": "src/client/creature_presentation_arthropods_v3.js",
+      "bytes": 4873,
+      "sha256": "034d20eacb486e9eccc7e7f6cdc89c06dc476807514c6bbb2c8ef60c9dcdf238"
+    },
+    {
+      "path": "src/client/creature_presentation_clockwork_v3.js",
+      "bytes": 9269,
+      "sha256": "f8e5aec63f8be4fdc2ffdddba7781aaebb84116ae59022197a554bdb4e8dade8"
+    },
+    {
       "path": "src/client/creature_presentation_d11.js",
-      "bytes": 32765,
-      "sha256": "2e2011573eed5b0127539e78a3589cb308e4aef6f7f87916de50780a3eaebc78"
+      "bytes": 32790,
+      "sha256": "8c32c0cfd71f21280e135fa0b6a44c9432230e23b04b42ee1a42b073d1e061ad"
     },
     {
       "path": "src/client/creature_presentation_dungeon_mobs_v1.js",
@@ -1792,8 +1805,13 @@
     },
     {
       "path": "src/client/creature_presentation_dungeon_mobs_v2b.js",
-      "bytes": 7832,
-      "sha256": "032145e1661c918629914f56bda4dc86fb1bf17d4ddeb4a9ae0c377b33b4e554"
+      "bytes": 3060,
+      "sha256": "fdaa6793beb79bfd7030d6436fa6b86f581e2b961601dcd0d6d495a411ddbe3e"
+    },
+    {
+      "path": "src/client/creature_presentation_profiles_v3.js",
+      "bytes": 1056,
+      "sha256": "f5e446c1a1009c57c7580c724eda2488ffd6a376091419125cb5099cc896c313"
     },
     {
       "path": "src/client/death_presentation.js",
@@ -1822,8 +1840,8 @@
     },
     {
       "path": "src/client/dungeon_mob_melee_presentation_v2b.js",
-      "bytes": 8034,
-      "sha256": "62f2bc620fbf421e2d63159cbef1286194356c1cc915c6947ef37bb0f5916b98"
+      "bytes": 6883,
+      "sha256": "c1e839498a969a6d63392fd67b34412c651b824ca153d3f3f9c7a8c24eb2702d"
     },
     {
       "path": "src/client/dungeon_service_style_v2.js",
@@ -9292,8 +9310,8 @@
     },
     {
       "path": "world-cumulative-dev.html",
-      "bytes": 13122,
-      "sha256": "2f0799525ee6dec63fa072e828bd0f12b29b4cb4b79ce4e18db6096c88383604"
+      "bytes": 13533,
+      "sha256": "a3662cc4ed9152a8ca548ee7e96686ed69af86b1935661607e63e03e242d1bff"
     },
     {
       "path": "world-fort-deep-v2-dev.html",

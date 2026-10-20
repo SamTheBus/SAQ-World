@@ -1,0 +1,23 @@
+{
+  "runtimeId": "01642e208e3c2496",
+  "release": "dungeon-mobs-v2-23798350e43c",
+  "focusedChecks": 99,
+  "revampedFamilies": [
+    "clockwork_scarab",
+    "temporal_watcher",
+    "clockwork_drone",
+    "star_weaver",
+    "neon_spider"
+  ],
+  "unchangedOtherFamilies": 27,
+  "unchangedRenderingTraces": 2592,
+  "attackDirections": 8,
+  "starWeaverSupportingLegs": 6,
+  "neonSpiderSupportingLegs": 8,
+  "separateFrontAnatomy": true,
+  "authoritySharedCatalogsAndSaveSource": "byte-identical",
+  "workerModulesByteIdentical": 271,
+  "workerGraphReused": true,
+  "workerImportSmokes": 2,
+  "nativeReview": "Pending live deployment inspection."
+}

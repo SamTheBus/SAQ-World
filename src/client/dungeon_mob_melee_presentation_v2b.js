@@ -1,3 +1,5 @@
+import {drawClockworkAttackV3} from './creature_presentation_clockwork_v3.js';
+import {drawArthropodAttackV3} from './creature_presentation_arthropods_v3.js';
 import {uprightAttackFrame} from './upright_attack_frame.js';
 // Contact-melee presentation for the seven ordinary brass/neon Dungeon mobs.
 // All poses are disposable; authoritative positions, timing and hit tests stay
@@ -12,11 +14,11 @@ const bodyHeights=Object.freeze({clockwork_scarab:-10.8,star_weaver:-9.36,tempor
 export const DUNGEON_MOB_CONTACT_MS_V2B=190;
 
 const uprightTuning={
- clockwork_scarab:{front:14,recoil:3,lean:-.1,hitLean:.08,squeezeX:.85,squeezeY:1.12,hitX:1.1,hitY:.92,openRest:1,openBrace:5,openHit:.4},
- star_weaver:{front:20,recoil:4,lift:-3,lean:-.12,hitLean:.1,squeezeX:.9,hitX:1.08,rest:14,drawBack:8,openBrace:1,openHit:1,sweepBrace:-.45,sweepHit:.65},
- temporal_watcher:{front:12,recoil:5,lift:-2,lean:-.08,hitLean:.1,squeezeX:.88,squeezeY:1.12,hitX:1.12,hitY:.92,openBrace:1,openHit:1},
- clockwork_drone:{front:11,recoil:3,lift:3,lean:-.18,hitLean:.1,squeezeX:.92,hitX:1.08,openBrace:1,openHit:1},
- neon_spider:{front:18,recoil:2,lean:-.1,hitLean:.1,squeezeX:.78,squeezeY:1.18,hitX:1.16,hitY:.88,rest:12,drawBack:8,openBrace:1,openHit:1,sweepBrace:-.7,sweepHit:.9},
+ clockwork_scarab:{front:18,recoil:3,lean:-.1,hitLean:.08,squeezeX:.9,squeezeY:1.08,hitX:1.06,hitY:.94,rest:17,drawBack:14,openRest:.3,openBrace:1,openHit:0},
+ star_weaver:{front:18,recoil:4,lift:-2,lean:-.1,hitLean:.08,squeezeX:.94,hitX:1.05,rest:12,drawBack:10,openRest:.25,openBrace:1,openHit:0},
+ temporal_watcher:{front:22,recoil:3,lift:-1,lean:-.08,hitLean:.1,squeezeX:.96,squeezeY:1.06,hitX:1.04,hitY:.96,openBrace:1,openHit:1},
+ clockwork_drone:{front:23,recoil:3,lift:2,lean:-.12,hitLean:.08,squeezeX:.96,hitX:1.04,rest:14,drawBack:12,openBrace:1,openHit:1},
+ neon_spider:{front:16,recoil:3,lean:-.08,hitLean:.06,squeezeX:.9,squeezeY:1.08,hitX:1.08,hitY:.94,rest:16,drawBack:13,openBrace:1,openHit:0},
  wireframe_orb:{front:14,recoil:3.5,lean:-.2,hitLean:.18,squeezeX:.82,squeezeY:1.18,hitX:1.12,hitY:.9,openBrace:1,openHit:1,sweepBrace:-.2,sweepHit:.4},
  cyber_wraith:{front:15,recoil:4,lift:-5,lean:.15,hitLean:-.08,squeezeX:.88,squeezeY:1.15,hitX:1.06,hitY:.95,rest:10,drawBack:7,openBrace:1,openHit:1,sweepBrace:-.45,sweepHit:.5}
 };
@@ -28,25 +30,16 @@ export function dungeonMobMeleePoseV2B(actor,tick){
  const centerLimit=g.mode==='clearHullGap'?g.reach+sourceRadius+targetRadius:g.reach,weaponReach=Math.max(sourceRadius,centerLimit-targetRadius),contactReach=clamp(distance-targetRadius,sourceRadius,weaponReach);
  const p=clamp((tick-phase.phaseStartedTick)/Math.max(1,phase.phaseEndsTick-phase.phaseStartedTick),0,1);
  const frame=uprightAttackFrame(uprightTuning[family],phase.phase,p,direction,contactReach);
- return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,...frame,lunge:frame.anchor,
+ return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,...frame,lunge:frame.anchor,presentationTick:tick,
   bodyPivot:{x:0,y:bodyHeights[family]*(actor.elite?.scale??1)},upright:true,disableFacingFlip:false};
 }
 
 export function drawDungeonMobMeleeLimbV2B(c,pose,flash=false){
+ if(drawClockworkAttackV3(c,pose,flash)||drawArthropodAttackV3(c,pose,flash))return true;
  if(!pose||!families.has(pose.family))return false;
  const {family,limb,lunge,bodyPivot}=pose;c.save();c.translate(lunge.x+bodyPivot.x,lunge.y+bodyPivot.y);c.rotate(Math.atan2(pose.direction.y,pose.direction.x));c.lineJoin='round';c.lineCap='round';c.strokeStyle=flash?'#fff':'#30393c';c.lineWidth=1.4;
  const tip=limb.extension;
- if(family==='clockwork_scarab'){
-  c.fillStyle=flash?'#fff':'#d8b675';for(const side of [-1,1]){const open=limb.open;c.beginPath();c.moveTo(7,side*3);c.quadraticCurveTo(tip-2,side*(open+3),tip,side*open);c.lineTo(tip-2,side*.5);c.lineTo(8,side);c.closePath();c.fill();c.stroke();}
- }else if(family==='star_weaver'||family==='neon_spider'){
-  c.strokeStyle=flash?'#fff':family==='star_weaver'?'#e6f5ff':'#ff007f';c.lineWidth=family==='star_weaver'?1.6:2;
-  for(const side of [-1,1]){c.beginPath();c.moveTo(3,side*3);c.lineTo(tip*.55,side*(7+limb.open*3));c.lineTo(tip,side*(1+limb.open*1.5));c.lineTo(tip-2,side*.5);c.stroke();}
-  if(family==='star_weaver'){c.fillStyle=flash?'#fff':'#a5dcff';for(const side of [-1,1]){c.beginPath();c.arc(tip*.55,side*(7+limb.open*3),1.7,0,Math.PI*2);c.fill();}}
- }else if(family==='temporal_watcher'){
-  c.strokeStyle=flash?'#fff':'#f0c66b';c.lineWidth=2;c.beginPath();c.arc(tip-3,0,3.5+limb.open,-1.2,1.2);c.stroke();c.strokeStyle=flash?'#fff':'#72501e';c.lineWidth=1;for(const side of [-1,1]){c.beginPath();c.moveTo(6,side*4);c.lineTo(tip-3,side*3);c.stroke();}
- }else if(family==='clockwork_drone'){
-  c.strokeStyle=flash?'#fff':'#ccb86e';c.lineWidth=2;for(const side of [-1,1]){c.beginPath();c.moveTo(2,side*4);c.lineTo(tip-3,side*(3+limb.open));c.lineTo(tip,side*2);c.stroke();}c.fillStyle=flash?'#fff':'#e38e3e';c.beginPath();c.ellipse(tip-1,0,1.5,2.5,0,0,Math.PI*2);c.fill();
- }else if(family==='wireframe_orb'){
+ if(family==='wireframe_orb'){
   // A near edge braces on contact; this is attached frame geometry, never a beam.
   c.strokeStyle=flash?'#fff':'#a3d9ff';c.lineWidth=1.6;c.beginPath();c.moveTo(tip-5,-5);c.lineTo(tip,0);c.lineTo(tip-5,5);c.stroke();
  }else{
