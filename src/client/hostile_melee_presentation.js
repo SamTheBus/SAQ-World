@@ -5,6 +5,28 @@ const smooth = x => { const p=clamp(x,0,1); return p*p*(3-2*p); };
 const turn = a => Math.atan2(Math.sin(a),Math.cos(a));
 export const HOSTILE_STRIKE_FEEDBACK_MS = 190;
 
+// Upright sprites turn by mirroring, never by rotating their heads below their
+// feet. These keyframes share endpoints so windup/strike/recovery cannot jump.
+const uprightDungeonMelee={
+  lava_serpent:{front:12,recoil:4,lift:-1,lean:-.12,hitLean:.08,squeezeX:.82,squeezeY:1.13,hitX:1.08,hitY:.94},
+  hell_bat:{front:18,recoil:3,lift:-4,lean:-.14,hitLean:.2,squeezeX:1.18,squeezeY:.92,hitX:.88,hitY:1.1},
+  slag_slime:{front:16,recoil:2.5,lift:2,lean:0,hitLean:.06,squeezeX:1.32,squeezeY:.62,hitX:1.2,hitY:.82},
+  swamp_basilisk:{front:13,recoil:5,lift:-2,lean:-.1,hitLean:.08,squeezeX:.88,squeezeY:1.18,hitX:1.12,hitY:.9},
+  marsh_ghost:{front:23,recoil:2,lift:-5,lean:-.12,hitLean:.18,squeezeX:.85,squeezeY:1.2,hitX:.92,hitY:1.08}
+};
+const mix=(a,b,t)=>a+(b-a)*t;
+function uprightMeleeBody(tuning,phase,p,direction,contactReach){
+  const reach=Math.max(0,contactReach-tuning.front),idle=[0,0,0,1,1];
+  const brace=[-tuning.recoil,tuning.lift,tuning.lean,tuning.squeezeX,tuning.squeezeY];
+  const hit=[reach,0,tuning.hitLean,tuning.hitX,tuning.hitY];
+  const from=phase==='recovery'?hit:phase==='windup'&&p<.4?idle:brace;
+  const to=phase==='recovery'?idle:phase==='windup'&&p<.4?brace:hit;
+  const blend=phase==='windup'?smooth(p<.4?p/.4:(p-.4)/.6):phase==='recovery'?smooth(p):1;
+  const [travel,lift,rotation,scaleX,scaleY]=from.map((v,i)=>mix(v,to[i],blend));
+  return {x:direction.x*travel,y:direction.y*travel+lift,rotation:rotation*direction.x,scaleX,scaleY};
+}
+
+
 // These are disposable poses, not movement, attack shapes or timing rules.
 // The near face is bounded by the same combat radii as the authoritative hit.
 export function hostileMeleePose(actor, tick) {
@@ -21,6 +43,8 @@ export function hostileMeleePose(actor, tick) {
   const p=clamp((tick-phase.phaseStartedTick)/Math.max(1,phase.phaseEndsTick-phase.phaseStartedTick),0,1);
   const windup=phase.phase==='windup',impact=phase.phase==='impact',w=windup?smooth(p):0,r=phase.phase==='recovery'?(1-p)**2:0;
   const family=actor.enemyFamily,body={x:0,y:0,rotation:0,scaleX:1,scaleY:1},limb={extension:0,sweep:0,open:0};
+  if(uprightDungeonMelee[family])return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,
+    upright:true,bodyPivot:{x:0,y:-10},body:uprightMeleeBody(uprightDungeonMelee[family],phase.phase,p,direction,contactReach),limb};
   let travel=0,lift=0;
   switch(family){
     case 'sprout': { // Pull the cap back, then jab with the head rather than slide upright.
@@ -69,31 +93,6 @@ export function hostileMeleePose(actor, tick) {
       limb.sweep=windup?-.65*side*w:impact?.4*side*p:.4*side*r;
       body.rotation=windup?aim*w+limb.sweep:impact?aim+limb.sweep:aim*r+limb.sweep;
       limb.extension=28.5;break;
-    }
-    case 'lava_serpent': {
-      const reach=Math.max(0,contactReach-12),aim=turn(angle+Math.PI);
-      travel=windup?-4*w:impact?reach*(1-.12*p):reach*r;
-      body.rotation=windup?aim-.28*w:impact?aim+.12*p:aim*r;
-      body.scaleX=windup?1-.18*w:impact?1.08:1+.08*r;body.scaleY=windup?1+.13*w:impact?.94:1-.06*r;break;
-    }
-    case 'hell_bat': {
-      const reach=Math.max(0,contactReach-18),aim=turn(angle+Math.PI/2);
-      travel=windup?-3*w:impact?reach*(1-.08*p):reach*r;lift=windup?-4*w:impact?-2*(1-p):-2*r;
-      body.rotation=windup?aim*.7:impact?aim:aim*r;body.scaleX=windup?1+.18*w:impact?.88:1-.12*r;body.scaleY=windup?1-.08*w:impact?1.1:1+.1*r;break;
-    }
-    case 'slag_slime': {
-      const reach=Math.max(0,contactReach-16);travel=windup?-2.5*w:impact?reach:reach*r;lift=windup?2*w:impact?3*(1-p):2*r;
-      body.rotation=angle;body.scaleX=windup?1+.32*w:impact?1.2:1+.2*r;body.scaleY=windup?1-.38*w:impact?.82:1-.18*r;break;
-    }
-    case 'swamp_basilisk': {
-      const reach=Math.max(0,contactReach-13),aim=turn(angle+Math.PI);
-      travel=windup?-5*w:impact?reach*(1-.06*p):reach*r;lift=windup?-2*w:impact?1:0;
-      body.rotation=windup?aim+.22*w:impact?aim-.08*p:aim*r;body.scaleX=windup?1-.12*w:impact?1.12:1+.12*r;body.scaleY=windup?1+.18*w:impact?.9:1-.1*r;break;
-    }
-    case 'marsh_ghost': {
-      const reach=Math.max(0,contactReach-23),aim=turn(angle+Math.PI/2);
-      travel=windup?-2*w:impact?reach:reach*r;lift=windup?-7*w:impact?-1*(1-p):-r;
-      body.rotation=windup?aim*.55-.12*w:impact?aim:aim*r;body.scaleX=windup?1-.15*w:impact?.92:1-.08*r;body.scaleY=windup?1+.2*w:impact?1.08:1+.08*r;break;
     }
     case 'corroded_golem': {
       const reach=Math.min(5,Math.max(0,contactReach-29));travel=windup?-1.5*w:impact?reach:reach*r;lift=windup?-2*w:impact?3*(1-p):r;

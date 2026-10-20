@@ -280,7 +280,10 @@ function draw_hell_bat(c,m,presentationTime,seed){
 
         let cx = m.x + m.w / 2;
         let cy = m.y + m.h / 2 + Math.sin(presentationTime / 110) * 3;
-        let batWing = m.familyAttack?(m.familyAttack.phase==='windup'?5+8*m.familyAttack.progress:m.familyAttack.phase==='impact'?-8:-4*(1-m.familyAttack.progress)):Math.sin(presentationTime / 70) * 11;
+        let batWing = Math.sin(presentationTime / 70) * 11;
+        if(m.familyAttack){const a=m.familyAttack,p=a.progress,launch=smooth((p-.4)/.6);
+          const wing=a.phase==='windup'?13*(1-launch)-8*launch:-8;
+          const blend=a.phase==='windup'?smooth(p/.4):a.phase==='recovery'?1-smooth(p):1;batWing+=(wing-batWing)*blend;}
         c.fillStyle = m.flashTimer > 0 ? "#ffffff" : "#1e1f26";
         c.beginPath();
         c.ellipse(cx, cy, 7, 11, 0, 0, Math.PI * 2);
@@ -319,7 +322,8 @@ function draw_hell_bat(c,m,presentationTime,seed){
 
 function draw_slag_slime(c,m,presentationTime,seed){
 
-        let squish = m.familyAttack?0:Math.sin(presentationTime / 100) * 3.5;
+        const a=m.familyAttack,blend=!a?0:a.phase==='windup'?smooth(a.progress):a.phase==='recovery'?1-smooth(a.progress):1;
+        let squish = Math.sin(presentationTime / 100) * 3.5*(1-blend);
         let wScale = m.w / 2 + squish;
         let hScale = m.h / 2 - squish;
         let cx = m.x + m.w / 2;
@@ -629,15 +633,16 @@ export function hostileRangedPose(actor,tick){
   const p=clamp((tick-r.phaseStartedTick)/Math.max(1,r.phaseEndsTick-r.phaseStartedTick),0,1),charge=r.phase==='windup'?smooth(p):0;
   const release=r.phase==='recovery'?Math.max(0,1-(tick-r.phaseStartedTick)/3):0,recovery=r.phase==='recovery'?1-p:0,angle=Math.atan2(direction.y,direction.x),family=actor.enemyFamily;
   const body={x:0,y:0,rotation:0,scaleX:1,scaleY:1};let travel=0;
+  const hold=r.phase==='windup'?charge:1-smooth(p),kick=r.phase==='recovery'?Math.sin(Math.PI*clamp((tick-r.phaseStartedTick)/4,0,1)):0;
   switch(family){
-    case 'thorn_wyrm':body.rotation=angle+Math.PI;body.scaleX=1-.16*charge+.05*release;body.scaleY=1+.12*charge;travel=-3*charge-2*release;break;
-    case 'wyrmling':body.rotation=angle+Math.PI/2;body.y=-3*charge;body.scaleY=1+.08*charge-.06*release;travel=-2*charge-3*release;break;
-    case 'magma_elemental':body.rotation=angle+Math.PI/2;body.scaleX=1+.08*charge;body.scaleY=1-.08*charge+.06*release;travel=-1*charge-4*release;break;
-    case 'toxic_fly':body.rotation=angle+Math.PI/2;body.scaleX=1+.12*charge;body.scaleY=1-.13*charge+.1*release;body.y=-2*charge;travel=-2*charge+1.5*release;break;
+    case 'thorn_wyrm':body.rotation=direction.x*(.08*hold-.04*kick);body.scaleX=1-.16*hold+.05*kick;body.scaleY=1+.12*hold;travel=-3*hold-2*kick;break;
+    case 'wyrmling':body.rotation=direction.x*(-.09*hold+.06*kick);body.y=-3*hold;body.scaleY=1+.08*hold-.06*kick;travel=-2*hold-3*kick;break;
+    case 'magma_elemental':body.rotation=direction.x*(-.06*hold+.08*kick);body.scaleX=1+.08*hold;body.scaleY=1-.08*hold+.06*kick;travel=-hold-4*kick;break;
+    case 'toxic_fly':body.rotation=direction.x*(-.12*hold+.08*kick);body.scaleX=1+.12*hold;body.scaleY=1-.13*hold+.1*kick;body.y=-2*hold;travel=-2*hold+1.5*kick;break;
     case 'void_orb':body.rotation=angle*.16+charge*.2;body.scaleX=1+.12*charge-.1*release;body.scaleY=1-.1*charge+.12*release;travel=-2*charge-2*release;break;
   }
   body.x+=direction.x*travel;body.y+=direction.y*travel;
-  return {family,ranged:true,phase:r.phase,progress:p,charge,release,recovery,direction,body,limb:{extension:0,sweep:0,open:charge}};
+  return {family,ranged:true,...(family!=='void_orb'?{upright:true,bodyPivot:{x:0,y:-10}}:{}),phase:r.phase,progress:p,charge,release,recovery,direction,body,limb:{extension:0,sweep:0,open:charge}};
 }
 
 function drawDungeonMobAnatomy(c,m,time,seed,family){

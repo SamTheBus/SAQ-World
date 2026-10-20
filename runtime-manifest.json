@@ -1,313 +1,288 @@
 {
-  "runtimeId": "a13360c63bbb53dd",
-  "runtimeSha256": "a13360c63bbb53dd497174a59182c71d8a7f97ca8adab5ebfe8286bc701facf1",
-  "parentRuntimeId": "0a5d419b11f15b2d",
-  "reviewRevision": 7,
+  "runtimeId": "2a7b198da3ce008a",
+  "runtimeSha256": "2a7b198da3ce008a0d9c9249275d11b41c1a59d3532e7126f9cd855e43348f20",
+  "parentRuntimeId": "a13360c63bbb53dd",
+  "reviewRevision": 8,
   "changedRuntimeFiles": [
     "index.html",
     "src/client/creature_presentation_d11.js",
+    "src/client/creature_presentation_dungeon_mobs_v1.js",
     "src/client/hostile_melee_presentation.js",
-    "src/host/local_endless_session_d9.js",
-    "src/host/planned_campaign_binding_v1.js",
-    "src/shared/content/creature_presentation_d11_1.js",
-    "src/shared/content/creatures_d11.js",
-    "src/shared/content/encounter_motion_d11_2.js",
-    "src/shared/content/ordinary_enemies.js",
-    "src/shared/contracts/activity_state.js",
-    "src/shared/contracts/dungeon_mob_catalog_v1.js",
-    "src/shared/contracts/encounter_economy.js",
-    "src/shared/contracts/functional_site_d9.js",
-    "src/shared/contracts/hostile_projectiles_v1.js",
-    "src/shared/contracts/planned_fort_v1.js",
-    "src/shared/contracts/planned_ruin_v1.js",
-    "src/shared/contracts/procedural_encounter_d9.js",
-    "src/shared/contracts/site_reset_d13c.js",
-    "src/shared/contracts/site_run_episode_d13b.js",
-    "src/shared/contracts/world_root_contract_d9.js",
-    "src/shared/contracts/world_runtime_d9.js",
-    "src/storage/world_snapshot_d9.js",
-    "src/storage/world_transition_d9.js",
     "world-cumulative-dev.html"
   ],
   "addedRuntimeFiles": [
-    "save-worker.dungeon-mobs-v2-67c72258e325.js",
-    "src/client/creature_presentation_dungeon_mobs_v2a.js",
-    "src/client/creature_presentation_dungeon_mobs_v2b.js",
-    "src/client/dungeon_mob_melee_presentation_v2b.js",
-    "src/shared/content/dungeon_mobs_v2.js",
-    "src/shared/contracts/dungeon_mob_catalog_v2.js",
-    "src/shared/contracts/ordinary_roster_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/entrypoints/activity_save_worker.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/host/planned_campaign_binding_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/host/site_content_binding_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/active_spaces.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/affix_range_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/alpha_population_reservations_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/alpha_population_retention_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/alpha_site_population_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/boss_review_fixture_d12_5.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/bosses_d12_5.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/constellations.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/crypt_family_runtime_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/crypt_family_runtime_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/crypt_population_v3.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_item_bases.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_item_bases_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_item_bases_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_mobs_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_mobs_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_rarity.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/economy_rewards.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/elite_affixes_d12_4.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/elite_review_fixture_d12_4.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/encounter_motion_d11_2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/equipment.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/equipment_d4_legacy.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/ferry_plan_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/forge.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/forge_material_costs.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/forge_review.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/fort_family_runtime_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/functional_site_registry_d10.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/gear_numbers_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear_d7_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear_migration.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/index.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/interior_navigation_d12_3a.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/manual_primary.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/multiroom_policy_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/oldward_wood.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/open_town_template_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/ordinary_enemies.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/overworld_fixture_catalog.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_cave_policy_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_cave_population_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_crypt_policy_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_crypt_policy_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_fort_policy_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_fort_policy_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_exterior_v3.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_exterior_v4.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_policy_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_policy_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_standard_kit_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/procedural_catalog.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/reward_modifiers.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/reward_progression.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/reward_progression_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/ruin_family_runtime_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/ruin_modular_kit_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/settlement_life_alpha_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/settlement_life_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/settlement_services_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_definition_runtime_d10.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_families_d12.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_families_d12_1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_families_d12_2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_family_runtime_d12.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_family_runtime_d12_1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_family_runtime_d12_2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/subweapons.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/tavern_interior_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/tome_profiles.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/village_template_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_cave_d10.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_cave_formations_d12_2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_cave_modules_d12_1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_fort_d10.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_region_names_d12_2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_ruin_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_sites_d11.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/workshop_gear_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_combat_retention_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_combat_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_melee_geometry.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_profile_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_runtime_policy_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/activity_state.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/actor_geometry_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/actor_residency.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/alpha_population_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/attack_haste.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/boss_combat_d12_5.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/boss_completion_reward_d12_5d.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/boss_extraction_d12_5c.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/campaign_tavern_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/checkpoint.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat_amount.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat_attribution.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat_integer.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat_integer_migration.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/commands.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/content_numeric_admission_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/d9_numeric_expression.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/dungeon_mob_catalog_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/dungeon_mob_catalog_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/economy_amount.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/elite_combat_d12_4.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/encounter_economy.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/encounter_progression.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/encounter_proof.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/endless_formula.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/episode_progression_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/ferry_travel_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/forge_economy.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/forge_stations.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/functional_site_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/gear_salvage.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/geography.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/hashing.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/hero_progression_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/history.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/hostile_projectiles_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/identities.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/integer_domain.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/large_number.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/local_world_frames_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/major_place_names.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/mastery_causality.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/mastery_combat.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/mastery_stats.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/multiplayer.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/multiroom_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/ordinary_population.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/ordinary_roster_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/ordinary_roster_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/origin_egress_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/origin_hordes_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/overworld.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/paged_collision_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/participant_progression.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/participant_progression_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_cave_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_crypt_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_crypt_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_fort_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_fort_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_ruin_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_ruin_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_inventory.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_inventory_d4_legacy.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_inventory_perf1r_legacy.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_progression.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_respawn.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_stats.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_stats_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/primary.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/procedural_encounter_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/progression_commands.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/progression_integer.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/renewable_inventory.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/rng.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/seed.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/settlement_interiors.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/settlement_services_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/settlement_workshop_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/shield_guard.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_content_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_definition_d13a.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_finale_completion_d13d.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_finale_d13d.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_interiors.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_reset_d13c.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_run_episode_d13b.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_truth_d12_4c.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/snapshot.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/state.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/subweapon_combat.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/subweapon_inventory.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/threat_power.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/threat_power_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/tome_cast.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/travel.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/versions.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/wire.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_address.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_chunk_delta_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_ground_occupancy_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_navigation_contract_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_navigation_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_paging_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_patch_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_root_contract_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_root_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_runtime_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_stream_capture_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/alpha_population_overlay_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/alpha_population_runtime_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/crypt_family_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/crypt_family_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/endless_world_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/ferry_overlay_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/fort_family_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/fort_family_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/local_shoreline_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/local_water_geometry_v3.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/multiroom_cave_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/multiroom_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/natural_clusters_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/outdoor_bridge_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_cave_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_crypt_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_crypt_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_fort_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_fort_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_ruin_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_ruin_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_town_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_village_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_world_chunks_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_world_foundation_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/ruin_family_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/ruin_family_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/ruin_groves_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/settlement_geometry_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/site_discovery_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_d12.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_d12_1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_d12_2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_placement_d12.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_placement_d12_1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_placement_d10.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_region_placement_d12_2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_fort_placement_d10.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_ruin_exterior_d11_3_2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/world_combat_packs_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/world_combat_rooms_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/world_identity_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/shared/rules/world_geometry.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/simulation/settlement_interior_transitions.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/simulation/subweapon_rules.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/activity_campaign_store.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/activity_save_task.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/campaign_store.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/campaign_store_core.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/local_indexeddb_campaign_store.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/navigation_summary_v2.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/paged_world_store.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/planned_world_assets_v1.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_cold_deadlines_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_deadlines_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_encounter_task_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_gear_knowledge_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_gear_pages_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_ground_residency_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_ground_window_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_navigation_pages_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_page_buffer_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_page_diff_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_page_publication_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_page_refs_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_residency_task_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_save_task_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_snapshot_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_transition_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_transition_pages_d9.js",
-    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_worker_task_d9.js"
+    "save-worker.dungeon-mobs-v2-a15f329ec4b4.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/entrypoints/activity_save_worker.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/host/planned_campaign_binding_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/host/site_content_binding_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/active_spaces.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/affix_range_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/alpha_population_reservations_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/alpha_population_retention_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/alpha_site_population_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/boss_review_fixture_d12_5.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/bosses_d12_5.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/constellations.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/crypt_family_runtime_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/crypt_family_runtime_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/crypt_population_v3.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_item_bases.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_item_bases_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_item_bases_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_mobs_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_mobs_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_rarity.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/economy_rewards.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/elite_affixes_d12_4.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/elite_review_fixture_d12_4.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/encounter_motion_d11_2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/equipment.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/equipment_d4_legacy.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/ferry_plan_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/forge.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/forge_material_costs.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/forge_review.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/fort_family_runtime_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/functional_site_registry_d10.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/gear_numbers_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear_d7_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear_migration.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/index.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/interior_navigation_d12_3a.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/manual_primary.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/multiroom_policy_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/oldward_wood.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/open_town_template_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/ordinary_enemies.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/overworld_fixture_catalog.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_cave_policy_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_cave_population_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_crypt_policy_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_crypt_policy_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_fort_policy_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_fort_policy_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_exterior_v3.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_exterior_v4.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_policy_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_policy_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_standard_kit_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/procedural_catalog.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/reward_modifiers.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/reward_progression.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/reward_progression_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/ruin_family_runtime_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/ruin_modular_kit_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/settlement_life_alpha_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/settlement_life_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/settlement_services_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_definition_runtime_d10.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_families_d12.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_families_d12_1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_families_d12_2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_family_runtime_d12.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_family_runtime_d12_1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_family_runtime_d12_2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/subweapons.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/tavern_interior_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/tome_profiles.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/village_template_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_cave_d10.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_cave_formations_d12_2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_cave_modules_d12_1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_fort_d10.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_region_names_d12_2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_ruin_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_sites_d11.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/workshop_gear_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_combat_retention_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_combat_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_melee_geometry.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_profile_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_runtime_policy_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/activity_state.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/actor_geometry_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/actor_residency.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/alpha_population_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/attack_haste.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/boss_combat_d12_5.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/boss_completion_reward_d12_5d.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/boss_extraction_d12_5c.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/campaign_tavern_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/checkpoint.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat_amount.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat_attribution.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat_integer.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat_integer_migration.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/commands.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/content_numeric_admission_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/d9_numeric_expression.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/dungeon_mob_catalog_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/dungeon_mob_catalog_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/economy_amount.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/elite_combat_d12_4.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/encounter_economy.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/encounter_progression.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/encounter_proof.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/endless_formula.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/episode_progression_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/ferry_travel_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/forge_economy.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/forge_stations.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/functional_site_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/gear_salvage.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/geography.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/hashing.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/hero_progression_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/history.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/hostile_projectiles_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/identities.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/integer_domain.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/large_number.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/local_world_frames_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/major_place_names.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/mastery_causality.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/mastery_combat.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/mastery_stats.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/multiplayer.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/multiroom_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/ordinary_population.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/ordinary_roster_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/ordinary_roster_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/origin_egress_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/origin_hordes_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/overworld.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/paged_collision_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/participant_progression.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/participant_progression_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_cave_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_crypt_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_crypt_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_fort_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_fort_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_ruin_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_ruin_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_inventory.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_inventory_d4_legacy.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_inventory_perf1r_legacy.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_progression.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_respawn.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_stats.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_stats_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/primary.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/procedural_encounter_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/progression_commands.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/progression_integer.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/renewable_inventory.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/rng.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/seed.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/settlement_interiors.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/settlement_services_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/settlement_workshop_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/shield_guard.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_content_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_definition_d13a.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_finale_completion_d13d.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_finale_d13d.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_interiors.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_reset_d13c.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_run_episode_d13b.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_truth_d12_4c.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/snapshot.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/state.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/subweapon_combat.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/subweapon_inventory.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/threat_power.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/threat_power_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/tome_cast.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/travel.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/versions.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/wire.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_address.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_chunk_delta_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_ground_occupancy_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_navigation_contract_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_navigation_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_paging_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_patch_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_root_contract_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_root_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_runtime_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_stream_capture_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/alpha_population_overlay_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/alpha_population_runtime_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/crypt_family_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/crypt_family_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/endless_world_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/ferry_overlay_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/fort_family_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/fort_family_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/local_shoreline_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/local_water_geometry_v3.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/multiroom_cave_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/multiroom_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/natural_clusters_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/outdoor_bridge_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_cave_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_crypt_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_crypt_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_fort_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_fort_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_ruin_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_ruin_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_town_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_village_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_world_chunks_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_world_foundation_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/ruin_family_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/ruin_family_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/ruin_groves_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/settlement_geometry_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/site_discovery_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_d12.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_d12_1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_d12_2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_placement_d12.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_placement_d12_1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_placement_d10.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_region_placement_d12_2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_fort_placement_d10.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_ruin_exterior_d11_3_2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/world_combat_packs_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/world_combat_rooms_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/world_identity_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/rules/world_geometry.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/simulation/settlement_interior_transitions.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/simulation/subweapon_rules.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/activity_campaign_store.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/activity_save_task.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/campaign_store.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/campaign_store_core.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/local_indexeddb_campaign_store.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/navigation_summary_v2.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/paged_world_store.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/planned_world_assets_v1.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_cold_deadlines_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_deadlines_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_encounter_task_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_gear_knowledge_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_gear_pages_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_ground_residency_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_ground_window_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_navigation_pages_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_page_buffer_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_page_diff_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_page_publication_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_page_refs_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_residency_task_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_save_task_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_snapshot_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_transition_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_transition_pages_d9.js",
+    "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_worker_task_d9.js"
   ],
   "unchangedRuntimeFiles": [
     "assets/alpha-site-population-v1.json",
@@ -334,6 +309,7 @@
     "assets/ruin-storybook-v1/vertical-thin-source.png",
     "manifest.webmanifest",
     "save-worker.dungeon-mobs-v1-2b383d7d04b6.js",
+    "save-worker.dungeon-mobs-v2-67c72258e325.js",
     "save-worker.js",
     "src/client/activity_save_bridge.js",
     "src/client/actor_status_presentation.js",
@@ -349,12 +325,14 @@
     "src/client/command_adapter.js",
     "src/client/completion_art_preparation.js",
     "src/client/context_action_input.js",
-    "src/client/creature_presentation_dungeon_mobs_v1.js",
+    "src/client/creature_presentation_dungeon_mobs_v2a.js",
+    "src/client/creature_presentation_dungeon_mobs_v2b.js",
     "src/client/death_presentation.js",
     "src/client/diagnostic_download_d9.js",
     "src/client/diagnostic_overlays.js",
     "src/client/diagnostic_samples.js",
     "src/client/dungeon_combat_icons.js",
+    "src/client/dungeon_mob_melee_presentation_v2b.js",
     "src/client/dungeon_service_style_v2.js",
     "src/client/economy_resource_presentation.js",
     "src/client/elite_presentation_d12_4.js",
@@ -446,8 +424,10 @@
     "src/host/identity_allocation.js",
     "src/host/local_activity_session.js",
     "src/host/local_authority_host.js",
+    "src/host/local_endless_session_d9.js",
     "src/host/local_world_session.js",
     "src/host/paged_world_authority_d9.js",
+    "src/host/planned_campaign_binding_v1.js",
     "src/host/site_content_binding_d9.js",
     "src/host/site_truth_presentation_cache.js",
     "src/host/world_client_port.js",
@@ -461,6 +441,8 @@
     "src/shared/content/boss_review_fixture_d12_5.js",
     "src/shared/content/bosses_d12_5.js",
     "src/shared/content/constellations.js",
+    "src/shared/content/creature_presentation_d11_1.js",
+    "src/shared/content/creatures_d11.js",
     "src/shared/content/crypt_family_runtime_v1.js",
     "src/shared/content/crypt_family_runtime_v2.js",
     "src/shared/content/crypt_population_v3.js",
@@ -468,10 +450,12 @@
     "src/shared/content/dungeon_item_bases_d9.js",
     "src/shared/content/dungeon_item_bases_v1.js",
     "src/shared/content/dungeon_mobs_v1.js",
+    "src/shared/content/dungeon_mobs_v2.js",
     "src/shared/content/dungeon_rarity.js",
     "src/shared/content/economy_rewards.js",
     "src/shared/content/elite_affixes_d12_4.js",
     "src/shared/content/elite_review_fixture_d12_4.js",
+    "src/shared/content/encounter_motion_d11_2.js",
     "src/shared/content/equipment.js",
     "src/shared/content/equipment_d4_legacy.js",
     "src/shared/content/ferry_plan_v1.js",
@@ -492,6 +476,7 @@
     "src/shared/content/multiroom_policy_v1.js",
     "src/shared/content/oldward_wood.js",
     "src/shared/content/open_town_template_v1.js",
+    "src/shared/content/ordinary_enemies.js",
     "src/shared/content/overworld_fixture_catalog.js",
     "src/shared/content/planned_cave_policy_v1.js",
     "src/shared/content/planned_cave_population_v2.js",
@@ -540,6 +525,7 @@
     "src/shared/content/world_profile_d9.js",
     "src/shared/content/world_runtime_policy_d9.js",
     "src/shared/contracts/activity_fixture.js",
+    "src/shared/contracts/activity_state.js",
     "src/shared/contracts/actor_geometry_d9.js",
     "src/shared/contracts/actor_residency.js",
     "src/shared/contracts/alpha_population_v1.js",
@@ -560,8 +546,11 @@
     "src/shared/contracts/commands.js",
     "src/shared/contracts/content_numeric_admission_d9.js",
     "src/shared/contracts/d9_numeric_expression.js",
+    "src/shared/contracts/dungeon_mob_catalog_v1.js",
+    "src/shared/contracts/dungeon_mob_catalog_v2.js",
     "src/shared/contracts/economy_amount.js",
     "src/shared/contracts/elite_combat_d12_4.js",
+    "src/shared/contracts/encounter_economy.js",
     "src/shared/contracts/encounter_progression.js",
     "src/shared/contracts/encounter_proof.js",
     "src/shared/contracts/endless_formula.js",
@@ -570,11 +559,13 @@
     "src/shared/contracts/ferry_travel_v1.js",
     "src/shared/contracts/forge_economy.js",
     "src/shared/contracts/forge_stations.js",
+    "src/shared/contracts/functional_site_d9.js",
     "src/shared/contracts/gear_salvage.js",
     "src/shared/contracts/geography.js",
     "src/shared/contracts/hashing.js",
     "src/shared/contracts/hero_progression_d9.js",
     "src/shared/contracts/history.js",
+    "src/shared/contracts/hostile_projectiles_v1.js",
     "src/shared/contracts/identities.js",
     "src/shared/contracts/index.js",
     "src/shared/contracts/integer_domain.js",
@@ -588,6 +579,7 @@
     "src/shared/contracts/multiroom_v1.js",
     "src/shared/contracts/ordinary_population.js",
     "src/shared/contracts/ordinary_roster_v1.js",
+    "src/shared/contracts/ordinary_roster_v2.js",
     "src/shared/contracts/origin_egress_d9.js",
     "src/shared/contracts/origin_hordes_v1.js",
     "src/shared/contracts/overworld.js",
@@ -597,7 +589,9 @@
     "src/shared/contracts/planned_cave_v1.js",
     "src/shared/contracts/planned_crypt_v1.js",
     "src/shared/contracts/planned_crypt_v2.js",
+    "src/shared/contracts/planned_fort_v1.js",
     "src/shared/contracts/planned_fort_v2.js",
+    "src/shared/contracts/planned_ruin_v1.js",
     "src/shared/contracts/planned_ruin_v2.js",
     "src/shared/contracts/player_inventory.js",
     "src/shared/contracts/player_inventory_d4_legacy.js",
@@ -607,6 +601,7 @@
     "src/shared/contracts/player_stats.js",
     "src/shared/contracts/player_stats_d9.js",
     "src/shared/contracts/primary.js",
+    "src/shared/contracts/procedural_encounter_d9.js",
     "src/shared/contracts/progression_commands.js",
     "src/shared/contracts/progression_integer.js",
     "src/shared/contracts/renewable_inventory.js",
@@ -621,6 +616,8 @@
     "src/shared/contracts/site_finale_completion_d13d.js",
     "src/shared/contracts/site_finale_d13d.js",
     "src/shared/contracts/site_interiors.js",
+    "src/shared/contracts/site_reset_d13c.js",
+    "src/shared/contracts/site_run_episode_d13b.js",
     "src/shared/contracts/site_truth_d12_4c.js",
     "src/shared/contracts/snapshot.js",
     "src/shared/contracts/stat_presentation.js",
@@ -640,7 +637,9 @@
     "src/shared/contracts/world_navigation_d9.js",
     "src/shared/contracts/world_paging_d9.js",
     "src/shared/contracts/world_patch_d9.js",
+    "src/shared/contracts/world_root_contract_d9.js",
     "src/shared/contracts/world_root_d9.js",
+    "src/shared/contracts/world_runtime_d9.js",
     "src/shared/contracts/world_stream_capture_d9.js",
     "src/shared/generation/alpha_population_overlay_v1.js",
     "src/shared/generation/alpha_population_runtime_v1.js",
@@ -739,6 +738,8 @@
     "src/storage/world_page_refs_d9.js",
     "src/storage/world_residency_task_d9.js",
     "src/storage/world_save_task_d9.js",
+    "src/storage/world_snapshot_d9.js",
+    "src/storage/world_transition_d9.js",
     "src/storage/world_transition_pages_d9.js",
     "src/storage/world_worker_task_d9.js",
     "worker/dungeon-mobs-v1-2b383d7d04b6/src/entrypoints/activity_save_worker.js",
@@ -1009,6 +1010,277 @@
     "worker/dungeon-mobs-v1-2b383d7d04b6/src/storage/world_transition_d9.js",
     "worker/dungeon-mobs-v1-2b383d7d04b6/src/storage/world_transition_pages_d9.js",
     "worker/dungeon-mobs-v1-2b383d7d04b6/src/storage/world_worker_task_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/entrypoints/activity_save_worker.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/host/planned_campaign_binding_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/host/site_content_binding_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/active_spaces.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/affix_range_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/alpha_population_reservations_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/alpha_population_retention_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/alpha_site_population_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/boss_review_fixture_d12_5.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/bosses_d12_5.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/constellations.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/crypt_family_runtime_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/crypt_family_runtime_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/crypt_population_v3.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_item_bases.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_item_bases_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_item_bases_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_mobs_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_mobs_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/dungeon_rarity.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/economy_rewards.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/elite_affixes_d12_4.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/elite_review_fixture_d12_4.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/encounter_motion_d11_2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/equipment.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/equipment_d4_legacy.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/ferry_plan_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/forge.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/forge_material_costs.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/forge_review.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/fort_family_runtime_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/functional_site_registry_d10.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/gear_numbers_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear_d7_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear_migration.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/generated_gear_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/index.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/interior_navigation_d12_3a.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/manual_primary.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/multiroom_policy_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/oldward_wood.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/open_town_template_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/ordinary_enemies.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/overworld_fixture_catalog.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_cave_policy_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_cave_population_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_crypt_policy_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_crypt_policy_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_fort_policy_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_fort_policy_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_exterior_v3.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_exterior_v4.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_policy_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_policy_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/planned_ruin_standard_kit_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/procedural_catalog.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/reward_modifiers.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/reward_progression.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/reward_progression_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/ruin_family_runtime_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/ruin_modular_kit_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/settlement_life_alpha_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/settlement_life_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/settlement_services_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_definition_runtime_d10.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_families_d12.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_families_d12_1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_families_d12_2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_family_runtime_d12.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_family_runtime_d12_1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/site_family_runtime_d12_2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/subweapons.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/tavern_interior_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/tome_profiles.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/village_template_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_cave_d10.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_cave_formations_d12_2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_cave_modules_d12_1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_fort_d10.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_region_names_d12_2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_ruin_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/woodland_sites_d11.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/workshop_gear_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_combat_retention_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_combat_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_melee_geometry.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_profile_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/content/world_runtime_policy_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/activity_state.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/actor_geometry_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/actor_residency.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/alpha_population_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/attack_haste.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/boss_combat_d12_5.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/boss_completion_reward_d12_5d.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/boss_extraction_d12_5c.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/campaign_tavern_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/checkpoint.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat_amount.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat_attribution.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat_integer.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/combat_integer_migration.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/commands.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/content_numeric_admission_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/d9_numeric_expression.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/dungeon_mob_catalog_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/dungeon_mob_catalog_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/economy_amount.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/elite_combat_d12_4.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/encounter_economy.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/encounter_progression.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/encounter_proof.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/endless_formula.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/episode_progression_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/ferry_travel_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/forge_economy.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/forge_stations.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/functional_site_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/gear_salvage.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/geography.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/hashing.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/hero_progression_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/history.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/hostile_projectiles_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/identities.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/integer_domain.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/large_number.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/local_world_frames_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/major_place_names.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/mastery_causality.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/mastery_combat.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/mastery_stats.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/multiplayer.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/multiroom_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/ordinary_population.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/ordinary_roster_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/ordinary_roster_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/origin_egress_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/origin_hordes_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/overworld.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/paged_collision_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/participant_progression.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/participant_progression_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_cave_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_crypt_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_crypt_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_fort_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_fort_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_ruin_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/planned_ruin_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_inventory.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_inventory_d4_legacy.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_inventory_perf1r_legacy.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_progression.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_respawn.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_stats.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/player_stats_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/primary.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/procedural_encounter_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/progression_commands.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/progression_integer.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/renewable_inventory.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/rng.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/seed.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/settlement_interiors.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/settlement_services_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/settlement_workshop_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/shield_guard.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_content_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_definition_d13a.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_finale_completion_d13d.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_finale_d13d.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_interiors.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_reset_d13c.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_run_episode_d13b.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/site_truth_d12_4c.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/snapshot.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/state.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/subweapon_combat.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/subweapon_inventory.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/threat_power.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/threat_power_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/tome_cast.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/travel.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/versions.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/wire.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_address.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_chunk_delta_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_ground_occupancy_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_navigation_contract_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_navigation_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_paging_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_patch_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_root_contract_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_root_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_runtime_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/contracts/world_stream_capture_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/alpha_population_overlay_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/alpha_population_runtime_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/crypt_family_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/crypt_family_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/endless_world_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/ferry_overlay_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/fort_family_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/fort_family_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/local_shoreline_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/local_water_geometry_v3.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/multiroom_cave_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/multiroom_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/natural_clusters_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/outdoor_bridge_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_cave_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_crypt_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_crypt_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_fort_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_fort_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_ruin_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_ruin_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_town_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_village_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_world_chunks_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/planned_world_foundation_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/ruin_family_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/ruin_family_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/ruin_groves_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/settlement_geometry_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/site_discovery_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_d12.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_d12_1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_d12_2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_placement_d12.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_family_placement_d12_1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_placement_d10.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_cave_region_placement_d12_2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_fort_placement_d10.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/woodland_ruin_exterior_d11_3_2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/world_combat_packs_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/world_combat_rooms_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/generation/world_identity_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/shared/rules/world_geometry.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/simulation/settlement_interior_transitions.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/simulation/subweapon_rules.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/activity_campaign_store.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/activity_save_task.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/campaign_store.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/campaign_store_core.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/local_indexeddb_campaign_store.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/navigation_summary_v2.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/paged_world_store.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/planned_world_assets_v1.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_cold_deadlines_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_deadlines_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_encounter_task_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_gear_knowledge_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_gear_pages_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_ground_residency_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_ground_window_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_navigation_pages_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_page_buffer_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_page_diff_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_page_publication_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_page_refs_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_residency_task_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_save_task_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_snapshot_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_transition_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_transition_pages_d9.js",
+    "worker/dungeon-mobs-v2-67c72258e325/src/storage/world_worker_task_d9.js",
     "world-crypt-large-v2-dev.html",
     "world-fort-deep-v2-dev.html",
     "world-ruin-deep-v2-dev.html",
@@ -1128,7 +1400,7 @@
     {
       "path": "index.html",
       "bytes": 13013,
-      "sha256": "57860a995018aa9e402831e50e738bc061d8a77a745fce924694637ff4c3f345"
+      "sha256": "8554140bdea0e7841aa9c6a46e8193aeca3b60d7a10d600a520a5351eb957ef3"
     },
     {
       "path": "manifest.webmanifest",
@@ -1144,6 +1416,11 @@
       "path": "save-worker.dungeon-mobs-v2-67c72258e325.js",
       "bytes": 140,
       "sha256": "efc1dc12a11ecf5ee58aff6ce688622957c125b17eaec1379b46f78899ffa00a"
+    },
+    {
+      "path": "save-worker.dungeon-mobs-v2-a15f329ec4b4.js",
+      "bytes": 140,
+      "sha256": "bfde92384a10d797684cb27fab8863d8ca584591ee224bdda52c62d257b647b2"
     },
     {
       "path": "save-worker.js",
@@ -1222,13 +1499,13 @@
     },
     {
       "path": "src/client/creature_presentation_d11.js",
-      "bytes": 32440,
-      "sha256": "956abba09350c17743b51cb527ab894e577a5ac0d52a526bc675d86f74af5a26"
+      "bytes": 32596,
+      "sha256": "eb28245d65f55850999576e3d7bf3cbc2759e0dcc54725589b78068ec988341d"
     },
     {
       "path": "src/client/creature_presentation_dungeon_mobs_v1.js",
-      "bytes": 25504,
-      "sha256": "701d60a98080e6e9a8d46e5e37787626a828a8e182d22ffe993375a0e8aebc93"
+      "bytes": 25975,
+      "sha256": "348ad066262d2ba6aec1036a7ac92af4b7effe4a176246a6a8ec42d0dea9aa07"
     },
     {
       "path": "src/client/creature_presentation_dungeon_mobs_v2a.js",
@@ -1372,8 +1649,8 @@
     },
     {
       "path": "src/client/hostile_melee_presentation.js",
-      "bytes": 14660,
-      "sha256": "bb87ed7cd3094a533a244548ca95221880af751c3dc76f6a485b891a91221baf"
+      "bytes": 14771,
+      "sha256": "db607b14ac9fad67eb51f8eb614944af42fa45bd2170d1b800c9b42845c35d18"
     },
     {
       "path": "src/client/hybrid_art_binding.js",
@@ -6016,6 +6293,1361 @@
       "sha256": "ef893e1518038d7012ae767b60c840842160f0aa46216658a75ea2f6cb6fcc5f"
     },
     {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/entrypoints/activity_save_worker.js",
+      "bytes": 5174,
+      "sha256": "590695b9d73efc46751ba9a6577681e03f134c9cea1499ce20d27b1671b05217"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/host/planned_campaign_binding_v1.js",
+      "bytes": 4957,
+      "sha256": "43c2ee189809eb9de60b09d40b443e37d720060eaed113b08b2df162460ef801"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/host/site_content_binding_d9.js",
+      "bytes": 14039,
+      "sha256": "6781b242684347c082fcac7b59d6cb631aef7b53e1d00793aae7d86e5c8faa92"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/active_spaces.js",
+      "bytes": 1453,
+      "sha256": "c2e1a7ba37d93a3afe171a1b3767cd482d2b93cc7d7d7407cafe6e409a014300"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/affix_range_d9.js",
+      "bytes": 2241,
+      "sha256": "a725a7c6c05e89e863457410de0fba7543d6604037c0c1f953558a4a35782657"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/alpha_population_reservations_v1.js",
+      "bytes": 99492,
+      "sha256": "6497505ae46497d86cfc44a88211d7fa3a48142060f77e16dd627f606d23218e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/alpha_population_retention_v1.js",
+      "bytes": 1965,
+      "sha256": "0d9c17e6f932073a2a8365e6b2241331de3ef3f1140472bdb31079828cb37215"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/alpha_site_population_v1.js",
+      "bytes": 13181,
+      "sha256": "aceec7dc65cbbfcd389d713ec6e624ae5899241a130ae2087d3fe786f5210e32"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/boss_review_fixture_d12_5.js",
+      "bytes": 2108,
+      "sha256": "4722d937c133ebae1aa0611eb4bb2986d3b5d1fb075f977b084ea1dc4d04da72"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/bosses_d12_5.js",
+      "bytes": 1453,
+      "sha256": "ca44c50c023c244159481215aee3c9268244594eae2d689e831b8ba30e1091fd"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/constellations.js",
+      "bytes": 21390,
+      "sha256": "a3a20c039261d28df3d2e15acf2d981cb50ee009425b42f8f15a1484482da89a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/crypt_family_runtime_v1.js",
+      "bytes": 914,
+      "sha256": "5e04b75563fb7a0191de856f1763b8aa93aca6af1e5be9408c63f22729ea7842"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/crypt_family_runtime_v2.js",
+      "bytes": 1798,
+      "sha256": "5b81d488d8ea49957a7e55f4b839896ca69f1dfb2616095c4cc59cd68c666e47"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/crypt_population_v3.js",
+      "bytes": 1703,
+      "sha256": "d1cc687a2c21ad8d33cb538448213cb910f113b94e5bfa91354dc88e84ac6ae6"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_item_bases.js",
+      "bytes": 13814,
+      "sha256": "b8a5728f5786eb46100297fc2ea1919a9eb449c3e6b94762e65041864197795e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_item_bases_d9.js",
+      "bytes": 14694,
+      "sha256": "a6c43b6a301d4020353b0484d550db55b948c022899aa9e53eb23f4760c81ddc"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_item_bases_v1.js",
+      "bytes": 13708,
+      "sha256": "f63ac005e1c1dbe7c4d8bf2dbae26ff305157c73d07fece96d343ff33a1e9db7"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_mobs_v1.js",
+      "bytes": 4138,
+      "sha256": "4677bae9903ece76c5bfeb770d6ce9749941ee964d73bc2412fb88a2bcd18263"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_mobs_v2.js",
+      "bytes": 4833,
+      "sha256": "28c2f5eef5dc4f7c0e959fa89ed27ef329e5366ac5e7f5f288a40c287b089b70"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/dungeon_rarity.js",
+      "bytes": 5195,
+      "sha256": "4b085a2764d8b26cc759b0af5738000bee917743bd8936cda35998b03f79251c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/economy_rewards.js",
+      "bytes": 6265,
+      "sha256": "72b3488599df39f5482391626c5ed095cda098ccdc59501d12fef008ad82ed03"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/elite_affixes_d12_4.js",
+      "bytes": 6731,
+      "sha256": "73f1c1c9b10f1553f0eb3c7c02d02ed7ef2c6453f9f906a8a849eaa4cfadcab9"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/elite_review_fixture_d12_4.js",
+      "bytes": 14533,
+      "sha256": "8d686d1f1f99d198cc717783711db8f44327741e5ecd515f314592b41d9723f3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/encounter_motion_d11_2.js",
+      "bytes": 1416,
+      "sha256": "e6821c0de489c3f2170814d659877fab9a8bbae9e2cf1d9cfc5cd990736c440f"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/equipment.js",
+      "bytes": 4751,
+      "sha256": "0f945b8aff8f174093afca92d11ebc10cde404ec04fa75952934b0d00301cf64"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/equipment_d4_legacy.js",
+      "bytes": 1278,
+      "sha256": "a61ea6510f95e5b1c9fb44df45385f3e771f3b5fcedd6c10e5d68b46d29a5f17"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/ferry_plan_v1.js",
+      "bytes": 12721,
+      "sha256": "f1cc55ab21d728e76535680f7aebfbc365047ee3dc866e1f1be1ed4078791bbd"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/forge.js",
+      "bytes": 2994,
+      "sha256": "ece62de2fbd13c8ee260b179409665775e5a33011ecb98906ec170edba8a8ba8"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/forge_material_costs.js",
+      "bytes": 5805,
+      "sha256": "48f2ee4940d4cb25f71c1de03d444ce2bd7f968f893dc124d562a7a64897087e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/forge_review.js",
+      "bytes": 253,
+      "sha256": "d64e66b9d200518e3ab4de9545f8292406b021b0243551b0c1dd8d12e0a32c4d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/fort_family_runtime_v1.js",
+      "bytes": 7488,
+      "sha256": "f0e055af6617b773d5bf4bbc0f6c8a7bb35c35626e5614a4e971bc3686e31f70"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/functional_site_registry_d10.js",
+      "bytes": 3013,
+      "sha256": "1e372e4dcdf9f06f2e10d9c7e4e0f22d264696cc97a34bdb93383de0b2a53bbc"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/gear_numbers_d9.js",
+      "bytes": 2024,
+      "sha256": "03c73148ae35bff8e94eb20ab34335c98a0901d4ecd3d34e05b1cca0701ae097"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear.js",
+      "bytes": 10628,
+      "sha256": "894e3fcbccd50696977e3a14ffca878551dfa10114095cdafd9671ed454ac33c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear_d7_v2.js",
+      "bytes": 7962,
+      "sha256": "433d51baf94e44fd332c3173753d1565b04ba6a92b5fb26b1ab8cdfa195651dc"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear_d9.js",
+      "bytes": 9501,
+      "sha256": "1cc394ed56439d9b30b0985f81ffe3c38565f549c87517ab4de49191dd31e73e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear_migration.js",
+      "bytes": 1611,
+      "sha256": "c92e80b6dbfb521609ac6b7ac1b36db2455dc02ab67c43a6d10f53877465a6ce"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/generated_gear_v1.js",
+      "bytes": 7076,
+      "sha256": "739c987707a1fbcb9ea50c313e0125d68eb88f934251e4cccf97242bdeec4520"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/index.js",
+      "bytes": 7547,
+      "sha256": "0cf1fce373123a8fda445eaf98c84449e9e3321a39d7463d727cd211f923a88f"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/interior_navigation_d12_3a.js",
+      "bytes": 1108,
+      "sha256": "8832562b7b3d2940b320d41cd10560b2e1de3cf58f20e5fc2b91091f5f5534fd"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/manual_primary.js",
+      "bytes": 1065,
+      "sha256": "0884788d23355874e1ea38414256689edc148d45e31587b09004bd686e6ca088"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/multiroom_policy_v1.js",
+      "bytes": 1361,
+      "sha256": "8a77167ff0b0e4d9e6ac2ed7219cb45c117302738ba7ee7a65b3b170728af5c4"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/oldward_wood.js",
+      "bytes": 10887,
+      "sha256": "8ea2e874d60e9f274db57ae4536451178318dca2946b02def829306d7740ccd3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/open_town_template_v1.js",
+      "bytes": 19967,
+      "sha256": "8bec5669e4d7de769001437461c09eb3db27ee00fc482ddec93948ccf0fcc2a1"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/ordinary_enemies.js",
+      "bytes": 6815,
+      "sha256": "acc513674cc28e1740b280c3644685cd7d6b3066ddfde3fcc09756eaed10e474"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/overworld_fixture_catalog.js",
+      "bytes": 1410,
+      "sha256": "928a63cbbc5b4c373a28802e0a3bb78e4e3bb4d56ddbf8aebcc271e2828a534d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_cave_policy_v1.js",
+      "bytes": 510,
+      "sha256": "425e942601be583c069b6caf95453cf44b450a15f75a794e04f53579cc66027c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_cave_population_v2.js",
+      "bytes": 2380,
+      "sha256": "663270de615804d2f880866d6d6be8878bb0bce37f487af992e08d3929c86509"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_crypt_policy_v1.js",
+      "bytes": 1796,
+      "sha256": "7f8f294abe57d32ff95916519bf6fbeb0d1f7b1a07b6b9d84cc6c0d78ce9e8d4"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_crypt_policy_v2.js",
+      "bytes": 2746,
+      "sha256": "781d48a4ac2fe9fbbdfd382faa9b857783cea58c18ec44f95e4619d5d49e6005"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_fort_policy_v1.js",
+      "bytes": 3239,
+      "sha256": "5c64ded65c1b29ac2945f29fb6aa9f82f51a376ab8370e952fac8fae259d3e1e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_fort_policy_v2.js",
+      "bytes": 1839,
+      "sha256": "9f05d22b6b37f91b11e977f4dddb1e8cd4547aa63b6580f9409f8f853629ddbc"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_exterior_v3.js",
+      "bytes": 923,
+      "sha256": "78616d78d9c40966ff37983965cc85b2708fcca9d79bc966db4f30d42f76d4e3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_exterior_v4.js",
+      "bytes": 1001,
+      "sha256": "c554e27d7b4aee7865b6e373c2c0431b21f1f74a3cb252693c253b3faa7da139"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_policy_v1.js",
+      "bytes": 2610,
+      "sha256": "278d29e6f91967c2309c4614e2caff7c7d0df9873b719f253347635acfc011a3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_policy_v2.js",
+      "bytes": 2947,
+      "sha256": "6225c18eaddef92db98a0afb46294a33f3522994c42160dde1e351058af2bedb"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/planned_ruin_standard_kit_v1.js",
+      "bytes": 240,
+      "sha256": "bd102b9b55e85f9f251cdf7d044f696603bcaa16f15133695eef4814dba99edf"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/procedural_catalog.js",
+      "bytes": 2331,
+      "sha256": "4dbdc1925ba9c1a2cf06a972c48bd8544334c7b7e3007fe0509be0bed2492bf9"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/reward_modifiers.js",
+      "bytes": 702,
+      "sha256": "254f63bef085d60e81036af0e34784f98a6be2ae4e78899a62227e729a3ebccb"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/reward_progression.js",
+      "bytes": 1765,
+      "sha256": "14fcdb590aa4c66a984d8d779a8c2a6b4e4dcafedfb4388ada55097eac227050"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/reward_progression_d9.js",
+      "bytes": 1674,
+      "sha256": "c1948cceb3bbb18bad27006ed62f7bb40feb12621ea627cc6eb2129478e81e29"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/ruin_family_runtime_v1.js",
+      "bytes": 7032,
+      "sha256": "c5e46dd1ce705df1c882f7706057fd75cc537a757c7b27d7352b29d32f2eab62"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/ruin_modular_kit_v1.js",
+      "bytes": 2148,
+      "sha256": "b5049125119e11053983a4e00686a16866b0d48026195e8c15e4177c401d170b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/settlement_life_alpha_v1.js",
+      "bytes": 1590,
+      "sha256": "74cbdbdfb149c27862cb91c7e16b7474116ab80bc4c1b6affcc5544ef06e0cbb"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/settlement_life_v1.js",
+      "bytes": 2114,
+      "sha256": "35834646a028778e4335fe2b615c8ec71bc026d172287a123821aafac7a923dc"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/settlement_services_v2.js",
+      "bytes": 2262,
+      "sha256": "a90e1a3be282c07dd38c5c7dab5979ca032ab8c2a14923ed52d8b03b9d994dca"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_definition_runtime_d10.js",
+      "bytes": 10908,
+      "sha256": "dd93d34b002e55fc09da3cc3121438fba2a6d195d52e8c81d4765f2a97239465"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_families_d12.js",
+      "bytes": 2468,
+      "sha256": "afff1cc2c1b7b31a48ac64451565a86c532262cd3b5dada15573c3b651c657f1"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_families_d12_1.js",
+      "bytes": 2415,
+      "sha256": "f9e1a8a8b8c5aab11541ac80f13355854062441cbd972bd5426c5f150c55653e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_families_d12_2.js",
+      "bytes": 2706,
+      "sha256": "1ff46e860be8b5a3ef1581ad3edd6f4ae697fcfe19e960cbc76c6ab57d14c0c9"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_family_runtime_d12.js",
+      "bytes": 8338,
+      "sha256": "3f6a5ce879b7702caa48d9bf2bcee7ccc28ead1d394754a7af3a386f7b1eec62"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_family_runtime_d12_1.js",
+      "bytes": 8544,
+      "sha256": "85bda8c86d8f36a89f073cbf85bf08e637e765430f92c96de205544d906dd570"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/site_family_runtime_d12_2.js",
+      "bytes": 15373,
+      "sha256": "6df531b57b27d1e6671df18cb135e33ade1fcd30d87e87d90fe340389adbeed2"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/subweapons.js",
+      "bytes": 1011,
+      "sha256": "d3b08bdbf32e2463f593fa898dd0d6c6268930eab820f23591da25e5b734ca9f"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/tavern_interior_v1.js",
+      "bytes": 2512,
+      "sha256": "7e20e65630782ccec906caba7bbb1961443f1bdd6598b3ac871aaf4e1bb34dfb"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/tome_profiles.js",
+      "bytes": 1950,
+      "sha256": "a177fbc2f3d64f7d5b4d8580cdaeee62ada6dd50f82e9233d97d8b29450456bc"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/village_template_v1.js",
+      "bytes": 8150,
+      "sha256": "66427a4afbbde5ccb9f8c07084f7c32597b5053504bf2b73d77e1fb9f024981b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_cave_d10.js",
+      "bytes": 4562,
+      "sha256": "8b9629e7d7300579c4e4ace013b6297307c4bf7ffd99c4bb0d66855dca13da3a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_cave_formations_d12_2.js",
+      "bytes": 6445,
+      "sha256": "b30eab82a09e9537377ae2b6562560754af4b21c2906032c5a379854c99c6cf5"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_cave_modules_d12_1.js",
+      "bytes": 4329,
+      "sha256": "708d808857bb72239b551f5493438d25d6bdefa6cc0c173f06edc88f98b782c1"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_fort_d10.js",
+      "bytes": 7966,
+      "sha256": "a808b43640b8c565d5b0355bc6bb88c1f834776e0cc453c1cc26d86798d53284"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_region_names_d12_2.js",
+      "bytes": 771,
+      "sha256": "9f41cfb45ac68bb3f629b280ffec8a1421691e2968c6cedec65746a917cfeb06"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_ruin_d9.js",
+      "bytes": 7209,
+      "sha256": "438fd21dde8272bb78847ad51a5f91aa31461e8bc1e67a0b3e74dd04a567c9e3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/woodland_sites_d11.js",
+      "bytes": 8762,
+      "sha256": "e2e342a551cdc98057595ab392369081389c2316cf4cfee5444d6dc9978c365d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/workshop_gear_v2.js",
+      "bytes": 7196,
+      "sha256": "bb9e71edf5d3b598dd3e5372050b42c702b280477c69a7e2c3b574af3ddbec3d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_combat_retention_v1.js",
+      "bytes": 1391,
+      "sha256": "0dd86ac8d64edbb91fe12288ca95d9e8e08ce696f8b1675ccc58a18387452f97"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_combat_v1.js",
+      "bytes": 6583,
+      "sha256": "ff52e72495c47b9919679beaf03c22bebf6ae15a18a3e084ed76a345ebc52afc"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_melee_geometry.js",
+      "bytes": 739,
+      "sha256": "a143fe2ebafca6087cfb5a19a11330e7e8d92422a4d911ea574a8ace4d80120a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_profile_d9.js",
+      "bytes": 798,
+      "sha256": "0b32fdcb8fbc00600d676f2b7e47beca249c6b9c5e848999d0984247363509a3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/content/world_runtime_policy_d9.js",
+      "bytes": 737,
+      "sha256": "543bf8e67c71eb31e04fb5449b2b424fe5bd681cdbc28672b3c105d350c508ec"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/activity_state.js",
+      "bytes": 34667,
+      "sha256": "74bd61c581163aee872eee2aaa2381f00488eb5d46da892fafded725bb1e7099"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/actor_geometry_d9.js",
+      "bytes": 5021,
+      "sha256": "8dda27b46d4f70348f8c88ed5369a86a906bdca2617586be1acb8592014211e0"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/actor_residency.js",
+      "bytes": 660,
+      "sha256": "4f4739aafcea4e20942042cf545f90fcd05dcbc2ba9d28871f74d3e4b6844897"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/alpha_population_v1.js",
+      "bytes": 2311,
+      "sha256": "1aaeee17c7763598b7bfac216885801a8c5d5aee69a5710d1f5a4b90b0be0b0e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/attack_haste.js",
+      "bytes": 1397,
+      "sha256": "0f9410cf3293e5fee97342862942ea47c4fcfbbf2017d334651aad988c922cab"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/boss_combat_d12_5.js",
+      "bytes": 11896,
+      "sha256": "4c4a2c0af88c2665813320bf54aa66e4eefb6ccfa8886fa850aa0228d6a95f20"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/boss_completion_reward_d12_5d.js",
+      "bytes": 1788,
+      "sha256": "1cac39f0e78c9e4f0f010b3cc5602cfa9c0bc56d8d5ac5d6209e49f8018bcc73"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/boss_extraction_d12_5c.js",
+      "bytes": 2602,
+      "sha256": "8ce43a7e5e3b5c820681a8a02dd47e47cf707dfcadcccbd101b68c9ee89ebd3d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/campaign_tavern_v1.js",
+      "bytes": 6683,
+      "sha256": "09e0a80fb639efb8206c7170b0049906751120032aec055446c6b4ecc9430cee"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/checkpoint.js",
+      "bytes": 22964,
+      "sha256": "2b410d37724d1515cc0a16afa7615957f8437bb0fb6b7e1d7747ddbabb378a48"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat.js",
+      "bytes": 2185,
+      "sha256": "7b4dc580a1118249586bc689da54fee89d143d0e2a18663743686a517908360e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat_amount.js",
+      "bytes": 3530,
+      "sha256": "044f64a39ce9508c0a6b424c198b486c18cacad562fe154139170b032cf44f74"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat_attribution.js",
+      "bytes": 1017,
+      "sha256": "0afa63ebc1ce543e05e67c04b4b3278e5bd46c5db7ce668d558b11fdfb2ecd41"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat_integer.js",
+      "bytes": 2286,
+      "sha256": "13e733640b5e93068188d2d8eb55c6eae76f9f95a60525cb340ed70513c97c8d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/combat_integer_migration.js",
+      "bytes": 1812,
+      "sha256": "6f2fa9f16ba76cb61ac0d72b24d97bd70191bbf193cda1f683b94ebd39263ce9"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/commands.js",
+      "bytes": 10304,
+      "sha256": "3929e6ebd1c3a04faf2e9bf9d54e51d64dd098c859747c94a2505d17c217b581"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/content_numeric_admission_d9.js",
+      "bytes": 947,
+      "sha256": "c102a57db4e93a7b344ff6a426bd6fdbd35a6ac4b519a3737bb0c518f2ceeeb2"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/d9_numeric_expression.js",
+      "bytes": 4098,
+      "sha256": "ed1a7d12c28b985eadf839f83ddacf31f831221312174015365aadbf1fc3149a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/dungeon_mob_catalog_v1.js",
+      "bytes": 5273,
+      "sha256": "5f32b79d82469b44fa29e88e1fa8583338271bcd658696f7cce703edb607144b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/dungeon_mob_catalog_v2.js",
+      "bytes": 4484,
+      "sha256": "1c1561c1cf6f6d46bccecdd12bd139bc7c98f1e5c29b648d5001eed7855c7440"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/economy_amount.js",
+      "bytes": 1809,
+      "sha256": "56e737acac9c041b18b978e91705494aa6f1a34cf581e81506f70c9463cc026c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/elite_combat_d12_4.js",
+      "bytes": 42273,
+      "sha256": "4d12249a6b0a2d200fbda8fdb1469dc77300eab8fed18a3a3a13367f636528b6"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/encounter_economy.js",
+      "bytes": 21054,
+      "sha256": "de90e0041a55bd637de0fe2b2158840bcf38269cf2dbbc46e5161b4ae8489342"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/encounter_progression.js",
+      "bytes": 5286,
+      "sha256": "34ac0ba5471efdae6991f8a6e5c22e1b0c457cc235f4304eff16620824d4f209"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/encounter_proof.js",
+      "bytes": 9534,
+      "sha256": "f0903365b3bb9e41c51d762cd9187b5fb04ed3c29b02f38c3200b8ef6b92a666"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/endless_formula.js",
+      "bytes": 2876,
+      "sha256": "3be2ef0990c81a80ade6380ce1637b7f3dd087ae0d0e74af0709d564352f521d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/episode_progression_d9.js",
+      "bytes": 3163,
+      "sha256": "9c250d2cbf209d28e268b319e850e546fb8fe4e5c40cf016d6ccbdd5c16247bf"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/ferry_travel_v1.js",
+      "bytes": 3271,
+      "sha256": "85d9b0a7fb9800295b77967bfa9854e7d9614b3036f00e1365a31b598795e064"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/forge_economy.js",
+      "bytes": 8973,
+      "sha256": "8166ed7bb348fa7d5baa3a19226bccbd0d2a6000676c646e5747a9988a1c75ae"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/forge_stations.js",
+      "bytes": 2949,
+      "sha256": "638f0c6094602f0be9d86d1d5eb5cf0f0bf070e7a1f38d1b6442f8c1e985dec0"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/functional_site_d9.js",
+      "bytes": 25934,
+      "sha256": "6053c06e9fc6138cfcd97190b511805347bebd3f8c2a0e8d278d8f83889f679e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/gear_salvage.js",
+      "bytes": 11098,
+      "sha256": "6fbee7f854d4a13d323e4199b34b28ce1f215174fe9d9a36bca58bba36c6daa7"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/geography.js",
+      "bytes": 3694,
+      "sha256": "568bd7eb951b5c8b9c70aa5871cd1e128c92316c559965dadefa17e976bb94c9"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/hashing.js",
+      "bytes": 3233,
+      "sha256": "783d97ce7fdcbc447ca433b2a480d7296b2248e45f4c4ade7c6a3f4eccd6d5f2"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/hero_progression_d9.js",
+      "bytes": 1773,
+      "sha256": "275d26322f245e00ea9f8edeb940b3764bf06e6da36eaf97181aef74aba7e454"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/history.js",
+      "bytes": 16997,
+      "sha256": "2b6e26b29bc7135dcaa7e57079bedf69996f153259dae6735547b1812fbbd06a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/hostile_projectiles_v1.js",
+      "bytes": 6534,
+      "sha256": "779b4a00a336afcd1b7869df24c25a7f93794d1f78eb63528faef12ffe191103"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/identities.js",
+      "bytes": 2420,
+      "sha256": "0a5b531f9124e65f3f707aeb9fbea70eaff7f69424321fcb3b74b1d0c0fe5290"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/integer_domain.js",
+      "bytes": 2534,
+      "sha256": "35aab0122c62acf3a64b0b7e7f30192f67b4f586c8275db13d6f019255e6bcd3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/large_number.js",
+      "bytes": 1590,
+      "sha256": "8409daabde896921823b6059df003e4d312694de77fe3abe5e28d7617421ed98"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/local_world_frames_d9.js",
+      "bytes": 4406,
+      "sha256": "a3aa83abf74e7ccbf4ddd4ed6650378110234875232704ba0206a664fa78705a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/major_place_names.js",
+      "bytes": 1768,
+      "sha256": "0395a1f9d1edce1f8a851c3a6923b98cb50675ba608931d354384de10c5875e7"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/mastery_causality.js",
+      "bytes": 919,
+      "sha256": "947b9febb1bbe4b1f3e1030fc9120143bcbbaf1add9cb16f794e007c30ce3da0"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/mastery_combat.js",
+      "bytes": 2995,
+      "sha256": "12a3e7be8862e38b78334493128db0ec038afe04c66e72bb5a1f8e9bbda86dcf"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/mastery_stats.js",
+      "bytes": 5389,
+      "sha256": "55b56d84e1189949be0b40c3eb3df12e6e8a463d7d81b4f85cd9188b995380aa"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/multiplayer.js",
+      "bytes": 5759,
+      "sha256": "2c70c2ffaf67800fb1efe36a6893389f235d06e556754f1361c70338da3a5635"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/multiroom_v1.js",
+      "bytes": 2821,
+      "sha256": "8c269c16cfc7c0b87e5c0324feafce0dec58d20b5abd6ab673d26a1d8ba9a804"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/ordinary_population.js",
+      "bytes": 6639,
+      "sha256": "ff04d64b4e013d7d4a25dc28633754e97f7a61a765df86e34f6a2fa930c4af0f"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/ordinary_roster_v1.js",
+      "bytes": 13828,
+      "sha256": "1ea5642668c8e08fa1a79f934434a983b01d7a847c1631e434118d7161013e70"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/ordinary_roster_v2.js",
+      "bytes": 12044,
+      "sha256": "30348ef88fc1da279ba3454fe93f598572160cee3bd5bde5f01c6cc7562b0e3e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/origin_egress_d9.js",
+      "bytes": 3616,
+      "sha256": "46ac160017c43f6db90f80a3ae5ea733c98ce0baadd0aee9366f931e6905f15c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/origin_hordes_v1.js",
+      "bytes": 12910,
+      "sha256": "e5d7c93b1e77eea9f67cc17bb5c7ffc7fdf8e96b09301bb213e33e1282ca61b1"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/overworld.js",
+      "bytes": 42715,
+      "sha256": "622a742542689a6805f207c6fbc52a3360e1b3e51e46ddbd846bbabbe901b685"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/paged_collision_d9.js",
+      "bytes": 3380,
+      "sha256": "9c001d0ee39ea88ebf18f6c9660405c4f6a9ff393121908cb5763bb721cdcf6a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/participant_progression.js",
+      "bytes": 15065,
+      "sha256": "6d2800c9d9f4ede20c26802e314d95e718d1a8d6f1b8da231b63fbca0b5e49b3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/participant_progression_d9.js",
+      "bytes": 1608,
+      "sha256": "e7d197b5ecc69dca7719138c1fe14a8f5857f10066c7064d1ba13c1a9a8f3cf6"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_cave_v1.js",
+      "bytes": 4939,
+      "sha256": "0b1a3d1b81bc78fb33cc481be53f6ad8b8862a7b05d4f288262a50768ba0bfc2"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_crypt_v1.js",
+      "bytes": 4037,
+      "sha256": "de15e42ed62b0f62618ed14b7c72e67762b2b1ccee99237a42234688bbb8e232"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_crypt_v2.js",
+      "bytes": 2995,
+      "sha256": "e9b3f9772e2648cf73893611cd5b0812264ebafebfe1ee63a137d97a4ba01aa4"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_fort_v1.js",
+      "bytes": 10923,
+      "sha256": "49142788f77b2e61d55725c8db5e2c50d5454709a87e7ed1ff6d04007a212735"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_fort_v2.js",
+      "bytes": 2134,
+      "sha256": "59c9b118f9445b823b27b178b684524026ccc67edf3502eaa65dacdca17cf894"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_ruin_v1.js",
+      "bytes": 11216,
+      "sha256": "2e9b7209a71bbb96c1a34feaa9963c64c304cc2e7d12b0803cbc2d5703738cf8"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/planned_ruin_v2.js",
+      "bytes": 3601,
+      "sha256": "8267119c3730fb3a27f3010706fb62551da675a0690fbc9c3b966ac899b67d61"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_inventory.js",
+      "bytes": 15706,
+      "sha256": "3b2bbb0c32a51ec852471fa976a66f9a918e1926160f29cd5781202ae374aef3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_inventory_d4_legacy.js",
+      "bytes": 10781,
+      "sha256": "fd92544b95079849c847c6c5f24a707fa9f837e209cf207b9cc66885eadc7b94"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_inventory_perf1r_legacy.js",
+      "bytes": 13038,
+      "sha256": "5b3515b516ace616da6b36c7c97f8225551b1884f202c84f7564f7e89f77f2c4"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_progression.js",
+      "bytes": 2427,
+      "sha256": "cd41db9051839b538281a2ca2b4e91846f8724e378ddefabace60d961c61dba6"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_respawn.js",
+      "bytes": 6151,
+      "sha256": "e5b911f2f31067140c330b4350a77db96efefa88897eed009e666c8abbc304c1"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_stats.js",
+      "bytes": 8453,
+      "sha256": "e663a722f57e3b6d6eece7b6acbef1c06ecfb35ccec7bff4f97b1b47df524443"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/player_stats_d9.js",
+      "bytes": 5451,
+      "sha256": "d6bad63313e5e5f4d669e88709e5acb083b6f333c8ebeb473c64abc731b862b7"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/primary.js",
+      "bytes": 11985,
+      "sha256": "2e5c6156ae981064af78d44c148f47eded959adfb21d3e89bb5341a6139dc5a2"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/procedural_encounter_d9.js",
+      "bytes": 11901,
+      "sha256": "553e9456a6e3a9d4bb2bb8cb7a150711b9bf8f867a625bb2a0907733b56f4228"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/progression_commands.js",
+      "bytes": 2315,
+      "sha256": "8ebea9aa8f0b21de11952534309c9e00429428c81e685c4ac3a3f9cce798487d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/progression_integer.js",
+      "bytes": 1199,
+      "sha256": "8d1d8bc4272f1b2ba01e3e0a1d722c37f52bee8537d7103fcdd4a2e2cb92f706"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/renewable_inventory.js",
+      "bytes": 30658,
+      "sha256": "fbc9e5c21ebcd1fd8d5b49186020fc3f0ba71a0b5545f9e214c89a954eb1646c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/rng.js",
+      "bytes": 4952,
+      "sha256": "f69fc1318aabd5ded069bd703fad48db7bdbfbb259543ce91427a82ff06cf967"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/seed.js",
+      "bytes": 2187,
+      "sha256": "3fc8803f23c6d36e77c78603e43d112cdd649dc8871d908b79ea7fcf876bbb80"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/settlement_interiors.js",
+      "bytes": 1951,
+      "sha256": "b0912befaf6af4b3ebf9fe11f50d3a71cdfd68273f587fdee4a9ea2a4373c7e0"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/settlement_services_v1.js",
+      "bytes": 18685,
+      "sha256": "31e0c5102a522c4f0f665a312cc96d2577c4344ab1367c994192dae913653634"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/settlement_workshop_v2.js",
+      "bytes": 14587,
+      "sha256": "9e2614b947b6fd44f15a8524e00cd8791d5e56bf69974370c4bc7a70ed3141da"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/shield_guard.js",
+      "bytes": 3425,
+      "sha256": "51b347160bc993d70385f441e65f029745cf8b47ba37b16f4f1174847d53ee45"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_content_d9.js",
+      "bytes": 9692,
+      "sha256": "73b2b9746fc3fc3baf02b019dfd05b3f0d4f7f01a71c271e6f3237ad2740d84d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_definition_d13a.js",
+      "bytes": 14592,
+      "sha256": "8e6421b2ac3077566ec9c7b1a12bd9afa97a6ceb5837104dbe61bf701e24c5fa"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_finale_completion_d13d.js",
+      "bytes": 16976,
+      "sha256": "70b6bb500c8449002648d53aea4aca1c221394b15f5a2e7f0054cffcedb4f464"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_finale_d13d.js",
+      "bytes": 45462,
+      "sha256": "de3f2f3f7713d1bbe6294721e3ed4d69751cb5976fb08874b80a6190ea239256"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_interiors.js",
+      "bytes": 9856,
+      "sha256": "2d15db875f65e1a1e21017090044b3ad6361e458fbb7e253cd2bdd47ea626010"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_reset_d13c.js",
+      "bytes": 13049,
+      "sha256": "4237691b651a6e1bce13474ea4a722bffbefb2e347c91b56507cefaf700e86a7"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_run_episode_d13b.js",
+      "bytes": 35832,
+      "sha256": "435a31421a16d10049321474743ff73963c4e57452a2e4310e0913c508ed6b9d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/site_truth_d12_4c.js",
+      "bytes": 10381,
+      "sha256": "9594a77ce416d1b8781385918bd5a27b96fc2da53c5f8c5b4e022bc79774468c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/snapshot.js",
+      "bytes": 1123,
+      "sha256": "afd334336334d5491722c09a10fab1dcd92e90e032a7607d40b9df10701e2504"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/state.js",
+      "bytes": 33836,
+      "sha256": "b9402f7d7753032c29ebdc00c02275a2b0f3e4c30c5a09218fdfd47aa2ea1c49"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/subweapon_combat.js",
+      "bytes": 9845,
+      "sha256": "570deccbe2934bce746d60ecf10ebbc076510a14d41a28e6ddfd8b9913c97060"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/subweapon_inventory.js",
+      "bytes": 3728,
+      "sha256": "dcdd549934662851d6bd00400d09c38e2cdbb4f42069421430c27610af5ed9a9"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/threat_power.js",
+      "bytes": 960,
+      "sha256": "39560999166956c9a96865928bc8fda40ac65a1c353ab046b2a279e3875d81f2"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/threat_power_d9.js",
+      "bytes": 707,
+      "sha256": "d3ae7899d4d3e28844dc5876b375db929e02994a7a8a0d6a0ecfa8505e29e712"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/tome_cast.js",
+      "bytes": 2532,
+      "sha256": "75b98f7c8334a26c37b924ccf46fc4ccd9ff322bb07b4d64a10be07f6ae5a381"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/travel.js",
+      "bytes": 8015,
+      "sha256": "3ead3f52899b9853a66c1721abddaddb801e37bf201aee0d47335dcad8792d26"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/versions.js",
+      "bytes": 366,
+      "sha256": "9be3c8d691cb5692f37c9a506b89bee0ffe711987fab6efc46bccb6b1031adfd"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/wire.js",
+      "bytes": 6106,
+      "sha256": "089bff6d93dc7a72e2bbb84eb6834c62d010c43711e7044cc51e3bbb1e3a42af"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_address.js",
+      "bytes": 3055,
+      "sha256": "aeb0b34a9882d84434d6804708917f5d3c0c6235107155a13855b02e9b5451c6"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_chunk_delta_d9.js",
+      "bytes": 10444,
+      "sha256": "023df38fc3b7b5077eabc1dc7ec23ed178b47e84b8a510b2fda382e9c0ae9617"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_ground_occupancy_d9.js",
+      "bytes": 5463,
+      "sha256": "1e19b0c6ebc83a284c89613d8d149688fa745232d586bf104ce2718a801e54cf"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_navigation_contract_d9.js",
+      "bytes": 1473,
+      "sha256": "e55c6697c1297775519e2831fb9d8a504b3c52d6a0bc04dbcd439c4193457f85"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_navigation_d9.js",
+      "bytes": 8538,
+      "sha256": "7f6b75247e7a79aa95e9a6224269f7b03e20a2d92fa89f269abd6bba78317f56"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_paging_d9.js",
+      "bytes": 12296,
+      "sha256": "cb95596cfebb0443f117baf88b3ba3a6627ce76100b761dace2a493cbcc7fadd"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_patch_d9.js",
+      "bytes": 8744,
+      "sha256": "4f23a8fa98a9049347cf535aa492412cd36a8252dca6154a8620b8e6134af993"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_root_contract_d9.js",
+      "bytes": 11416,
+      "sha256": "a6c2ac6eac207576688cc1692780cdf06a369513933cab7d3df8b3a878db6543"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_root_d9.js",
+      "bytes": 4812,
+      "sha256": "715af4bc587573e226899ed5ff17c5f7e08132a2a703c8787bb7dd27408136d5"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_runtime_d9.js",
+      "bytes": 6076,
+      "sha256": "41c7b65fa181f26c900d191687703408549e3d6eadb4ebffb8438ac8454418f1"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/contracts/world_stream_capture_d9.js",
+      "bytes": 3822,
+      "sha256": "895732fa7bac9ceb59feb85f4dabdde1c0973fb5219c0674d7f9bc0384d422d4"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/alpha_population_overlay_v1.js",
+      "bytes": 2402,
+      "sha256": "2e882ce5c6008483f25c18be6c93a25253c592e86acf0821ef2aedde538d3dc3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/alpha_population_runtime_v1.js",
+      "bytes": 4233,
+      "sha256": "3557f8ad4ce5572cd29646dda25ed29861241192d856e89830ebade6c341671d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/crypt_family_v1.js",
+      "bytes": 2155,
+      "sha256": "fe3f452908d841af68a5fcfeeb9305fd671a0d23201c45d4f61a95dded5fd0d8"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/crypt_family_v2.js",
+      "bytes": 3945,
+      "sha256": "c0d40bf58d67da7dab8293cda9a58fdb3a14fabe49aa930356d8a4af2a01c391"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/endless_world_d9.js",
+      "bytes": 12764,
+      "sha256": "48bd04fe434b0af4e58fa52a3c7054f0f7c1346fc084607b1e4c3d682a385d50"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/ferry_overlay_v1.js",
+      "bytes": 815,
+      "sha256": "cbb7d46ff748bd70819bde04f76cc2cf5e70e995319f665f811ce22fd2407f0b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/fort_family_v1.js",
+      "bytes": 3317,
+      "sha256": "c0ac83f7ae0b668b5a6f0ca68ad4a741d3d220d6304932a3acaf87236c451d2c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/fort_family_v2.js",
+      "bytes": 3648,
+      "sha256": "8a892617ffce13b83ee7a613a9e75332fa0ad7d837a9b9d71e97b38d721ce2e9"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/local_shoreline_v2.js",
+      "bytes": 3575,
+      "sha256": "845a6a5fc1db24b4802e141b25a8f6a1f689eb6bbd166a1ad48347665c804ede"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/local_water_geometry_v3.js",
+      "bytes": 11121,
+      "sha256": "02c99a3501d2b70f4ab0f3c44e6a5ffc60a4d141803be3da1ca63e078cfcd743"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/multiroom_cave_v1.js",
+      "bytes": 2964,
+      "sha256": "459a347837caadd7570e777690c4dcad82acf5809d633a7c802fb77cea4941ac"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/multiroom_v1.js",
+      "bytes": 10471,
+      "sha256": "0df85d12891b4d29d549b837b82409fcf8ce6764ab85d73bfc0e74e7a356dd39"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/natural_clusters_v1.js",
+      "bytes": 4509,
+      "sha256": "ea0d7e6e68bd516932c60cadc03cc895fdb0faf9f8e4317d7d9f6669eb45361b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/outdoor_bridge_v1.js",
+      "bytes": 1525,
+      "sha256": "13ff937fe78bf6021136c7501e5e7a5e3af612db1f710a3d5f9a94ee7b651ca2"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_cave_v1.js",
+      "bytes": 6142,
+      "sha256": "661045a1cddf0dc240a0608bba2d25f19c66bf22b6658c6f83ab15e7def8de64"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_crypt_v1.js",
+      "bytes": 5594,
+      "sha256": "1d87d1e1a0a182b1a05fc176b53eafc7f34a79a959366ef6cd94b13a5ff7ddc7"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_crypt_v2.js",
+      "bytes": 5724,
+      "sha256": "68d4a910db5f47f1a5469738b9d62eea3a4847eb1dae5c1b048390aa959e6d5c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_fort_v1.js",
+      "bytes": 8961,
+      "sha256": "af0c83123e0e1f766556fb8649376ca37fadc0e2ee86c62cb69f20eec0bd7401"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_fort_v2.js",
+      "bytes": 5896,
+      "sha256": "360bd98ff247bbb96e6d6f84b89f9befce210ec9ba8460fb482994fa591d8c28"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_ruin_v1.js",
+      "bytes": 13863,
+      "sha256": "85193b75151510943c69c34627e0ebafff7569fd60986ab6b8a0e7f23b0191dd"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_ruin_v2.js",
+      "bytes": 4301,
+      "sha256": "d53611bf5702e3e0056ce6f0cef714dae1d76119e63e512d4c1ffe55cc4aff7e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_town_v1.js",
+      "bytes": 3693,
+      "sha256": "c742f9ffa935df729ffafae01cdb78d9b0fa384a431d7b3ee608e293f5e723de"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_village_v1.js",
+      "bytes": 3017,
+      "sha256": "1c53577fc6a77a4b93dce375e63e7becd1ec073c2708335a714702d418c8c1db"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_world_chunks_v1.js",
+      "bytes": 17384,
+      "sha256": "f21a5500506dd200288c2578d88417dda307c3f7825c826ce22370540c85a898"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/planned_world_foundation_v1.js",
+      "bytes": 14369,
+      "sha256": "1d09dc9c2885729b3085a317ebcfe089a4aa3346a9955137bc319eec36586146"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/ruin_family_v1.js",
+      "bytes": 3010,
+      "sha256": "2306cbaf591ae40ddd489fbb36a79036f02c97a6acc25e90c3bcce511c48308b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/ruin_family_v2.js",
+      "bytes": 4278,
+      "sha256": "150494f86b828f73aa05454bf5027f31280b6fee9e6026c60988b49f89c9adb1"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/ruin_groves_v1.js",
+      "bytes": 5717,
+      "sha256": "2242e777d75856f65aed21513871aab7268d2e2553cdb9e190c6694404e37119"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/settlement_geometry_v1.js",
+      "bytes": 2834,
+      "sha256": "4b97db4300cfadb2ef6519c0778e3336503498db15d03231363fd3156283933b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/site_discovery_d9.js",
+      "bytes": 13218,
+      "sha256": "a8983b21c1f28a8771c30b8888bd9394fdedc81ad1c5474f459cf1e598622179"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_d12.js",
+      "bytes": 9273,
+      "sha256": "e533d20b888fa12d1e4e1c7cf0644fe47a80c885d69fdf2013bb9c222d79ab12"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_d12_1.js",
+      "bytes": 17465,
+      "sha256": "cfabdb0d7d4b1ee49460384105e8ae502230d89588aed1349a123ab72c052744"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_d12_2.js",
+      "bytes": 29135,
+      "sha256": "d5dd87bd00a45e92300c26bf2a4edb37f9512479baa4d3e4a0a8c6d3bcf7194a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_placement_d12.js",
+      "bytes": 2738,
+      "sha256": "15375fe12e9ed033cb206aa65ab8ec68cfbbd2d1111b277fef061553ab795088"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_family_placement_d12_1.js",
+      "bytes": 5357,
+      "sha256": "3380530faca57727618172dedf0e6a72d48d65f896b74dc53e2f47cb0670fa27"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_placement_d10.js",
+      "bytes": 8172,
+      "sha256": "a7b7f736f9697c7f5ead36cbf2869d47b725ddab40917fd5c2882a8de5aa4c49"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_cave_region_placement_d12_2.js",
+      "bytes": 9335,
+      "sha256": "bf87b19405670b82bf1bf5878f4173aa87d994a948dfb9a13df3ee35c8d498a1"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_fort_placement_d10.js",
+      "bytes": 8068,
+      "sha256": "749151b4cbaab249a7254fc14a48419dd2c0e7736e65f96fc285d9737886d78a"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/woodland_ruin_exterior_d11_3_2.js",
+      "bytes": 3208,
+      "sha256": "5e8326be7b4990ed70e814c637ff24cf282cdef3ac40e1865eb93a6148d3f92c"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/world_combat_packs_v1.js",
+      "bytes": 3164,
+      "sha256": "0147c63d6dec6fe376e48af3b4e7f74d3572dc7724f6408090ca039d3a5fedbe"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/world_combat_rooms_v1.js",
+      "bytes": 2167,
+      "sha256": "44c2f3a2fe7b31ef7acc3df438bbd2ba0136e244e5570db7302b9d1b73102880"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/generation/world_identity_d9.js",
+      "bytes": 391,
+      "sha256": "8f0637ae0ffec76e2546f2251f360d7004fe6cddb04da876ca3a5aca4b67a6ea"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/shared/rules/world_geometry.js",
+      "bytes": 2772,
+      "sha256": "c3da8ae5ff4341f1bf079bffd385f73969b215902e7d867c35823c4aa1d466e3"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/simulation/settlement_interior_transitions.js",
+      "bytes": 4080,
+      "sha256": "32aab9a11b38253a8dc05e561fda6f6012b7e908432172f2c2d9fe2acb2a2258"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/simulation/subweapon_rules.js",
+      "bytes": 8295,
+      "sha256": "3c1b687328896e1c8031d840e54f2a2109c55c213e0ca3a0f9312e5f7d877e30"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/activity_campaign_store.js",
+      "bytes": 11297,
+      "sha256": "6de60f5a1d4b1638d198420fa45d9c4228f0fcebed2b783520d2dca63d08c97b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/activity_save_task.js",
+      "bytes": 4257,
+      "sha256": "e95b51562ecd2cf954bbef01da94749a227454c9c667b13d61f9dc9f65f6b165"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/campaign_store.js",
+      "bytes": 1898,
+      "sha256": "bf16379350f9023a68f2322139cd4bd7b64191bab3c02ea486256c0786f9bb41"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/campaign_store_core.js",
+      "bytes": 5745,
+      "sha256": "e2d747e7d6c4e76b455bde95330011bb790d57be8de47316ec0ab8358d5f94bb"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/local_indexeddb_campaign_store.js",
+      "bytes": 15613,
+      "sha256": "4f7895072670116b0241e52498f470cd5221429ba2b0aaf8e76029e034eff13b"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/navigation_summary_v2.js",
+      "bytes": 1062,
+      "sha256": "941208c1808e1efdd263a87bc23380807eabfc922d6be074836ebf7a5ffe5495"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/paged_world_store.js",
+      "bytes": 6625,
+      "sha256": "a0d1fa84d89ba66d344be5580125c5804fd3806363641eac80e8b81d6bb301f8"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/planned_world_assets_v1.js",
+      "bytes": 2812,
+      "sha256": "e08e05daa5ca59c53813a1305ee634e421c188356cf5847f73e49155f1e56e03"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_cold_deadlines_d9.js",
+      "bytes": 5820,
+      "sha256": "26581dcda579f3241691324c1e44b728df64aad7ec9c2f3e9f8e3d712edaf6e7"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_deadlines_d9.js",
+      "bytes": 2482,
+      "sha256": "68ef16f55f80abc6caafe1d7abf25d4de706300e858890920ec5bb26a66228ad"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_encounter_task_d9.js",
+      "bytes": 3564,
+      "sha256": "9c3488e546994d0fb2828556fb0b594719b349b9c21671501daaf18ee712a237"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_gear_knowledge_d9.js",
+      "bytes": 4154,
+      "sha256": "d735f3a96beff1bb22cd6c80030ab6278fd9f61cb9c9d08d7360d111e7ae8cbe"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_gear_pages_d9.js",
+      "bytes": 14939,
+      "sha256": "cc83ef31fe4667bd91c5a55bc5e57af1ecca39f9cd633201f99905eeaf012dc8"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_ground_residency_d9.js",
+      "bytes": 5618,
+      "sha256": "9b2c8e4819ee45c93aab638a0d4d634d8f860bfd2980c532228fdd00b2bc3fdf"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_ground_window_d9.js",
+      "bytes": 5034,
+      "sha256": "e487de381f38b0cafd24ccb9ee8c1fb31e0db3661a7b6a93c954ce7331a7522d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_navigation_pages_d9.js",
+      "bytes": 4214,
+      "sha256": "66d1fb2803a11f4d479996a98d3007719b7096b37b54b3cfbb220b44b29f5111"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_page_buffer_d9.js",
+      "bytes": 3852,
+      "sha256": "78fc0a65d181f690b70d1abcf44e5ae894e99917a4bc46a5fcc5efe84db9d3c8"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_page_diff_d9.js",
+      "bytes": 1984,
+      "sha256": "b1126cfbbf54a7a474cdbd0a4f2ea48cbd0085780a83af3d4e55ba6c594e192e"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_page_publication_d9.js",
+      "bytes": 7440,
+      "sha256": "3750860e9550dc466c12d3da9d73ee67a5a465c912e5fd80c87182d668163f65"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_page_refs_d9.js",
+      "bytes": 3412,
+      "sha256": "056fddc205fc6fd661e30888b1b8239b1b7ae7f7d8168674c94858e4b5edb067"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_residency_task_d9.js",
+      "bytes": 5782,
+      "sha256": "c907f3f6784df3acf0f8f3baea09241ecc216eb3b944c0cba2bc5a8026d50593"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_save_task_d9.js",
+      "bytes": 4412,
+      "sha256": "68188c45c01463e4803a51705321f8feee99db92a8b3237e1a475edb411002cd"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_snapshot_d9.js",
+      "bytes": 11973,
+      "sha256": "fdf74cf20d7bf50976b98c18b5067309a51b5d80362ac5298c33dfaaca2e9f0d"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_transition_d9.js",
+      "bytes": 10993,
+      "sha256": "d680c2410469a024c1f63539820338846bccdd920bbd878d8afd4993de75b304"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_transition_pages_d9.js",
+      "bytes": 5004,
+      "sha256": "1423b84a0e17d0298c313cfaa2addf5698b0c41794de113afb9a3a80cea37153"
+    },
+    {
+      "path": "worker/dungeon-mobs-v2-a15f329ec4b4/src/storage/world_worker_task_d9.js",
+      "bytes": 5375,
+      "sha256": "ef893e1518038d7012ae767b60c840842160f0aa46216658a75ea2f6cb6fcc5f"
+    },
+    {
       "path": "world-crypt-large-v2-dev.html",
       "bytes": 7012,
       "sha256": "62550ee33050fa7c9a6f512c7bf4e816905756f0361bafb3ec436111fda10713"
@@ -6023,7 +7655,7 @@
     {
       "path": "world-cumulative-dev.html",
       "bytes": 13013,
-      "sha256": "57860a995018aa9e402831e50e738bc061d8a77a745fce924694637ff4c3f345"
+      "sha256": "8554140bdea0e7841aa9c6a46e8193aeca3b60d7a10d600a520a5351eb957ef3"
     },
     {
       "path": "world-fort-deep-v2-dev.html",
