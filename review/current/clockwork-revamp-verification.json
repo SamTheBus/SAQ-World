@@ -1,15 +1,14 @@
 {
-  "runtimeId": "45be24fb4f1da303",
-  "release": "dungeon-mobs-v2-fd00bc5dcbb1",
-  "focusedChecks": 107,
-  "celShadedOrdinaryFamilies": 32,
-  "eliteAffixesPerFamily": 9,
-  "eliteRenderCases": 288,
-  "bossCocoonAndFallbackCelMaterials": true,
-  "worldVectorCelMaterials": true,
-  "worldRasterPreparation": "Discrete color regions, performed once on decoded terrain and scenery assets. Source files, alpha, geometry and collision stay exact.",
-  "perFrameImageReadback": false,
-  "solidWireframeOrbCore": true,
+  "runtimeId": "df22bd04d4dcec32",
+  "release": "dungeon-mobs-v2-873e95f9b23c",
+  "focusedChecks": 102,
+  "correction": "Removed rejected blanket shadow bands and terrain palette reduction.",
+  "worldAndPlayerRenderSource": "Matches the established version before the blanket-shading change; normalized line endings.",
+  "terrainAndSceneryAssetBytes": "exact",
+  "blanketShading": false,
+  "terrainPosterization": false,
+  "fullAuthoredCelShading": "unfinished",
+  "ordinaryFamiliesRetained": 32,
   "revampedFamilies": [
     "clockwork_scarab",
     "temporal_watcher",
@@ -17,8 +16,9 @@
     "star_weaver",
     "neon_spider"
   ],
+  "solidWireframeOrbCore": true,
   "unchangedOtherFamilyGeometryAndAnimation": 26,
-  "unchangedRenderingTracesUnderSharedMaterial": 2496,
+  "unchangedControlTraces": 2496,
   "attackDirections": 8,
   "starWeaverSupportingLegs": 6,
   "neonSpiderSupportingLegs": 8,
@@ -27,5 +27,5 @@
   "workerModulesByteIdentical": 271,
   "workerGraphReused": true,
   "workerImportSmokes": 2,
-  "nativeReview": "Pending live deployment inspection."
+  "verificationScope": "Source restoration and focused checks. Live inspection is recorded with the publication."
 }

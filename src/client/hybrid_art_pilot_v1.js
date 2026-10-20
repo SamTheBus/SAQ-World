@@ -1,6 +1,5 @@
 import {environmentWorldOffset,terrainHash} from './environment_motifs.js';
 import {hybridArtTerrainBinding} from './hybrid_art_binding.js';
-import {prepareCelTexture} from './cel_materials_v1.js';
 
 // Opt-in presentation adapter. It never receives an authority mutation API.
 export async function createHybridArtPilotV1(environment,review,initialMode='candidate',coverage='inspection-corridor'){
@@ -19,7 +18,7 @@ export async function createHybridArtPilotV1(environment,review,initialMode='can
    for(const s of manifest.slots.filter(s=>s.used)){const col=s.index%4,row=Math.floor(s.index/4),inset=s.kind==='sprite'?8:3;
     let x=Math.floor(col*image.width/4)+inset,y=Math.floor(row*image.height/4)+inset,w=Math.floor((col+1)*image.width/4)-x-inset,h=Math.floor((row+1)*image.height/4)-y-inset;
     if(s.index===4){x+=Math.floor(w*.32);w=Math.floor(w*.36);} // Use the authored dirt material, not a second drawn path silhouette.
-    const c=environment.document.createElement('canvas');c.width=s.decodedWidth;c.height=s.decodedHeight;c.getContext('2d').drawImage(image,x,y,w,h,0,0,c.width,c.height);tiles[s.index]=prepareCelTexture(c,{terrain:s.kind!=='sprite'});
+    const c=environment.document.createElement('canvas');c.width=s.decodedWidth;c.height=s.decodedHeight;c.getContext('2d').drawImage(image,x,y,w,h,0,0,c.width,c.height);tiles[s.index]=c;
    }
   }finally{image.close();}downloads++;loadMs=environment.performance.now()-start;
  })();try{await loading;}catch(e){tiles.length=0;throw e;}finally{loading=null;}}
