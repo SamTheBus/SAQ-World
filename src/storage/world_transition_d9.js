@@ -16,6 +16,7 @@ import {reconcileWorldComparisonPagesD9} from './world_transition_pages_d9.js';
 import {siteResetTransitionsD13C,validateSiteRunEpisodeProgressD13B} from '../shared/contracts/site_run_episode_d13b.js';
 import {siteResetIdentityMatchesD13C} from '../shared/contracts/site_reset_d13c.js';
 import {validateSiteFinaleReservationProgressD13D_A} from '../shared/contracts/site_finale_d13d.js';
+import {originHordeUpgradeForGroup,validateOriginHordeProgress} from '../shared/contracts/origin_hordes_v1.js';
 
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 // Frame rebasing is not movement of a reward or a change to a historical receipt.
@@ -70,12 +71,12 @@ export async function validateWorldAdvanceD9(a,b,options){
  if(options)await reconcileWorldComparisonPagesD9(a,b,options);
  alignWorldReceiptComparisonD9(a,result.d9World.runtime.frames);alignWorldReceiptComparisonD9(b,result.d9World.runtime.frames);
  for(const id of a.session.playerIds)for(const [source,row] of Object.entries(a.playersById[id].d8.causalXp))if(!retiredEntities.has(source))for(const [kind,sequence] of Object.entries(row))check((b.playersById[id].d8.causalXp[source]?.[kind]??0)>=sequence,'Mastery causal receipt regressed across paging');
-  validateEncounterEconomyProgress(a,b);validateSiteRunEpisodeProgressD13B(a,b);validateSiteFinaleReservationProgressD13D_A(a,b);
+  validateEncounterEconomyProgress(a,b);validateOriginHordeProgress(a,b);validateSiteRunEpisodeProgressD13B(a,b);validateSiteFinaleReservationProgressD13D_A(a,b);
  for(const [id,g] of Object.entries(a.groupsById)){
   if(retiredGroups.has(id)){check(!b.groupsById[id]&&!b.encounterEconomy.groups[id]&&!b.d9World.episodes[id],'Retired group remained in live authority');continue;}
-  const h=b.groupsById[id];check(h&&same(g.entityIds,h.entityIds)&&g.spaceInstanceId===h.spaceInstanceId&&g.siteId===h.siteId,'Resident group identity changed');
+  const h=b.groupsById[id],originUpgrade=originHordeUpgradeForGroup(a,b,id);check(h&&(same(g.entityIds,h.entityIds)||originUpgrade)&&g.spaceInstanceId===h.spaceInstanceId&&g.siteId===h.siteId,'Resident group identity changed');
   const renewed=encounterAdvanced(a,b,id);check(!g.cleared||h.cleared||renewed,'Encounter clear regressed');
-  if(g.threatSnapshot&&(g.siteId!==null||a.d9World.episodes[id]?.snapshot)&&!renewed)check(same(g.threatSnapshot,h.threatSnapshot),'Frozen encounter rescaled');
+  if(g.threatSnapshot&&(g.siteId!==null||a.d9World.episodes[id]?.snapshot)&&!renewed)check(same(g.threatSnapshot,h.threatSnapshot)||originUpgrade,'Frozen encounter rescaled');
  }
  for(const [id,actor] of Object.entries(a.entitiesById)){
   if(retiredEntities.has(id)){check(actor.team==='hostile'&&!b.entitiesById[id],'Invalid actor retirement');continue;}

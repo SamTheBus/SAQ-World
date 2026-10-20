@@ -18,6 +18,7 @@ import {functionalSiteGroupsD12} from './functional_site_d9.js';
 import {siteResetTransitionsD13C} from './site_run_episode_d13b.js';
 import {rewardClassForCompletionResourceD13D_C} from './boss_completion_reward_d12_5d.js';
 import {ensurePersonalFinaleClaimsD13D_G1,markPersonalFinaleClaimD13D_G1,personalFinaleClaimD13D_G1,validatePersonalFinaleClaimsD13D_G1} from './site_finale_completion_d13d.js';
+import {originHordeUpgradeForGroup} from './origin_hordes_v1.js';
 const stateMax=a=>(typeof a.maxHp==='string'||a.maxHp.n!==undefined||a.maxHp.chunks)?0:boundedCombatInteger(a.maxHp);
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 export const inSettlement=(s,m,a)=>a.residency.spaceInstanceId===s.overworldInstanceId&&m.safeRegions.some(r=>a.position.x>=r.x&&a.position.x<r.x+r.width&&a.position.y>=r.y&&a.position.y<r.y+r.height);
@@ -96,7 +97,7 @@ export function createEncounterRenewal(s,m,onRenew){const layout=encounterResour
    // participants encounter the new occupation together; there is no live reset.
    retireEncounterRewards(s,g.groupId);e.episode=safeInteger(e.episode+1,1);e.startedTick=s.tick;e.clearedTick=null;e.vacatedTick=null;e.eligibleReturn=0;e.usedResources={};delete e.personalCompletionClaimsBySourceId;g.cleared=false;
    if(originEpisode){s.d9World.episodes[g.groupId]=originEpisode;e.contentDepth=1;g.threatSnapshot=null;g.threatReady=true;}
-   for(const member of defs.get(g.groupId).members){const a=s.entitiesById[member.entityId],profile=encounterActorProfile(s,g,a);a.position={...member.position};a.hp=structuredClone((s.subweaponCombat?combatInteger(profile.maxHp):profile.maxHp));a.maxHp=structuredClone(a.hp);a.attackDamage=structuredClone((s.subweaponCombat?combatInteger(profile.attackDamage):profile.attackDamage));a.alive=true;a.attackTimer=0;a.movementIntent={x:0,y:0};a.movedLastTick=false;}
+   for(const member of defs.get(g.groupId).members){const a=s.entitiesById[member.entityId],profile=encounterActorProfile(s,g,a);a.position={...member.position};a.hp=structuredClone((s.subweaponCombat?combatInteger(profile.maxHp):profile.maxHp));a.maxHp=structuredClone(a.hp);a.attackDamage=structuredClone((s.subweaponCombat?combatInteger(profile.attackDamage):profile.attackDamage));a.alive=true;a.attackTimer=0;a.movementIntent={x:0,y:0};a.movedLastTick=false;delete a.ai.defeatedTick;if(a.ai.melee)Object.assign(a.ai.melee,{phase:'idle',phaseStartedTick:s.tick,phaseEndsTick:s.tick,targetEntityId:null});if(a.ai.motion)Object.assign(a.ai.motion,{startedTick:null,lastMovedTick:null});}
    if(g.siteId===null)g.threatReady=true;econ.revision++;onRenew(g);
   }
  }
@@ -116,7 +117,7 @@ export function validateEncounterEconomyProgress(a,b){
    requireContract(next&&next.anchorId===prior.anchorId&&same(next.geography,prior.geography),'Procedural encounter geography changed');
    if(n.episode===g.episode&&prior.snapshot)requireContract(same(prior.snapshot,next.snapshot),'Frozen procedural progression changed');
    if(n.episode>g.episode&&!prior.origin){const r=next.renewalReceipt;requireContract(r?.version==='procedural-renewal-d9-v1'&&r.fromEpisode===n.episode-1&&r.renewedTick===n.startedTick&&r.renewedTick>=a.tick&&r.clearedTick!==null&&r.vacatedTick>=r.clearedTick&&r.renewedTick-r.vacatedTick>=D9_PROFILE.renewalVacancyTicks,'Procedural renewal lacks vacancy receipt');}
-  }else if(g.contentDepth!==undefined&&!(next?.origin&&n.episode>g.episode))requireContract(n.contentDepth===g.contentDepth,'Frozen encounter content depth changed');
+  }else if(g.contentDepth!==undefined&&!(next?.origin&&n.episode>g.episode))requireContract(n.contentDepth===g.contentDepth||originHordeUpgradeForGroup(a,b,id),'Frozen encounter content depth changed');
   if(n.episode===g.episode){requireContract(n.startedTick===g.startedTick,'Episode start changed');for(const [key,personal] of Object.entries(g.personalCompletionClaimsBySourceId??{})){const nextRecord=n.personalCompletionClaimsBySourceId?.[key],beforeClaimed=Object.keys(personal.claimedByPlayerId),afterClaimed=Object.keys(nextRecord?.claimedByPlayerId??{});requireContract(nextRecord&&same({...personal,claimedByPlayerId:{}},{...nextRecord,claimedByPlayerId:{}})&&beforeClaimed.every(playerId=>same(personal.claimedByPlayerId[playerId],nextRecord.claimedByPlayerId[playerId]))&&beforeClaimed.every(playerId=>afterClaimed.includes(playerId)),'Personal completion claim regressed');}for(const [key,r] of Object.entries(g.usedResources)){const personal=g.personalCompletionClaimsBySourceId?.[key];if(personal)requireContract(r.tick===n.usedResources[key]?.tick&&r.playerIds.every(playerId=>n.usedResources[key]?.playerIds.includes(playerId)),'Personal completion provenance regressed');else requireContract(same(n.usedResources[key],r),'Consumed resource reset');}}
   else if(!prior||prior.origin)requireContract(n.startedTick>=a.tick&&(y.returnSequence>x.returnSequence||g.eligibleReturn>0),'Renewal lacks settlement return');
  }

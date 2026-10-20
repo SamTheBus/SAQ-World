@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hostile attack render inspection</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#141b20;color:#e9e4d7;font:14px system-ui,sans-serif}main{max-width:1160px;margin:0 auto;padding:18px 20px}h1{font-size:23px;margin:0 0 5px}p{margin:0 0 12px;color:#bcc7c8;line-height:1.4}.grid{display:grid;grid-template-columns:140px repeat(3,minmax(0,1fr));gap:3px 8px;align-items:center}.heading{font-size:12px;font-weight:700;color:#e1caa4;text-transform:uppercase;letter-spacing:.06em;padding:5px 0}.family{font-weight:650;font-size:13px}.cell{background:#1e292e;border:1px solid #354349;border-radius:5px;overflow:hidden}canvas{display:block;width:100%;height:88px}footer{margin-top:12px;font-size:12px;color:#acbabd}@media(max-width:760px){main{padding:12px 10px}.grid{grid-template-columns:104px repeat(3,minmax(0,1fr));gap:3px 4px}h1{font-size:20px}.family{font-size:11px}canvas{height:86px}.heading{font-size:10px}p{font-size:12px}}
+</style>
+<main><h1>Enemy attack clarity</h1><p>Render inspection using the actual creature painters. Each hero reference sits at the maximum ordinary melee boundary: <strong>51.8 px between centers</strong>, with a 9 px combat radius. This gallery is a drawing check; native combat is verified separately.</p>
+<div class="grid" id="gallery"><div></div><div class="heading">Idle</div><div class="heading">Directed warning</div><div class="heading">Strike / contact</div></div>
+<footer>Amber marks show the incoming reach. The body extends into the strike; the ivory trail ends at the hero’s near surface. Confirmed hits retain a short contact trail even when a rendered frame skips the impact pose.</footer></main>
+<script type="module">
+import {ORDINARY_ENEMIES} from '../../src/shared/content/ordinary_enemies.js';
+import {drawCreatureD11} from '../../src/client/creature_presentation_d11.js';
+import {WORLD_CLASSIC_MELEE_TIMING} from '../../src/shared/content/world_hostile_melee.js';
+import {hostileMeleeMotionD11_2} from '../../src/shared/content/encounter_motion_d11_2.js';
+import {drawCombatImpact} from '../../src/client/combat_vfx.js';
+const gallery=document.querySelector('#gallery');
+for(const enemy of ORDINARY_ENEMIES){
+  const name=document.createElement('div');name.className='family';name.textContent=enemy.name;gallery.append(name);
+  for(const phase of ['idle','windup','impact']){
+    const cell=document.createElement('div');cell.className='cell';const canvas=document.createElement('canvas');
+    canvas.width=640;canvas.height=224;canvas.setAttribute('aria-label',`${enemy.name}: ${phase}`);cell.append(canvas);gallery.append(cell);
+    const c=canvas.getContext('2d');c.scale(2,2);c.translate(20,0);c.scale(2,2);
+    const source={x:40,y:38},target={x:91.8,y:38},timing=WORLD_CLASSIC_MELEE_TIMING[enemy.family]??hostileMeleeMotionD11_2(enemy.family),end=phase==='windup'?timing.windupTicks:timing.impactTicks,tick=phase==='windup'?end*.78:0;
+    c.strokeStyle='#586b70';c.setLineDash([1.5,2]);c.lineWidth=.5;c.beginPath();c.moveTo(source.x,source.y);c.lineTo(target.x,target.y);c.stroke();c.setLineDash([]);
+    c.fillStyle='#39596b';c.strokeStyle='#a2c1d0';c.lineWidth=.8;c.beginPath();c.arc(target.x,target.y,9,0,Math.PI*2);c.fill();c.stroke();
+    c.fillStyle='#d8e6ea';c.beginPath();c.arc(target.x,target.y-10,3.4,0,Math.PI*2);c.fill();
+    drawCreatureD11(c,{alive:true,enemyFamily:enemy.family,position:source,visualSeed:7,hp:{m:1,e:0},maxHp:{m:1,e:0},hullRadius:10,presentationFacingX:1,
+      meleeAction:phase!=='idle',meleePhase:{phase,phaseStartedTick:0,phaseEndsTick:end,targetEntityId:'hero',actionSequence:1},
+      meleeGeometry:{mode:'clearHullGap',reach:32,sourceRadius:10.8,targetRadius:9,targetPosition:target}},tick);
+    if(phase==='impact')drawCombatImpact(c,'hostile',target.x,target.y,1,0,25,false);
+  }
+}
+</script></html>

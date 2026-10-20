@@ -41,6 +41,7 @@ import { validateSiteInteriors, validateSiteState, siteTransitionTarget, SITE_EX
 export { ordinaryEnemyForProfile } from '../content/ordinary_enemies.js';
 export { populationRegionAt } from './ordinary_population.js';
 import { validateOrdinaryPopulation } from '../contracts/ordinary_population.js';
+import {validateOriginHordes} from './origin_hordes_v1.js';
 import { ORDINARY_ENEMIES, ORDINARY_PROFILES, ORDINARY_ACQUIRE_RANGE, ORDINARY_ACQUIRE_RANGES, ordinaryEnemyForProfile } from '../content/ordinary_enemies.js';
 import { compileBoundOverworld } from '../content/overworld_fixture_catalog.js';
 export { compileBoundOverworld } from '../content/overworld_fixture_catalog.js';
@@ -106,6 +107,7 @@ export function validateActivityState(s){
   validateSiteInteriors(origin,originCollision);validateSiteState(s,manifest);validateEncounterEconomy(s,manifest);if(d9)validateFunctionalSiteStateD9(s);validateAuthoritativeSiteDefinitionsD13A(s);validateSiteRunEpisodesD13B(s);validateSiteFinaleReservationsD13D_A(s);
   if(manifest.population){
     validateOrdinaryPopulation(origin,originCollision);
+    if(d9)validateOriginHordes(s,origin,originCollision);
     for(const p of [...ORDINARY_ENEMIES,...ORDINARY_PROFILES])requireContract(same(s.content.definitionsById[p.contentDefinitionId],p),'Ordinary content drift');
   requireContract(same(Object.keys(s.groupsById).sort(),[...manifest.population.groups,...(manifest.siteInteriors??[]).flatMap(d=>d.groups)].map(g=>g.groupId).concat(functionalSitesD10(s).filter(f=>f.siteKind!=='woodland-fort').flatMap(functionalSiteGroupsD12)).sort()),'Population inventory mismatch');
     for(const g of manifest.population.groups){const live=s.groupsById[g.groupId];requireContract((live.siteId!==null||live.regionId===g.regionId)&&live.spaceInstanceId===s.overworldInstanceId&&same(live.entityIds,g.members.map(a=>a.entityId)),'Population group drift');

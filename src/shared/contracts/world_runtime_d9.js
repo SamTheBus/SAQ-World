@@ -10,7 +10,9 @@ export function runtimeManifestD9(state,origin){
   chunks.push({chunkId:id,areaId:id,origin:{x:p.x,y:p.y},dimensions:{width:P.chunkWidth,height:P.chunkHeight},label:page.region.name,biome:page.region.biome,minimumLevel:copyWire(page.region.minimumLevel)});
   let region=regions.find(r=>r.regionId===regionId);if(!region){region={regionId,label:page.region.name,biome:page.region.biome,minimumLevel:copyWire(page.region.minimumLevel),chunkIds:[],discoveryId:regionId};regions.push(region);}region.chunkIds.push(id);
  }
- const next={...origin,chunks,regions,population:{...origin.population,groups:[...(origin.population?.groups??[]),...runtime.groups]},d9:true};
+ const originGroups=(origin.population?.groups??[]).map(g=>state.d9World.originHordes?.groupsById[g.groupId]?.definition??g);
+ const siteInteriors=origin.siteInteriors?.map(site=>({...site,groups:site.groups.map(g=>state.d9World.originHordes?.groupsById[g.groupId]?.definition??g)}));
+ const next={...origin,chunks,regions,population:{...origin.population,groups:[...originGroups,...runtime.groups]},...(siteInteriors?{siteInteriors}:{}),d9:true};
  // Authority helpers may retain the projection identity while its bounded
  // membership changes. This is derived geometry, never a second campaign fact.
  if(cached){for(const key of Object.keys(cached.manifest))delete cached.manifest[key];Object.assign(cached.manifest,next);cached.revision=runtime.revision;}else{cached={manifest:next,revision:runtime.revision};views.set(state,cached);}return cached.manifest;

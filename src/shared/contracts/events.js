@@ -37,11 +37,20 @@ export function validateEvent(event) {
     validateId("entityId", event.payload.sourceEntityId);
     validateId("entityId", event.payload.targetEntityId);
   } else {
-    closedRecord(event.payload, ["attackActionId", "sourceEntityId", "sourceCharacterId", "targetEntityId", "damage", "resultingHp", "targetAlive"], ["combatVersion","critical","mechanic","defenseKind","sourceItem","trigger","barrierAbsorption","chainFrom"]);
+    closedRecord(event.payload, ["attackActionId", "sourceEntityId", "sourceCharacterId", "targetEntityId", "damage", "resultingHp", "targetAlive"], ["combatVersion","critical","mechanic","defenseKind","sourceItem","trigger","barrierAbsorption","chainFrom","meleeContact"]);
     validateId("attackActionId", event.payload.attackActionId);
     validateId("entityId", event.payload.sourceEntityId);
     if (event.payload.sourceCharacterId !== null) validateId("characterId", event.payload.sourceCharacterId);
     validateId("entityId", event.payload.targetEntityId);
+    if(event.payload.meleeContact!==undefined){
+      const c=event.payload.meleeContact;
+      closedRecord(c,['sourcePosition','targetPosition','reach','mode','sourceRadius','targetRadius']);
+      for(const p of [c.sourcePosition,c.targetPosition]){closedRecord(p,['x','y']);requireContract(Number.isFinite(p.x)&&Number.isFinite(p.y),'Invalid melee contact position');}
+      for(const n of [c.reach,c.sourceRadius,c.targetRadius])requireContract(Number.isFinite(n)&&n>=0&&n<=256,'Invalid melee contact geometry');
+      requireContract(['center','clearHullGap'].includes(c.mode)&&event.payload.combatVersion==='combat-integer-v2'&&event.payload.trigger!=='periodic'&&['hostile','barrier','block','parry'].includes(event.payload.mechanic),'Invalid melee contact attribution');
+      const centerReach=c.reach+(c.mode==='clearHullGap'?c.sourceRadius+c.targetRadius:0);
+      requireContract(Math.hypot(c.targetPosition.x-c.sourcePosition.x,c.targetPosition.y-c.sourcePosition.y)<=centerReach+1e-7,'Melee contact exceeds authoritative reach');
+    }
     if(['fractional-d6-v1','combat-integer-v2'].includes(event.payload.combatVersion)){const validateAmount=event.payload.combatVersion==='combat-integer-v2'?validateInteger:validateCombatAmount;const chain=event.payload.chainFrom;if(chain){closedRecord(chain,['entityId','position']);validateId('entityId',chain.entityId);closedRecord(chain.position,['x','y']);requireContract(event.payload.mechanic==='lightning'&&Number.isFinite(chain.position.x)&&Number.isFinite(chain.position.y),'Invalid Lightning chain');}const b=event.payload.barrierAbsorption;if(b!=null){closedRecord(b,['absorbed','remaining','capacity']);for(const v of Object.values(b))validateAmount(v);requireContract(compareCombat(b.absorbed,0)>0&&compareCombat(b.remaining,0)>=0&&compareCombat(b.capacity,0)>0&&compareCombat(b.remaining,b.capacity)<=0,'Invalid Barrier absorption feedback');}if(event.payload.sourceItem!==undefined)validateDamageSourceItem(event.payload.sourceItem);requireContract(event.payload.trigger===undefined||event.payload.trigger===null||['pressure','reactive','proc','periodic','mastery'].includes(event.payload.trigger),'Invalid damage trigger');
       validateAmount(event.payload.damage);validateAmount(event.payload.resultingHp);requireContract(event.payload.defenseKind==null||['barrier','block','parry'].includes(event.payload.defenseKind),'Invalid defense feedback');
       requireContract(typeof event.payload.critical==='boolean'&&['main','bash','riposte','offhand','fire','lightning','frost','bleed','burn','poison','slag','bloom','rupture','shadowflurry','windrazor','assassin','aegis','shatter','hostile','barrier','block','parry'].includes(event.payload.mechanic),'Invalid fractional packet attribution');

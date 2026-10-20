@@ -1,3 +1,4 @@
+import {hostileMeleePose,drawHostileMeleePhase} from './hostile_melee_presentation.js';
 import {drawFilteredCreatureSurface} from './filtered_creature_surface.js';
 import {creaturePresentationD11_1} from '../shared/content/creature_presentation_d11_1.js';
 import {drawBloodBerserkerBadgeD12_4H_A,drawBloodBerserkerFrontD12_4H_A,drawBloodBerserkerRearD12_4H_A,drawGlacialWardenAuraD12_4E,drawGlacialWardenBadgeD12_4E,drawGlacialWardenPulseD12_4E,drawGlacialWardenSigilD12_4E,drawIronCitadelBadgeD12_4G,drawIronCitadelFrontD12_4G,drawIronCitadelRearD12_4G,drawIronGuardFrontD12_4G,drawIronGuardRearD12_4G,drawNullifierBadgeD12_4I,drawNullifierFrontD12_4I,drawNullifierRearD12_4I,drawSlagShaperBadgeD12_4K,drawSlagShaperFrontD12_4K,drawSlagShaperRearD12_4K,drawSwiftCommanderAuraD12_4D,drawSwiftCommanderBadgeD12_4D,drawSwiftCommanderPulseD12_4D,drawSwiftCommanderSigilD12_4D,drawSwiftHasteD12_4D,drawToxicDecayBadgeD12_4F,drawToxicDecayFrontD12_4F,drawToxicDecayRearD12_4F,drawVitalityWeaverAuraD12_4,drawVitalityWeaverBadgeD12_4,drawVitalityWeaverPulseD12_4,drawVitalityWeaverSigilD12_4,drawWebWeaverBadgeD12_4J,drawWebWeaverFrontD12_4J,drawWebWeaverRearD12_4J} from './elite_presentation_d12_4.js';
@@ -6,7 +7,7 @@ import {drawActorStatusRow,drawEliteAffixIdentitySlot} from './actor_status_pres
 // Narrow H4A mob_renderer.js family blocks; presentation clock is injected.
 // No Dungeon imports, globals, live-state ownership or authoritative randomness.
 function draw_sprout(c,m,presentationTime){
-        let squish = Math.sin(presentationTime / 110) * 1.5;
+        const pose=attackPose(m);let squish = Math.sin(presentationTime / 110) * 1.5+pose.windup*3-pose.impact*3;
         let wScale = (m.w / 2 + squish) * 0.65;
         let hScale = (m.h / 2 - squish) * 0.65;
         let cx = m.x + m.w / 2;
@@ -72,7 +73,7 @@ function draw_sprout(c,m,presentationTime){
 function draw_golem(c,m,presentationTime){
         // --- MOUNTAIN PEAK OVERHAUL: ANCIENT STONE GOLEM ---
         let time = presentationTime;
-        let hover = Math.sin(time / 200) * 3.5;
+        const pose=attackPose(m);let hover = pose.active?-pose.windup*3+pose.impact*4:Math.sin(time / 200) * 3.5;
         let cx = m.x + m.w / 2;
         let cy = m.y + m.h / 2 + hover;
 
@@ -147,8 +148,8 @@ function draw_golem(c,m,presentationTime){
 
         // 6. Heavy Floating Gauntlets
         for (let i = -1; i <= 1; i += 2) {
-          let handX = cx + i * 18;
-          let handY = cy + 3 + Math.sin(time / 250 + i) * 2;
+          let handX = cx + i * (18+pose.windup*2+pose.impact*6);
+          let handY = cy + 3 + Math.sin(time / 250 + i) * 2-pose.windup*4+pose.impact*3;
           c.save();
           c.translate(handX, handY);
           c.rotate(i * 0.15);
@@ -174,7 +175,7 @@ function draw_golem(c,m,presentationTime){
       }
 
 function draw_slime(c,m,presentationTime){
-        let squish = Math.sin(presentationTime / 100) * 2.0;
+        const pose=attackPose(m);let squish = Math.sin(presentationTime / 100) * 2.0+pose.windup*3-pose.impact*3.5;
         let wScale = (m.w / 2) * 0.7 + squish;
         let hScale = (m.h / 2) * 0.7 - squish;
         let cx = m.x + m.w / 2;
@@ -408,7 +409,7 @@ export function drawCreatureD11(c,actor,presentationTick,flash=false){
   const m={x:frame.x,y:frame.y,w:frame.width,h:frame.height,flashTimer:flash?1:0,movedLastTick:Boolean(actor.movedLastTick),motionBlend,stepPhase,meleeAction:Boolean(actor.meleeAction),meleePhase:melee,phaseProgress,deathProgress:actor.alive?0:Math.max(0,Math.min(1,(actor.deathAge??0)/24)),presentationTick,paletteKey:profile.paletteKey};
   c.save();c.translate(actor.position.x,actor.position.y);drawVitalityWeaverPulseD12_4(c,actor,presentationTick);drawVitalityWeaverSigilD12_4(c,actor,presentationTick);drawVitalityWeaverAuraD12_4(c,actor,presentationTick);drawSwiftCommanderPulseD12_4D(c,actor,presentationTick);drawSwiftCommanderSigilD12_4D(c,actor,presentationTick);drawSwiftCommanderAuraD12_4D(c,actor,presentationTick);drawSwiftHasteD12_4D(c,actor,presentationTick);drawGlacialWardenPulseD12_4E(c,actor,presentationTick);drawGlacialWardenSigilD12_4E(c,actor,presentationTick);drawGlacialWardenAuraD12_4E(c,actor,presentationTick);drawToxicDecayRearD12_4F(c,actor,presentationTick);drawIronCitadelRearD12_4G(c,actor,presentationTick);drawIronGuardRearD12_4G(c,actor,presentationTick);drawBloodBerserkerRearD12_4H_A(c,actor,presentationTick);drawNullifierRearD12_4I(c,actor,presentationTick);drawWebWeaverRearD12_4J(c,actor,presentationTick);drawSlagShaperRearD12_4K(c,actor,presentationTick);
   const shadow=profile.contactShadow;c.fillStyle=`rgba(10,14,15,${shadow.alpha})`;c.beginPath();c.ellipse(shadow.x,shadow.y,shadow.rx,shadow.ry,0,0,Math.PI*2);c.fill();
-  c.save();const eliteScale=actor.elite?.scale??1;c.scale(eliteScale,eliteScale);c.scale(actor.presentationFacingX===-1?-1:1,1);c.translate(profile.drawOffset.x,profile.drawOffset.y);c.scale(profile.visualScale,profile.visualScale);c.strokeStyle='#000';c.lineWidth=1.8;c.lineJoin='round';if(actor.elite?.affixId==='vitality_weaver'){c.filter='sepia(.16) saturate(1.28) hue-rotate(58deg) brightness(1.03)';c.shadowColor='#43cf85';c.shadowBlur=2;}else if(actor.elite?.affixId==='swift_commander'){c.filter='saturate(1.18) hue-rotate(12deg) brightness(1.04)';c.shadowColor='#00d2ff';c.shadowBlur=2;}else if(actor.elite?.affixId==='glacial_warden'){c.filter='saturate(.9) hue-rotate(142deg) brightness(1.18) contrast(1.04)';c.shadowColor='#79d7ff';c.shadowBlur=2;}else if(actor.elite?.affixId==='toxic_decay'){c.filter='sepia(.2) saturate(1.45) hue-rotate(64deg) brightness(1.02)';c.shadowColor='#70408f';c.shadowBlur=2;}else if(actor.elite?.affixId==='iron_citadel'){c.filter='saturate(.72) hue-rotate(172deg) brightness(1.04) contrast(1.08)';c.shadowColor='#7196b5';c.shadowBlur=2;}else if(actor.elite?.affixId==='blood_berserker'){c.filter='sepia(.22) saturate(1.48) hue-rotate(304deg) brightness(.98) contrast(1.08)';c.shadowColor='#d34550';c.shadowBlur=2;}else if(actor.elite?.affixId==='nullifier'){c.filter='sepia(.12) saturate(1.35) hue-rotate(225deg) brightness(1.02) contrast(1.06)';c.shadowColor='#9b5de5';c.shadowBlur=2;}else if(actor.elite?.affixId==='web_weaver'){c.filter='saturate(.78) hue-rotate(152deg) brightness(1.12) contrast(1.06)';c.shadowColor='#88e8f6';c.shadowBlur=2;}else if(actor.elite?.affixId==='slag_shaper'){c.filter='sepia(.34) saturate(1.55) hue-rotate(332deg) brightness(.98) contrast(1.12)';c.shadowColor='#f97316';c.shadowBlur=2;}
+  const attackArt=hostileMeleePose(actor,presentationTick);drawHostileMeleePhase(c,attackArt);c.save();if(attackArt)c.translate(attackArt.direction.x*attackArt.lunge,attackArt.direction.y*attackArt.lunge);const eliteScale=actor.elite?.scale??1;c.scale(eliteScale,eliteScale);c.scale(actor.presentationFacingX===-1?-1:1,1);c.translate(profile.drawOffset.x,profile.drawOffset.y);c.scale(profile.visualScale,profile.visualScale);c.strokeStyle='#000';c.lineWidth=1.8;c.lineJoin='round';if(actor.elite?.affixId==='vitality_weaver'){c.filter='sepia(.16) saturate(1.28) hue-rotate(58deg) brightness(1.03)';c.shadowColor='#43cf85';c.shadowBlur=2;}else if(actor.elite?.affixId==='swift_commander'){c.filter='saturate(1.18) hue-rotate(12deg) brightness(1.04)';c.shadowColor='#00d2ff';c.shadowBlur=2;}else if(actor.elite?.affixId==='glacial_warden'){c.filter='saturate(.9) hue-rotate(142deg) brightness(1.18) contrast(1.04)';c.shadowColor='#79d7ff';c.shadowBlur=2;}else if(actor.elite?.affixId==='toxic_decay'){c.filter='sepia(.2) saturate(1.45) hue-rotate(64deg) brightness(1.02)';c.shadowColor='#70408f';c.shadowBlur=2;}else if(actor.elite?.affixId==='iron_citadel'){c.filter='saturate(.72) hue-rotate(172deg) brightness(1.04) contrast(1.08)';c.shadowColor='#7196b5';c.shadowBlur=2;}else if(actor.elite?.affixId==='blood_berserker'){c.filter='sepia(.22) saturate(1.48) hue-rotate(304deg) brightness(.98) contrast(1.08)';c.shadowColor='#d34550';c.shadowBlur=2;}else if(actor.elite?.affixId==='nullifier'){c.filter='sepia(.12) saturate(1.35) hue-rotate(225deg) brightness(1.02) contrast(1.06)';c.shadowColor='#9b5de5';c.shadowBlur=2;}else if(actor.elite?.affixId==='web_weaver'){c.filter='saturate(.78) hue-rotate(152deg) brightness(1.12) contrast(1.06)';c.shadowColor='#88e8f6';c.shadowBlur=2;}else if(actor.elite?.affixId==='slag_shaper'){c.filter='sepia(.34) saturate(1.55) hue-rotate(332deg) brightness(.98) contrast(1.12)';c.shadowColor='#f97316';c.shadowBlur=2;}
   const paintBody=target=>(CREATURE_PAINTERS_D11[actor.enemyFamily]??draw_sprout)(target,m,presentationTime,seed);
   const boundedFilter=actor.elite?.affixId==='swift_commander'&&actor.enemyFamily==='animated_armor'||actor.enemyFamily==='golem'&&['slag_shaper','iron_citadel'].includes(actor.elite?.affixId);
   if(boundedFilter)drawFilteredCreatureSurface(c,frame,paintBody);else paintBody(c);c.restore();drawToxicDecayFrontD12_4F(c,actor,presentationTick);drawIronCitadelFrontD12_4G(c,actor,presentationTick);drawIronGuardFrontD12_4G(c,actor,presentationTick);drawBloodBerserkerFrontD12_4H_A(c,actor,presentationTick);drawNullifierFrontD12_4I(c,actor,presentationTick);drawWebWeaverFrontD12_4J(c,actor,presentationTick);drawSlagShaperFrontD12_4K(c,actor,presentationTick);
