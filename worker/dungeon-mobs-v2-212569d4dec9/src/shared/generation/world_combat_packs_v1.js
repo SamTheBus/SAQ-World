@@ -1,0 +1,15 @@
+import {hasWorldCombat,WORLD_COMBAT_VERSION as V} from '../content/world_combat_v1.js';
+import {FERRY_NETWORK} from '../content/ferry_plan_v1.js';
+const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;return h;};
+export function createWorldPackSampler(asset,binding,tile){
+ const protectedChunks=new Set();const protect=c=>{if(c&&Number.isFinite(c.x))for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)protectedChunks.add((c.x+dx)+','+(c.y+dy));};
+ const scan=o=>{if(!o||typeof o!=='object')return;if(Array.isArray(o)){for(const q of o)scan(q);return;}for(const [k,v]of Object.entries(o)){if(['core','expansion','footprint','approach','coreChunks','expansionChunks','footprintChunks','approachChunks','reservedChunks','sockets','campus','activity','arrival'].includes(k)&&Array.isArray(v))for(const c of v)protect(c);else if(['entrance','landing','breathing'].includes(k)&&v?.x!==undefined)protect(v);else if(v&&typeof v==='object')scan(v);}};
+ for(const list of [asset.settlements,asset.sites,asset.futureIslands,asset.factions,asset.populationOverlay])scan(list);
+ for(const c of asset.extraProtected??[])protect(c);for(const c of asset.originZone?.runtimeChunks??[])protect({x:c.chunkX,y:c.chunkY});
+ const safe=(x,y)=>!protectedChunks.has(Math.floor(x/32)+','+Math.floor(y/26))&&Math.hypot(x-asset.spawnTile.x,y-asset.spawnTile.y)>24&&FERRY_NETWORK.landings.every(l=>Math.hypot(x-l.tile.x,y-l.tile.y)>32);
+ return (cx,cy,digest)=>{if(!hasWorldCombat(binding)||protectedChunks.has(cx+','+cy))return [];const h=hash(V+'/'+asset.campaignSeedHex+'/'+cx+'/'+cy);if(h%100>=60)return [];const count=6+(h>>>8)%7,candidates=[];
+ for(let a=0;a<24;a++){const x=cx*32+7+(hash(h+'/x/'+a)%18),y=cy*26+6+(hash(h+'/y/'+a)%14),b=tile(x,y);if(!safe(x,y)||b.collision!=='1'||b.kind==='bridge'||b.town||b.fortExterior||b.ruinExterior||b.caveExterior)continue;const positions=[];
+ for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){const xx=x+dx,yy=y+dy,q=tile(xx,yy);if(!safe(xx,yy)||q.collision!=='1'||q.landmassId!==b.landmassId||q.kind==='bridge'||q.town||q.fortExterior||q.ruinExterior||q.caveExterior)continue;let clear=true;for(let oy=-1;oy<=1;oy++)for(let ox=-1;ox<=1;ox++)if(tile(xx+ox,yy+oy).collision!=='1')clear=false;if(clear)positions.push({x:(xx-cx*32)*32+16,y:(yy-cy*26)*32+16,n:hash(h+'/member/'+dx+'/'+dy)});}
+ positions.sort((a,b)=>a.n-b.n);const chosen=[];for(const p of positions)if(chosen.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>=40)){chosen.push(p);if(chosen.length===count)break;}if(chosen.length<count)continue;const families=({w:['sprout','slime','gargoyle'],a:['slime','sprout','rust_nibbler'],r:['golem','gargoyle','rust_nibbler'],m:['slime','cursed_blade','sprout'],d:['rust_nibbler','golem','animated_armor'],s:['golem','cursed_blade','gargoyle'],t:['sprout','slime','rust_nibbler'],l:['golem','animated_armor','cursed_blade']})[b.biome]??['slime','sprout','golem'];
+ return [{id:'anchor:'+digest.slice(0,32),ordinal:0,position:{x:(x-cx*32)*32+16,y:(y-cy*26)*32+16},rank:h%13===0?'B':'C',combatVersion:V,members:chosen.map((p,i)=>({family:families[(h+i)%3],position:{x:p.x,y:p.y}}))}];}return [];};
+}
