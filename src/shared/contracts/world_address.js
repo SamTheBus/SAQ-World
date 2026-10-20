@@ -12,7 +12,11 @@ export function normalizeWorldPosition(p){
  signedAddress(p.chunkX);signedAddress(p.chunkY);check(Number.isFinite(p.localX)&&Number.isFinite(p.localY),'Invalid local movement');
  const dx=Math.floor(p.localX/P.chunkWidth),dy=Math.floor(p.localY/P.chunkHeight);
  check(Number.isSafeInteger(dx)&&Number.isSafeInteger(dy),'Unbounded local movement');
- return freezeWire(validateWorldPosition({chunkX:addressWire(BigInt(p.chunkX)+BigInt(dx)),chunkY:addressWire(BigInt(p.chunkY)+BigInt(dy)),localX:p.localX-dx*P.chunkWidth,localY:p.localY-dy*P.chunkHeight}));
+ // These four computed fields are validated primitives, so no input object is
+ // retained. Match freezeWire's null prototype and frozen descriptors without
+ // traversing and copying the same freshly constructed record a second time.
+ const normalized=Object.assign(Object.create(null),{chunkX:addressWire(BigInt(p.chunkX)+BigInt(dx)),chunkY:addressWire(BigInt(p.chunkY)+BigInt(dy)),localX:p.localX-dx*P.chunkWidth,localY:p.localY-dy*P.chunkHeight});
+ return Object.freeze(validateWorldPosition(normalized));
 }
 export const legacyWorldPosition=p=>normalizeWorldPosition({chunkX:'0',chunkY:'0',localX:p.x,localY:p.y});
 export function relativeWorldPosition(p,origin,maxChunkDelta=8){

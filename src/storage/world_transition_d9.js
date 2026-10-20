@@ -11,7 +11,7 @@ import {validateInventoryProgress} from '../shared/contracts/player_inventory.js
 import {validatePlayerRespawnProgress} from '../shared/contracts/player_respawn.js';
 import {validateEncounterEconomyProgress,encounterAdvanced} from '../shared/contracts/encounter_economy.js';
 import {validateOverworldDiscoveryProgress,manifestForState} from '../shared/contracts/overworld.js';
-import {localFramePositionD9} from '../shared/contracts/local_world_frames_d9.js';
+import {localFramePositionD9,projectToLocalFrameD9} from '../shared/contracts/local_world_frames_d9.js';
 import {reconcileWorldComparisonPagesD9} from './world_transition_pages_d9.js';
 import {siteResetTransitionsD13C,validateSiteRunEpisodeProgressD13B} from '../shared/contracts/site_run_episode_d13b.js';
 import {siteResetIdentityMatchesD13C} from '../shared/contracts/site_reset_d13c.js';
@@ -26,11 +26,23 @@ function comparable(state){const s=copyWire(state),frames=s.d9World.runtime.fram
   for(const r of [...Object.values(p.inventory.d7.salvaged),...Object.values(p.inventory.d7.autoSalvaged)])if(r.reward)r.reward.position=point(r.reward.position,r.reward.spaceInstanceId);
  }return s;
 }
+// Compare immutable world receipts through the AFTER computation frame. This
+// applies the exact same deterministic rebase operation to both endpoints;
+// it does not introduce a positional tolerance or change saved coordinates.
+export function alignWorldReceiptComparisonD9(state,frames){
+ const point=(p,space)=>{if(space!==state.overworldInstanceId)return p;const local=projectToLocalFrameD9(p,frames);return local?copyWire(localFramePositionD9(local,frames)):p;};
+ for(const p of Object.values(state.playersById)){const i=p.inventory;
+  for(const r of Object.values(i.rewardsByEntityId))r.position=point(r.position,r.spaceInstanceId);
+  for(const r of Object.values(i.renewal.groundBySourceId))r.position=point(r.position,r.spaceInstanceId);
+  for(const r of [...Object.values(i.d7.salvaged),...Object.values(i.d7.autoSalvaged)])if(r.reward)r.reward.position=point(r.reward.position,r.reward.spaceInstanceId);
+ }return state;
+}
 export async function validateWorldAdvanceD9(a,b,options){
  validateActivityState(b);check(a.d9World&&b.d9World,'D9 transition required');
  for(const key of ['content','session','overworldInstanceId','proofCase'])check(same(a[key],b[key]),'Immutable campaign identity changed');
  for(const key of ['campaignId','seed','charactersById'])check(same(a.campaign[key],b.campaign[key]),'Campaign identity changed');
  check(a.campaign.saveRevision===b.campaign.saveRevision&&a.campaign.checkpointId===b.campaign.checkpointId,'Unconfirmed campaign revision');
+ if(a.d9World.plannedWorld)check(a.d9World.runtimePolicy===b.d9World.runtimePolicy,'Runtime retention contract changed inside campaign');
  if(a.d9World.plannedWorld)check(same(a.d9World.plannedWorld,b.d9World.plannedWorld)&&same(a.d9World.plannedStart,b.d9World.plannedStart),'Pinned planned world changed');else if(b.d9World.plannedWorld)check(a.tick===0&&b.tick===0&&a.d9World.runtime.chunks.length===0&&Object.keys(a.d9World.siteReservationsById).length===0,'Planned binding is genesis-only');
  if(a.d9World.plannedWorld?.cavePrototype)check(same(a.d9World.siteReservationsById,b.d9World.siteReservationsById),'Pinned planned Cave reservation changed');
  for(const key of ['origin','profile','migration'])check(same(a.d9World[key],b.d9World[key]),'Pinned world provenance changed');
@@ -56,6 +68,7 @@ export async function validateWorldAdvanceD9(a,b,options){
  validateOverworldDiscoveryProgress(a.campaign.overworld,b.campaign.overworld,manifestForState(b));
  const result=b;a=comparable(a);b=comparable(b);
  if(options)await reconcileWorldComparisonPagesD9(a,b,options);
+ alignWorldReceiptComparisonD9(a,result.d9World.runtime.frames);alignWorldReceiptComparisonD9(b,result.d9World.runtime.frames);
  for(const id of a.session.playerIds)for(const [source,row] of Object.entries(a.playersById[id].d8.causalXp))if(!retiredEntities.has(source))for(const [kind,sequence] of Object.entries(row))check((b.playersById[id].d8.causalXp[source]?.[kind]??0)>=sequence,'Mastery causal receipt regressed across paging');
   validateEncounterEconomyProgress(a,b);validateSiteRunEpisodeProgressD13B(a,b);validateSiteFinaleReservationProgressD13D_A(a,b);
  for(const [id,g] of Object.entries(a.groupsById)){

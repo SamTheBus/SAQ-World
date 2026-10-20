@@ -1,3 +1,5 @@
+import {worldOrdinaryMeleeProfile} from './world_melee_geometry.js';
+import {hasWorldCombat,worldEnemyStats} from './world_combat_v1.js';
 import {freezeWire,copyWire,canonicalStringify,requireContract as check} from '../contracts/wire.js';
 import {hashBytes,frameUtf8,bytesToHex,utf8} from '../contracts/hashing.js';
 import {combatInteger} from '../contracts/combat_amount.js';
@@ -20,13 +22,13 @@ export async function buildDefinedFunctionalSiteD10(state,site,binding,definitio
  const members=[],actors=[],entityIds=[];
  for(let n=0;n<template.encounter.members.length;n++){
   const spec=template.encounter.members[n],enemy=ORDINARY_ENEMIES.find(e=>e.family===spec.family);check(enemy,'Unknown site enemy');
-  const profile=resolveOrdinaryProfile(enemy,template.encounter.rank),entityId='ent:'+await token('enemy-'+n);
+  const profile=worldOrdinaryMeleeProfile(state,resolveOrdinaryProfile(enemy,template.encounter.rank)),entityId='ent:'+await token('enemy-'+n);
   entityIds.push(entityId);members.push({entityId,enemyDefinitionId:enemy.enemyDefinitionId,profileId:profile.contentDefinitionId,position:{x:spec.x,y:spec.y}});
  }
  const episode={...unfrozenEpisodeD9('site-anchor:'+site.siteId,0),geography:{chunkX:site.entrance.chunkX,chunkY:site.entrance.chunkY,anchorOrdinal:0,minimumLevel:copyWire(site.minimumLevel),rank:template.encounter.rank}};
  episode.snapshot=frozenSnapshot?copyWire(frozenSnapshot):prepareEpisodeSnapshotD9(episode,{tick:state.tick,minimumLevel:site.minimumLevel,participants:Object.values(state.playersById).map(p=>{const a=state.entitiesById[p.entityId];return {playerId:p.playerId,alive:a.alive,spaceInstanceId:a.residency.spaceInstanceId,position:copyWire(state.d9World.positions[a.entityId]??site.entrance),heroLevel:p.progression.level};}),anchor:site.entrance,spaceInstanceId:state.overworldInstanceId,rank:template.encounter.rank,trigger:'activation'});
  for(const member of members){
-  const profile=state.content.definitionsById[member.profileId],enemy=ORDINARY_ENEMIES.find(e=>e.enemyDefinitionId===member.enemyDefinitionId),stats=threatEndpointsD9(episode.snapshot.effectiveLevel,template.encounter.rank,enemy.budget);
+  const profile=worldOrdinaryMeleeProfile(state,state.content.definitionsById[member.profileId]),enemy=ORDINARY_ENEMIES.find(e=>e.enemyDefinitionId===member.enemyDefinitionId),stats=(hasWorldCombat(state)?worldEnemyStats:threatEndpointsD9)(episode.snapshot.effectiveLevel,template.encounter.rank,enemy.budget);
   actors.push({entityId:member.entityId,contentDefinitionId:profile.contentDefinitionId,kind:'actor',ownerCharacterId:null,team:'hostile',hp:combatInteger(stats.maxHp),maxHp:combatInteger(stats.maxHp),position:copyWire(member.position),hullRadius:profile.hullRadius,combatRadius:profile.combatRadius,movementIntent:{x:0,y:0},moveSpeed:profile.moveSpeed,alive:true,attackDamage:combatInteger(stats.attackDamage),attackReach:profile.attackReach,attackReachMode:profile.attackReachMode,attackDelayTicks:profile.attackDelayTicks,attackTimer:profile.attackDelayTicks,nextAttackActionSequence:1,movedLastTick:false,ai:actorAi(enemy.family,state.tick),residency:{spaceInstanceId,residencyRevision:1}});
  }
  const interior={recipeVersion:pkg.packageVersion,siteId:site.siteId,logicalSpaceId,contentHash:pkg.contentHash,collision:copyWire(template.collision),entrance:copyWire(template.entrance),rooms:copyWire(template.rooms),decorations:copyWire(template.decorations),groupId,...(template.visual?{visual:copyWire(template.visual)}:{})};
@@ -49,7 +51,7 @@ export async function buildDefinedWorldCompoundD10(state,parcel,binding,definiti
  const members=[],actors=[],entityIds=[];
  for(let n=0;n<template.encounter.members.length;n++){
   const spec=template.encounter.members[n],enemy=ORDINARY_ENEMIES.find(e=>e.family===spec.family);check(enemy,'Unknown compound enemy');
-  const profile=resolveOrdinaryProfile(enemy,template.encounter.rank),entityId='ent:'+await token('enemy-'+n),stats=threatEndpointsD9(site.minimumLevel,template.encounter.rank,enemy.budget),position={x:spec.x,y:spec.y};
+  const profile=worldOrdinaryMeleeProfile(state,resolveOrdinaryProfile(enemy,template.encounter.rank)),entityId='ent:'+await token('enemy-'+n),stats=threatEndpointsD9(site.minimumLevel,template.encounter.rank,enemy.budget),position={x:spec.x,y:spec.y};
   entityIds.push(entityId);members.push({entityId,enemyDefinitionId:enemy.enemyDefinitionId,profileId:profile.contentDefinitionId,position:copyWire(position)});
   actors.push({entityId,contentDefinitionId:profile.contentDefinitionId,kind:'actor',ownerCharacterId:null,team:'hostile',hp:combatInteger(stats.maxHp),maxHp:combatInteger(stats.maxHp),position:copyWire(position),hullRadius:profile.hullRadius,combatRadius:profile.combatRadius,movementIntent:{x:0,y:0},moveSpeed:profile.moveSpeed,alive:true,attackDamage:combatInteger(stats.attackDamage),attackReach:profile.attackReach,attackReachMode:profile.attackReachMode,attackDelayTicks:profile.attackDelayTicks,attackTimer:profile.attackDelayTicks,nextAttackActionSequence:1,movedLastTick:false,ai:actorAi(spec.family,state.tick),residency:{spaceInstanceId:state.overworldInstanceId,residencyRevision:1}});
  }

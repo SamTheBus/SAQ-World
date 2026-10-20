@@ -23,8 +23,8 @@ export function renewEpisodeD9(episode,{approaching,obligationsResolved,placemen
  check(episode.renewalEligible&&approaching&&obligationsResolved&&placement,'Episode renewal unavailable');
  return {...unfrozenEpisodeD9(episode.anchorId,wire(big(episode.episode)+1n),{origin:episode.origin}),placement:copyWire(placement)};
 }
-export function chooseEpisodePlacementD9({candidates,participants,spaceInstanceId,isLegal}){
+export function chooseEpisodePlacementD9({candidates,participants,spaceInstanceId,isLegal,combat=false}){
  check(candidates.length<=P.placementCandidates,'Placement work bound');for(const pair of candidates){
- check(pair.length===2,'D9 preserves two members');if(pair.every(p=>isLegal(p)&&participants.every(a=>a.spaceInstanceId!==spaceInstanceId||pointDistance(p,a.position)>=P.placementSafetyRadius)))return freezeWire(pair);
+ check(combat?pair.length>=6&&pair.length<=12:pair.length===2,'D9 encounter member capacity');if(pair.every(p=>isLegal(p)&&participants.every(a=>a.spaceInstanceId!==spaceInstanceId||pointDistance(p,a.position)>=P.placementSafetyRadius)))return freezeWire(pair);
  }return null;
 }

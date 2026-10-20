@@ -1,4 +1,5 @@
 import {dungeonItemBasesD9} from './dungeon_item_bases_d9.js';
+import {worldGearRarity} from './world_combat_v1.js';
 import {rewardProgressionD9,validateRewardProgressionD9} from './reward_progression_d9.js';
 import {selectBaseTomeElement,selectD8TomeElement,tomeProfile} from './tome_profiles.js';
 import {createRngState,nextUint32} from '../contracts/rng.js';
@@ -21,8 +22,8 @@ const round4=n=>Number(n.toFixed(4));
 export function salvagePayload(seed,tier){safeInteger(tier,0,5);const r=rewardStream(`salvage-v1/${seed}`),out={[SALVAGE_MATERIALS[tier]]:1+Math.floor(r.random()*3)};for(let t=tier-1;t>=0;t--)if(r.random()<.6)out[SALVAGE_MATERIALS[t]]=1+Math.floor(r.random()*2);return freezeWire(out);}
 export function generateGearD9(seed,input,options={}){return certifyNumeric(c=>generateAtPrecision(c,seed,input,options));}
 function generateAtPrecision(c,seed,input,{tier=null,family=null,subType=null,noun=null}={}){
- const progression=typeof input==='number'||typeof input==='string'?rewardProgressionD9(input,seed):validateRewardProgressionD9(input),depth=progression.sourceDepth; positiveProgression(depth);const rng=rewardStream(seed),random=()=>rng.random(),pick=a=>a[Math.floor(random()*a.length)],power=wire(big(depth)/4n+1n);
- const rarityTier=tier??rollRarityD9(depth,progression.quality,random);safeInteger(rarityTier,0,5);
+ const progression=typeof input==='number'||typeof input==='string'?rewardProgressionD9(input,seed):validateRewardProgressionD9(input),depth=progression.sourceDepth; positiveProgression(depth);const rng=rewardStream(seed),random=()=>rng.random(),pick=a=>a[Math.floor(random()*a.length)],power=progression.combatHash?depth:wire(big(depth)/4n+1n);
+ const rarityRandom=progression.combatHash?random():null,rarityTier=tier??(progression.combatHash?worldGearRarity(depth,progression.combatQuality,rarityRandom,progression.modifiers?.qualityHundredths??0):rollRarityD9(depth,progression.quality,random));safeInteger(rarityTier,0,5);
  const type=family??pick(GEAR_FAMILIES),sub=type==='subweapon'?(subType??pick(['shield','dagger','tome'])):null,n=noun??pick(GEAR_NOUNS[sub??type]);requireContract(GEAR_FAMILIES.includes(type)&&GEAR_NOUNS[sub??type]?.includes(n),'Unknown generated family/noun');
  const E=c.dungeonScale(power).E,R=c.q(100+7*rarityTier,100),P=c.q((100+15*rarityTier)*(type==='overall'?18:10),1000),flatR=c.mul(R,c.q(type==='overall'?18:10,10));
  const I=v=>{if(v&&typeof v==='object'&&'lo' in v)return v;const q=exactDecimal(v);return c.q(q.n,q.d);},times=(...v)=>v.reduce((a,b)=>c.mul(a,I(b)),c.q(1)),f=(a,b)=>{const roll=BigInt(Math.floor(random()*4294967296));return c.add(I(a),c.mul(c.sub(I(b),I(a)),c.q(roll,4294967296)));},ceil=v=>wire(c.endpoint(v,'ceil')),round4=v=>decimalWire(c.endpoint(v,'round',4),4);
@@ -31,7 +32,7 @@ function generateAtPrecision(c,seed,input,{tier=null,family=null,subType=null,no
  const raw={type,subType:sub,statsRolled:rarityTier,noun:n,baseAtk:0,baseDef:0,baseMaxHp:0,baseStr:0,baseDex:0,baseInt:0,baseMoveSpeed:0,baseCritChance:0,baseCritDamage:0,baseBlock:0,baseParry:0};
  if(type==='ring'){const roll=random();raw.implicitType=roll<.33?'atk':roll<.66?'maxHp':'def';raw.implicitPctType=pick(['atkPct','maxHpPct','defPct','strPct','dexPct','intPct']);}
  // Resolve allowed identity before any numeric contribution; no late cosmetic hook.
- if(sub==='tome')raw.spellType=progression.modifiers?selectD8TomeElement(big(power)>=13n?13:1,rarityTier,random,progression.modifiers):selectBaseTomeElement(big(power)>=13n?13:1,random,progression.tomeEligibility);dungeonItemBasesD9(raw,power,c);
+ if(sub==='tome')raw.spellType=progression.modifiers?selectD8TomeElement(big(power)>=13n?13:1,rarityTier,random,progression.modifiers):selectBaseTomeElement(big(power)>=13n?13:1,random,progression.tomeEligibility);dungeonItemBasesD9(raw,power,c);if(progression.combatHash){const l=big(power),rar=BigInt(100+15*rarityTier),v=n=>wire((n*rar+99n)/100n);if(type==='weapon')raw.baseAtk=v(6n+2n*l);if(['chest','overall','helmet','leggings','boots'].includes(type)){const factor=type==='overall'?2n:1n;raw.baseDef=v((2n+l)*factor);raw.baseMaxHp=v((10n+4n*l)*factor);}if(type==='ring'){raw.baseAtk=v(1n+l/3n);raw.baseDef=v(1n+l/4n);raw.baseMaxHp=v(5n+l);}}
  const affixes=[],pool=[...AFFIX_POOLS[sub??type]],bonus={};
  for(let i=0;i<rarityTier&&pool.length;i++){const key=pool.splice(Math.floor(random()*pool.length),1)[0];let value;
  if(key==='atk'||key==='def')value=ceil(times(f('.04','.08'),E,flatR));

@@ -1,11 +1,12 @@
+import {hasWorldCombat} from '../shared/content/world_combat_v1.js';
 import { createSpatialIndex } from './activity_spatial.js';
 import { requireContract, safeInteger } from '../shared/contracts/wire.js';
 import {functionalSiteSpaceIdsD12} from '../shared/contracts/functional_site_d9.js';
 export const ACTIVITY_DEFAULTS=Object.freeze({prepareRadius:512,leaveRadius:704,mergeDistance:768,splitTicks:60,sleepTicks:120,softActors:24,hardActors:48});
 export function createActivityScheduler(state,options={}, {beforeSleep=()=>true,onWake=()=>{}}={}) {
-  const config=Object.freeze({...ACTIVITY_DEFAULTS,...options});
+  const config=Object.freeze({...ACTIVITY_DEFAULTS,...(hasWorldCombat(state)?{softActors:96,hardActors:192}:{}),...options});
   for(const v of Object.values(config))safeInteger(v,1);
-  requireContract(config.prepareRadius>=400&&config.leaveRadius>config.prepareRadius&&config.mergeDistance>=config.prepareRadius&&config.hardActors<=48&&config.softActors<=config.hardActors,'Unsafe activity configuration');
+  requireContract(config.prepareRadius>=400&&config.leaveRadius>config.prepareRadius&&config.mergeDistance>=config.prepareRadius&&config.hardActors<=(hasWorldCombat(state)?192:48)&&config.softActors<=config.hardActors,'Unsafe activity configuration');
   requireContract(config.hardActors>=Object.keys(state.playersById).length,'Actor budget must include every player');
   const dormant=createSpatialIndex(),active=new Map(),separatedSince=new Map();let clusters=[],deferred=0,wakes=0,sleeps=0;
   const actors=g=>g.entityIds.map(id=>state.entitiesById[id]);
@@ -23,7 +24,9 @@ export function createActivityScheduler(state,options={}, {beforeSleep=()=>true,
       if(interiorSpace(g)&&!players.some(p=>p.residency.spaceInstanceId===g.spaceInstanceId)){active.delete(id);index(g);sleeps++;continue;}
       if(near(g,config.leaveRadius)){g.lastRequiredTick=state.tick;active.set(id,state.tick);}
       else if(state.tick-lastNear>=config.sleepTicks&&beforeSleep(g,config.leaveRadius)){active.delete(id);index(g);sleeps++;}}
-    let live=players.length+[...active.keys()].reduce((n,id)=>n+actors(state.groupsById[id]).filter(a=>a.alive).length,0);
+    // Reserve every participant's slot while defeated: a respawn must not push
+    // already active hostile groups beyond the shared simulation ceiling.
+    let live=Object.keys(state.playersById).length+[...active.keys()].reduce((n,id)=>n+actors(state.groupsById[id]).filter(a=>a.alive).length,0);
     const candidates=new Set();for(const p of players)for(const id of dormant.query(p.residency.spaceInstanceId,p.position,config.prepareRadius))candidates.add(id);
     deferred=0;
     for(const id of [...candidates].sort()){const g=state.groupsById[id];if(!near(g,config.prepareRadius))continue;

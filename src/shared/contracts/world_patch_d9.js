@@ -1,3 +1,4 @@
+import {hasWorldCombat} from '../content/world_combat_v1.js';
 import {copyWire,canonicalStringify,closedRecord,requireContract as check} from './wire.js';
 import {captureWorldPositionsD9} from './world_runtime_d9.js';
 import {proceduralGroupPinnedD9} from './world_chunk_delta_d9.js';
@@ -29,7 +30,7 @@ export function applyWorldTransferPatchD9(state,patch){
  for(const id of patch.releasedGroupIds)check(!proceduralGroupPinnedD9(state,id),'Combat now pins a prepared eviction');
  for(const id of patch.coldGroups)check(!state.groupsById[id],'Cold encounter residency changed during preparation');
  for(const placement of patch.placements){
-  closedRecord(placement,['groupId','anchor','positions','renewal']);check(placement.positions.length===2,'Prepared placement composition changed');
+  closedRecord(placement,['groupId','anchor','positions','renewal']);check((placement.positions.length===2||hasWorldCombat(state)&&placement.positions.length>=6&&placement.positions.length<=12),'Prepared placement composition changed');
   const participants=Object.values(state.playersById).map(p=>state.entitiesById[p.entityId]).filter(a=>a.residency.spaceInstanceId===state.overworldInstanceId).map(a=>({alive:a.alive,position:localFramePositionD9(a.position,state.d9World.runtime.frames)}));
   const distance=(a,b)=>{const q=relativeWorldPosition(a,b,4);return q?Math.hypot(q.x-b.localX,q.y-b.localY):Infinity;};
   check(participants.some(p=>p.alive&&distance(p.position,placement.anchor)<=P.prepareRadius)&&placement.positions.every(q=>participants.every(p=>distance(q,p.position)>=P.placementSafetyRadius)),'Participant approach/safe placement changed');

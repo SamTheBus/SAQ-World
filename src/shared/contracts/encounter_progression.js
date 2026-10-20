@@ -1,3 +1,5 @@
+import {hasWorldCombat,worldEnemyStats,worldBossStats,worldHeroKillXp} from '../content/world_combat_v1.js';
+import {worldOrdinaryMeleeProfile} from '../content/world_melee_geometry.js';
 import { closedRecord, requireContract, safeInteger } from './wire.js';
 import { MAX_PLAYER_LEVEL } from './player_progression.js';
 import { ordinaryEnemyForProfile, ORDINARY_PROFILES, resolveOrdinaryProfile } from '../content/ordinary_enemies.js';
@@ -17,17 +19,19 @@ export function ordinaryTier(profileId) {
 export function encounterActorProfile(state, group, actor) {
   const enemy=ordinaryEnemyForProfile(actor.contentDefinitionId);
   const level=group.threatSnapshot?.levelsByEntityId[actor.entityId];
-  let profile;if(enemy&&level!==undefined&&group.threatSnapshot.version===D9_THREAT_VERSION){const stats=threatEndpointsD9(level,ordinaryTier(actor.contentDefinitionId),enemy.budget);profile={...state.content.definitionsById[actor.contentDefinitionId],maxHp:stats.maxHp,attackDamage:stats.attackDamage};}
+  let profile;if(enemy&&level!==undefined&&group.threatSnapshot.version===D9_THREAT_VERSION){const stats=hasWorldCombat(state)?worldEnemyStats(level,ordinaryTier(actor.contentDefinitionId),enemy.budget):threatEndpointsD9(level,ordinaryTier(actor.contentDefinitionId),enemy.budget);profile={...state.content.definitionsById[actor.contentDefinitionId],maxHp:stats.maxHp,attackDamage:stats.attackDamage};}
   else profile=enemy&&level!==undefined?resolveOrdinaryProfile(enemy,ordinaryTier(actor.contentDefinitionId),level):state.content.definitionsById[actor.contentDefinitionId];
-  return eliteActorProfileD12_4(state,actor,profile);
+  if(hasWorldCombat(state)&&profile?.isBoss&&level!==undefined)profile={...profile,...worldBossStats(level)};return eliteActorProfileD12_4(state,actor,worldOrdinaryMeleeProfile(state,profile));
 }
-export function ordinaryKillXp(actor, group) {
+export function ordinaryKillXp(actor, group, state=null,participant=null) {
   const enemy=ordinaryEnemyForProfile(actor.contentDefinitionId);
-  if(!enemy)return 0;
+  if(hasWorldCombat(state)&&participant){const boss=Boolean(state.content.definitionsById[actor.contentDefinitionId]?.isBoss);if(!enemy&&!boss)return 0;return worldHeroKillXp(group.threatSnapshot.levelsByEntityId[actor.entityId],participant.progression.level,ordinaryTier(actor.contentDefinitionId)??'C',Boolean(state.eliteCombat?.elitesByEntityId[actor.entityId]),boss);}
+  if(!enemy)return hasWorldCombat(state)&&state.content.definitionsById[actor.contentDefinitionId]?.isBoss?worldBossStats(group.threatSnapshot.levelsByEntityId[actor.entityId]).xp:0;
   const level=group.threatSnapshot?.levelsByEntityId[actor.entityId];
-  if(group.threatSnapshot?.version===D9_THREAT_VERSION)return threatEndpointsD9(level,ordinaryTier(actor.contentDefinitionId),{...enemy.budget,xp:({sprout:20,slime:20,golem:25})[enemy.family]}).xp;
+  if(hasWorldCombat(state))return worldEnemyStats(level,ordinaryTier(actor.contentDefinitionId),enemy.budget,Boolean(state.eliteCombat?.elitesByEntityId[actor.entityId])).xp;
+  if(group.threatSnapshot?.version===D9_THREAT_VERSION)return threatEndpointsD9(level,ordinaryTier(actor.contentDefinitionId),{...enemy.budget,xp:({sprout:20,slime:20,golem:25,gargoyle:24,rust_nibbler:18,animated_armor:25,cursed_blade:22})[enemy.family]}).xp;
   safeInteger(level,1,MAX_PLAYER_LEVEL);
-  return Math.round(({sprout:20,slime:20,golem:25})[enemy.family]*resolveThreatPower(level,ordinaryTier(actor.contentDefinitionId)).power);
+  return Math.round(({sprout:20,slime:20,golem:25,gargoyle:24,rust_nibbler:18,animated_armor:25,cursed_blade:22})[enemy.family]*resolveThreatPower(level,ordinaryTier(actor.contentDefinitionId)).power);
 }
 // Includes living participants regardless of local rendering/connection. At most four.
 export function eligibleNearbyParticipants(state, instanceId, points, radius) {

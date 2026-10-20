@@ -1,3 +1,4 @@
+import{retainedSiteCountsD9}from'../content/alpha_population_retention_v1.js';
 import {D9_RUNTIME_POLICY as B} from '../content/world_runtime_policy_d9.js';
 import {withinRetainedSiteBudgetsD9} from '../content/alpha_population_retention_v1.js';
 import {copyWire,closedRecord,requireContract as check,safeInteger,validateWire} from './wire.js';
@@ -35,7 +36,7 @@ export function validateWorldStreamCaptureD9(state,kind=state?.streamCapture?.ki
  closedRecord(state.streamCapture,['version','kind']);check(state.streamCapture.version===WORLD_STREAM_CAPTURE_D9&&state.streamCapture.kind===kind&&KINDS.has(kind),'World stream capture version/kind');
  closedRecord(state.campaign,['campaignId','seed']);safeInteger(state.tick);check(state.session.campaignId===state.campaign.campaignId&&state.d9World&&state.spacesByInstanceId[state.overworldInstanceId],'World stream capture identity');
  check(Object.keys(state.playersById).length>=1&&Object.keys(state.playersById).length<=4,'World stream participant bound');
- check(withinRetainedSiteBudgetsD9(state)&&state.d9World.runtime.chunks.length<=B.residentChunks,'World stream residency bound');
+ if(!withinRetainedSiteBudgetsD9(state)||state.d9World.runtime.chunks.length>B.residentChunks){const retained=retainedSiteCountsD9(state);throw new TypeError('World stream residency bound: '+JSON.stringify({policy:state.d9World.runtimePolicy,canonicalActors:Object.keys(state.entitiesById).length,groups:Object.keys(state.groupsById).length,retainedSite:retained,chunks:state.d9World.runtime.chunks.length}));}
  const collision=state.spacesByInstanceId[state.overworldInstanceId].collision;
  check(collision.pages.length===state.d9World.runtime.chunks.length&&collision.frames===state.d9World.runtime.frames||JSON.stringify(collision.frames)===JSON.stringify(state.d9World.runtime.frames),'World stream geometry bound');
  return state;

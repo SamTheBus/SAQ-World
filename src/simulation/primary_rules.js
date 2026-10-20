@@ -98,7 +98,8 @@ export function selectPrimaryTarget(state,sourceEntityId) {
 }
 
 // Caller supplies eligible same-instance actors. B1 math and tie ordering are unchanged.
-export function selectForwardActor(source,actors,aim,minimum,eligible=canActorAttack) {
+export function selectForwardActor(source,actors,aim,minimum,eligible=canActorAttack){return selectForwardActors(source,actors,aim,minimum,eligible,1)[0]??null;}
+export function selectForwardActors(source,actors,aim,minimum,eligible=canActorAttack,limit=1) {
   const candidates=[];
   for(const target of actors) {
     if(target.kind!=="actor"||!target.alive||target.team===source.team||!eligible(source,target))continue;
@@ -107,5 +108,5 @@ export function selectForwardActor(source,actors,aim,minimum,eligible=canActorAt
     if(dot>=minimum)candidates.push({id:target.entityId,distance,dot});
   }
   candidates.sort((a,b)=>a.distance-b.distance||b.dot-a.dot||(a.id<b.id?-1:a.id>b.id?1:0));
-  return candidates[0]?.id??null;
+  return candidates.slice(0,limit).map(c=>c.id);
 }

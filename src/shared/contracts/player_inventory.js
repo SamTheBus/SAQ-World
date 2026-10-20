@@ -1,5 +1,5 @@
 import {inventoryIntakeCapacity,D8_OWNERSHIP_BOUND} from './participant_progression.js';
-import {itemDefinition} from '../content/equipment.js';
+import {itemDefinition,equipmentLevelAllowed} from '../content/equipment.js';
 import {validateRenewableInventory,validateRenewableInventoryProgress,groundGear,lineToPoint} from './renewable_inventory.js';
 import {FORGE_INVENTORY_VERSION,emptyEconomy,validateForgeEconomy,validateForgeProgress} from './forge_economy.js';
 import {validatePlayerInventory as validatePerfInventory} from './player_inventory_perf1r_legacy.js';
@@ -43,7 +43,7 @@ export function canPickUp(state,p,sourceEntityId,radius){
 export function equipmentActionAvailable(state,p,kind,payload){
   const inv=p.inventory,primary=state.primary.actorsById[p.entityId];
   if(!inv||inv.revision!==payload.inventoryRevision||primary.current||primary.heldCommandId||primary.queuedCommandId)return false;
-  if(kind==='equipment.equip'){const next=equipmentAfter(inv,payload.itemId,payload.slot);return Boolean(next&&canonicalStringify(next)!==canonicalStringify(inv.equipped));}
+  if(kind==='equipment.equip'){const next=equipmentAfter(inv,payload.itemId,payload.slot);return Boolean(next&&equipmentLevelAllowed(p,inv.itemsById[payload.itemId])&&canonicalStringify(next)!==canonicalStringify(inv.equipped));}
   return payload.slot!=='weapon'&&equipmentSlots(inv).includes(payload.slot)&&inv.equipped[payload.slot]!==null;
 }
 export function validatePlayerInventory(p,state,validateCommand){

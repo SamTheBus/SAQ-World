@@ -1,5 +1,5 @@
 import {integerBigInt} from '../shared/contracts/integer_domain.js';
-import {copyWire as copyValue} from '../shared/contracts/wire.js';
+import {copyWire as copyValue,requireContract} from '../shared/contracts/wire.js';
 import {progressionBigInt as big,progressionWire as progressionWire} from '../shared/contracts/progression_integer.js';
 import {D9_HERO_VERSION} from '../shared/contracts/hero_progression_d9.js';
 import {D9_THREAT_VERSION,ordinaryTier} from '../shared/contracts/encounter_progression.js';
@@ -59,10 +59,10 @@ export function createActivityProgression(state, manifest, measure) {
   }
   function prepareDefeat(target,radius){
     if(!state.d9World)return null;const group=groupsByEntity.get(target.entityId);if(!group||target.team!=='hostile')return [];
-    const reward=ordinaryKillXp(target,group);if(!reward)return [];
+    const reward=ordinaryKillXp(target,group,state);if(!reward)return [];
     const rows=eligibleNearbyParticipants(state,target.residency.spaceInstanceId,[target.position],radius).map(player=>{
       const inventoryPlan=prepareEpisodeReward(state,player,episodeSource(state,group,'enemy',group.entityIds.indexOf(target.entityId)),target.position,target.residency.spaceInstanceId),rate=stats.get(player.entityId).heroXpRate;
-      const next=awardPlayerXp(player.progression,combatInteger(multiplyCombat(reward,rate?.n??1,rate?.d??1))),d8=player.d8?updateHighestHeroLevel(player.d8,next.level):null,leveled=big(next.level)>big(player.progression.level);
+      const next=awardPlayerXp(player.progression,combatInteger(multiplyCombat(ordinaryKillXp(target,group,state,player),rate?.n??1,rate?.d??1))),d8=player.d8?updateHighestHeroLevel(player.d8,next.level):null,leveled=big(next.level)>big(player.progression.level);
       const resolved=leveled?resolvePlayerStats({...player,progression:next,...(d8?{d8}:{})}):null;
       return {player,inventoryPlan,next,d8,resolved,levels:big(next.level)-big(player.progression.level)};
     });
@@ -78,7 +78,7 @@ export function createActivityProgression(state, manifest, measure) {
       }return;
     }
     measure('progressionAward',()=>{
-      const reward=ordinaryKillXp(target,group);if(!reward)return;
+      const reward=ordinaryKillXp(target,group,state);if(!reward)return;
       const eligible=eligibleNearbyParticipants(state,target.residency.spaceInstanceId,[target.position],radius);
       counters.awards++;
       for(const player of eligible){
@@ -99,6 +99,17 @@ export function createActivityProgression(state, manifest, measure) {
   function resolvedStats(id){const p=playersByEntity.get(id);if(!p)return undefined;const key=transientKey(p),old=transientKeys.get(id);if(key.some((v,i)=>v!==old?.[i]))equipmentChanged(p);return stats.get(id);}
   return Object.freeze({resolvedStats,freezeGroup,resetGroup,awardDefeat,prepareDefeat,refreshGroups,
     equipmentChanged,
+    combatLevel(entityId){
+      const player=playersByEntity.get(entityId);if(player)return player.progression.level;
+      const group=groupsByEntity.get(entityId),episode=group&&state.d9World?.episodes[group.groupId]?.snapshot,frozen=group?.threatSnapshot?.levelsByEntityId?.[entityId];
+      // Summons are members of their boss's encounter group. Their frozen
+      // episode remains authoritative if a dormant/dead child's individual
+      // slot still contains an old placeholder when the boss revives it.
+      const summon=state.bossCombat?.summonsByEntityId?.[entityId];if(summon){requireContract(group&&summon.groupId===group.groupId&&episode,'Boss summon combat level is not frozen');return episode.effectiveLevel;}
+      requireContract(frozen!==undefined||episode,'Hostile combat level is not frozen');
+      if(frozen!==undefined&&episode)requireContract(big(frozen)===big(episode.effectiveLevel),'Hostile combat level snapshot mismatch');
+      return frozen??episode.effectiveLevel;
+    },
 
     prepareCombat(actor,radius){const group=groupsByEntity.get(actor.entityId);if(group)freezeGroup(group,radius,'combat');},
     prepareResource(group,point){freezeGroup(group,768,'resource',[point]);},

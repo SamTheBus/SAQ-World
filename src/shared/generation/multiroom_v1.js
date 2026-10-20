@@ -1,3 +1,4 @@
+import {populateCombatRooms} from './world_combat_rooms_v1.js';
 import {MULTIROOM_VERSION as V,MULTIROOM_POLICY as P} from '../content/multiroom_policy_v1.js';
 import {freezeWire,requireContract as check} from '../contracts/wire.js';
 const hash=s=>{let n=2166136261;for(const c of s)n=Math.imul(n^c.charCodeAt(0),16777619)>>>0;return n;};
@@ -53,4 +54,4 @@ function buildRecipe(seed,family,tier,index){
 }
 
 const recipeCache=new Map();
-export function multiroomRecipe(seed,family,tier,index){const k=seed+'/'+family+'/'+tier+'/'+index;if(!recipeCache.has(k)){const r=buildRecipe(seed,family,tier,index);if(recipeCache.size>=128)recipeCache.delete(recipeCache.keys().next().value);recipeCache.set(k,r);}return recipeCache.get(k);}
+export function multiroomRecipe(seed,family,tier,index,combat=false){if(combat)return populateCombatRooms(multiroomRecipe(seed,family,tier,index),seed,family,tier,index);const k=seed+'/'+family+'/'+tier+'/'+index;if(!recipeCache.has(k)){const r=buildRecipe(seed,family,tier,index);if(recipeCache.size>=128)recipeCache.delete(recipeCache.keys().next().value);recipeCache.set(k,r);}return recipeCache.get(k);}

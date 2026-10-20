@@ -4,7 +4,9 @@ export function requireContract(condition, message) {
 
 // Versioned technical capacity for canonical entity-ID indexes. Ordinary
 // records, arrays, total nodes, depth and descriptor checks retain their bounds.
-export const ENTITY_INDEX_WIRE_V2=Object.freeze({version:'entity-index-wire-capacity-v2',maximumKeys:512,parentRecordMaximum:256});
+export const RESOURCE_INVENTORY_WIRE_V1=Object.freeze({version:'horde-resource-inventory-wire-v1',maximumEntries:512,ordinaryArrayMaximum:256});
+export const GROUP_INDEX_WIRE_V1=Object.freeze({version:'horde-group-index-wire-v1',maximumKeys:512,parentRecordMaximum:256});
+export const ENTITY_INDEX_WIRE_V2=Object.freeze({version:'entity-index-wire-capacity-v3-hordes',maximumKeys:8192,parentRecordMaximum:256});
 
 // Inspect descriptors before values: validation never invokes a property getter.
 export function validateWire(value) {
@@ -13,7 +15,7 @@ export function validateWire(value) {
   // Per-record/array limits, descriptor checks and depth remain unchanged.
   let nodes = 0;
   function visit(current, depth) {
-    requireContract(++nodes <= 262144 && depth <= 24, "Wire size/depth limit");
+    requireContract(++nodes <= 2097152 && depth <= 24, "Wire size/depth limit");
     if (current === null || typeof current === "boolean") return;
     if (typeof current === "string") {
       requireContract(current.length <= 4096 && !/[\u0000]/u.test(current), "Invalid wire string");
@@ -41,14 +43,14 @@ export function validateWire(value) {
     const keys = Reflect.ownKeys(descriptors);
     requireContract(keys.every((key) => typeof key === "string"), "Symbol wire key");
     if (array) {
-      requireContract(current.length <= 256 && keys.length === current.length + 1, "Sparse/extended/oversize array");
+      requireContract((current.length<=256||current.length<=512&&keys.filter(k=>k!=='length').every(k=>{const d=descriptors[k];if(!d||!('value' in d))return false;const r=d.value;if(!r||typeof r!=='object'||Array.isArray(r))return false;const ds=Object.getOwnPropertyDescriptors(r),v=k=>ds[k]&&'value' in ds[k]?ds[k].value:undefined;return typeof v('groupId')==='string'&&['chest','breakable'].includes(v('kind'))&&Number.isSafeInteger(v('ordinal'))&&typeof v('spaceInstanceId')==='string';}))&&keys.length===current.length+1, "Sparse/extended/oversize array");
       for (let i = 0; i < current.length; i++) {
         const descriptor = descriptors[String(i)];
         requireContract(descriptor && "value" in descriptor && descriptor.enumerable, "Array accessor or hole");
         visit(descriptor.value, depth + 1);
       }
     } else {
-      requireContract(keys.length <= 256 || keys.length<=ENTITY_INDEX_WIRE_V2.maximumKeys&&keys.every(key=>/^ent:[a-f0-9]{32}$/.test(key)), "Oversize record");
+      requireContract(keys.length <= 256 || keys.length<=ENTITY_INDEX_WIRE_V2.maximumKeys&&keys.every(key=>/^ent:[a-f0-9]{32}$/.test(key)) || keys.length<=GROUP_INDEX_WIRE_V1.maximumKeys&&keys.every(key=>/^(ordinary|site|group|encounter):[a-zA-Z0-9:_-]+$/.test(key)), "Oversize record");
       for (const key of keys) {
         requireContract(key.length > 0 && key.length <= 128 && !["__proto__", "prototype", "constructor"].includes(key), "Unsafe record key");
         const descriptor = descriptors[key];

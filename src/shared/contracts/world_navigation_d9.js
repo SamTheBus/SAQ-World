@@ -34,7 +34,7 @@ export function revealNavigationD9(state){
   const center=localFramePositionD9(a.position,w.runtime.frames),radius=participantRadius(p),tx=BigInt(center.chunkX)*32n+BigInt(Math.floor(center.localX/32)),ty=BigInt(center.chunkY)*26n+BigInt(Math.floor(center.localY/32)),key=JSON.stringify([tx.toString(),ty.toString(),radius,w.runtime.revision]);nextKeys.set(p.playerId,key);participants.push({p,tx,ty,radius,key});
  }
  if(participants.every(({p,key})=>prior.get(p.playerId)===key)&&prior.size===nextKeys.size)return false;
- const manifest=originManifestForState(state),origin=originGeometry(state,manifest),siteTruth=resolveSiteTruthD12_4C(state),pending=new Map(nav.pending.map(r=>[navigationIdentityD9(r),r]));let changed=false;
+ const manifest=originManifestForState(state),origin=originGeometry(state,manifest),siteTruth=resolveSiteTruthD12_4C(state,{includeFinaleDiagnostics:false}),pending=new Map(nav.pending.map(r=>[navigationIdentityD9(r),r]));let changed=false;
  const chunks=new Map(w.runtime.chunks.map(c=>[c.chunkX+','+c.chunkY,c])),originChunks=new Set(manifest.chunks.map(c=>(c.origin.x/1024)+','+(c.origin.y/832))),markCache=new Map(),remembered=known.get(state)??new Map();known.set(state,remembered);
  for(const {p,tx,ty,radius,key} of participants){
   if(prior.get(p.playerId)===key)continue;

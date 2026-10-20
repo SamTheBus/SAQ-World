@@ -1,3 +1,4 @@
+import {hasWorldCombat} from './world_combat_v1.js';
 import {multiplyAmount,wholeAmount,rewardAmount} from '../contracts/economy_amount.js';
 import {D9_REWARD_PROGRESSION,validateRewardProgressionD9} from './reward_progression_d9.js';
 import {progressionBigInt} from '../contracts/progression_integer.js';
@@ -30,6 +31,7 @@ export function rollContentReward(state,player,{sourceEntityId,rank,kind,ordinal
  if(rewardClass!==null)requireContract([BOSS_COMPLETION_REWARD_CLASS,SITE_FINALE_ELITE_PACK_COMPLETION_REWARD_CLASS,SITE_FINALE_PROVISIONAL_COMPLETION_REWARD_CLASS].includes(rewardClass)&&kind==='chest','Unknown economic reward classification');
  if(modifiers)validateRewardModifiers(modifiers);const occurrence=(hash,chance,key)=>{if(!modifiers||modifiers.occurrenceHundredths===100)return hash%100<chance;const threshold=chance*modifiers.occurrenceHundredths,whole=Math.floor(threshold/100);return hash%100<whole||hash%100===whole&&hashReward(key+'/d8-occurrence-fraction')%100<threshold%100;};const gold=n=>!modifiers||modifiers.goldHundredths===100?n:multiplyAmount(rewardAmount(n),`${Math.floor(modifiers.goldHundredths/100)}.${String(modifiers.goldHundredths%100).padStart(2,'0')}`.replace(/0+$/,'').replace(/\.$/,''));
  const profile=progression?.version===D9_REWARD_PROGRESSION?rewardProfileD9(progression,rank):rewardProfile(rank),key=`d5-eco-v1/${state.campaign.seed.seedHex}/${player.playerId}/${sourceEntityId}`,roll=hashReward(key+'/branch')%100,pool=REWARD_POOLS[Math.min(2,['C','B','A','S'].indexOf(rank))];
+ if(hasWorldCombat(state)){const l=BigInt(progression?.sourceDepth??1),elite=progression?.combatQuality==='elite',value=String(kind==='chest'?20n+4n*l:(1n+l/4n)*BigInt(elite?3:1)),gear=kind==='chest'||elite||occurrence(hashReward(key+'/combat-gear'),10,key+'/combat-gear');return {gold:gold(value),souls:hashReward(key+'/combat-soul')%100<35?1:0,definitionId:gear?pool[hashReward(key+'/combat-family')%pool.length]:null,healing:false};}
  if(kind==='enemy'){
   // Preserve D4 fixed-catalog onboarding and 35% subsequent gear chance.
   const gearRoll=hashReward(`${canonicalStringify(state.campaign.seed)}/${player.playerId}/${sourceEntityId}/player-inventory-d4r-v1`);

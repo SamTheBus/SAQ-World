@@ -40,5 +40,7 @@ export function resolveOrdinaryProfile(enemy,tier,progressionPower=BASELINE_PROG
     moveSpeed:enemy.moveSpeed,hullRadius:enemy.body.hullRadius,combatRadius:enemy.body.combatRadius,attackReach:enemy.attack.reach,attackReachMode:'center',attackDelayTicks:enemy.attack.delayTicks,aiKind:'simpleMelee'});
 }
 export const ORDINARY_PROFILES=freezeWire(ORDINARY_ENEMIES.flatMap(d=>THREAT_TIERS.map(tier=>resolveOrdinaryProfile(d,tier))));
-export function ordinaryEnemyForProfile(id){const p=ORDINARY_PROFILES.find(p=>p.contentDefinitionId===id);return p?ORDINARY_ENEMIES.find(d=>p.profileKey.startsWith(`ordinary-${d.family.replaceAll('_','-')}-`)):null;}
+// Immutable catalog lookup: horde AI/presentation call this for every active actor.
+const enemyByProfile=new Map(ORDINARY_PROFILES.map(p=>[p.contentDefinitionId,ORDINARY_ENEMIES.find(d=>p.profileKey.startsWith(`ordinary-${d.family.replaceAll('_','-')}-`))]));
+export function ordinaryEnemyForProfile(id){return enemyByProfile.get(id)??null;}
 export function validateOrdinaryDefinition(d){requireContract(ORDINARY_ENEMIES.some(e=>canonicalStringify(e)===canonicalStringify(d)),'Ordinary definition drift');}

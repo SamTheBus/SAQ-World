@@ -1,3 +1,4 @@
+import {hasWorldCombat} from './world_combat_v1.js';
 import {usesMultiroom,multiroomPolicy,multiroomLinks} from './multiroom_policy_v1.js';import {multiroomRecipe} from '../generation/multiroom_v1.js';
 import {PLANNED_FORT_V2,FORT_PACKAGE_V2,fortPackageForVersion} from './planned_fort_policy_v2.js';
 import {fortFloorRecipeV2} from '../generation/fort_family_v2.js';
@@ -6,7 +7,7 @@ import {FORT_FAMILY_PACKAGE,FORT_FAMILY_PACKAGE_ID,FUNCTIONAL_FORT_FAMILY,PLANNE
 import {fortFloorRecipe,fortFloorLinks} from '../generation/fort_family_v1.js';import {copyWire,freezeWire,canonicalStringify,requireContract as check} from '../contracts/wire.js';import {hashBytes,frameUtf8,bytesToHex,utf8} from '../contracts/hashing.js';
 import {createEliteForAffixD13D_B} from '../contracts/elite_combat_d12_4.js';import {applyEliteActorStatsD12_4} from './elite_affixes_d12_4.js';import {combatInteger} from '../contracts/combat_amount.js';import {initialCaveInteriorNavigationD12_3A} from './interior_navigation_d12_3a.js';
 export async function buildFortFamilyV1(state,socket,binding,{sha256,runEpisode=1}={}){
- const version=socket.provenance.placementVersion,pkg=fortPackageForVersion(version),multi=usesMultiroom(state.d9World.plannedWorld),recipeFor=multi?(seed,tier,i)=>multiroomRecipe(seed,'fort',tier,i):version===PLANNED_FORT_V2?fortFloorRecipeV2:fortFloorRecipe;check([PLANNED_FORT_VERSION,PLANNED_FORT_V2].includes(version),'Unknown Fort generation version');
+ const version=socket.provenance.placementVersion,pkg=fortPackageForVersion(version),multi=usesMultiroom(state.d9World.plannedWorld),recipeFor=multi?(seed,tier,i)=>multiroomRecipe(seed,'fort',tier,i,hasWorldCombat(state)):version===PLANNED_FORT_V2?fortFloorRecipeV2:fortFloorRecipe;check([PLANNED_FORT_VERSION,PLANNED_FORT_V2].includes(version),'Unknown Fort generation version');
  check(binding.packageId===FORT_FAMILY_PACKAGE_ID&&binding.packageVersion===version&&binding.contentHash===pkg.contentHash&&Number.isSafeInteger(runEpisode)&&runEpisode>=1,'Invalid Fort family binding/episode');
  const reservation=state.d9World.siteReservationsById[socket.siteId],tier=reservation?.parcel.tier,policy=multi?multiroomPolicy(tier):FORT_TIER_POLICY[tier];check(policy,'Missing Fort reservation');const floorIds=[],floors=[],spaces=[],actors=[],groups=[],economies=[],episodes=[],resources=[],elites=[],recipes=policy.floors.map((_,i)=>recipeFor(socket.siteSeed,tier,i)),links=multi?multiroomLinks(tier):fortFloorLinks(tier);
  const token=async key=>bytesToHex((await hashBytes(frameUtf8([version,socket.siteId,key]),sha256)).slice(0,16));

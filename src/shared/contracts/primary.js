@@ -1,3 +1,4 @@
+import {hasWorldCombat} from '../content/world_combat_v1.js';
 import { closedRecord, copyWire, requireContract, safeInteger, canonicalStringify } from "./wire.js";
 import { validateId } from "./identities.js";
 import { SHIELD_SWORD_PRIMARY } from "../content/manual_primary.js";
@@ -14,7 +15,7 @@ export function primaryProfile(state,entityId) {
   const id=state.primary?.actorsById[entityId]?.profileId;
   const profile=state.content?.definitionsById[id];
   requireContract(profile?.kind==="primaryProfile" && same(profile,SHIELD_SWORD_PRIMARY),"Unsupported equipped primary profile");
-  return profile;
+  return hasWorldCombat(state)?{...profile,forwardDotMinimum:0.1}:profile;
 }
 export function initializePrimary(state) {
   const next=copyWire(state),actorsById={};

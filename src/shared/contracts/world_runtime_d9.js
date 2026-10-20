@@ -24,6 +24,7 @@ export function rebaseWorldRuntimeD9(state,newFrames){
  for(const p of Object.values(state.playersById))for(const rows of [p.inventory.d7.salvaged,p.inventory.d7.autoSalvaged])for(const value of Object.values(rows))if(value.reward?.spaceInstanceId===state.overworldInstanceId)changes.push([value.reward,'position',project(value.reward.position)]);
  const effects=[...Object.values(state.subweaponCombat.projectiles),...Object.values(state.subweaponCombat.mastery??{}).flatMap(b=>[...Object.values(b.hazards??{}),...Object.values(b.razors??{})])];
  for(const value of effects)if(value.spaceInstanceId===state.overworldInstanceId)changes.push([value,'position',project(value.position)]);
+ for(const group of Object.values(state.groupsById))if(group.spaceInstanceId===state.overworldInstanceId&&group.containment){changes.push([group.containment,'homeAnchor',project(group.containment.homeAnchor)]);for(const id of Object.keys(group.containment.memberHomesById))changes.push([group.containment.memberHomesById,id,project(group.containment.memberHomesById[id])]);}
  for(const group of runtime.groups){changes.push([group,'anchor',project(group.anchor)]);for(const member of group.members)changes.push([member,'position',project(member.position)]);}
  for(const resource of runtime.resources)if(resource.spaceInstanceId===state.overworldInstanceId)changes.push([resource,'position',project(resource.position)]);
  // Validate the complete transform before applying any spatial change. No

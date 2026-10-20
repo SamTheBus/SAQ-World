@@ -1,4 +1,5 @@
 import { collidesWithTiles } from '../shared/rules/world_geometry.js';
+import {hasWorldCombat} from '../shared/content/world_combat_v1.js';
 
 const HOME_TOLERANCE = 1e-7;
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -15,7 +16,9 @@ export function createOrdinaryEvade(state, manifest, {onHomeReset=()=>{}}={}) {
   function reset(actor, home, sleeping) {
     if (!actor.alive || !legal(actor, home.position)) return false;
     actor.position = {...home.position};
-    actor.hp = structuredClone(actor.maxHp);
+    // A World pack's retained damage survives returning to its spawn. Sleep
+    // only parks its state; clearing and normal renewal remain separate.
+    if(!hasWorldCombat(state))actor.hp = structuredClone(actor.maxHp);
     actor.attackTimer = 0;
     actor.movementIntent = {x:0,y:0};
     if (sleeping) actor.movedLastTick = false;

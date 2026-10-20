@@ -1,3 +1,5 @@
+import {combatPlayer} from './world_combat_v1.js';
+import {progressionBigInt} from '../contracts/progression_integer.js';
 import {workshopResult} from './workshop_gear_v2.js';
 import {combatAmount as Q,addCombat as add,multiplyCombat as mul,asCombatAmount as A} from '../contracts/combat_amount.js';
 import {SUBWEAPONS} from './subweapons.js';
@@ -5,6 +7,9 @@ import {effectiveEquipmentBonuses} from './forge.js';
 import { freezeWire, requireContract } from '../contracts/wire.js';
 
 export const itemDefinition=item=>item?.workshop?workshopResult(item).definition:item?.generated?.definition??EQUIPMENT[item?.definitionId];
+// Keep higher-level finds owned and tradable; only equipping uses this gate.
+export const equipmentRequiredLevel=(player,item)=>combatPlayer(player)&&item?.generated?.progression?.combatHash?item.generated.itemPower:null;
+export const equipmentLevelAllowed=(player,item)=>{const required=equipmentRequiredLevel(player,item);return required===null||progressionBigInt(player.progression.level)>=progressionBigInt(required);};
 export const EQUIPMENT_CATALOG_VERSION='world-equipment-d4r-v1';
 export const EQUIPMENT_SLOTS=Object.freeze(['weapon','helmet','chest','leggings','overall','boots','ring1','ring2']);
 // Fixed definitions, separate from owned instances. Site tier selects a reward pool;
@@ -41,4 +46,4 @@ export function equipmentAfter(inv,itemId,slot){const item=inv.itemsById[itemId]
  equipped[target]=itemId;return equipped;
 }
 
-export function equipmentBonuses(p){const result={attack:0,maxHp:0,defense:0};if(!p.inventory)return result;for(const [slot,id] of Object.entries(p.inventory.equipped)){if(id===null||slot==='subweapon')continue;const d=itemDefinition(p.inventory.itemsById[id]);requireContract(d,'Unknown equipped item');const level=p.inventory.economy?.slotLevels[slot]??0,bonus=d.numericVersion?null:effectiveEquipmentBonuses(d,slot,level);for(const key of Object.keys(result)){const extra=slot==='weapon'&&key==='attack'?level*15:['chest','leggings','overall'].includes(slot)?key==='maxHp'?level*50:key==='defense'?level*10:0:['ring1','ring2'].includes(slot)?key==='attack'?level*10:key==='maxHp'?level*30:0:0;const value=d.rarityTier!==undefined?add(d.numericVersion?mul(A(d.bonuses[key]),100+level,100):Q(d.bonuses[key]*(100+level),100),extra):bonus[key];result[key]=value?.n!==undefined||result[key]?.n!==undefined?add(result[key],value):result[key]+value;}}return result;}
+export function equipmentBonuses(p){const result={attack:0,maxHp:0,defense:0};if(!p.inventory)return result;for(const [slot,id] of Object.entries(p.inventory.equipped)){if(id===null||slot==='subweapon')continue;const d=itemDefinition(p.inventory.itemsById[id]);requireContract(d,'Unknown equipped item');const level=p.inventory.economy?.slotLevels[slot]??0,bonus=d.numericVersion?null:effectiveEquipmentBonuses(d,slot,level,combatPlayer(p));for(const key of Object.keys(result)){const extra=slot==='weapon'&&key==='attack'?level*(combatPlayer(p)?2:15):['chest','leggings','overall'].includes(slot)?key==='maxHp'?level*(combatPlayer(p)?8:50):key==='defense'?level*(combatPlayer(p)?2:10):0:['ring1','ring2'].includes(slot)?key==='attack'?level*(combatPlayer(p)?2:10):key==='maxHp'?level*(combatPlayer(p)?6:30):0:0;const value=d.rarityTier!==undefined?add(d.numericVersion?mul(A(d.bonuses[key]),100+level,100):Q(d.bonuses[key]*(100+level),100),extra):bonus[key];result[key]=value?.n!==undefined||result[key]?.n!==undefined?add(result[key],value):result[key]+value;}}return result;}

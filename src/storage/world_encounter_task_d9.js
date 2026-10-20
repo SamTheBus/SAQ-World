@@ -1,3 +1,4 @@
+import{worldRetentionBudgets}from'../shared/content/world_combat_retention_v1.js';
 import {D9_RUNTIME_POLICY as B} from '../shared/content/world_runtime_policy_d9.js';
 import {retainedSiteCountsD9} from '../shared/content/alpha_population_retention_v1.js';
 import {copyWire} from '../shared/contracts/wire.js';
@@ -20,7 +21,7 @@ export async function prepareWorldEncountersD9(before,{sha256}){
   if(distance<=P.prepareRadius)candidates.push({chunk,anchor,id,world,distance,renewal:Boolean(old)});
  }
  candidates.sort((a,b)=>a.distance-b.distance||a.id.localeCompare(b.id));
- for(const c of candidates){if(placements.length>=2)break;const retained=retainedSiteCountsD9(state);if(!c.renewal&&(state.d9World.runtime.groups.length>=B.proceduralGroups||Object.keys(state.entitiesById).length-retained.actors+2>B.residentActors||Object.keys(state.groupsById).length-retained.groups>=B.residentGroups))continue;
+ for(const c of candidates){if(placements.length>=2)break;const retained=retainedSiteCountsD9(state);if(!c.renewal&&(state.d9World.runtime.groups.length>=B.proceduralGroups||Object.keys(state.entitiesById).length-retained.actors+c.anchor.members.length>worldRetentionBudgets(state).actors||Object.keys(state.groupsById).length-retained.groups>=worldRetentionBudgets(state).groups))continue;
   const options={sha256,participants},plan=await (c.renewal?prepareProceduralRenewalD9(state,c.chunk,c.anchor,options):prepareProceduralEncounterD9(state,c.chunk,c.anchor,options));if(!plan)continue;
   if(c.renewal)applyProceduralRenewalD9(state,plan);else admitProceduralEncounterD9(state,plan);
   placements.push({groupId:c.id,anchor:copyWire(c.world),positions:copyWire(plan.record.placement),renewal:c.renewal});
