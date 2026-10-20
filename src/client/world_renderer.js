@@ -1,3 +1,5 @@
+import {drawPlannedVillageGround,plannedVillageDepthItems} from './planned_village_presentation_v1.js';
+import {civilianDepthItems} from './settlement_civilians_v1.js';
 import {drawFerryLandings} from './ferry_presentation_v1.js';
 import {createCompletionArtPreparation} from './completion_art_preparation.js';
 import {drawPlannedTownGround,plannedTownDepthItems} from './planned_town_presentation_v1.js';
@@ -76,6 +78,8 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
       ctx.fillRect(col*c.tileSize, row*c.tileSize, c.tileSize, c.tileSize);
       if (!floor) { ctx.strokeStyle = "#526275"; ctx.strokeRect(col*c.tileSize+1, row*c.tileSize+1, c.tileSize-2, c.tileSize-2); }
     }
+    if(model.space.plannedVillage){drawPlannedVillageGround(ctx,model,viewport);depthItems.push(...plannedVillageDepthItems(model,viewport));}
+    depthItems.push(...civilianDepthItems(model,viewport));
     if(model.space.plannedTown){drawPlannedTownGround(ctx,model,viewport);depthItems.push(...plannedTownDepthItems(model,viewport));}
     if(seamless&&!model.space.site){drawEnvironmentMarkers(ctx,model.space);depthItems.push(...environmentCache.depthItems(model.space,viewport,time));}
     else if(model.space.visual&&(model.space.site||model.space.functionalSite))depthItems.push(...siteEnvironment.depthItems(model.space,viewport,time));
@@ -125,7 +129,7 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
     combatVfx.draw(ctx,model,time,viewport);if(performanceProbe)performanceProbe.measure("combatFeedback",()=>feedback.draw(ctx,time,equipmentArt,viewport));else feedback.draw(ctx,time,equipmentArt,viewport);
     ctx.restore();
     drawArachnidTreantBossHudD12_5A(ctx,canvas,model);
-    const available = Boolean(exit)&&((exit.siteAction||exit.forgeAction||exit.ferryLandingId)?exit.available&&["safe","encounter"].includes(model.persistence.phase):model.persistence.phase === "safe") && Math.hypot(actor.position.x-exit.x, actor.position.y-exit.y) <= exit.radius;
+    const available = Boolean(exit)&&((exit.siteAction||exit.forgeAction||exit.ferryLandingId||exit.serviceNpcId)?exit.available&&["safe","encounter"].includes(model.persistence.phase):model.persistence.phase === "safe") && Math.hypot(actor.position.x-exit.x, actor.position.y-exit.y) <= exit.radius;
     if (available) {
       const label = exit.label ?? (model.space.label.endsWith("A") ? "Enter test room B" : "Return to test field A");
       const compactKeep=exit.siteKind==='woodland-fort'&&label==='Leave Keep',caveMouth=exit.siteKind==='woodland-cave'&&label==='Enter Woodland Cave';

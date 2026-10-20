@@ -1,3 +1,5 @@
+import {hasServicesV2,serviceNpcsFor} from '../content/settlement_services_v2.js';
+import {accessibleServiceNpc} from './settlement_services_v1.js';
 import {canonicalStringify,freezeWire,requireContract} from './wire.js';
 import {collidesWithTiles} from '../rules/world_geometry.js';
 export const FORGE_INTERACTION_RADIUS=48;
@@ -23,6 +25,7 @@ export function forgeStationLayout(manifest,collision){
 export function validateForgeStations(value,manifest,collision){requireContract(canonicalStringify(value)===canonicalStringify(forgeStationLayout(manifest,collision)),'Forge station content drift');}
 export function installForgeStations(state,manifest){state.campaign.forgeStations??=JSON.parse(JSON.stringify(forgeStationLayout(manifest,state.spacesByInstanceId[state.overworldInstanceId].collision)));return state;}
 export function nearbyForge(state,p){
+ if(hasServicesV2(state.d9World?.plannedWorld)){const n=serviceNpcsFor(state.d9World.plannedWorld).find(n=>n.services?.includes('attune')&&accessibleServiceNpc(state,p,n.id));if(n)return n;}
  const actor=state.entitiesById[p.entityId],primary=state.primary.actorsById[p.entityId];
  if(!actor?.alive||actor.residency.spaceInstanceId!==state.overworldInstanceId||primary?.current||primary?.heldCommandId||primary?.queuedCommandId)return null;
  const c=state.spacesByInstanceId[state.overworldInstanceId].collision;

@@ -1,37 +1,42 @@
 {
-  "runtimeId": "4a5ce83aa8f2408b",
-  "runtimeSha256": "4a5ce83aa8f2408b733ce94d3448cfb25d8cb4ab68bc5ed92c97a555424d1743",
-  "parentRuntimeId": "db4f2670ae0f3170",
+  "runtimeId": "3da5e7e40452aa32",
+  "runtimeSha256": "3da5e7e40452aa322fa183aefb5af02490896f3782525022b60778f9439e6b8a",
+  "parentRuntimeId": "2fb4204b2359ea0b",
   "changedRuntimeFiles": [
     "index.html",
-    "src/client/environment_presentation.js",
-    "src/client/playable_client.js",
-    "src/client/world_input.js",
-    "src/client/world_map_d9.js",
-    "src/client/world_renderer.js",
+    "src/client/ground_item_presentation.js",
+    "src/client/settlement_services_menu_v1.js",
     "src/dev/planned_world_review_v1.js",
     "src/entrypoints/activity_save_worker.js",
     "src/entrypoints/playable_browser.js",
     "src/host/activity_client_port.js",
     "src/host/local_endless_session_d9.js",
-    "src/host/world_residency_d9.js",
+    "src/shared/content/equipment.js",
+    "src/shared/content/forge.js",
     "src/shared/contracts/activity_state.js",
     "src/shared/contracts/commands.js",
-    "src/shared/contracts/local_world_frames_d9.js",
-    "src/shared/contracts/world_navigation_d9.js",
-    "src/shared/contracts/world_root_contract_d9.js",
+    "src/shared/contracts/forge_economy.js",
+    "src/shared/contracts/forge_stations.js",
+    "src/shared/contracts/gear_salvage.js",
+    "src/shared/contracts/player_stats.js",
+    "src/shared/contracts/player_stats_d9.js",
+    "src/shared/contracts/renewable_inventory.js",
+    "src/shared/contracts/settlement_services_v1.js",
+    "src/shared/contracts/world_paging_d9.js",
+    "src/shared/generation/planned_village_v1.js",
     "src/shared/generation/planned_world_chunks_v1.js",
     "src/shared/generation/planned_world_foundation_v1.js",
     "src/simulation/activity_simulation.js",
     "src/storage/planned_world_assets_v1.js",
+    "src/storage/world_gear_pages_d9.js",
     "world-cumulative-dev.html"
   ],
   "addedRuntimeFiles": [
-    "src/client/ferry_menu_v1.js",
-    "src/client/ferry_presentation_v1.js",
-    "src/shared/content/ferry_plan_v1.js",
-    "src/shared/contracts/ferry_travel_v1.js",
-    "src/shared/generation/ferry_overlay_v1.js"
+    "src/client/dungeon_service_style_v2.js",
+    "src/client/settlement_services_menu_legacy_v1.js",
+    "src/shared/content/settlement_services_v2.js",
+    "src/shared/content/workshop_gear_v2.js",
+    "src/shared/contracts/settlement_workshop_v2.js"
   ],
   "unchangedRuntimeFiles": [
     "assets/alpha-site-population-v1.json",
@@ -83,8 +88,11 @@
     "src/client/environment_cache.js",
     "src/client/environment_layout.js",
     "src/client/environment_motifs.js",
+    "src/client/environment_presentation.js",
     "src/client/equipment_art.js",
     "src/client/extraction_portal_presentation_d12_5c.js",
+    "src/client/ferry_menu_v1.js",
+    "src/client/ferry_presentation_v1.js",
     "src/client/filtered_creature_surface.js",
     "src/client/forge_art.js",
     "src/client/forge_presentation.js",
@@ -92,7 +100,6 @@
     "src/client/fort_art_d10.js",
     "src/client/fort_equipment_display.js",
     "src/client/generated_equipment_art.js",
-    "src/client/ground_item_presentation.js",
     "src/client/hero_presentation.js",
     "src/client/hybrid_art_binding.js",
     "src/client/hybrid_art_pilot_v1.js",
@@ -109,7 +116,9 @@
     "src/client/planned_cartography_v2.js",
     "src/client/planned_ruin_exterior_presentation.js",
     "src/client/planned_town_presentation_v1.js",
+    "src/client/planned_village_presentation_v1.js",
     "src/client/planned_world_materials_v1.js",
+    "src/client/playable_client.js",
     "src/client/presentation_state.js",
     "src/client/primary_input.js",
     "src/client/progression_copy.js",
@@ -121,6 +130,7 @@
     "src/client/ruin_storybook_art_v1.js",
     "src/client/salvage_material_art.js",
     "src/client/settlement_building_presentation.js",
+    "src/client/settlement_civilians_v1.js",
     "src/client/settlement_interior_presentation.js",
     "src/client/shield_guard_input.js",
     "src/client/site_environment_presentation.js",
@@ -136,6 +146,9 @@
     "src/client/wallet_display.js",
     "src/client/world_browser_client.js",
     "src/client/world_depth_presentation.js",
+    "src/client/world_input.js",
+    "src/client/world_map_d9.js",
+    "src/client/world_renderer.js",
     "src/client/world_worker_bridge_d9.js",
     "src/client/xp_display.js",
     "src/dev/natural_cluster_review_v1.js",
@@ -158,6 +171,7 @@
     "src/host/site_content_binding_d9.js",
     "src/host/site_truth_presentation_cache.js",
     "src/host/world_client_port.js",
+    "src/host/world_residency_d9.js",
     "src/host/world_terrain_projection_d9.js",
     "src/shared/content/active_spaces.js",
     "src/shared/content/affix_range_d9.js",
@@ -180,9 +194,8 @@
     "src/shared/content/elite_affixes_d12_4.js",
     "src/shared/content/elite_review_fixture_d12_4.js",
     "src/shared/content/encounter_motion_d11_2.js",
-    "src/shared/content/equipment.js",
     "src/shared/content/equipment_d4_legacy.js",
-    "src/shared/content/forge.js",
+    "src/shared/content/ferry_plan_v1.js",
     "src/shared/content/forge_material_costs.js",
     "src/shared/content/forge_review.js",
     "src/shared/content/fort_family_runtime_v1.js",
@@ -219,6 +232,8 @@
     "src/shared/content/reward_progression_d9.js",
     "src/shared/content/ruin_family_runtime_v1.js",
     "src/shared/content/ruin_modular_kit_v1.js",
+    "src/shared/content/settlement_life_alpha_v1.js",
+    "src/shared/content/settlement_life_v1.js",
     "src/shared/content/site_definition_runtime_d10.js",
     "src/shared/content/site_families_d12.js",
     "src/shared/content/site_families_d12_1.js",
@@ -229,6 +244,7 @@
     "src/shared/content/subweapons.js",
     "src/shared/content/tavern_interior_v1.js",
     "src/shared/content/tome_profiles.js",
+    "src/shared/content/village_template_v1.js",
     "src/shared/content/woodland_cave_d10.js",
     "src/shared/content/woodland_cave_formations_d12_2.js",
     "src/shared/content/woodland_cave_modules_d12_1.js",
@@ -266,10 +282,8 @@
     "src/shared/contracts/endless_formula.js",
     "src/shared/contracts/episode_progression_d9.js",
     "src/shared/contracts/events.js",
-    "src/shared/contracts/forge_economy.js",
-    "src/shared/contracts/forge_stations.js",
+    "src/shared/contracts/ferry_travel_v1.js",
     "src/shared/contracts/functional_site_d9.js",
-    "src/shared/contracts/gear_salvage.js",
     "src/shared/contracts/geography.js",
     "src/shared/contracts/hashing.js",
     "src/shared/contracts/hero_progression_d9.js",
@@ -278,6 +292,7 @@
     "src/shared/contracts/index.js",
     "src/shared/contracts/integer_domain.js",
     "src/shared/contracts/large_number.js",
+    "src/shared/contracts/local_world_frames_d9.js",
     "src/shared/contracts/major_place_names.js",
     "src/shared/contracts/mastery_causality.js",
     "src/shared/contracts/mastery_combat.js",
@@ -302,13 +317,10 @@
     "src/shared/contracts/player_inventory_perf1r_legacy.js",
     "src/shared/contracts/player_progression.js",
     "src/shared/contracts/player_respawn.js",
-    "src/shared/contracts/player_stats.js",
-    "src/shared/contracts/player_stats_d9.js",
     "src/shared/contracts/primary.js",
     "src/shared/contracts/procedural_encounter_d9.js",
     "src/shared/contracts/progression_commands.js",
     "src/shared/contracts/progression_integer.js",
-    "src/shared/contracts/renewable_inventory.js",
     "src/shared/contracts/rng.js",
     "src/shared/contracts/seed.js",
     "src/shared/contracts/settlement_interiors.js",
@@ -336,8 +348,9 @@
     "src/shared/contracts/world_chunk_delta_d9.js",
     "src/shared/contracts/world_ground_occupancy_d9.js",
     "src/shared/contracts/world_navigation_contract_d9.js",
-    "src/shared/contracts/world_paging_d9.js",
+    "src/shared/contracts/world_navigation_d9.js",
     "src/shared/contracts/world_patch_d9.js",
+    "src/shared/contracts/world_root_contract_d9.js",
     "src/shared/contracts/world_root_d9.js",
     "src/shared/contracts/world_runtime_d9.js",
     "src/shared/contracts/world_stream_capture_d9.js",
@@ -346,6 +359,7 @@
     "src/shared/generation/crypt_family_v1.js",
     "src/shared/generation/crypt_family_v2.js",
     "src/shared/generation/endless_world_d9.js",
+    "src/shared/generation/ferry_overlay_v1.js",
     "src/shared/generation/fort_family_v1.js",
     "src/shared/generation/fort_family_v2.js",
     "src/shared/generation/local_shoreline_v2.js",
@@ -418,7 +432,6 @@
     "src/storage/world_deadlines_d9.js",
     "src/storage/world_encounter_task_d9.js",
     "src/storage/world_gear_knowledge_d9.js",
-    "src/storage/world_gear_pages_d9.js",
     "src/storage/world_ground_residency_d9.js",
     "src/storage/world_ground_window_d9.js",
     "src/storage/world_navigation_pages_d9.js",
@@ -551,8 +564,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 7111,
-      "sha256": "a3653713c2768d8db175382af742dfb0a8db932b44e4615aa98bf682f89b2c4f"
+      "bytes": 7176,
+      "sha256": "c4ba9b008ba1a591326170791549b91d0da3244ff08da00d7204489e081f015b"
     },
     {
       "path": "manifest.webmanifest",
@@ -665,6 +678,11 @@
       "sha256": "8ee5e0afffbfb39a08e3a919f116c0c170cc61f7661a61dcbdb35c7859ef988b"
     },
     {
+      "path": "src/client/dungeon_service_style_v2.js",
+      "bytes": 26229,
+      "sha256": "debf88528ff55eddf6a35373bee2f5756cde2bb6deedd464716e24c2a3856805"
+    },
+    {
       "path": "src/client/economy_resource_presentation.js",
       "bytes": 5331,
       "sha256": "9715eeb7b7b028ad0bd4d22fe4c4b9238c7cb904b15e9579cc3b8fd784f34c31"
@@ -691,8 +709,8 @@
     },
     {
       "path": "src/client/environment_presentation.js",
-      "bytes": 50040,
-      "sha256": "cba2dcceb506122c653bf46c6a6aab8a2ab8568b8bc41c484b4163d674783481"
+      "bytes": 50222,
+      "sha256": "bfb19db5bcb678c5fcdf81cb09a94dd6b33d0c2cc4c8e0b7f97b00ba635213d7"
     },
     {
       "path": "src/client/equipment_art.js",
@@ -751,8 +769,8 @@
     },
     {
       "path": "src/client/ground_item_presentation.js",
-      "bytes": 7766,
-      "sha256": "a767b317462eaacdc1262a6fa0c8c4128e598f00a70acc2ac1b7aa719f23a550"
+      "bytes": 7784,
+      "sha256": "e05fdb9c4e73c73ed8f4ba9aee46c2f5cd4bc685e026cdec7848dfee4dc43277"
     },
     {
       "path": "src/client/hero_presentation.js",
@@ -835,14 +853,19 @@
       "sha256": "bbd9234b4d8ba35d74f4ba09dc2f4d79c7b84fecf0a1e0b1fa4a78df7afaf945"
     },
     {
+      "path": "src/client/planned_village_presentation_v1.js",
+      "bytes": 2763,
+      "sha256": "48dfc98644b8a9bda97170bd34909e152dc6f93067e19946b01bd0c016ef0888"
+    },
+    {
       "path": "src/client/planned_world_materials_v1.js",
       "bytes": 2440,
       "sha256": "f8aff02264a92d0b8573fbe02070d97aacc93661c8c8a085320a6a488965cfaf"
     },
     {
       "path": "src/client/playable_client.js",
-      "bytes": 20353,
-      "sha256": "ce617b97377938785c9a119f129352a94fa5911bb0302c641928db42dff9b8ce"
+      "bytes": 20792,
+      "sha256": "99e1835778a6556db30ec45dea99c5168ffea339e1b33cabb67ab3bb1c61a670"
     },
     {
       "path": "src/client/presentation_state.js",
@@ -900,9 +923,24 @@
       "sha256": "37712e772e555a7c2cc2169ed17e275aaa8e290e09b61811cc0b8eb91b221a98"
     },
     {
+      "path": "src/client/settlement_civilians_v1.js",
+      "bytes": 1448,
+      "sha256": "5dd0d2fff9716bfae2524265b92fd8da20263adc2e5624e58a90b9a967a805ed"
+    },
+    {
       "path": "src/client/settlement_interior_presentation.js",
       "bytes": 4979,
       "sha256": "18a03c88f39af46eb649638c47b7801f5b65075a792c96aca30a482da33bbf20"
+    },
+    {
+      "path": "src/client/settlement_services_menu_legacy_v1.js",
+      "bytes": 5114,
+      "sha256": "2bd0762f761b93f6583c9f8fb23ece30bd925b2933c24ed1e47b6c88464b6373"
+    },
+    {
+      "path": "src/client/settlement_services_menu_v1.js",
+      "bytes": 20796,
+      "sha256": "dde44c49ed832bd7e710dd932546400642b8a36d9ec0109a3cdd093694465e02"
     },
     {
       "path": "src/client/shield_guard_input.js",
@@ -976,8 +1014,8 @@
     },
     {
       "path": "src/client/world_input.js",
-      "bytes": 7526,
-      "sha256": "8dd44f487655737a9e7bbea7d2f516a4ff89741d3b566f77b9b239290cea2adf"
+      "bytes": 7622,
+      "sha256": "a8f404d3a770188cdb444f3d5d2860523418c1a3c19ad3f04d9a938f70f46566"
     },
     {
       "path": "src/client/world_map_d9.js",
@@ -986,8 +1024,8 @@
     },
     {
       "path": "src/client/world_renderer.js",
-      "bytes": 17671,
-      "sha256": "92be70b6af4878b04aa3f94807974432b00f4105de0ad3beaf3d570fbdd79907"
+      "bytes": 18066,
+      "sha256": "2fd888ca44a2479e9cacb2932fd64391705fbc2c6351324ea6983d5832298113"
     },
     {
       "path": "src/client/world_worker_bridge_d9.js",
@@ -1006,13 +1044,13 @@
     },
     {
       "path": "src/dev/planned_world_review_v1.js",
-      "bytes": 17584,
-      "sha256": "fd1cc3e2425f41908f272353bce7cd5421d2a58bb4275fc65299a972db00a47e"
+      "bytes": 19225,
+      "sha256": "56a0986a40615eac12fc434be71925538146d83c645821a481cf2cb0eb2b6640"
     },
     {
       "path": "src/entrypoints/activity_save_worker.js",
-      "bytes": 4853,
-      "sha256": "8c41289372ac9ba92aac6c4b0f99b6b86a2b7c33e6c1242205ade1ab568705eb"
+      "bytes": 5077,
+      "sha256": "f8fbfb57d90e59210225e447f6e6451d6bb19d2bd09cca9a12c1de262f1ce521"
     },
     {
       "path": "src/entrypoints/browser_boot.js",
@@ -1021,8 +1059,8 @@
     },
     {
       "path": "src/entrypoints/playable_browser.js",
-      "bytes": 29905,
-      "sha256": "b263efd9c21a82529f1ed8eb75c659b9034cbf0ce61eff78436939e4c72bb15f"
+      "bytes": 30317,
+      "sha256": "f7892c7e7a52bc21ede5d20788ade54c998647ddadbd254d35163b64309eced9"
     },
     {
       "path": "src/entrypoints/world_browser.js",
@@ -1036,8 +1074,8 @@
     },
     {
       "path": "src/host/activity_client_port.js",
-      "bytes": 29498,
-      "sha256": "886108baf5f9cb739721e545adc443dd49f00887d071c2f047180b12637937be"
+      "bytes": 30182,
+      "sha256": "db3000cb53d782f2443876f431cf44389fa0d86cf04084d33335b4434710704f"
     },
     {
       "path": "src/host/campaign_authority.js",
@@ -1091,8 +1129,8 @@
     },
     {
       "path": "src/host/local_endless_session_d9.js",
-      "bytes": 39724,
-      "sha256": "a8632ae81ced6129ba7b50fa020fcd3ba8611fe7fe6aac57a4d40f3838d6fd80"
+      "bytes": 40551,
+      "sha256": "18f99dc0ca4becf5ef90259c211220a157cbb3a17056776f93958ddc90fb8729"
     },
     {
       "path": "src/host/local_world_session.js",
@@ -1106,8 +1144,8 @@
     },
     {
       "path": "src/host/planned_campaign_binding_v1.js",
-      "bytes": 3914,
-      "sha256": "69869ede0509b74dd95cf75165e47ae0912bed8435479d2c5991fa15c67f7840"
+      "bytes": 4033,
+      "sha256": "42470cff3086ebc1c53c6f9f1162c410a461f76154e385b494b63e504b17537a"
     },
     {
       "path": "src/host/site_content_binding_d9.js",
@@ -1241,8 +1279,8 @@
     },
     {
       "path": "src/shared/content/equipment.js",
-      "bytes": 3938,
-      "sha256": "11ec9bfd941cbc633405f85313b8eeab63d53c0a048343038d9efadca822a4be"
+      "bytes": 4083,
+      "sha256": "827e2ed87a1c76720a225f455bf4eeebac6ee6e6b01dde33ec6d94fa81c09c9b"
     },
     {
       "path": "src/shared/content/equipment_d4_legacy.js",
@@ -1256,8 +1294,8 @@
     },
     {
       "path": "src/shared/content/forge.js",
-      "bytes": 2574,
-      "sha256": "c46f7f379c17813fbdc2902315bd1619783250b6267fb768da47b588a016e586"
+      "bytes": 2626,
+      "sha256": "37e4c06baa243bf3b11105d9132cefffee6d6b6f4d1d00a60d990a148658acc2"
     },
     {
       "path": "src/shared/content/forge_material_costs.js",
@@ -1440,6 +1478,21 @@
       "sha256": "b5049125119e11053983a4e00686a16866b0d48026195e8c15e4177c401d170b"
     },
     {
+      "path": "src/shared/content/settlement_life_alpha_v1.js",
+      "bytes": 1590,
+      "sha256": "74cbdbdfb149c27862cb91c7e16b7474116ab80bc4c1b6affcc5544ef06e0cbb"
+    },
+    {
+      "path": "src/shared/content/settlement_life_v1.js",
+      "bytes": 2114,
+      "sha256": "35834646a028778e4335fe2b615c8ec71bc026d172287a123821aafac7a923dc"
+    },
+    {
+      "path": "src/shared/content/settlement_services_v2.js",
+      "bytes": 2262,
+      "sha256": "a90e1a3be282c07dd38c5c7dab5979ca032ab8c2a14923ed52d8b03b9d994dca"
+    },
+    {
       "path": "src/shared/content/site_definition_runtime_d10.js",
       "bytes": 10631,
       "sha256": "721ba238a33a362b66fee22dc0a8f679322597823ef481671a142d042a258dbb"
@@ -1490,6 +1543,11 @@
       "sha256": "a177fbc2f3d64f7d5b4d8580cdaeee62ada6dd50f82e9233d97d8b29450456bc"
     },
     {
+      "path": "src/shared/content/village_template_v1.js",
+      "bytes": 8150,
+      "sha256": "66427a4afbbde5ccb9f8c07084f7c32597b5053504bf2b73d77e1fb9f024981b"
+    },
+    {
       "path": "src/shared/content/woodland_cave_d10.js",
       "bytes": 4562,
       "sha256": "8b9629e7d7300579c4e4ace013b6297307c4bf7ffd99c4bb0d66855dca13da3a"
@@ -1525,6 +1583,11 @@
       "sha256": "e2e342a551cdc98057595ab392369081389c2316cf4cfee5444d6dc9978c365d"
     },
     {
+      "path": "src/shared/content/workshop_gear_v2.js",
+      "bytes": 7196,
+      "sha256": "bb9e71edf5d3b598dd3e5372050b42c702b280477c69a7e2c3b574af3ddbec3d"
+    },
+    {
       "path": "src/shared/content/world_profile_d9.js",
       "bytes": 798,
       "sha256": "0b32fdcb8fbc00600d676f2b7e47beca249c6b9c5e848999d0984247363509a3"
@@ -1541,8 +1604,8 @@
     },
     {
       "path": "src/shared/contracts/activity_state.js",
-      "bytes": 33617,
-      "sha256": "c664b17e5bc08fa39831abbaadba0c1fd71a6202c3ddc4d8f7b2838521a7ab4a"
+      "bytes": 34018,
+      "sha256": "f9b1b1ced3dff3f32816899e9b3546ed8eb3ff6eafb62c8ce56df52a0b56d8ba"
     },
     {
       "path": "src/shared/contracts/actor_geometry_d9.js",
@@ -1586,8 +1649,8 @@
     },
     {
       "path": "src/shared/contracts/campaign_tavern_v1.js",
-      "bytes": 6321,
-      "sha256": "97ec7377d996ed31bbfd9a32479eb07e02fc5e878382fbf57ddaf403213c1c09"
+      "bytes": 6683,
+      "sha256": "09e0a80fb639efb8206c7170b0049906751120032aec055446c6b4ecc9430cee"
     },
     {
       "path": "src/shared/contracts/checkpoint.js",
@@ -1631,8 +1694,8 @@
     },
     {
       "path": "src/shared/contracts/commands.js",
-      "bytes": 8603,
-      "sha256": "7feee397d1e16747d5b8faecdffcdbbc00d7e9aed03746b3026706b81f8614ba"
+      "bytes": 10304,
+      "sha256": "3929e6ebd1c3a04faf2e9bf9d54e51d64dd098c859747c94a2505d17c217b581"
     },
     {
       "path": "src/shared/contracts/content_numeric_admission_d9.js",
@@ -1691,13 +1754,13 @@
     },
     {
       "path": "src/shared/contracts/forge_economy.js",
-      "bytes": 8668,
-      "sha256": "8d2df22a3969c0194b0ef5d1d314cf511bd2c95d0fb87355cbf9c2988e5676ed"
+      "bytes": 8967,
+      "sha256": "2fb45ecebbd502d99464db495cd43d56e39daf034cd9f6d494fe80f905abd3fb"
     },
     {
       "path": "src/shared/contracts/forge_stations.js",
-      "bytes": 2572,
-      "sha256": "c5b3de8f2d3f3b7d09affaf530054fe74a1de5b7a4adb7e5f081e91b83fe6b31"
+      "bytes": 2949,
+      "sha256": "638f0c6094602f0be9d86d1d5eb5cf0f0bf070e7a1f38d1b6442f8c1e985dec0"
     },
     {
       "path": "src/shared/contracts/functional_site_d9.js",
@@ -1706,8 +1769,8 @@
     },
     {
       "path": "src/shared/contracts/gear_salvage.js",
-      "bytes": 10521,
-      "sha256": "fa3a5fc01881604ba6cf18219cd481cb0f1a87f845e75797788eb71ad95391f9"
+      "bytes": 11098,
+      "sha256": "6fbee7f854d4a13d323e4199b34b28ce1f215174fe9d9a36bca58bba36c6daa7"
     },
     {
       "path": "src/shared/contracts/geography.js",
@@ -1876,13 +1939,13 @@
     },
     {
       "path": "src/shared/contracts/player_stats.js",
-      "bytes": 8288,
-      "sha256": "e2e6c341c78272c5e0113f0e6a633a847e2a2fa984f8720f48ac80c5ad69ddd8"
+      "bytes": 8453,
+      "sha256": "e663a722f57e3b6d6eece7b6acbef1c06ecfb35ccec7bff4f97b1b47df524443"
     },
     {
       "path": "src/shared/contracts/player_stats_d9.js",
-      "bytes": 5262,
-      "sha256": "4dcc86d983e4c35a8d27b7f2dded80cf36d3be073e27f431adad739b89d68875"
+      "bytes": 5451,
+      "sha256": "d6bad63313e5e5f4d669e88709e5acb083b6f333c8ebeb473c64abc731b862b7"
     },
     {
       "path": "src/shared/contracts/primary.js",
@@ -1906,8 +1969,8 @@
     },
     {
       "path": "src/shared/contracts/renewable_inventory.js",
-      "bytes": 28021,
-      "sha256": "067d388f8e27907b828fa637d8197c913119d714177ffc61b45b728e2ec89660"
+      "bytes": 29127,
+      "sha256": "6cd007ea41aec0a1ec7a43f4e995321d93b85c7e799fd57209efa628d47c6f1d"
     },
     {
       "path": "src/shared/contracts/rng.js",
@@ -1923,6 +1986,16 @@
       "path": "src/shared/contracts/settlement_interiors.js",
       "bytes": 1951,
       "sha256": "b0912befaf6af4b3ebf9fe11f50d3a71cdfd68273f587fdee4a9ea2a4373c7e0"
+    },
+    {
+      "path": "src/shared/contracts/settlement_services_v1.js",
+      "bytes": 18158,
+      "sha256": "90b6bba36a000e5259fd479a1682b3f888f6ee8f0d7ad565a26e41b443529b27"
+    },
+    {
+      "path": "src/shared/contracts/settlement_workshop_v2.js",
+      "bytes": 13914,
+      "sha256": "870c6e33ecbdf05068013dcc6032417dd5ee00dfe72485a146d0240cf072deb2"
     },
     {
       "path": "src/shared/contracts/shield_guard.js",
@@ -1961,8 +2034,8 @@
     },
     {
       "path": "src/shared/contracts/site_run_episode_d13b.js",
-      "bytes": 35235,
-      "sha256": "2cbd8e72a131ca6ef30c35c9ab304eeba7d040f120d48a6bb5553e7582f8c551"
+      "bytes": 35279,
+      "sha256": "a5ccf59585a00d1c3d4ff5dde15d4143cf0d7c4119c35df95808fc84969584eb"
     },
     {
       "path": "src/shared/contracts/site_truth_d12_4c.js",
@@ -2051,8 +2124,8 @@
     },
     {
       "path": "src/shared/contracts/world_paging_d9.js",
-      "bytes": 11434,
-      "sha256": "b23380d9c027379f371a9c7afee4a8b7f532f950e8279f24be7b42adf2b0c19e"
+      "bytes": 11697,
+      "sha256": "be0c1b70ca2e1484bcf2618fac0caf84fc1f42facb4b623d8c7abf5a729d9530"
     },
     {
       "path": "src/shared/contracts/world_patch_d9.js",
@@ -2190,14 +2263,19 @@
       "sha256": "c742f9ffa935df729ffafae01cdb78d9b0fa384a431d7b3ee608e293f5e723de"
     },
     {
+      "path": "src/shared/generation/planned_village_v1.js",
+      "bytes": 3017,
+      "sha256": "1c53577fc6a77a4b93dce375e63e7becd1ec073c2708335a714702d418c8c1db"
+    },
+    {
       "path": "src/shared/generation/planned_world_chunks_v1.js",
-      "bytes": 16726,
-      "sha256": "0273481994e601a1f3519a79e08d8aa7450853edb52532615e5e235daa247033"
+      "bytes": 17220,
+      "sha256": "07fec5760ddfec395c1ca8f3e1d7534fe15328121df43097b19fda6efa42c25c"
     },
     {
       "path": "src/shared/generation/planned_world_foundation_v1.js",
-      "bytes": 13270,
-      "sha256": "2d40e53037944d980cdcc168f563763e60d30d025ddb930f089456926d541b2c"
+      "bytes": 14045,
+      "sha256": "2ac9db3c409a3b0962ee32d1d908bb14fd26daf77b76572a95ffd078c28b96fd"
     },
     {
       "path": "src/shared/generation/procedural_overworld.js",
@@ -2321,8 +2399,8 @@
     },
     {
       "path": "src/simulation/activity_simulation.js",
-      "bytes": 42210,
-      "sha256": "9acc07e61d93a7450b81363e99b51473fc8f8b7c8ce86253cb6da2d92ed35ab1"
+      "bytes": 42664,
+      "sha256": "62bf9408d7f1e677264f53fd9d66f084eacc1f68200f4fd2906bd53c733bf6de"
     },
     {
       "path": "src/simulation/activity_spatial.js",
@@ -2466,8 +2544,8 @@
     },
     {
       "path": "src/storage/planned_world_assets_v1.js",
-      "bytes": 2667,
-      "sha256": "d974a1d6fee9d4231cbe662df9d7a126fef694fec6a181e2725179c92902b961"
+      "bytes": 2770,
+      "sha256": "f0a57689ce16d89b597d2abcfd85685a4ac19e4703f6cd538b72a9100509a4b7"
     },
     {
       "path": "src/storage/world_cold_deadlines_d9.js",
@@ -2486,13 +2564,13 @@
     },
     {
       "path": "src/storage/world_gear_knowledge_d9.js",
-      "bytes": 4093,
-      "sha256": "f6d9ab3c0cd7125e9c61255bc6b102cff69567b06eff4e5c481524572b76532b"
+      "bytes": 4154,
+      "sha256": "d735f3a96beff1bb22cd6c80030ab6278fd9f61cb9c9d08d7360d111e7ae8cbe"
     },
     {
       "path": "src/storage/world_gear_pages_d9.js",
-      "bytes": 14165,
-      "sha256": "8c4898b78e459346db86cca1b740692d89abbaa2c35e2cbe4a84acff244bbddf"
+      "bytes": 14593,
+      "sha256": "a2336db9a5c8b69aee8231edf1cf2e33819401ef4267765fe37049c452083133"
     },
     {
       "path": "src/storage/world_ground_residency_d9.js",
@@ -2566,8 +2644,8 @@
     },
     {
       "path": "world-cumulative-dev.html",
-      "bytes": 7111,
-      "sha256": "a3653713c2768d8db175382af742dfb0a8db932b44e4615aa98bf682f89b2c4f"
+      "bytes": 7176,
+      "sha256": "c4ba9b008ba1a591326170791549b91d0da3244ff08da00d7204489e081f015b"
     },
     {
       "path": "world-fort-deep-v2-dev.html",

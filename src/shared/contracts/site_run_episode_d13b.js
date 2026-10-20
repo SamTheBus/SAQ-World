@@ -150,7 +150,7 @@ function rewardArchiveProof(receipt,sourceEntityId,source,reward){
 function dispositionOrigin(state,player,sourceEntityId,source,proof){
  const inv=player.inventory,itemId=`item:${player.playerId}:${sourceEntityId}`,base={groupId:source.groupId,episode:source.episode,sourceEntityId,...(source.progression?{progression:copyWire(source.progression)}:{})};
  const carried=inv.itemsById[itemId]&&inv.renewal.originsByItemId[itemId],dropped=inv.renewal.groundBySourceId[sourceEntityId]?.origin,salvaged=inv.d7?.salvaged?.[itemId]?.origin,automatic=inv.d7?.autoSalvaged?.[itemId]?.origin,remote=state.d9World?.paging.remoteGearByPlayer?.[player.playerId]?.[itemId];
- const rows=[carried,dropped,salvaged,automatic,remote?.origin].filter(Boolean);requireContract(rows.length===1||rows.length===0&&remote,'Claimed retired gear has no unique ownership disposition');
+ const rows=[carried,dropped,salvaged,automatic,inv.services?.salesByItemId[itemId]?.origin,remote?.origin].filter(Boolean);requireContract(rows.length===1||rows.length===0&&remote,'Claimed retired gear has no unique ownership disposition');
  const origin=rows[0]??(remote.origin=base);requireContract(origin.groupId===source.groupId&&origin.episode===source.episode&&origin.sourceEntityId===sourceEntityId,'Retired gear ownership provenance drift');origin.archive=copyWire(proof);return origin;
 }
 

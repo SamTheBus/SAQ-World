@@ -1,3 +1,4 @@
+import {serviceActionProblem} from './settlement_services_v1.js';
 import {ferryTravelTarget} from './ferry_travel_v1.js';
 import {FUNCTIONAL_CRYPT_FAMILY} from '../content/planned_crypt_policy_v1.js';
 import {FUNCTIONAL_FORT_FAMILY} from '../content/planned_fort_policy_v1.js';
@@ -61,7 +62,7 @@ import {installPersonalFinaleClaimsD13D_G1} from './site_finale_completion_d13d.
 export { actorRules, actorContext };
 export const ACTIVITY_FORMAT='saq-world-activity-1';
 export function validateActivityCommand(command){validateWire(command);const {residencyRevision,...legacy}=command;safeInteger(residencyRevision,1);validateCommand(legacy);
-  requireContract(['movement.setIntent','combat.primaryIntent','combat.guardIntent','combat.shadowDash','subweapon.claim','ferry.travel','site.transition','player.respawn','loot.pickup','gear.salvage','gear.drop','resource.interact','progression.change','forge.attune','equipment.equip','equipment.unequip'].includes(command.kind),'Unsupported activity command');return command;}
+  requireContract(['movement.setIntent','combat.primaryIntent','combat.guardIntent','combat.shadowDash','subweapon.claim','service.modify','service.material','service.buy','service.sell','service.rest','supply.use','ferry.travel','site.transition','player.respawn','loot.pickup','gear.salvage','gear.drop','resource.interact','progression.change','forge.attune','equipment.equip','equipment.unequip'].includes(command.kind),'Unsupported activity command');return command;}
 export function activityContextMatches(state,c){const a=state.entitiesById[state.playersById[c.playerId]?.entityId];if(!a)return false;const context=actorContext(state,a.entityId);
   return ['spaceInstanceId','spaceRevision','residencyRevision'].every(k=>c[k]===context[k]);}
 export function validateActivityCommandForState(c,s){validateActivityCommand(c);requireContract(c.campaignId===s.campaign.campaignId&&c.sessionId===s.session.sessionId,'Stale session/campaign');
@@ -77,6 +78,7 @@ export function validateActivityCommandForState(c,s){validateActivityCommand(c);
   if(c.kind==='resource.interact')requireContract(canUseResource(s,manifestForState(s),s.playersById[c.playerId],c.payload),'Resource unavailable: approach it and finish your swing');
   if(c.kind==='forge.attune')requireContract(canAttune(s,s.playersById[c.playerId],c.payload,manifestForState(s)),'Forge unavailable: approach the Forge and check level and costs');
   if(c.kind.startsWith('equipment.'))requireContract(equipmentActionAvailable(s,s.playersById[c.playerId],c.kind,c.payload),'Equipment unavailable: release Primary and finish the swing');
+  if(c.kind.startsWith('service.')||c.kind==='supply.use')requireContract(serviceActionProblem(s,s.playersById[c.playerId],c.kind,c.payload)===null,serviceActionProblem(s,s.playersById[c.playerId],c.kind,c.payload)??'Service unavailable');
   if(c.kind==='ferry.travel')requireContract(ferryTravelTarget(s,actor,c.payload),'Ferry unavailable: approach the landing and prepare a safe arrival');
   if(c.kind==='site.transition'){const actor=s.entitiesById[s.playersById[c.playerId].entityId],target=/^site:/.test(c.payload.siteId)?functionalSiteTransitionTargetD9(s,actor,c.payload):siteTransitionTarget(s,manifestForState(s),actor,c.payload);requireContract(target,'Site entrance unavailable: approach it and finish the current swing');}return c;}
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);

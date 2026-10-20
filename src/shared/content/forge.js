@@ -4,7 +4,7 @@ import {FORGE_MATERIAL_COSTS} from './forge_material_costs.js';
 import {addAmount,multiplyAmount,powerAmount,floorAmount} from '../contracts/economy_amount.js';
 import {safeInteger,freezeWire} from '../contracts/wire.js';
 // Dungeon items.js:1322–1394. No discounts, floating-point currency or old wallet cap.
-export const FORGE_MATERIALS=Object.freeze(['Monster Soul','Rare Scrap','Luminous Soul','Magic Scrap','Epic Scrap','Astral Shards','Legendary Scrap','Mythic Scrap']);
+export const FORGE_MATERIALS=Object.freeze(['Monster Soul','Rare Scrap','Luminous Soul','Magic Scrap','Epic Scrap','Astral Shards','Legendary Scrap','Mythic Scrap','Eridium Shard',"Overlord's Sigil",'Astral Essence']);
 const mul=multiplyAmount,pow=powerAmount;
 export function attunementCost(level){safeInteger(level,0,99);const n=level+1;
  const gold=n<=10?mul('2500',pow('1.35',n)):n<=30?mul(mul('2500',pow('1.35',10)),pow('3.55',n-10)):mul(mul('100000',pow('2.25',30)),pow('3',n-30));

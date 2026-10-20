@@ -1,3 +1,4 @@
+import {resonanceEffects} from '../content/workshop_gear_v2.js';
 import {resolveMasteryContribution} from './mastery_stats.js';
 import {D9_HERO_VERSION} from './hero_progression_d9.js';
 import {resolveD9PlayerStats} from './player_stats_d9.js';
@@ -34,7 +35,7 @@ function resolveSubweaponContribution(player,base){
   const inv=player.inventory,definition=itemDefinition(inv.itemsById[inv.equipped.subweapon]),family=definition?.subType??null;
   const scale=100+(inv.economy.slotLevels.subweapon??0),attributes={str:5+(player.d8?.allocated.str??0),dex:5+(player.d8?.allocated.dex??0),int:5+(player.d8?.allocated.int??0)};
   for(const key of Object.keys(attributes))attributes[key]+=(definition?.attributes[key]??0)*scale/100;
-  const effects={};for(const [slot,id] of Object.entries(inv.equipped)){const d=itemDefinition(inv.itemsById[id]);if(!d?.effects)continue;const scale=(100+inv.economy.slotLevels[slot])/100;for(const [k,v] of Object.entries(d.effects))effects[k]=(effects[k]??0)+v*scale;if(slot!=='subweapon')for(const key of Object.keys(attributes))attributes[key]+=(d.attributes?.[key]??0)*scale;}
+  const effects={...resonanceEffects(inv)};for(const [slot,id] of Object.entries(inv.equipped)){const d=itemDefinition(inv.itemsById[id]);if(!d?.effects)continue;const scale=(100+inv.economy.slotLevels[slot])/100;for(const [k,v] of Object.entries(d.effects))effects[k]=(effects[k]??0)+v*scale;if(slot!=='subweapon')for(const key of Object.keys(attributes))attributes[key]+=(d.attributes?.[key]??0)*scale;}
   for(const key of Object.keys(attributes))attributes[key]=Math.floor(attributes[key]*(1+(effects[key+'Pct']??0)));
   const str=Math.max(0,attributes.str-5),dex=Math.max(0,attributes.dex-5),int=Math.max(0,attributes.int-5);
   const q=n=>amount(Math.round(n*1000000),1000000),f=definition?.family??{},pct=(v,k)=>mul(v,q(1+(effects[k]??0)).n,q(1+(effects[k]??0)).d);

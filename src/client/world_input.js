@@ -1,6 +1,6 @@
 import { selectedActor, spaceKey } from "./presentation_state.js";
 
-export function createWorldInput({ canvas, environment, renderer, profile, adapter, readModel, reportError, now, isBlocked=()=>false,openForge=()=>{}, openFerry=()=>{}, retryRejectedStop=false, readCommandModel=readModel }) {
+export function createWorldInput({ canvas, environment, renderer, profile, adapter, readModel, reportError, now, isBlocked=()=>false,openForge=()=>{}, openFerry=()=>{},openService=()=>{}, retryRejectedStop=false, readCommandModel=readModel }) {
   const keys = new Set(), actionOwners = new Set(), listeners = [];
   let movementOwner = null, joystick = null, cursor = null, suppressedUntil = -1, lastIntent = "0,0", key = spaceKey(readModel());
   const directional = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "KeyW", "KeyA", "KeyS", "KeyD"]);
@@ -53,7 +53,7 @@ export function createWorldInput({ canvas, environment, renderer, profile, adapt
   function action(exitId) {
     if (isBlocked() || !exitId || !selectedActor(readModel()).alive) return false;
     clear();
-    try { const selected=readModel().space.exits?.find(e=>e.exitId===exitId);let result;if(selected?.ferryLandingId){if(selected.available)openFerry(selected);}else if(selected?.forgeAction){if(selected.available)openForge();}else if(selected?.siteAction)result=adapter.issue("site.transition",selected.siteAction);else result=adapter.issue("space.travel", { exitId });if(result?.then)result.catch(error=>reportError(error.message)); } catch (error) { reportError(error.message); }
+    try { const selected=readModel().space.exits?.find(e=>e.exitId===exitId);let result;if(selected?.serviceNpcId){if(selected.available)openService(selected);}else if(selected?.ferryLandingId){if(selected.available)openFerry(selected);}else if(selected?.forgeAction){if(selected.available)openForge();}else if(selected?.siteAction)result=adapter.issue("site.transition",selected.siteAction);else result=adapter.issue("space.travel", { exitId });if(result?.then)result.catch(error=>reportError(error.message)); } catch (error) { reportError(error.message); }
     return true;
   }
   function listen(target, type, handler, options) { target.addEventListener(type, handler, options); listeners.push(() => target.removeEventListener(type, handler, options)); }

@@ -1,3 +1,4 @@
+import {hasSettlementLife} from '../content/settlement_life_v1.js';
 import {canonicalStringify,closedRecord,copyWire,requireContract as check} from './wire.js';
 import {createTavernBinding,floorForSpace} from './settlement_interiors.js';
 import {tavernCollision} from '../content/tavern_interior_v1.js';
@@ -5,6 +6,7 @@ import {prepareTavernTransition,tavernActions} from '../../simulation/settlement
 import {projectToLocalFrameD9} from './local_world_frames_d9.js';
 import {mixPlan} from '../generation/planned_world_foundation_v1.js';
 import {PLANNED_TOWN_VERSION,PLANNED_TOWN_START_VERSION,TOWN_START_TILES,PLANNED_TOWN_ID,TOWN_TAVERN,TOWN_FRONTAGE} from '../generation/planned_town_v1.js';
+export function campaignTavernCollision(floor,services=false){const c=copyWire(tavernCollision(floor));if(services&&floor==='ground')c.tiles[6]=c.tiles[6].slice(0,9)+'2'+c.tiles[6].slice(10);return c;}
 const token=(campaignId,label)=>[0,1,2,3].map(lane=>mixPlan(PLANNED_TOWN_VERSION+'/'+campaignId+'/'+PLANNED_TOWN_ID+'/'+TOWN_TAVERN.id+'/'+label+'/'+lane).toString(16).padStart(8,'0')).join('');
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 export const tavernSpaceIds=s=>Object.values(s.d9World?.settlementInterior?.binding.floorSpaces??{});
@@ -13,7 +15,7 @@ export async function installCampaignTavern(s,sha256){
  const digest=async label=>token(s.campaign.campaignId,label);
  const binding=copyWire(createTavernBinding({campaignId:s.campaign.campaignId,settlementId:PLANNED_TOWN_ID,buildingId:TOWN_TAVERN.id,exteriorSpaceId:s.overworldInstanceId,frontage:{x:0,y:0},exteriorDimensions:[14,12]}));
  binding.frontage=copyWire(TOWN_FRONTAGE); // Permanent plan tile; projected at interaction time.
- const floorLogicalIds={};for(const floor of ['ground','upper']){binding.floorSpaces[floor]='spi:'+await digest(floor);floorLogicalIds[floor]='spc:'+await digest('logical/'+floor);s.spacesByInstanceId[binding.floorSpaces[floor]]={spaceId:floorLogicalIds[floor],spaceInstanceId:binding.floorSpaces[floor],spaceRevision:1,collision:copyWire(tavernCollision(floor))};}
+ const floorLogicalIds={};for(const floor of ['ground','upper']){binding.floorSpaces[floor]='spi:'+await digest(floor);floorLogicalIds[floor]='spc:'+await digest('logical/'+floor);s.spacesByInstanceId[binding.floorSpaces[floor]]={spaceId:floorLogicalIds[floor],spaceInstanceId:binding.floorSpaces[floor],spaceRevision:1,collision:campaignTavernCollision(floor,hasSettlementLife(s.d9World.plannedWorld))};}
  s.d9World.settlementInterior={version:PLANNED_TOWN_VERSION,siteId:'loc:'+await digest('entrance'),binding,floorLogicalIds};
 }
 export function campaignTavernBinding(s){
@@ -37,5 +39,5 @@ export function validateCampaignTavern(s){
  const expected=createTavernBinding({campaignId:b.campaignId,settlementId:b.settlementId,buildingId:b.buildingId,exteriorSpaceId:b.exteriorSpaceId,frontage:b.frontage,exteriorDimensions:[14,12]});
  check(b.identity===expected.identity&&b.version===expected.version&&b.recipeVersion===expected.recipeVersion&&Object.keys(b).sort().join(',')===Object.keys(expected).sort().join(','),'Tavern recipe/binding drift');
  closedRecord(b.floorSpaces,['ground','upper']);closedRecord(r.floorLogicalIds,['ground','upper']);check(new Set(Object.values(b.floorSpaces)).size===2,'Tavern duplicate floor');
- for(const f of ['ground','upper']){check(b.floorSpaces[f]==='spi:'+token(s.campaign.campaignId,f)&&r.floorLogicalIds[f]==='spc:'+token(s.campaign.campaignId,'logical/'+f),'Tavern deterministic floor identity drift');const space=s.spacesByInstanceId[b.floorSpaces[f]];check(space&&space.spaceId===r.floorLogicalIds[f]&&same(space.collision,tavernCollision(f)),'Tavern floor geometry drift');}
+ for(const f of ['ground','upper']){check(b.floorSpaces[f]==='spi:'+token(s.campaign.campaignId,f)&&r.floorLogicalIds[f]==='spc:'+token(s.campaign.campaignId,'logical/'+f),'Tavern deterministic floor identity drift');const space=s.spacesByInstanceId[b.floorSpaces[f]];check(space&&space.spaceId===r.floorLogicalIds[f]&&same(space.collision,campaignTavernCollision(f,hasSettlementLife(s.d9World.plannedWorld))),'Tavern floor geometry drift');}
 }

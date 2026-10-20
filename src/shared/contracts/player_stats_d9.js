@@ -1,3 +1,4 @@
+import {resonanceEffects} from '../content/workshop_gear_v2.js';
 import {d9LevelStats} from './hero_progression_d9.js';
 import {equipmentBonuses,itemDefinition} from '../content/equipment.js';
 import {exactDecimal} from '../content/gear_numbers_d9.js';
@@ -11,7 +12,7 @@ export function guardChanceExact(raw,cap,unit=1000){raw=A(raw);const half=Q(cap,
 export function resolveD9PlayerStats(player){
  const inv=player.inventory,level=d9LevelStats(player.progression.level),bonus=equipmentBonuses(player),base={version:'resolved-player-stats-integer-v2',maxHp:add(level.maxHp,bonus.maxHp),attack:add(level.attack,bonus.attack),defense:add(level.defense,bonus.defense),moveSpeed:3,pickupRadius:BASE_PICKUP_RADIUS};
  if(!inv?.subweapons)return {...base,...Object.fromEntries(['maxHp','attack','defense'].map(k=>[k,combatInteger(base[k])]))};
- const definition=itemDefinition(inv.itemsById[inv.equipped.subweapon]),family=definition?.subType??null,scale=100+(inv.economy.slotLevels.subweapon??0),attributes=Object.fromEntries(['str','dex','int'].map(k=>[k,add(5,Q(big(player.d8?.allocated[k]??0)))])),effects={};
+ const definition=itemDefinition(inv.itemsById[inv.equipped.subweapon]),family=definition?.subType??null,scale=100+(inv.economy.slotLevels.subweapon??0),attributes=Object.fromEntries(['str','dex','int'].map(k=>[k,add(5,Q(big(player.d8?.allocated[k]??0)))])),effects=Object.fromEntries(Object.entries(resonanceEffects(inv)).map(([k,v])=>[k,exactDecimal(v)]));
  for(const [slot,id] of Object.entries(inv.equipped)){const d=itemDefinition(inv.itemsById[id]);if(!d)continue;const scale=100+(inv.economy.slotLevels[slot]??0);for(const [k,v] of Object.entries(d.effects??{}))effects[k]=add(effects[k]??0,mul(exactDecimal(v),scale,100));for(const k of ['str','dex','int'])attributes[k]=add(attributes[k],mul(exactDecimal(d.attributes?.[k]??0),scale,100));}
  const effect=k=>effects[k]??Q(0),quantize=v=>mul(round(mul(v,1000000)),1,1000000),pct=(v,k)=>times(v,quantize(add(1,effect(k))));
  for(const k of ['str','dex','int'])attributes[k]=combatInteger(round(times(attributes[k],add(1,effect(k+'Pct'))),'floor'));

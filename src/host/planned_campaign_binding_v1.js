@@ -1,3 +1,4 @@
+import {installSettlementServices} from '../shared/contracts/settlement_services_v1.js';
 import {PLANNED_TOWN_START_VERSION,TOWN_START_TILES} from '../shared/generation/planned_town_v1.js';
 import {collidesWithTiles} from '../shared/rules/world_geometry.js';
 import {installCampaignTavern} from '../shared/contracts/campaign_tavern_v1.js';
@@ -23,5 +24,5 @@ export async function preparePlannedCampaignBindingV1(source,binding,{plannedAss
  s.d9World.plannedWorld=copyWire(binding);if(hasAlphaPopulation(binding))s.d9World.runtimePolicy=ALPHA_POPULATION_RETENTION.version;s.d9World.plannedStart=copyWire(spawn);for(const r of [...caveReservations,...fortReservations,...ruinReservations,...cryptReservations])s.d9World.siteReservationsById[r.siteId]=copyWire(r);
  for(const [i,pid] of [...s.session.playerIds].sort().entries()){const actor=s.entitiesById[s.playersById[pid].entityId],tile=TOWN_START_TILES[i],arrival=binding.townPrototype===PLANNED_TOWN_START_VERSION?projectToLocalFrameD9(tileAddress(tile.x,tile.y),frames):['fort-deep-fixture','ruin-deep-fixture','crypt-large-fixture'].includes(binding.assetId)?projectToLocalFrameD9(tileAddress(asset.spawnTile.x+(i%2)*2,asset.spawnTile.y+Math.floor(i/2)*2),frames):q;check(arrival&&!collidesWithTiles(s.spacesByInstanceId[s.overworldInstanceId].collision,arrival.x,arrival.y,actor.hullRadius),'Town start must be hull-safe and prepared');actor.position={x:arrival.x,y:arrival.y};actor.movementIntent={x:0,y:0};}
  if(binding.townPrototype)await installCampaignTavern(s,plannedAssets.sha256??(async bytes=>{throw Error('Tavern identity hash unavailable');}));
- captureWorldPositionsD9(s);validateActivityState(s);return s;
+ installSettlementServices(s);captureWorldPositionsD9(s);validateActivityState(s);return s;
 }

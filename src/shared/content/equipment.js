@@ -1,9 +1,10 @@
+import {workshopResult} from './workshop_gear_v2.js';
 import {combatAmount as Q,addCombat as add,multiplyCombat as mul,asCombatAmount as A} from '../contracts/combat_amount.js';
 import {SUBWEAPONS} from './subweapons.js';
 import {effectiveEquipmentBonuses} from './forge.js';
 import { freezeWire, requireContract } from '../contracts/wire.js';
 
-export const itemDefinition=item=>item?.generated?.definition??EQUIPMENT[item?.definitionId];
+export const itemDefinition=item=>item?.workshop?workshopResult(item).definition:item?.generated?.definition??EQUIPMENT[item?.definitionId];
 export const EQUIPMENT_CATALOG_VERSION='world-equipment-d4r-v1';
 export const EQUIPMENT_SLOTS=Object.freeze(['weapon','helmet','chest','leggings','overall','boots','ring1','ring2']);
 // Fixed definitions, separate from owned instances. Site tier selects a reward pool;

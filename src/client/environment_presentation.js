@@ -185,6 +185,7 @@ export function* prepareEnvironmentDrawing(ctx,space,viewport=null,layout=create
   }
   for(const b of v.blockers) {
     yield;
+    if(b.kind.startsWith('civilian-'))continue; // Settlement/NPC depth painters own these; a clearing is not foliage.
     const x=b.x*t,y=b.y*t,w=b.width*t,h=b.height*t;
     if(x+w<=bounds.x||y+h<=bounds.y||x>=bounds.x+bounds.width||y>=bounds.y+bounds.height)continue;
     paintedBlockers++;
@@ -221,7 +222,7 @@ export function* prepareEnvironmentDrawing(ctx,space,viewport=null,layout=create
   for(const f of plannedRuinEntranceFrames(space))if(f.x>=bounds.x-192&&f.y>=bounds.y-192&&f.x<=bounds.x+bounds.width+192&&f.y<=bounds.y+bounds.height+192)drawPlannedRuinEntranceGround(ctx,f,pilot);
   // Exit signage occupies a passable marker, not a solid door or wall.
   for(const exit of space.exits) {
-    if(exit.ferryLandingId||exit.siteKind==='civilian-tavern')continue; // Building art owns the door/sign; the standard context prompt supplies text.
+    if(exit.ferryLandingId||exit.siteKind==='civilian-tavern'||exit.serviceNpcId)continue; // Building art owns the door/sign; the standard context prompt supplies text.
     const exitPaintMargin=exit.siteKind==='woodland-ruin'?192:32;
     if(exit.x<bounds.x-exitPaintMargin||exit.y<bounds.y-exitPaintMargin||exit.x>bounds.x+bounds.width+exitPaintMargin||exit.y>bounds.y+bounds.height+exitPaintMargin)continue;
     if(exit.siteAction){
@@ -314,7 +315,7 @@ export function drawEnvironmentFallback(ctx,space,bounds,pilot=null){
  for(let y=minY;y<=maxY;y++)for(let x=minX;x<=maxX;x++){drawPlannedSurfaceCell(ctx,at(x,y),biomeAt(x*t+16,y*t+16),x,y,t,seed,offset,at);pilot?.drawSurface(ctx,space,at(x,y),x,y,t,at);}
  for(const material of ['r','p'])for(let y=minY;y<=maxY;y++)for(let x=minX;x<=maxX;x++)if(at(x,y)===material)drawRoadCell(ctx,at,x,y,t,seed,offset,pilot?.eligible(space,x*t,y*t)?pilot.road:null);
  pilot?.roadOverlay?.(ctx,space,bounds,at);drawWoodlandRoadAccents(ctx,at,biomeAt,minX,maxX,minY,maxY,t,seed,offset);for(const exit of space.exits??[])if(exit.siteAction&&!exit.proceduralRuin&&exit.siteKind==='woodland-ruin'&&exit.x>=bounds.x-192&&exit.y>=bounds.y-192&&exit.x<=bounds.x+bounds.width+192&&exit.y<=bounds.y+bounds.height+192){const n=terrainHash(Math.floor(exit.x/t),Math.floor(exit.y/t),seed+907);drawRuinExteriorGroundD11_3(ctx,exit,n,nearestRoadAnchor(space,exit),t);}let paintedDecorations=0;for(let y=minY;y<=maxY;y++)for(let x=minX;x<=maxX;x++){const detail=woodlandGroundDetail(space,x,y,blockedTiles);if(!detail)continue;paintedDecorations+=drawWoodlandDetail(ctx,detail,bounds,[],null,pilot,space);woodlandDetailIds.push(detail.id);}
-  for(const b of v.blockers){const bx=b.x*t,by=b.y*t,bw=b.width*t,bh=b.height*t;if(bx+bw<=bounds.x||by+bh<=bounds.y||bx>=bounds.x+bounds.width||by>=bounds.y+bounds.height)continue;
+  for(const b of v.blockers){if(b.kind.startsWith('civilian-'))continue;const bx=b.x*t,by=b.y*t,bw=b.width*t,bh=b.height*t;if(bx+bw<=bounds.x||by+bh<=bounds.y||bx>=bounds.x+bounds.width||by>=bounds.y+bounds.height)continue;
   if(b.kind.startsWith('fort-'))drawFortBlockerD10(ctx,space,b,t);else if(b.kind==='cave-rock-wall')drawCaveBlockerD10(ctx,space,b,t);
     else if(isPlannedRuinMasonry(b))obstacleVisualIds.push(...drawPlannedRuinMasonry(ctx,space,b,bounds,pilot));else if(b.kind==='ruin-exterior-masonry'){} // Legacy facade owns its mask.
 else if(b.kind==='building'){building(ctx,b,t);for(let ty=b.y;ty<b.y+b.height;ty++)for(let tx=b.x;tx<b.x+b.width;tx++)obstacleVisualIds.push(obstacleTileVisualId(b,tx,ty,'solid'));}else if(b.kind==='fence'){ctx.fillStyle='#754923';ctx.fillRect(bx,by,bw,bh);for(let ty=b.y;ty<b.y+b.height;ty++)for(let tx=b.x;tx<b.x+b.width;tx++)obstacleVisualIds.push(obstacleTileVisualId(b,tx,ty,'solid'));}

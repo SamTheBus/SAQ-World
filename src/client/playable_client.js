@@ -1,3 +1,4 @@
+import {createSettlementServicesMenu} from './settlement_services_menu_v1.js';
 import {createFerryMenu} from './ferry_menu_v1.js';
 import {createCivilianContextInput} from './civilian_context_input.js';
 import {createWorldMapD9} from './world_map_d9.js';
@@ -27,7 +28,7 @@ export function mountPlayableClient({ port, environment, nextCommandToken, capab
   const renderer = createWorldRenderer(canvas,{performanceProbe,environmentArt}), profile = createControlProfile(capabilities), queue = createPresentationQueue();
   const adapter = createClientCommandAdapter({ port, nextCommandToken });
   const restoreGameplayFocus=()=>canvas.focus({preventScroll:true});
-  let observedProgression=null,levelNoticeUntil=0,inventory=null,diagnostics=null,subweaponHud=null,navigation=null,siteNavigator=null,ferryMenu=null,renderModel=null;
+  let observedProgression=null,levelNoticeUntil=0,inventory=null,diagnostics=null,subweaponHud=null,navigation=null,siteNavigator=null,ferryMenu=null,serviceMenu=null,renderModel=null;
   // One authoritative projection per rendered frame. The UI previously asked
   // the port for the same immutable model through several child presenters,
   // creating avoidable full-state clones and major-GC gaps during long play.
@@ -40,11 +41,12 @@ export function mountPlayableClient({ port, environment, nextCommandToken, capab
   // An explicit hidden style avoids overriding the HTML hidden attribute.
   loading.style.display='none';loading.textContent='Loading area…';doc.body.appendChild(loading);
   const loadingFeedback=blocked=>{loading.hidden=!blocked;loading.style.display=blocked?'flex':'none';doc.documentElement.dataset.spacePreparing=String(blocked);};
-  const gameplayInputBlocked=()=>{const m=readModel();return !preparation.observe(presentationSpace(m),Boolean(m.siteActivationPending))||Boolean(inventory?.isOpen()||navigation?.isOpen()||diagnostics?.isDragging()||siteNavigator?.busy()||ferryMenu?.isOpen());};
+  const gameplayInputBlocked=()=>{const m=readModel();return !preparation.observe(presentationSpace(m),Boolean(m.siteActivationPending))||Boolean(inventory?.isOpen()||navigation?.isOpen()||diagnostics?.isDragging()||siteNavigator?.busy()||ferryMenu?.isOpen()||serviceMenu?.isOpen());};
   const input = createWorldInput({ canvas, environment, renderer, profile, adapter, readModel,
     retryRejectedStop:doc.body.dataset.shorelineReview==='true',readCommandModel:()=>port.getReadModel(),
-    openFerry:landing=>ferryMenu.open(landing),openForge:()=>inventory?.openForge(),isBlocked:gameplayInputBlocked,reportError: (text) => { message = text; }, now: () => environment.performance.now() });
-  const civilianInput=createCivilianContextInput({environment,readModel,activate:exitId=>input.activate(exitId),isBlocked:()=>gameplayInputBlocked()||!readModel().space.exits?.some(e=>e.available&&(e.ferryLandingId||e.siteKind==='civilian-tavern'||(doc.body.dataset.caveReview==='true'||doc.body.dataset.fortReview==='true'||doc.body.dataset.ruinReview==='true'||doc.body.dataset.cryptReview==='true')&&e.siteAction))});
+    openService:n=>serviceMenu.open(n),openFerry:landing=>ferryMenu.open(landing),openForge:()=>inventory?.openForge(),isBlocked:gameplayInputBlocked,reportError: (text) => { message = text; }, now: () => environment.performance.now() });
+  const civilianInput=createCivilianContextInput({environment,readModel,activate:exitId=>input.activate(exitId),isBlocked:()=>gameplayInputBlocked()||!readModel().space.exits?.some(e=>e.available&&(e.serviceNpcId||e.ferryLandingId||e.siteKind==='civilian-tavern'||(doc.body.dataset.caveReview==='true'||doc.body.dataset.fortReview==='true'||doc.body.dataset.ruinReview==='true'||doc.body.dataset.cryptReview==='true')&&e.siteAction))});
+  serviceMenu=createSettlementServicesMenu({document:doc,adapter,readModel,clearInput:()=>{input.clear();primary?.clear();},restoreFocus:restoreGameplayFocus,reportError:text=>{message=text;}});
   ferryMenu=createFerryMenu({document:doc,adapter,clearInput:()=>input.clear(),restoreFocus:restoreGameplayFocus,reportError:text=>{message=text;}});
   const button=doc.getElementById("primary-attack");
   const gameSurfaces=[canvas,button,doc.getElementById('world-pickup')].filter(Boolean),gestureListeners=[];
@@ -98,9 +100,9 @@ export function mountPlayableClient({ port, environment, nextCommandToken, capab
       if (["failed", "aborted", "conflict"].includes(model.travel.status)) message = model.travel.reason ?? "Travel failed; source retained.";
     }
     for (const job of queue.due(model)) message = job.message;
-    inventory.refresh(model,time);
+    inventory.refresh(model,time);serviceMenu.refresh(model);
     if(performanceProbe)performanceProbe.measure('deathPresentation',()=>death.refresh(model));else death.refresh(model);
-    const presentation=applyGameplayPresentationState(doc,gameplayPresentationState(model,{foregroundModalOpen:inventory.isOpen()||!doc.getElementById('world-death').hidden||!doc.getElementById('startup-recovery').hidden,fullScreenPanelOpen:navigation.isOpen()}));
+    const presentation=applyGameplayPresentationState(doc,gameplayPresentationState(model,{foregroundModalOpen:inventory.isOpen()||serviceMenu.isOpen()||!doc.getElementById('world-death').hidden||!doc.getElementById('startup-recovery').hidden,fullScreenPanelOpen:navigation.isOpen()}));
     navigation.refresh(model,time,presentation);if(disclosure.open&&time>=nextSiteNavAt){siteNavigator.refresh(model);nextSiteNavAt=time+250;}subweaponHud.refresh(model);primary?.refresh(model);
     const participant=model.playersById[model.localPlayerId],progress=participant.progression;
     const levelNotice=doc.getElementById('world-level-up');
@@ -169,5 +171,5 @@ export function mountPlayableClient({ port, environment, nextCommandToken, capab
   }
   resize();
   return Object.freeze({ render, invalidateArt:()=>renderer.invalidate('review-art-mode-change'), prepare:()=>renderer.prepare(port.getReadModel(),environment.performance.now(),input),pollInput:()=>{const model=port.getReadModel(),ready=preparation.observe(presentationSpace(model),Boolean(model.siteActivationPending));if(!ready){input.clear(false);primary?.clear(false);loadingFeedback(true);return false;}input.refresh(model);primary?.refresh(model);return true;}, releaseInput:()=>{subweaponHud?.clear();input.clear();primary?.clear();}, resize,resources:()=>Object.freeze({...renderer.resources(),...(navigation?.resources?.()??{}),spacePreparation:preparation.inspect()}),
-    destroy:()=>{ferryMenu?.destroy();loading.remove();civilianInput.destroy();navigation.destroy();siteNavigator.destroy();subweaponHud.destroy();diagnostics.destroy();inventory.destroy();death.destroy();input.destroy();primary?.destroy();gestureListeners.forEach(remove=>remove());if(disclosure){compact.removeEventListener?.('change',layoutDisclosure);disclosure.removeEventListener('toggle',resize);}} });
+    destroy:()=>{serviceMenu?.destroy();ferryMenu?.destroy();loading.remove();civilianInput.destroy();navigation.destroy();siteNavigator.destroy();subweaponHud.destroy();diagnostics.destroy();inventory.destroy();death.destroy();input.destroy();primary?.destroy();gestureListeners.forEach(remove=>remove());if(disclosure){compact.removeEventListener?.('change',layoutDisclosure);disclosure.removeEventListener('toggle',resize);}} });
 }
