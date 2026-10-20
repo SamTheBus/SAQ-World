@@ -4,6 +4,7 @@ import {drawCreatureD11} from './creature_presentation_d11.js';
 import {ruinLandscapeBlendAt} from '../shared/generation/ruin_groves_v1.js';
 import {terrainHash} from './environment_motifs.js';
 import {depthItem} from './world_depth_presentation.js';
+import {prepareCelTexture} from './cel_materials_v1.js';
 
 // Small translucent layers stay compatible with the scenery command recorder.
 // No opaque canopy discs, blur/filter work, or authority/collision changes.
@@ -20,11 +21,11 @@ export async function createRuinStorybookArtV1(environment,review,initial='story
  const start=environment.performance.now();
  for(const f of manifest.files){const r=await environment.fetch(new URL(f.path,base));if(!r.ok)throw Error('Missing storybook '+f.id);const bytes=await r.arrayBuffer(),digest=Array.from(new Uint8Array(await environment.crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');if(digest!==f.sha256||bytes.byteLength!==f.bytes)throw Error('Storybook commitment mismatch '+f.id);
   const bitmap=await environment.createImageBitmap(new Blob([bytes],{type:'image/png'}));try{if(bitmap.width!==f.width||bitmap.height!==f.height)throw Error('Storybook source dimensions');
-   const crop=(box,w,h)=>{const canvas=environment.document.createElement('canvas');canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(bitmap,...box,0,0,w,h);decodedBytes+=w*h*4;return canvas;};
+   const crop=(box,w,h)=>{const canvas=environment.document.createElement('canvas');canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(bitmap,...box,0,0,w,h);decodedBytes+=w*h*4;return prepareCelTexture(canvas);};
    if(f.id==='entrance')images.entrance=crop(f.crop,576,Math.round(576*f.crop[3]/f.crop[2]));
    else if(['modular','vertical'].includes(f.id)){for(const [id,p]of Object.entries(manifest.modules))if(p.sheet===f.id){const w=Math.ceil(p.crop[2]*p.scale*2.8),h=Math.round(w*p.crop[3]/p.crop[2]);modules[id]=crop(p.crop,w,h);}}
    else if(f.id==='grove')for(let i=0;i<6;i++){const box=manifest.floraSlots[i],w=i<3?270:256;flora[i]=crop(box,w,Math.round(w*box[3]/box[2]));}
-   else for(let i=0;i<2;i++){const canvas=environment.document.createElement('canvas');canvas.width=canvas.height=256;const c=canvas.getContext('2d'),box=[i*887,0,887,887];for(let y=0;y<2;y++)for(let x=0;x<2;x++){c.save();c.translate(x?256:0,y?256:0);c.scale(x?-1:1,y?-1:1);c.drawImage(bitmap,...box,0,0,128,128);c.restore();}decodedBytes+=256*256*4;materials[i]=canvas;}
+   else for(let i=0;i<2;i++){const canvas=environment.document.createElement('canvas');canvas.width=canvas.height=256;const c=canvas.getContext('2d'),box=[i*887,0,887,887];for(let y=0;y<2;y++)for(let x=0;x<2;x++){c.save();c.translate(x?256:0,y?256:0);c.scale(x?-1:1,y?-1:1);c.drawImage(bitmap,...box,0,0,128,128);c.restore();}decodedBytes+=256*256*4;materials[i]=prepareCelTexture(canvas,{terrain:true});}
   }finally{bitmap.close();}
  }
  loadMs=environment.performance.now()-start;

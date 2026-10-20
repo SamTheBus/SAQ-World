@@ -1,15 +1,17 @@
 import {createEnvironmentLayout,prepareEnvironmentLayout,obstacleTileVisualId,obstacleTileVisualCoverage} from './environment_layout.js';
 import {environmentWorldOffset,environmentIdentity,drawCanopy,drawFlower,flowerMotion} from './environment_motifs.js';
+import {celShadeContext} from './cel_materials_v1.js';
 
 // Same 256px artwork, prepared a tile at a time ahead of the viewport.
 export function createEnvironmentCache(canvas,{diagnostics=null,prepareDrawing,prepareDepthItems=null,drawFallback=null,drawRequiredObstacle=null}={}){
+ if(drawFallback){const paint=drawFallback;drawFallback=(c,...args)=>paint(celShadeContext(c,{mode:'world'}),...args);}
  const SIZE=256,BASE_LIMIT=32,MAX_LIMIT=128,DESCRIPTORS=64,PREFETCH=8,RECENT=24,LAYOUTS=4;
  const pages=new Map(),fallbacks=new Map(),descriptors=new Map(),layouts=new Map(),stamps=new Map(),flowerStamps=[],rasterPool=[];
  const win=canvas.ownerDocument.defaultView??globalThis;
  let lastView=null,travelX=0,travelY=0;
  let layoutJob=null,activeJob=null,planKey=null,planVisual=null,key=null,scaleKey=null,queue=[],pending=null,generation=0,visualGeneration=0,rasterGeneration=0,currentVisual=null,frameSequence=0,visibleIds=new Set(),preloadIds=new Set(),recentIds=new Set(),recentSeen=new Map(),protectedIds=new Set(),lastFlowers=[],requiredTasks=[],builds=0,created=0,worstBuildMs=0,descriptorReuses=0,retentionHits=0,peakNeeded=0,peakPrefetched=0,capacity=BASE_LIMIT,evictions=0,misses=0,fallbackBuilds=0,fallbackHits=0,peakFallbackPages=0,visibleRasterPages=0,fallbackPages=0,activeColliderVisuals=0,missingColliderVisuals=0,underCoveredColliderVisuals=0,lastColliderRepair=null,lastColliderAudit=null,lastRasterLifecycle=null,staleRasterDiscards=0,atomicRasterReplacements=0,rasterCompletenessRepairs=0,clearCount=0,lastClearReason='none',lastMissReason='none',clearReasons=Object.create(null);
  const emit=(kind,values={})=>{if(diagnostics)diagnostics({kind,at:performance.now(),...values});};
- const art={tree(ctx,x,y,size,n){const variant=n%12;let tile=stamps.get(variant);if(!tile){tile=canvas.ownerDocument.createElement('canvas');tile.width=128;tile.height=128;drawCanopy(tile.getContext('2d'),0,0,128,variant);stamps.set(variant,tile);}ctx.drawImage(tile,x,y,size,size);}};
+ const art={tree(ctx,x,y,size,n){const variant=n%12;let tile=stamps.get(variant);if(!tile){tile=canvas.ownerDocument.createElement('canvas');tile.width=128;tile.height=128;drawCanopy(celShadeContext(tile.getContext('2d'),{mode:'world'}),0,0,128,variant);stamps.set(variant,tile);}ctx.drawImage(tile,x,y,size,size);}};
  const touch=(map,id,value)=>{map.delete(id);map.set(id,value);};
  function releaseRaster(raster){if(!raster)return;rasterPool.push(raster);while(rasterPool.length>RECENT)rasterPool.shift();}
  function clear(reason='manual'){clearCount++;lastClearReason=reason;clearReasons[reason]=(clearReasons[reason]??0)+1;emit('clear',{reason,pages:pages.size,descriptors:descriptors.size,layouts:layouts.size,protected:protectedIds.size});generation++;if(pending!==null){if(win.requestIdleCallback)win.cancelIdleCallback(pending);else win.clearTimeout(pending);}pending=null;queue=[];if(activeJob)releaseRaster(activeJob.raster);activeJob=null;layoutJob=null;pages.clear();fallbacks.clear();rasterPool.length=0;descriptors.clear();layouts.clear();visibleIds.clear();preloadIds.clear();recentIds.clear();recentSeen.clear();protectedIds.clear();key=null;scaleKey=null;planKey=null;planVisual=null;currentVisual=null;lastFlowers=[];requiredTasks=[];lastView=null;travelX=travelY=0;capacity=BASE_LIMIT;visibleRasterPages=0;fallbackPages=0;activeColliderVisuals=0;missingColliderVisuals=0;underCoveredColliderVisuals=0;lastColliderRepair=null;lastColliderAudit=null;}
@@ -32,7 +34,7 @@ export function createEnvironmentCache(canvas,{diagnostics=null,prepareDrawing,p
   if(!raster&&pages.size>=capacity){const ids=[...pages.keys()].filter(k=>k!==id&&!visibleIds.has(k)),victim=ids.find(k=>!preloadIds.has(k)&&!recentIds.has(k))??(mode==='sync'?ids.find(k=>!preloadIds.has(k))??ids[0]:undefined);if(victim!==undefined){raster=pages.get(victim).raster;pages.delete(victim);recentSeen.delete(victim);recentIds.delete(victim);evictions++;emit('evict',{id:victim,reason:'capacity',required:requiredTasks.length,protected:protectedIds.size,pages:pages.size,capacity});}}
   if(!raster){raster=canvas.ownerDocument.createElement('canvas');created++;emit('allocate',{id});}
   const pixels=Math.ceil(SIZE*scale);if(raster.width!==pixels||raster.height!==pixels){raster.width=pixels;raster.height=pixels;}
-  const rc=raster.getContext('2d');let descriptor=descriptors.get(id),drawing=null,commands=null;
+  const rc=celShadeContext(raster.getContext('2d'),{mode:'world'});let descriptor=descriptors.get(id),drawing=null,commands=null;
   if(descriptor?.signature===sig){descriptorReuses++;touch(descriptors,id,descriptor);}
   else{
    commands=[];const methods=new Map();

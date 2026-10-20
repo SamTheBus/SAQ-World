@@ -1,4 +1,6 @@
 import {drawOrdinaryHostileProjectile} from './ordinary_hostile_projectile_presentation.js';
+import {celShadeContext} from './cel_materials_v1.js';
+import {drawCelBoss as drawArachnidTreantD12_5A,drawCelCocoon as drawTreantCocoonD12_5A,drawCelFallbackMob as drawProofSlime} from './cel_creature_renderer_v1.js';
 import {drawPlannedVillageGround,plannedVillageDepthItems} from './planned_village_presentation_v1.js';
 import {civilianDepthItems} from './settlement_civilians_v1.js';
 import {drawFerryLandings} from './ferry_presentation_v1.js';
@@ -19,17 +21,17 @@ import {createSiteEnvironment} from './site_environment_presentation.js';
 import {createCombatFeedback} from './combat_feedback.js';
 import { drawOrdinaryEnemy } from './ordinary_enemy_presentation.js';
 import { createCamera, createPaintedPrompt, selectedActor, spaceKey,createHeroFacing } from "./presentation_state.js";
-import { drawWorldHero, drawProofSlime,tomeFocusPosition } from "./hero_presentation.js";
+import { drawWorldHero,tomeFocusPosition } from "./hero_presentation.js";
 import { drawEnvironment, drawEnvironmentMarkers, drawCollisionCoverageDebug, createEnvironmentCache } from "./environment_presentation.js";
 import {depthItem,drawDepthItems} from './world_depth_presentation.js';
 import {drawBerserkerTransfersD12_4H_A,drawGlacialSnareFrontD12_4E,drawGlacialSnareRearD12_4E,drawNullifiedFrontD12_4I,drawNullifiedRearD12_4I,drawSlagShaperHazardsD12_4K,drawToxicPoisonFrontD12_4F,drawToxicPoisonRearD12_4F,drawWebbedFrontD12_4J,drawWebbedRearD12_4J,drawWebWeaverHazardsD12_4J} from './elite_presentation_d12_4.js';
 import {drawActorStatusRow} from './actor_status_presentation.js';
-import {drawArachnidTreantBossHudD12_5A,drawArachnidTreantD12_5A,drawArachnidTreantGroundD12_5A,drawTreantCocoonD12_5A} from './boss_presentation_d12_5.js';
+import {drawArachnidTreantBossHudD12_5A,drawArachnidTreantGroundD12_5A} from './boss_presentation_d12_5.js';
 import {createExtractionPortalPresentationD12_5C} from './extraction_portal_presentation_d12_5c.js';
 
 export function createWorldRenderer(canvas,{performanceProbe=null,developmentScene=null,environmentArt=null}={}) {
   const completionPreparation=createCompletionArtPreparation(canvas);
-  let ctx = canvas.getContext("2d"), layout = 0, facing = 1, previous = null;
+  let ctx = celShadeContext(canvas.getContext("2d"),{mode:'world'}), layout = 0, facing = 1, previous = null;
   const groundItems=createGroundItemPresentation();
   const boltOrigins=new Map(),combatVfx=createCombatVfx();
   const resourceArt=createResourcePresentation(),portalArt=createExtractionPortalPresentationD12_5C(),rewards=createRewardFeedback(canvas);
@@ -43,7 +45,7 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
   function resize(width, height) {
     const nextWidth=Math.max(1,Math.round(width)),nextHeight=Math.max(1,Math.round(height));resizeEvents++;lastResize={from:{width:canvas.width,height:canvas.height},to:{width:nextWidth,height:nextHeight}};
     if(canvas.width===nextWidth&&canvas.height===nextHeight){resizeNoops++;return false;}
-    resizeChanges++;prompt.clear();layout++;canvas.width=nextWidth;canvas.height=nextHeight;ctx=canvas.getContext("2d");rewards.resize();return true;
+    resizeChanges++;prompt.clear();layout++;canvas.width=nextWidth;canvas.height=nextHeight;ctx=celShadeContext(canvas.getContext("2d"),{mode:'world'});rewards.resize();return true;
   }
   function render(model, time, input) {
     prompt.clear();

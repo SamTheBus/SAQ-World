@@ -1,6 +1,7 @@
 import {createHybridArtPilotV1} from './hybrid_art_pilot_v1.js';
 import {environmentWorldOffset,environmentSeed,terrainHash,drawMushrooms} from './environment_motifs.js';
 import {roadMask} from './road_presentation.js';
+import {prepareCelTexture} from './cel_materials_v1.js';
 const TAU=Math.PI*2;
 
 // Presentation-only successor. World-phase materials never choose geometry.
@@ -17,11 +18,11 @@ export async function createHybridArtV2(environment,review,initialMode='candidat
     const tile=environment.document.createElement('canvas');tile.width=tile.height=256;const c=tile.getContext('2d'),x=Math.floor(i%4*bitmap.width/4)+3,y=Math.floor(Math.floor(i/4)*bitmap.height/4)+3,w=Math.floor((i%4+1)*bitmap.width/4)-x-3,h=Math.floor((Math.floor(i/4)+1)*bitmap.height/4)-y-3;
     // Mirrored material quadrants have identical shared edges. The world-space
     // phase remains continuous across tiles, pages, local rebases and chunks.
-    for(let yy=0;yy<2;yy++)for(let xx=0;xx<2;xx++){c.save();c.translate(xx?256:0,yy?256:0);c.scale(xx?-1:1,yy?-1:1);c.drawImage(bitmap,x,y,w,h,0,0,128,128);c.restore();}materials[i]=tile;
+    for(let yy=0;yy<2;yy++)for(let xx=0;xx<2;xx++){c.save();c.translate(xx?256:0,yy?256:0);c.scale(xx?-1:1,yy?-1:1);c.drawImage(bitmap,x,y,w,h,0,0,128,128);c.restore();}materials[i]=prepareCelTexture(tile,{terrain:true});
    }
   }finally{bitmap.close();}
   const br=await environment.fetch(new URL(manifest.bushes.path,base));if(!br.ok)throw Error('V2 bushes unavailable');const bb=await br.arrayBuffer(),bd=Array.from(new Uint8Array(await environment.crypto.subtle.digest('SHA-256',bb)),n=>n.toString(16).padStart(2,'0')).join('');if(bd!==manifest.bushes.sha256||bb.byteLength!==manifest.bushes.bytes)throw Error('V2 bush commitment mismatch');
-  const foliage=await environment.createImageBitmap(new Blob([bb],{type:'image/png'}));try{if(foliage.width!==manifest.bushes.width||foliage.height!==manifest.bushes.height)throw Error('V2 bush dimensions');for(let i=0;i<4;i++){const sprite=environment.document.createElement('canvas');sprite.width=sprite.height=64;const s=manifest.bushes.slots[i];sprite.getContext('2d').drawImage(foliage,s.x,s.y,s.width,s.height,0,64-s.decodedHeight,64,s.decodedHeight);bushes[i]=sprite;}}finally{foliage.close();}downloads+=2;loadMs=environment.performance.now()-at;
+  const foliage=await environment.createImageBitmap(new Blob([bb],{type:'image/png'}));try{if(foliage.width!==manifest.bushes.width||foliage.height!==manifest.bushes.height)throw Error('V2 bush dimensions');for(let i=0;i<4;i++){const sprite=environment.document.createElement('canvas');sprite.width=sprite.height=64;const s=manifest.bushes.slots[i];sprite.getContext('2d').drawImage(foliage,s.x,s.y,s.width,s.height,0,64-s.decodedHeight,64,s.decodedHeight);bushes[i]=prepareCelTexture(sprite);}}finally{foliage.close();}downloads+=2;loadMs=environment.performance.now()-at;
  })();try{await loading;}catch(e){materials.length=0;bushes.length=0;throw e;}finally{loading=null;}}
  async function setMode(value){if(!['existing','v1','candidate'].includes(value))throw Error('Unknown art mode');if(value==='candidate')await load();await prior.setMode(value==='existing'?'existing':'candidate');mode=value;return value;}
  function material(c,index,x,y,w,h,worldX,worldY,scale=1){const image=materials[index];for(let yy=0;yy<h;){const sy=(((worldY+yy)/scale)%256+256)%256,hh=Math.min(h-yy,(256-sy)*scale);for(let xx=0;xx<w;){const sx=(((worldX+xx)/scale)%256+256)%256,ww=Math.min(w-xx,(256-sx)*scale);c.drawImage(image,sx,sy,ww/scale,hh/scale,x+xx,y+yy,ww,hh);xx+=ww;}yy+=hh;}}

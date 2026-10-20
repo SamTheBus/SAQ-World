@@ -12,6 +12,9 @@ const face=m=>attack(m)?.limb.open??0;
 function draw_wireframe_orb(c,m,time,seed){
  const p=center(m),q=face(m),a=attack(m);
  c.save();c.translate(p.x,p.y);c.rotate(time/600+(seed%11)*.09+(a?.limb.sweep??0));c.strokeStyle=ink(m,'#3498db');c.lineWidth=1.5;
+ // Solid faceted core under the original rotating wire lattice.
+ c.fillStyle=ink(m,'#397fba');c.beginPath();c.moveTo(-10,-10);c.lineTo(10,-10);c.lineTo(10,10);c.lineTo(-10,10);c.closePath();c.fill();
+ c.fillStyle=ink(m,'#a5d9ff');c.beginPath();c.moveTo(-9,-9);c.lineTo(2,-7);c.lineTo(-2,2);c.lineTo(-9,8);c.closePath();c.fill();
  // Preserve the source rotating square; inset cross-braces expose its tumble.
  c.strokeRect(-10,-10,20,20);c.beginPath();c.moveTo(-10,-10);c.lineTo(4-q*2,-4);c.lineTo(10,-10);c.moveTo(-10,10);c.lineTo(4-q*2,4);c.lineTo(10,10);c.moveTo(4-q*2,-4);c.lineTo(4-q*2,4);c.stroke();
  c.fillStyle=ink(m,'#a5d9ff');for(const side of [-1,1]){c.beginPath();c.arc(10,side*10,1.2,0,TAU);c.fill();}c.restore();

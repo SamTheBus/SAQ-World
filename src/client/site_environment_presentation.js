@@ -1,4 +1,5 @@
 import {depthItem} from './world_depth_presentation.js';
+import {celShadeContext} from './cel_materials_v1.js';
 import {drawFortEquipmentRack} from './fort_equipment_display.js';
 import {drawCaveDecorationD10,caveDecorationAnchorD10,drawCaveInteriorExitD10,drawCaveSurfaceD10} from './cave_art_d10.js';
 import {drawRuinSurfaceD11_3,drawRuinDecorationD11_3,ruinDecorationAnchorD11_3,isRuinDepthDecorationD11_3,drawRuinInteriorExitD11_3} from './ruin_art_d11_3.js';
@@ -73,18 +74,18 @@ export function createSiteEnvironment(canvas) {
     const surfaceIdentity=['procedural-fort','procedural-ruin','procedural-crypt','woodland-cave'].includes(site.siteKind)?site.contentHash+'/'+space.spaceInstanceId:site.contentHash;if(identity!==surfaceIdentity){pages.clear();caveSurface=null;ruinSurface=null;identity=surfaceIdentity;}
     ctx.fillStyle=mode==='fort'?'#090806':'#05030a';ctx.fillRect(view.x,view.y,view.width,view.height);
     if(mode==='cave'){
-      if(!caveSurface){caveSurface=canvas.ownerDocument.createElement('canvas');caveSurface.width=space.collision.width*t;caveSurface.height=space.collision.height*t;drawCaveSurfaceD10(caveSurface.getContext('2d'),space);builds++;}
+      if(!caveSurface){caveSurface=canvas.ownerDocument.createElement('canvas');caveSurface.width=space.collision.width*t;caveSurface.height=space.collision.height*t;drawCaveSurfaceD10(celShadeContext(caveSurface.getContext('2d'),{mode:'world'}),space);builds++;}
       const sx=Math.max(0,Math.floor(view.x)),sy=Math.max(0,Math.floor(view.y)),sw=Math.min(caveSurface.width-sx,Math.ceil(view.width)),sh=Math.min(caveSurface.height-sy,Math.ceil(view.height));if(sw>0&&sh>0)ctx.drawImage(caveSurface,sx,sy,sw,sh,sx,sy,sw,sh);
       return {paintedTerrainTiles:space.collision.width*space.collision.height,paintedBlockers:space.visual.blockers?.length??0,totalTerrainTiles:space.collision.width*space.collision.height};
     }
     if(mode==='ruin'&&space.visual.version.startsWith('woodland-ruin-presentation-d11.3')){
-      if(!ruinSurface){ruinSurface=canvas.ownerDocument.createElement('canvas');ruinSurface.width=space.collision.width*t;ruinSurface.height=space.collision.height*t;drawRuinSurfaceD11_3(ruinSurface.getContext('2d'),space);builds++;}
+      if(!ruinSurface){ruinSurface=canvas.ownerDocument.createElement('canvas');ruinSurface.width=space.collision.width*t;ruinSurface.height=space.collision.height*t;drawRuinSurfaceD11_3(celShadeContext(ruinSurface.getContext('2d'),{mode:'world'}),space);builds++;}
       const sx=Math.max(0,Math.floor(view.x)),sy=Math.max(0,Math.floor(view.y)),sw=Math.min(ruinSurface.width-sx,Math.ceil(view.width)),sh=Math.min(ruinSurface.height-sy,Math.ceil(view.height));if(sw>0&&sh>0)ctx.drawImage(ruinSurface,sx,sy,sw,sh,sx,sy,sw,sh);
       return {paintedTerrainTiles:space.collision.width*space.collision.height,paintedBlockers:space.visual.blockers?.length??0,totalTerrainTiles:space.collision.width*space.collision.height};
     }
     let painted=0;for(let py=Math.max(0,Math.floor(view.y/extent));py<=Math.min(Math.ceil(space.collision.height/size)-1,Math.floor((view.y+view.height)/extent));py++)for(let px=Math.max(0,Math.floor(view.x/extent));px<=Math.min(Math.ceil(space.collision.width/size)-1,Math.floor((view.x+view.width)/extent));px++){
       const key=px+','+py;let page=pages.get(key);if(page)pages.delete(key);else {
-        page=canvas.ownerDocument.createElement('canvas');page.width=extent;page.height=extent;const pc=page.getContext('2d');pc.translate(-px*extent,-py*extent);
+        page=canvas.ownerDocument.createElement('canvas');page.width=extent;page.height=extent;const pc=celShadeContext(page.getContext('2d'),{mode:'world'});pc.translate(-px*extent,-py*extent);
         for(let y=py*size;y<Math.min(space.collision.height,(py+1)*size);y++)for(let x=px*size;x<Math.min(space.collision.width,(px+1)*size);x++)drawTile(pc,v,x,y,t,mode);
         builds++;
       }

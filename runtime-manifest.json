@@ -1,19 +1,25 @@
 {
-  "runtimeId": "01642e208e3c2496",
-  "runtimeSha256": "01642e208e3c2496a09295fa11310cd23b5be6ba77b157dd78d1acf3c6621d8f",
-  "parentRuntimeId": "fc99848ad64538d7",
-  "reviewRevision": 11,
+  "runtimeId": "45be24fb4f1da303",
+  "runtimeSha256": "45be24fb4f1da303e249b424f1525293fc2f52a03631b712110d9cd401c933da",
+  "parentRuntimeId": "01642e208e3c2496",
+  "reviewRevision": 12,
   "changedRuntimeFiles": [
     "index.html",
+    "src/client/creature_presentation_arthropods_v3.js",
+    "src/client/creature_presentation_clockwork_v3.js",
     "src/client/creature_presentation_d11.js",
     "src/client/creature_presentation_dungeon_mobs_v2b.js",
-    "src/client/dungeon_mob_melee_presentation_v2b.js",
+    "src/client/environment_cache.js",
+    "src/client/hybrid_art_pilot_v1.js",
+    "src/client/hybrid_art_v2.js",
+    "src/client/ruin_storybook_art_v1.js",
+    "src/client/site_environment_presentation.js",
+    "src/client/world_renderer.js",
     "world-cumulative-dev.html"
   ],
   "addedRuntimeFiles": [
-    "src/client/creature_presentation_arthropods_v3.js",
-    "src/client/creature_presentation_clockwork_v3.js",
-    "src/client/creature_presentation_profiles_v3.js"
+    "src/client/cel_creature_renderer_v1.js",
+    "src/client/cel_materials_v1.js"
   ],
   "unchangedRuntimeFiles": [
     "assets/alpha-site-population-v1.json",
@@ -60,15 +66,16 @@
     "src/client/context_action_input.js",
     "src/client/creature_presentation_dungeon_mobs_v1.js",
     "src/client/creature_presentation_dungeon_mobs_v2a.js",
+    "src/client/creature_presentation_profiles_v3.js",
     "src/client/death_presentation.js",
     "src/client/diagnostic_download_d9.js",
     "src/client/diagnostic_overlays.js",
     "src/client/diagnostic_samples.js",
     "src/client/dungeon_combat_icons.js",
+    "src/client/dungeon_mob_melee_presentation_v2b.js",
     "src/client/dungeon_service_style_v2.js",
     "src/client/economy_resource_presentation.js",
     "src/client/elite_presentation_d12_4.js",
-    "src/client/environment_cache.js",
     "src/client/environment_layout.js",
     "src/client/environment_motifs.js",
     "src/client/environment_presentation.js",
@@ -87,8 +94,6 @@
     "src/client/hero_presentation.js",
     "src/client/hostile_melee_presentation.js",
     "src/client/hybrid_art_binding.js",
-    "src/client/hybrid_art_pilot_v1.js",
-    "src/client/hybrid_art_v2.js",
     "src/client/interior_light_clips.js",
     "src/client/interior_light_field.js",
     "src/client/inventory_presentation.js",
@@ -113,7 +118,6 @@
     "src/client/reward_feedback.js",
     "src/client/road_presentation.js",
     "src/client/ruin_art_d11_3.js",
-    "src/client/ruin_storybook_art_v1.js",
     "src/client/salvage_material_art.js",
     "src/client/settlement_building_presentation.js",
     "src/client/settlement_civilians_v1.js",
@@ -121,7 +125,6 @@
     "src/client/settlement_services_menu_legacy_v1.js",
     "src/client/settlement_services_menu_v1.js",
     "src/client/shield_guard_input.js",
-    "src/client/site_environment_presentation.js",
     "src/client/site_navigator_d12_4c.js",
     "src/client/space_preparation_gate.js",
     "src/client/stat_number.js",
@@ -137,7 +140,6 @@
     "src/client/world_depth_presentation.js",
     "src/client/world_input.js",
     "src/client/world_map_d9.js",
-    "src/client/world_renderer.js",
     "src/client/world_worker_bridge_d9.js",
     "src/client/xp_display.js",
     "src/dev/natural_cluster_review_v1.js",
@@ -1675,8 +1677,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 13533,
-      "sha256": "a3662cc4ed9152a8ca548ee7e96686ed69af86b1935661607e63e03e242d1bff"
+      "bytes": 14294,
+      "sha256": "ac10ff394d2db66e5b13c3a91935dff94eb6c200acc03962dd5dc80ec844ea9f"
     },
     {
       "path": "manifest.webmanifest",
@@ -1744,6 +1746,16 @@
       "sha256": "aa37957bcec5b824703b81ce23ab15e65a97ad99c2e418c24b99591600209819"
     },
     {
+      "path": "src/client/cel_creature_renderer_v1.js",
+      "bytes": 477,
+      "sha256": "ad978e7cc7fbafadefd81fd15826237362803561b33062e06d9bcc758aababb4"
+    },
+    {
+      "path": "src/client/cel_materials_v1.js",
+      "bytes": 7156,
+      "sha256": "191b3cc81f53920b58d25c3c52095722a58dc3041ec86768324c10b1eb9923bd"
+    },
+    {
       "path": "src/client/civilian_context_input.js",
       "bytes": 629,
       "sha256": "3985b6c13ddc926555844dcb1e21485e15a21bb4fa98b7c6f65c4d8841f4ebe5"
@@ -1780,18 +1792,18 @@
     },
     {
       "path": "src/client/creature_presentation_arthropods_v3.js",
-      "bytes": 4873,
-      "sha256": "034d20eacb486e9eccc7e7f6cdc89c06dc476807514c6bbb2c8ef60c9dcdf238"
+      "bytes": 6138,
+      "sha256": "639ce8dc359701edca73fc93c267bec07e54682d958465617fd0667559e9e14d"
     },
     {
       "path": "src/client/creature_presentation_clockwork_v3.js",
-      "bytes": 9269,
-      "sha256": "f8e5aec63f8be4fdc2ffdddba7781aaebb84116ae59022197a554bdb4e8dade8"
+      "bytes": 10520,
+      "sha256": "67f1611d5b1bd756ee50c12c7ad37efdb5d63402275b548b11e6ca0dc99045c7"
     },
     {
       "path": "src/client/creature_presentation_d11.js",
-      "bytes": 32790,
-      "sha256": "8c32c0cfd71f21280e135fa0b6a44c9432230e23b04b42ee1a42b073d1e061ad"
+      "bytes": 32879,
+      "sha256": "850fc386a274918058d8d414057ac3fc932c4a5aea8823623d603aa897943f57"
     },
     {
       "path": "src/client/creature_presentation_dungeon_mobs_v1.js",
@@ -1805,8 +1817,8 @@
     },
     {
       "path": "src/client/creature_presentation_dungeon_mobs_v2b.js",
-      "bytes": 3060,
-      "sha256": "fdaa6793beb79bfd7030d6436fa6b86f581e2b961601dcd0d6d495a411ddbe3e"
+      "bytes": 3390,
+      "sha256": "49fca3c19d7f57ab2721f048f113927a85ba38e47ca022d3f9424878a1e10e5e"
     },
     {
       "path": "src/client/creature_presentation_profiles_v3.js",
@@ -1860,8 +1872,8 @@
     },
     {
       "path": "src/client/environment_cache.js",
-      "bytes": 23304,
-      "sha256": "a6127b51db29a8bfb58229a9950552a369a25674d698dffcbaec2179e7036a47"
+      "bytes": 23545,
+      "sha256": "ec05aa3e553c50e939394c7e09c4f61d866eba9a278fe8fcbd588d1a8b7c2336"
     },
     {
       "path": "src/client/environment_layout.js",
@@ -1955,13 +1967,13 @@
     },
     {
       "path": "src/client/hybrid_art_pilot_v1.js",
-      "bytes": 6741,
-      "sha256": "52c487d9e182ed1efb7ec4842c3bf84df63ab3ca3b4b9f946641a938a27c1494"
+      "bytes": 6846,
+      "sha256": "b631697f83ff8059fa9e7111876a711ebf50a39deb18ad137d69f8a66e933aef"
     },
     {
       "path": "src/client/hybrid_art_v2.js",
-      "bytes": 10835,
-      "sha256": "bb84653581cbeaa6c4ee152e036b97a74544e2adf509daeed0bd50cd02df0746"
+      "bytes": 10946,
+      "sha256": "52c6f497ff55726838aa27d6e3f28ff743d75215f355d05809d9fc8bb2f0e6b0"
     },
     {
       "path": "src/client/interior_light_clips.js",
@@ -2085,8 +2097,8 @@
     },
     {
       "path": "src/client/ruin_storybook_art_v1.js",
-      "bytes": 12432,
-      "sha256": "86f81669d822687fcd917026e843d9a05b5c2b2014ab88ffdf2466d4f89b8f93"
+      "bytes": 12543,
+      "sha256": "9db2e9a29523d03f2309570113089ad3f197a34de1a13e00de0044c54e02d7ec"
     },
     {
       "path": "src/client/salvage_material_art.js",
@@ -2125,8 +2137,8 @@
     },
     {
       "path": "src/client/site_environment_presentation.js",
-      "bytes": 16984,
-      "sha256": "5edd7b12ea5942d23149553a6e6acdaa00209770b028ba401de48324bd52f338"
+      "bytes": 17136,
+      "sha256": "5dbc57125a88f49aac6b16d685b6fb16388d6175889c14c255c73975b22131fa"
     },
     {
       "path": "src/client/site_navigator_d12_4c.js",
@@ -2205,8 +2217,8 @@
     },
     {
       "path": "src/client/world_renderer.js",
-      "bytes": 18383,
-      "sha256": "8895046e3a0053b01574c30d415555078afa1a413c8958ff13f270b8b776ce92"
+      "bytes": 18604,
+      "sha256": "c7b6b0fdb057803b64cf73ab0ded66716a5f802ac94aa2682f723397d798211a"
     },
     {
       "path": "src/client/world_worker_bridge_d9.js",
@@ -9310,8 +9322,8 @@
     },
     {
       "path": "world-cumulative-dev.html",
-      "bytes": 13533,
-      "sha256": "a3662cc4ed9152a8ca548ee7e96686ed69af86b1935661607e63e03e242d1bff"
+      "bytes": 14294,
+      "sha256": "ac10ff394d2db66e5b13c3a91935dff94eb6c200acc03962dd5dc80ec844ea9f"
     },
     {
       "path": "world-fort-deep-v2-dev.html",

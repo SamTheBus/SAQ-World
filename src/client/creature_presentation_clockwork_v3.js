@@ -1,4 +1,5 @@
-// World-scale redesigns. The supplied presentation clock drives every detail.
+// Cel-shaded world-scale redesigns. Every surface uses hard color bands.
+// The supplied presentation clock drives every articulated detail.
 const TAU=Math.PI*2;
 const ink=(m,color)=>m.flashTimer?'#fff':color;
 const center=m=>({x:m.x+m.w/2,y:m.y+m.h/2});
@@ -6,6 +7,8 @@ const disk=(c,x,y,r,fill)=>{c.fillStyle=fill;c.beginPath();c.arc(x,y,r,0,TAU);c.
 function scarabHead(c,x,y,scale,open,flash){
  c.save();c.translate(x,y);c.scale(scale,scale);c.strokeStyle=flash?'#fff':'#263738';c.lineWidth=1.5;
  c.fillStyle=flash?'#fff':'#33514c';c.beginPath();c.moveTo(-4,-5);c.lineTo(3,-4);c.lineTo(6,0);c.lineTo(3,4);c.lineTo(-4,5);c.closePath();c.fill();c.stroke();
+ c.fillStyle=flash?'#fff':'#79a18a';c.beginPath();c.moveTo(-3,-4);c.lineTo(2,-3);c.lineTo(4,-1);c.lineTo(-3,-1);c.closePath();c.fill();
+ c.fillStyle=flash?'#fff':'#1c3433';c.beginPath();c.moveTo(-3,1);c.lineTo(4,1);c.lineTo(2,3);c.lineTo(-3,4);c.closePath();c.fill();
  c.fillStyle=flash?'#fff':'#8cfff1';for(const side of [-1,1]){c.beginPath();c.ellipse(2,side*2.2,1.4,.9,0,0,TAU);c.fill();}
  c.restore();
 }
@@ -22,7 +25,8 @@ export function drawClockworkScarabV3(c,m,time,seed){
  c.strokeStyle=ink(m,'#252b29');c.lineWidth=1.6;c.fillStyle=ink(m,'#365049');c.beginPath();c.ellipse(p.x-1,cy,14,10,0,0,TAU);c.fill();c.stroke();
  const lift=(a?.artWeight??0)*(1-(a?.strikeBlend??0))*1.2;
  for(const side of [-1,1]){
-  c.fillStyle=ink(m,side<0?'#dca04c':'#a56d32');c.beginPath();c.moveTo(p.x-13,cy+side*1.3);c.quadraticCurveTo(p.x-11,cy+side*(12+lift),p.x+6,cy+side*(8+lift));c.lineTo(p.x+9,cy+side*2);c.lineTo(p.x-13,cy+side*1.3);c.fill();c.stroke();
+  c.fillStyle=ink(m,side<0?'#e5b45e':'#96602f');c.beginPath();c.moveTo(p.x-13,cy+side*1.3);c.quadraticCurveTo(p.x-11,cy+side*(12+lift),p.x+6,cy+side*(8+lift));c.lineTo(p.x+9,cy+side*2);c.lineTo(p.x-13,cy+side*1.3);c.fill();c.stroke();
+  c.fillStyle=ink(m,side<0?'#ffe3a2':'#c58c42');c.beginPath();c.moveTo(p.x-10,cy+side*3);c.lineTo(p.x-5,cy+side*7);c.lineTo(p.x+4,cy+side*6);c.lineTo(p.x+6,cy+side*3);c.closePath();c.fill();
   c.strokeStyle=ink(m,'#f6d995');c.lineWidth=1;c.beginPath();c.moveTo(p.x-10,cy+side*3);c.quadraticCurveTo(p.x-5,cy+side*8,p.x+4,cy+side*6);c.stroke();c.strokeStyle=ink(m,'#252b29');
   for(const x of [-7,2])disk(c,p.x+x,cy+side*6.5,1,ink(m,'#675132'));
  }
@@ -34,12 +38,19 @@ export function drawClockworkScarabV3(c,m,time,seed){
 function gearCase(c,x,y,m){
  c.save();c.translate(x,y);c.strokeStyle=ink(m,'#242b2d');c.lineWidth=1.4;
  c.fillStyle=ink(m,'#73512d');c.beginPath();for(let n=0;n<48;n++){const a=n*TAU/48,r=n%4<2?15.5:13.4,px=Math.cos(a)*r,py=Math.sin(a)*r;n?c.lineTo(px,py):c.moveTo(px,py);}c.closePath();c.fill();c.stroke();
- disk(c,0,0,12.4,ink(m,'#d8b262'));disk(c,0,0,10.7,ink(m,'#19343a'));
+ disk(c,0,0,12.4,ink(m,'#d8b262'));
+ c.fillStyle=ink(m,'#f8df98');c.beginPath();c.arc(0,0,11.6,Math.PI,TAU);c.closePath();c.fill();
+ c.fillStyle=ink(m,'#8c6339');c.beginPath();c.arc(0,0,11.6,0,Math.PI);c.closePath();c.fill();
+ disk(c,0,0,10.7,ink(m,'#19343a'));
+ c.fillStyle=ink(m,'#315862');c.beginPath();c.arc(0,0,9.9,Math.PI,TAU);c.closePath();c.fill();
  c.strokeStyle=ink(m,'#edcf87');c.lineWidth=1.2;for(let n=0;n<12;n++){const a=n*TAU/12;c.beginPath();c.moveTo(Math.cos(a)*8.8,Math.sin(a)*8.8);c.lineTo(Math.cos(a)*(n%3?10:10.3),Math.sin(a)*(n%3?10:10.3));c.stroke();}
  c.restore();
 }
 function weight(c,x,y,flash,scale=1){
- c.save();c.translate(x,y);c.scale(scale,scale);c.strokeStyle=flash?'#fff':'#30302a';c.lineWidth=1.4;c.fillStyle=flash?'#fff':'#c69b4b';c.beginPath();c.moveTo(0,-5);c.lineTo(4.5,-2);c.lineTo(4.5,3);c.lineTo(0,5);c.lineTo(-4.5,3);c.lineTo(-4.5,-2);c.closePath();c.fill();c.stroke();c.fillStyle=flash?'#fff':'#98e6d1';c.fillRect(-1.4,-1.7,2.8,3.4);c.restore();
+ c.save();c.translate(x,y);c.scale(scale,scale);c.strokeStyle=flash?'#fff':'#30302a';c.lineWidth=1.4;c.fillStyle=flash?'#fff':'#c69b4b';c.beginPath();c.moveTo(0,-5);c.lineTo(4.5,-2);c.lineTo(4.5,3);c.lineTo(0,5);c.lineTo(-4.5,3);c.lineTo(-4.5,-2);c.closePath();c.fill();c.stroke();
+ c.fillStyle=flash?'#fff':'#f3d78a';c.beginPath();c.moveTo(0,-4);c.lineTo(3.5,-1.5);c.lineTo(-3.5,-1.5);c.closePath();c.fill();
+ c.fillStyle=flash?'#fff':'#79582f';c.beginPath();c.moveTo(-3.5,1);c.lineTo(3.5,1);c.lineTo(3.5,2.5);c.lineTo(0,4);c.lineTo(-3.5,2.5);c.closePath();c.fill();
+ c.fillStyle=flash?'#fff':'#98e6d1';c.fillRect(-1.4,-1.7,2.8,3.4);c.restore();
 }
 export function drawTemporalWatcherV3(c,m,time,seed){
  const p=center(m),cy=p.y+Math.sin(time/230)*1.4,a=m.familyAttack,q=a?.limb.open??0;
@@ -60,7 +71,8 @@ export function drawClockworkDroneV3(c,m,time,seed){
  c.strokeStyle=ink(m,'#7b6750');c.lineWidth=3;c.beginPath();c.moveTo(p.x-7,cy);c.lineTo(p.x-16,cy-9);c.moveTo(p.x+6,cy);c.lineTo(p.x+17,cy-9);c.stroke();
  for(const side of [-1,1]){const x=p.x+side*16,y=cy-10;c.strokeStyle=ink(m,'#26343a');c.fillStyle=ink(m,'#a68a54');c.beginPath();c.ellipse(x,y,8,4.5,0,0,TAU);c.fill();c.stroke();c.fillStyle=ink(m,'#203c40');c.beginPath();c.ellipse(x,y,5.5,2.6,0,0,TAU);c.fill();
   c.strokeStyle=ink(m,'#d9e4c9');c.lineWidth=1.2;const angle=time/55+side;c.beginPath();c.moveTo(x-Math.cos(angle)*5,y-Math.sin(angle)*2);c.lineTo(x+Math.cos(angle)*5,y+Math.sin(angle)*2);c.moveTo(x+Math.sin(angle)*4,y-Math.cos(angle)*2);c.lineTo(x-Math.sin(angle)*4,y+Math.cos(angle)*2);c.stroke();}
- c.strokeStyle=ink(m,'#26343a');c.fillStyle=ink(m,'#b7950b');c.beginPath();c.moveTo(p.x-12,cy-5);c.lineTo(p.x-6,cy-10);c.lineTo(p.x+9,cy-7);c.lineTo(p.x+14,cy-1);c.lineTo(p.x+10,cy+8);c.lineTo(p.x-9,cy+9);c.lineTo(p.x-14,cy+3);c.closePath();c.fill();c.stroke();
+ c.strokeStyle=ink(m,'#26343a');c.fillStyle=ink(m,'#c39b34');c.beginPath();c.moveTo(p.x-12,cy-5);c.lineTo(p.x-6,cy-10);c.lineTo(p.x+9,cy-7);c.lineTo(p.x+14,cy-1);c.lineTo(p.x+10,cy+8);c.lineTo(p.x-9,cy+9);c.lineTo(p.x-14,cy+3);c.closePath();c.fill();c.stroke();
+ c.fillStyle=ink(m,'#735133');c.beginPath();c.moveTo(p.x-12,cy+3);c.lineTo(p.x+12,cy+2);c.lineTo(p.x+9,cy+7);c.lineTo(p.x-8,cy+8);c.closePath();c.fill();
  c.fillStyle=ink(m,'#e0c785');c.beginPath();c.moveTo(p.x-9,cy-5);c.lineTo(p.x-4,cy-8);c.lineTo(p.x+7,cy-5);c.lineTo(p.x+5,cy-1);c.lineTo(p.x-10,cy);c.closePath();c.fill();
  c.fillStyle=ink(m,'#31464a');c.beginPath();c.roundRect(p.x-7,cy,12,6,[2]);c.fill();c.stroke();c.strokeStyle=ink(m,'#97aa9a');c.lineWidth=.8;for(let i=0;i<3;i++){c.beginPath();c.moveTo(p.x-5+i*3,cy+1);c.lineTo(p.x-5+i*3,cy+4.5);c.stroke();}
  c.strokeStyle=ink(m,'#26343a');disk(c,p.x+9,cy-.5,5.1,ink(m,'#2b5357'));disk(c,p.x+9,cy-.5,2.8,ink(m,'#79e1e1'));
