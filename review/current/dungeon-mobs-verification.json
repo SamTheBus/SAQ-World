@@ -45,7 +45,19 @@
     "log": "dungeon-mobs-v2-final-focused.txt"
   },
   "nativeBrowser": {
-    "status": "pending live deployment"
+    "status": "passed",
+    "normalUrl": "https://samthebus.github.io/SAQ-World/",
+    "warmV1CampaignUpgrade": true,
+    "galleryAll14Rendered": true,
+    "galleryReplayControl": true,
+    "ordinaryEEntry": "Frostland Crypt Floor1/4",
+    "savedCryptReopen": true,
+    "movementObserved": true,
+    "deathAndTownRespawn": true,
+    "manualSaveConfirmed": "Saved",
+    "finalReload": "same campaign at starting town, HP100, level1, XP0, all35reservations andtwo bound sites retained",
+    "gameBrowserErrors": 0,
+    "scope": "Desktop cloud browser. Gallery is render inspection; per-family attack correctness is verified by authority fixtures, not14native fights. A level1hero was defeated during the high-levelCrypt visit. Save/loading pauses remain."
   },
   "limitations": [
     "Physical-phone performance unverified",
