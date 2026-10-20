@@ -8,6 +8,9 @@ export const HOSTILE_STRIKE_FEEDBACK_MS = 190;
 // Upright sprites turn by mirroring, never by rotating their heads below their
 // feet. These keyframes share endpoints so windup/strike/recovery cannot jump.
 const uprightDungeonMelee={
+  sprout:{front:22.5,recoil:5,lift:0,lean:-.18,hitLean:.16,squeezeX:1.14,squeezeY:.8,hitX:1.08,hitY:.92},
+  slime:{front:14,recoil:4,lift:-4,lean:0,hitLean:0,squeezeX:1.4,squeezeY:.6,hitX:1.4,hitY:.7},
+  rust_nibbler:{front:17,recoil:2,lift:0,lean:-.08,hitLean:.08,squeezeX:.9,squeezeY:1.08,hitX:1.08,hitY:.92},
   lava_serpent:{front:12,recoil:4,lift:-1,lean:-.12,hitLean:.08,squeezeX:.82,squeezeY:1.13,hitX:1.08,hitY:.94},
   hell_bat:{front:18,recoil:3,lift:-4,lean:-.14,hitLean:.2,squeezeX:1.18,squeezeY:.92,hitX:.88,hitY:1.1},
   slag_slime:{front:16,recoil:2.5,lift:2,lean:0,hitLean:.06,squeezeX:1.32,squeezeY:.62,hitX:1.2,hitY:.82},
@@ -43,25 +46,13 @@ export function hostileMeleePose(actor, tick) {
   const p=clamp((tick-phase.phaseStartedTick)/Math.max(1,phase.phaseEndsTick-phase.phaseStartedTick),0,1);
   const windup=phase.phase==='windup',impact=phase.phase==='impact',w=windup?smooth(p):0,r=phase.phase==='recovery'?(1-p)**2:0;
   const family=actor.enemyFamily,body={x:0,y:0,rotation:0,scaleX:1,scaleY:1},limb={extension:0,sweep:0,open:0};
-  if(uprightDungeonMelee[family])return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,
+  if(uprightDungeonMelee[family]){
+    if(family==='rust_nibbler'){limb.extension=17;limb.open=windup?2+4*w:impact?.7:1+2*(1-r);}
+    return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,
     upright:true,bodyPivot:{x:0,y:-10},body:uprightMeleeBody(uprightDungeonMelee[family],phase.phase,p,direction,contactReach),limb};
+  }
   let travel=0,lift=0;
   switch(family){
-    case 'sprout': { // Pull the cap back, then jab with the head rather than slide upright.
-      const front=22.5,lean=turn(angle+Math.PI/2),reach=Math.max(0,contactReach-front);
-      travel=windup?-5*w:impact?reach*(1-.12*p):reach*r;
-      body.rotation=windup?lean*w*.34-.18*w:impact?lean+.12*p:lean*r;
-      body.scaleX=windup?1+.14*w:impact?1.08:1+.08*r;body.scaleY=windup?1-.2*w:impact?.92:1-.08*r;
-      break;
-    }
-    case 'slime': { // Compress, lift into a short hop, land wide, then spring back.
-      const hop=windup?smooth((p-.55)/.45):0,compress=windup?smooth(p/.55)*(1-hop):0,reach=Math.max(0,contactReach-14);
-      travel=windup?-4*compress+reach*.65*hop:impact?reach:reach*r;
-      lift=windup?-Math.sin(hop*Math.PI)*12:impact?2*p:-Math.sin(p*Math.PI)*3;
-      body.rotation=angle;body.scaleX=windup?1+.45*compress-.12*hop:impact?1.45-.2*p:1+.15*r;
-      body.scaleY=windup?1-.45*compress+.25*hop:impact?.65+.2*p:1-.12*r;
-      limb.open=compress;break;
-    }
     case 'golem': { // Torso braces while one independent floating gauntlet makes a heavy punch.
       const reach=Math.min(7,Math.max(0,contactReach-28));
       travel=windup?-2*w:impact?reach:reach*r;lift=windup?2*w:impact?2*(1-p):r;
@@ -75,12 +66,6 @@ export function hostileMeleePose(actor, tick) {
       body.rotation=(windup?-.2*w:impact?.08:.08*r)*(direction.x<0?-1:1);body.scaleX=impact?1.08:1;body.scaleY=windup?1-.18*w:impact?.94:1-.06*r;
       limb.extension=windup?6-3*w:impact?contactReach-travel:14*r+6*(1-r);
       limb.sweep=windup?-.65*w:impact?1.15*p:1.15*r;limb.open=windup?1-w:impact?1:r;break;
-    }
-    case 'rust_nibbler': { // Mandibles open while the carapace recoils, then snap shut.
-      const reach=Math.max(0,contactReach-17);
-      travel=windup?-2*w:impact?reach*(1-.1*p):reach*r;body.rotation=angle;
-      body.scaleX=windup?1-.1*w:impact?1.08:1+.08*r;body.scaleY=windup?1+.08*w:impact?.92:1-.08*r;
-      limb.extension=17;limb.open=windup?2+4*w:impact?.7+.3*p:1+2*(1-r);break;
     }
     case 'animated_armor': { // Plant the stance, raise the weapon, then swing from its shoulder.
       const reach=Math.max(0,contactReach-29);

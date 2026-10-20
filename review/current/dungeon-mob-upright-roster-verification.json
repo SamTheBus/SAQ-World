@@ -1,0 +1,15 @@
+{
+  "runtimeId": "fc99848ad64538d7",
+  "focusedChecks": 88,
+  "scope": "Presentation only. No simulation, content, roster, save or multiplayer code changes.",
+  "newlyCorrectedBodies": 17,
+  "previouslyCorrectedBodies": 9,
+  "directionsPerBody": 8,
+  "unchangedFamilyRenderingTraces": 1440,
+  "unchangedFamilies": 15,
+  "golemAndVoidOrbRetained": true,
+  "workerModulesByteIdentical": 271,
+  "canonicalAndPackagedWorkerImportSmokes": 2,
+  "workerGraphReused": true,
+  "nativeReview": "Pending final live review; focused checks and local rendered frames passed."
+}

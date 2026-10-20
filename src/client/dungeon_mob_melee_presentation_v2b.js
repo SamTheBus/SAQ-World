@@ -1,3 +1,4 @@
+import {uprightAttackFrame} from './upright_attack_frame.js';
 // Contact-melee presentation for the seven ordinary brass/neon Dungeon mobs.
 // All poses are disposable; authoritative positions, timing and hit tests stay
 // in World. Local +X is the animal/construct's attacking face.
@@ -10,28 +11,25 @@ const smooth=v=>{const x=clamp(v,0,1);return x*x*(3-2*x);};
 const bodyHeights=Object.freeze({clockwork_scarab:-10.8,star_weaver:-9.36,temporal_watcher:-10.8,clockwork_drone:-9.6,neon_spider:-10.8,wireframe_orb:-10.8,cyber_wraith:-17.84});
 export const DUNGEON_MOB_CONTACT_MS_V2B=190;
 
+const uprightTuning={
+ clockwork_scarab:{front:14,recoil:3,lean:-.1,hitLean:.08,squeezeX:.85,squeezeY:1.12,hitX:1.1,hitY:.92,openRest:1,openBrace:5,openHit:.4},
+ star_weaver:{front:20,recoil:4,lift:-3,lean:-.12,hitLean:.1,squeezeX:.9,hitX:1.08,rest:14,drawBack:8,openBrace:1,openHit:1,sweepBrace:-.45,sweepHit:.65},
+ temporal_watcher:{front:12,recoil:5,lift:-2,lean:-.08,hitLean:.1,squeezeX:.88,squeezeY:1.12,hitX:1.12,hitY:.92,openBrace:1,openHit:1},
+ clockwork_drone:{front:11,recoil:3,lift:3,lean:-.18,hitLean:.1,squeezeX:.92,hitX:1.08,openBrace:1,openHit:1},
+ neon_spider:{front:18,recoil:2,lean:-.1,hitLean:.1,squeezeX:.78,squeezeY:1.18,hitX:1.16,hitY:.88,rest:12,drawBack:8,openBrace:1,openHit:1,sweepBrace:-.7,sweepHit:.9},
+ wireframe_orb:{front:14,recoil:3.5,lean:-.2,hitLean:.18,squeezeX:.82,squeezeY:1.18,hitX:1.12,hitY:.9,openBrace:1,openHit:1,sweepBrace:-.2,sweepHit:.4},
+ cyber_wraith:{front:15,recoil:4,lift:-5,lean:.15,hitLean:-.08,squeezeX:.88,squeezeY:1.15,hitX:1.06,hitY:.95,rest:10,drawBack:7,openBrace:1,openHit:1,sweepBrace:-.45,sweepHit:.5}
+};
 export function dungeonMobMeleePoseV2B(actor,tick){
  const phase=actor.meleePhase,g=actor.meleeGeometry,family=actor.enemyFamily;
  if(!families.has(family)||!actor.alive||!g||!phase||phase.phase==='idle')return null;
  const dx=g.targetPosition?g.targetPosition.x-actor.position.x:actor.presentationFacingX??1,dy=g.targetPosition?g.targetPosition.y-actor.position.y:0,distance=Math.hypot(dx,dy);
- const direction=distance>.001?{x:dx/distance,y:dy/distance}:{x:1,y:0},angle=Math.atan2(direction.y,direction.x),sourceRadius=g.sourceRadius,targetRadius=g.targetRadius;
+ const direction=distance>.001?{x:dx/distance,y:dy/distance}:{x:1,y:0},sourceRadius=g.sourceRadius,targetRadius=g.targetRadius;
  const centerLimit=g.mode==='clearHullGap'?g.reach+sourceRadius+targetRadius:g.reach,weaponReach=Math.max(sourceRadius,centerLimit-targetRadius),contactReach=clamp(distance-targetRadius,sourceRadius,weaponReach);
- const p=clamp((tick-phase.phaseStartedTick)/Math.max(1,phase.phaseEndsTick-phase.phaseStartedTick),0,1),windup=phase.phase==='windup',impact=phase.phase==='impact',recovery=phase.phase==='recovery',w=windup?smooth(p):0,r=recovery?(1-p)**2:0;
- const body={x:0,y:0,rotation:angle,scaleX:1,scaleY:1},limb={extension:0,sweep:0,open:0};let travel=0,lift=0;
- switch(family){
-  case 'clockwork_scarab':{const reach=Math.max(0,contactReach-14);travel=windup?-3*w:impact?reach*(1-.08*p):reach*r;body.scaleX=windup?1-.15*w:impact?1.1:1+.1*r;body.scaleY=windup?1+.12*w:impact?.92:1-.08*r;limb.open=windup?1+4*w:impact?.4+.7*p:1+2*(1-r);limb.extension=impact?contactReach-travel:14;break;}
-  case 'star_weaver':{const reach=Math.max(0,contactReach-20);travel=windup?-4*w:impact?reach:reach*r;lift=windup?-3*w:impact?-1*(1-p):-r;body.scaleX=windup?1-.1*w:impact?1.08:1+.08*r;limb.extension=windup?14-6*w:impact?contactReach-travel:20*r+14*(1-r);limb.sweep=windup?-.45*w:impact?.65*p:.65*r;limb.open=windup?w:impact?1:r;break;}
-  case 'temporal_watcher':{const reach=Math.max(0,contactReach-12);travel=windup?-5*w:impact?reach*(1-.04*p):reach*r;lift=windup?-2*w:impact?1:0;body.scaleX=windup?1-.12*w:impact?1.12:1+.12*r;body.scaleY=windup?1+.12*w:impact?.92:1-.08*r;limb.extension=12;limb.open=windup?w:impact?1:r;break;}
-  case 'clockwork_drone':{const reach=Math.max(0,contactReach-11);travel=windup?-3*w:impact?reach:reach*r;lift=windup?3*w:impact?-2*(1-p):-2*r;body.rotation=angle+(windup?-.18*w:impact?.1:.1*r);body.scaleX=windup?1-.08*w:impact?1.08:1+.08*r;limb.extension=impact?contactReach-travel:11;limb.open=windup?w:impact?1:r;break;}
-  case 'neon_spider':{const reach=Math.max(0,contactReach-18);travel=windup?-2*w:impact?reach*(1-.08*p):reach*r;body.scaleX=windup?1-.22*w:impact?1.16:1+.16*r;body.scaleY=windup?1+.18*w:impact?.88:1-.12*r;limb.extension=windup?12-4*w:impact?contactReach-travel:18*r+12*(1-r);limb.sweep=windup?-.7*w:impact?.9*p:.9*r;limb.open=windup?w:impact?1:r;break;}
-  case 'wireframe_orb':{const reach=Math.max(0,contactReach-14);travel=windup?-3.5*w:impact?reach:reach*r;body.rotation=angle+(windup?-.5*w:impact?.25*p:.25*r);body.scaleX=windup?1-.18*w:impact?1.12:1+.12*r;body.scaleY=windup?1+.18*w:impact?.9:1-.1*r;limb.extension=14;limb.sweep=windup?-.2*w:impact?.4*p:.4*r;limb.open=windup?w:impact?1:r;break;}
-  case 'cyber_wraith':{const reach=Math.max(0,contactReach-15);travel=windup?-4*w:impact?reach*(1-.06*p):reach*r;lift=windup?-5*w:impact?-1*(1-p):-r;body.rotation=angle+(windup?.15*w:impact?-.08:-.08*r);body.scaleX=windup?1-.12*w:impact?1.06:1+.06*r;body.scaleY=windup?1+.15*w:impact?.95:1-.05*r;limb.extension=windup?10-3*w:impact?contactReach-travel:15*r+10*(1-r);limb.sweep=windup?-.45*w:impact?.5*p:.5*r;limb.open=windup?w:impact?1:r;break;}
- }
- const bodyPivot={x:0,y:bodyHeights[family]*(actor.elite?.scale??1)},lunge={x:direction.x*travel,y:direction.y*travel+lift};
- const cs=Math.cos(body.rotation),sn=Math.sin(body.rotation);
- body.x=lunge.x+bodyPivot.x-(cs*body.scaleX*bodyPivot.x-sn*body.scaleY*bodyPivot.y);
- body.y=lunge.y+bodyPivot.y-(sn*body.scaleX*bodyPivot.x+cs*body.scaleY*bodyPivot.y);
- return{family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,body,limb,bodyPivot,lunge,disableFacingFlip:true};
+ const p=clamp((tick-phase.phaseStartedTick)/Math.max(1,phase.phaseEndsTick-phase.phaseStartedTick),0,1);
+ const frame=uprightAttackFrame(uprightTuning[family],phase.phase,p,direction,contactReach);
+ return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,...frame,lunge:frame.anchor,
+  bodyPivot:{x:0,y:bodyHeights[family]*(actor.elite?.scale??1)},upright:true,disableFacingFlip:false};
 }
 
 export function drawDungeonMobMeleeLimbV2B(c,pose,flash=false){

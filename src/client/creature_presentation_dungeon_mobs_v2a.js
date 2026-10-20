@@ -1,3 +1,4 @@
+import {uprightAttackFrame} from './upright_attack_frame.js';
 // Source: SamTheBus/SAQ-Dungeon commit 387c78bfaf9f492fe7b6ff4539b956c12c2a7cdc.
 // mob_renderer.js ordinary vType branches. World injects clock/seed and attack
 // phases; none of these ordinary species gains a source-name-implied spell,
@@ -252,7 +253,7 @@ function draw_void_spectre(c,m,presentationTime,seed){
   const action=m.familyAttack,wind=action?.phase==='windup'?action.progress:0,hit=action?.phase==='impact'?1-action.progress:0,settle=action?.phase==='recovery'?1-action.progress:0;
 
         // Render a floating ethereal void phantom cloaked in cosmic energy
-        let hover = action?0:Math.sin(presentationTime / 150) * 5;
+        let hover = Math.sin(presentationTime / 150) * 5;
         let cx = m.x + m.w / 2;
         let cy = m.y + m.h / 2 + hover;
 
@@ -331,7 +332,7 @@ function draw_void_spectre(c,m,presentationTime,seed){
 function draw_void_wraith(c,m,presentationTime,seed){
   const action=m.familyAttack,wind=action?.phase==='windup'?action.progress:0,hit=action?.phase==='impact'?1-action.progress:0,settle=action?.phase==='recovery'?1-action.progress:0;
 
-        let hover = action?0:Math.sin(presentationTime / 150) * 6;
+        let hover = Math.sin(presentationTime / 150) * 6;
         let cx = m.x + m.w / 2;
         let cy = m.y + m.h / 2 - 2 + hover;
         c.fillStyle = m.flashTimer > 0 ? "#ffffff" : "#1b0a2a";
@@ -375,7 +376,7 @@ function draw_void_wraith(c,m,presentationTime,seed){
 function draw_rift_drifter(c,m,presentationTime,seed){
   const action=m.familyAttack,wind=action?.phase==='windup'?action.progress:0,hit=action?.phase==='impact'?1-action.progress:0,settle=action?.phase==='recovery'?1-action.progress:0;
 
-        let hover = action?0:Math.sin(presentationTime / 110) * 6;
+        let hover = Math.sin(presentationTime / 110) * 6;
         let cx = m.x + m.w / 2;
         let cy = m.y + m.h / 2 + hover;
         let coreGrad = c.createRadialGradient(cx, cy, 1, cx, cy, 12);
@@ -390,7 +391,9 @@ function draw_rift_drifter(c,m,presentationTime,seed){
         c.strokeStyle = "#000000";
         c.lineWidth = 1.5;
         for (let i = 0; i < 3; i++) {
-          let angle = action?(action.phase==='windup'?Math.PI+(i-1)*.6:action.phase==='impact'?(i===0?0:Math.PI+(i-1.5)*1.1)+action.limb.spin:presentationTime/180+(i*TAU)/3):presentationTime/180+(i*TAU)/3;
+          const idleAngle=presentationTime/180+(i*TAU)/3,braceAngle=Math.PI+(i-1)*.6,hitAngle=(i===0?0:Math.PI+(i-1.5)*1.1)+(action?.limb.spin??0);
+          const targetAngle=braceAngle+turn(hitAngle-braceAngle)*(action?.strikeBlend??0);
+          let angle=idleAngle+turn(targetAngle-idleAngle)*(action?.artWeight??0);
           let sx = cx + Math.cos(angle) * (16-5*wind);
           let sy = cy + Math.sin(angle) * (8-2*wind);
           c.beginPath();
@@ -408,18 +411,18 @@ function draw_coin_elemental(c,m,presentationTime,seed){
   const action=m.familyAttack,wind=action?.phase==='windup'?action.progress:0,hit=action?.phase==='impact'?1-action.progress:0,settle=action?.phase==='recovery'?1-action.progress:0;
 
         let cx = m.x + m.w / 2;
-        let cy = m.y + m.h / 2 + (action?0:Math.sin(presentationTime / 150)*3);
+        let cy = m.y + m.h / 2 + Math.sin(presentationTime / 150)*3;
 
         // Precompute coordinates and depth state for the 6 orbiting gold coins
         let coinsList = [];
         for (let i = 0; i < 6; i++) {
-          let angle = action?(action.phase==='impact'?action.limb.spin:action.phase==='windup'?presentationTime/900:presentationTime/600)+(i*TAU)/6:presentationTime/600+(i*TAU)/6;
-          let dist = action?18-5*wind:18+Math.sin(presentationTime/150+i)*3;
+          let angle = presentationTime/600+(i*TAU)/6+(action?.limb.spin??0);
+          let dist = 18+Math.sin(presentationTime/150+i)*3*(1-(action?.artWeight??0))-5*(action?.artWeight??0)*(1-(action?.strikeBlend??0));
           let ox = cx + Math.cos(angle) * dist * 1.3;
           let oy = cy + Math.sin(angle) * dist * 0.5;
           let isBehind = Math.sin(angle) < 0; // True if positioned behind core
 
-          let rot = angle * 2 + (action?Math.PI/2:0);
+          let rot = angle * 2 + Math.PI/2*(action?.artWeight??0);
           let cw = 6 * Math.abs(Math.sin(rot));
           let ch = 6;
 
@@ -535,74 +538,40 @@ const turn=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const families=new Set(DUNGEON_MOB_FAMILIES_V2A);
 const pivot={gilded_scuttler:-12,mimic_shield:-9,void_crawler:-8,void_spectre:-9,void_wraith:-11,rift_drifter:-10,coin_elemental:-8.5};
 
-// Pure visual transforms. Actual collision/attack positions remain unchanged.
-// A pivot correction keeps upright source art at body height as it turns;
-// anchor is the uncorrected lunge used by the separate directional limbs.
+const uprightTuning={
+ gilded_scuttler:{front:16.5,recoil:3,lean:-.16,hitLean:.08,squeezeX:.94,squeezeY:.85,hitX:1.06,hitY:.95,rest:14,drawBack:11,openRest:1,openBrace:4,openHit:.4,spinBrace:-.32,spinHit:.55},
+ mimic_shield:{front:13.5,recoil:4.5,lift:-1,lean:-.2,hitLean:.14,squeezeX:.88,squeezeY:1.08,hitX:1.08,hitY:.94,openRest:0,openBrace:8,openHit:1.3},
+ void_crawler:{front:16,recoil:4,lift:-1.5,lean:-.14,hitLean:.08,squeezeX:.8,squeezeY:1.14,hitX:1.1,hitY:.9,rest:15,drawBack:12,openRest:1.2,openBrace:5,openHit:.7},
+ void_spectre:{front:30,recoil:2,lift:-3,lean:-.12,hitLean:.08,squeezeX:.9,squeezeY:1.12,hitX:1.06,hitY:.97,rest:6,drawBack:4,openRest:3,openBrace:11,openHit:2,sweepHit:.5},
+ void_wraith:{front:25,recoil:3.5,lift:-4,lean:.18,hitLean:-.1,squeezeX:.85,squeezeY:1.16,hitX:.96,hitY:1.06,rest:5,drawBack:2,openRest:0,openBrace:1,openHit:1,sweepBrace:-.7,sweepHit:.3},
+ rift_drifter:{front:15.6,recoil:5,lift:-2,lean:-.08,hitLean:.1,squeezeX:.86,squeezeY:1.1,hitX:1.04,hitY:.96,orbitBrace:1,orbitHit:1,spinHit:.25},
+ coin_elemental:{front:21.5,recoil:2.5,lift:-3,lean:-.1,hitLean:.1,squeezeX:.9,squeezeY:1.13,hitX:1.03,hitY:.94,orbitBrace:1,orbitHit:1,spinHit:.65}
+};
+
+// Continuous body and limb keyframes share the idle horizontal orientation.
+// The actual attack direction belongs to the lunge and articulated limbs.
 export function dungeonMobMeleePoseV2A(actor,tick){
-  const family=actor.enemyFamily,phase=actor.meleePhase,g=actor.meleeGeometry;
-  if(!families.has(family)||!actor.alive||!g||!phase||phase.phase==='idle')return null;
-  const dx=g.targetPosition?g.targetPosition.x-actor.position.x:actor.presentationFacingX??1,dy=g.targetPosition?g.targetPosition.y-actor.position.y:0,distance=Math.hypot(dx,dy);
-  const direction=distance>.001?{x:dx/distance,y:dy/distance}:{x:1,y:0},angle=Math.atan2(direction.y,direction.x);
-  const sourceRadius=g.sourceRadius,targetRadius=g.targetRadius,centerLimit=g.mode==='clearHullGap'?g.reach+sourceRadius+targetRadius:g.reach;
-  const weaponReach=Math.max(sourceRadius,centerLimit-targetRadius),contactReach=clamp(distance-targetRadius,sourceRadius,weaponReach);
-  const p=clamp((tick-phase.phaseStartedTick)/Math.max(1,phase.phaseEndsTick-phase.phaseStartedTick),0,1),windup=phase.phase==='windup',impact=phase.phase==='impact',w=windup?smooth(p):0,r=phase.phase==='recovery'?(1-p)**2:0;
-  const body={x:0,y:0,rotation:0,scaleX:1,scaleY:1},limb={extension:0,sweep:0,open:0,orbit:0,spin:0};let travel=0,lift=0,frontExtent=0;
-  switch(family){
-    case 'gilded_scuttler': { // Brace the legs and roll the coin carapace into a quick pincer ram.
-      frontExtent=16.5;const reach=Math.max(0,contactReach-frontExtent),aim=turn(angle+Math.PI);
-      travel=windup?-3*w:impact?reach*(1-.13*p):reach*r;
-      body.rotation=windup?aim-.16*w:impact?aim+.12*p:aim*r;
-      body.scaleX=windup?1-.06*w:impact?1.06:1+.06*r;body.scaleY=windup?1-.15*w:impact?.95:1-.05*r;
-      limb.extension=windup?11:frontExtent;limb.open=windup?1+3*w:impact?.4:1;limb.spin=windup?-.32*w:impact?1.1*(1-p):.55*r;break;
-    }
-    case 'mimic_shield': { // The eye fixes on its target; the toothy shield opens, braces and bashes shut.
-      frontExtent=13.5;const reach=Math.max(0,contactReach-frontExtent);
-      travel=windup?-4.5*w:impact?reach*(1-.08*p):reach*r;lift=windup?-w:impact?1.5*(1-p):r;
-      body.rotation=(windup?-.2*w:impact?.14:.14*r)*(direction.x<0?-1:1);body.scaleX=windup?1-.12*w:impact?1.08:1+.08*r;
-      body.scaleY=windup?1+.08*w:impact?.94:1-.06*r;limb.open=windup?2+6*w:impact?1.3:1.3+2.2*(1-r);limb.extension=frontExtent;break;
-    }
-    case 'void_crawler': { // Compress the long segmented body, lift the feeler, then snap forward low.
-      frontExtent=16;const reach=Math.max(0,contactReach-frontExtent),aim=turn(angle+Math.PI);
-      travel=windup?-4*w:impact?reach*(1-.1*p):reach*r;lift=windup?-1.5*w:impact?1.2:1.2*r;
-      body.rotation=windup?aim+.18*w:impact?aim-.08*p:aim*r;body.scaleX=windup?1-.2*w:impact?1.1:1+.1*r;body.scaleY=windup?1+.14*w:impact?.9:1-.1*r;
-      limb.extension=windup?12:frontExtent;limb.open=windup?2+3*w:impact?.7:1.2;break;
-    }
-    case 'void_spectre': { // Two independently articulated claws cross in front of the hood.
-      frontExtent=30;const reach=Math.max(0,contactReach-frontExtent);
-      travel=windup?-2*w:impact?reach:reach*r;lift=windup?-3*w:impact?-1:-r;
-      body.rotation=angle*.08+(windup?-.12*w:impact?.08:.08*r);body.scaleX=windup?1-.1*w:impact?1.06:1+.06*r;body.scaleY=windup?1+.12*w:impact?.97:1-.03*r;
-      limb.extension=windup?6-2*w:impact?contactReach-travel:frontExtent*r+6*(1-r);limb.sweep=impact?.8*p:.8*r;limb.open=windup?8+3*w:impact?2+4*p:3+4*(1-r);break;
-    }
-    case 'void_wraith': { // A single hooked claw draws back for a slower, heavier sweep.
-      frontExtent=25;const reach=Math.max(0,contactReach-frontExtent);
-      travel=windup?-3.5*w:impact?reach:reach*r;lift=windup?-4*w:impact?-.5:-.5*r;
-      body.rotation=angle*.1+(windup?.18*w:impact?-.1:-.1*r);body.scaleX=windup?1-.15*w:impact?.96:1-.04*r;body.scaleY=windup?1+.16*w:impact?1.06:1+.06*r;
-      limb.extension=windup?5-3*w:impact?contactReach-travel:frontExtent*r+5*(1-r);limb.sweep=windup?-.7*w:impact?1.05*p:1.05*r;limb.open=windup?1:impact?1-p:r;break;
-    }
-    case 'rift_drifter': { // Orbiting shards form a body-bound wedge; none becomes a projectile.
-      frontExtent=15.6;const reach=Math.max(0,contactReach-frontExtent);
-      travel=windup?-5*w:impact?reach*(1-.07*p):reach*r;lift=windup?-2*w:impact?0:-Math.sin(p*Math.PI)*2;
-      body.rotation=angle;body.scaleX=windup?1-.14*w:impact?1.04:1+.04*r;body.scaleY=windup?1+.1*w:impact?.96:1-.04*r;
-      limb.orbit=windup?w:impact?1:r;limb.spin=impact?.25*p:.25*r;limb.extension=frontExtent;break;
-    }
-    case 'coin_elemental': { // Tighten the six-coin orbit, then sweep its leading rim into contact.
-      frontExtent=21.5;const reach=Math.max(0,contactReach-frontExtent);
-      travel=windup?-2.5*w:impact?reach:reach*r;lift=windup?-3*w:impact?2*(1-p):1.5*r;
-      body.rotation=angle;body.scaleX=windup?1-.1*w:impact?1.03:1+.03*r;body.scaleY=windup?1+.13*w:impact?.94:1-.06*r;
-      limb.orbit=windup?w:impact?1:r;limb.spin=impact?.65*p:.65*r;limb.extension=frontExtent;break;
-    }
-  }
-  const anchor={x:direction.x*travel,y:direction.y*travel+lift},py=pivot[family],sin=Math.sin(body.rotation),cos=Math.cos(body.rotation);
-  body.x=anchor.x+py*body.scaleY*sin;body.y=anchor.y+py-py*body.scaleY*cos;
-  return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,frontExtent,body,anchor,limb,disableFacingFlip:true};
+ const family=actor.enemyFamily,phase=actor.meleePhase,g=actor.meleeGeometry;
+ if(!families.has(family)||!actor.alive||!g||!phase||phase.phase==='idle')return null;
+ const dx=g.targetPosition?g.targetPosition.x-actor.position.x:actor.presentationFacingX??1,dy=g.targetPosition?g.targetPosition.y-actor.position.y:0,distance=Math.hypot(dx,dy);
+ const direction=distance>.001?{x:dx/distance,y:dy/distance}:{x:1,y:0};
+ const sourceRadius=g.sourceRadius,targetRadius=g.targetRadius,centerLimit=g.mode==='clearHullGap'?g.reach+sourceRadius+targetRadius:g.reach;
+ const weaponReach=Math.max(sourceRadius,centerLimit-targetRadius),contactReach=clamp(distance-targetRadius,sourceRadius,weaponReach);
+ const p=clamp((tick-phase.phaseStartedTick)/Math.max(1,phase.phaseEndsTick-phase.phaseStartedTick),0,1);
+ const frame=uprightAttackFrame(uprightTuning[family],phase.phase,p,direction,contactReach);
+ return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,...frame,
+  upright:true,bodyPivot:{x:0,y:pivot[family]*(actor.elite?.scale??1)},disableFacingFlip:false};
 }
 
 export function drawDungeonMobMeleeLimbV2A(c,pose,flash=false){
   if(!pose||!families.has(pose.family))return false;
   const {family,anchor,limb}=pose;
-  if(!['gilded_scuttler','void_crawler','void_spectre','void_wraith'].includes(family))return true;
+  if(!['gilded_scuttler','void_crawler','void_spectre','void_wraith','coin_elemental'].includes(family))return true;
   c.save();c.translate(anchor.x,anchor.y-8);c.rotate(Math.atan2(pose.direction.y,pose.direction.x));c.lineCap='round';c.lineJoin='round';
-  if(family==='gilded_scuttler'){
+  if(family==='coin_elemental'){
+    const x=limb.extension-4;c.fillStyle=flash?'#fff':'#ffd700';c.strokeStyle=flash?'#fff':'#9a7512';c.lineWidth=1.3;
+    c.beginPath();c.ellipse(x,0,4,7,0,0,TAU);c.fill();c.stroke();c.strokeStyle=flash?'#fff':'#fff0a1';c.beginPath();c.ellipse(x,0,2.3,5,0,0,TAU);c.stroke();
+  }else if(family==='gilded_scuttler'){
     c.fillStyle=flash?'#fff':'#ffd700';c.strokeStyle=flash?'#fff':'#765b11';c.lineWidth=1;
     for(const side of [-1,1]){c.beginPath();c.moveTo(9,side*3);c.quadraticCurveTo(limb.extension-2,side*(limb.open+3),limb.extension,side*limb.open);c.lineTo(limb.extension-3,side);c.closePath();c.fill();c.stroke();}
   }else if(family==='void_crawler'){

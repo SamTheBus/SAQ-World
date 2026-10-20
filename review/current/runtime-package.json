@@ -1,10 +1,12 @@
 {
-  "release": "dungeon-mobs-v2-212569d4dec9",
-  "sourceGraphSha256": "212569d4dec943cb31cc068d898539c1e5d99b8c6eaad9c0c42e9235022b60ae",
+  "release": "dungeon-mobs-v2-89953a76a499",
+  "workerRelease": "dungeon-mobs-v2-212569d4dec9",
+  "reusedWorkerGraph": true,
+  "sourceGraphSha256": "89953a76a4994bd3febaa65d0fa2c34e2d4b5cc6cba8465e9d9f29424fa87251",
   "workerWrapper": "save-worker.dungeon-mobs-v2-212569d4dec9.js",
   "workerEntry": "worker/dungeon-mobs-v2-212569d4dec9/src/entrypoints/activity_save_worker.js",
   "workerModules": 271,
-  "changedSourceModules": 46,
+  "changedSourceModules": 47,
   "workerModulesByteIdentical": true,
   "workerAssetBase": "public root save-worker URL",
   "workerFiles": [

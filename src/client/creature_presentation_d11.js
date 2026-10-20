@@ -178,7 +178,7 @@ function draw_golem(c,m,presentationTime){
       }
 
 function draw_slime(c,m,presentationTime){
-        const pose=attackPose(m);let squish = m.familyAttack?0:Math.sin(presentationTime / 100) * 2.0+pose.windup*3-pose.impact*3.5;
+        const pose=attackPose(m),blend=m.familyAttack?(pose.phase==='windup'?pose.p*pose.p*(3-2*pose.p):pose.phase==='recovery'?1-pose.p*pose.p*(3-2*pose.p):1):0;let squish = Math.sin(presentationTime / 100) * 2.0*(1-blend)+(m.familyAttack?0:pose.windup*3-pose.impact*3.5);
         let wScale = (m.w / 2) * 0.7 + squish;
         let hScale = (m.h / 2) * 0.7 - squish;
         let cx = m.x + m.w / 2;
@@ -341,7 +341,7 @@ function draw_gargoyle(c,m,presentationTime,seed){
 }
 
 function draw_rust_nibbler(c,m,presentationTime,seed){
-  const time=presentationTime,pose=attackPose(m),active=Boolean(m.movedLastTick||pose.active),cx=m.x+m.w/2+(pose.impact*4-pose.windup*2),cy=m.y+m.h-9;
+  const time=presentationTime,pose=attackPose(m),active=Boolean(m.movedLastTick||pose.active),cx=m.x+m.w/2+(m.familyAttack?0:pose.impact*4-pose.windup*2),cy=m.y+m.h-9;
   const flash=m.flashTimer>0,outline='#2b211a',dark=flash?'#fff':'#563b2b',rust=flash?'#fff':'#b65327',mid=flash?'#fff':'#d07635',light=flash?'#fff':'#e3a05b',eye='#f0cf67';
   c.save();c.lineJoin='round';c.lineCap='round';c.strokeStyle=outline;c.lineWidth=2;
   // Six two-segment legs retain their joints at small gameplay scale.
