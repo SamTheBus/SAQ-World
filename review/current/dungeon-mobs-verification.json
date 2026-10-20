@@ -1,14 +1,57 @@
 {
-  "changedSourceModules": 40,
-  "syntaxChecksPassed": 40,
-  "relativeImportsResolved": 2244,
-  "protectedFilesUnchanged": 71,
-  "workerGraphFilesByteIdentical": 268,
-  "versionedDocuments": 4,
-  "checks": 104,
-  "allSitesPreserved": 35,
-  "allFloorsPreserved": 72,
-  "workerImportSmokeChecks": 2,
-  "workerWrapperImmutableFilename": true,
-  "runtimeId": "0a5d419b11f15b2d"
+  "runtimeId": "a13360c63bbb53dd",
+  "release": "dungeon-mobs-v2-67c72258e325",
+  "sourceCommit": "387c78bfaf9f492fe7b6ff4539b956c12c2a7cdc",
+  "ordinaryFamilies": 32,
+  "addedFamilies": 14,
+  "originalDefinitionsRetained": 18,
+  "originalProfilesRetained": 72,
+  "oldRenderComparison": {
+    "creatureTraces": 8576,
+    "contactTraces": 2592,
+    "differences": 0
+  },
+  "catalogMigrations": {
+    "acceptedSeparatePublications": [
+      "7\u219218",
+      "18\u219232"
+    ],
+    "combined7To32Rejected": true,
+    "historicalReceiptsImmutable": true
+  },
+  "retainedWorld": {
+    "sites": 35,
+    "floors": 72,
+    "v1SubstitutionActors": 450,
+    "v2AdoptedGroups": 46,
+    "all32FamiliesPresent": true,
+    "publicationAndReopenCuts": 2,
+    "scope": "All35sites are constructed with structural positioning and normal entry/exit, then published/reopened as a parent bulk fixture. parentPreparation records whether the full18 V1 baseline was built directly by frozen V1 or migrated through its actual catalog+roster normal durable commits. Candidate V2 catalog append and safe second roster adoption each use a separate normal save-task commit and reopen. Structural wound/clear setup; normal chest and pickup commands create the protected gear receipt. No native combat or35sequential save-task publications claimed."
+  },
+  "workerGraph": {
+    "modules": 271,
+    "importEdges": 1564,
+    "byteIdenticalToCanonicalSource": true,
+    "importSmokeTests": 2,
+    "legacyWorkerPreserved": true,
+    "mainThreadCacheMappings": 46,
+    "packageIdempotent": true
+  },
+  "sourceChecks": {
+    "status": "passed",
+    "passed": 184,
+    "total": 184,
+    "failed": 0,
+    "log": "dungeon-mobs-v2-final-focused.txt"
+  },
+  "nativeBrowser": {
+    "status": "pending live deployment"
+  },
+  "limitations": [
+    "Physical-phone performance unverified",
+    "Online multiplayer unverified; four-local-player targeting tested",
+    "Broad35site setup is a structural fixture, not35native combat runs",
+    "Bosses/chest specials/boss summons outside ordinary32",
+    "Starter region and long travel placement remain separate work"
+  ]
 }

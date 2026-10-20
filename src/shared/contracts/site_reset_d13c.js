@@ -1,4 +1,5 @@
 import {adoptOrdinaryRosters} from './ordinary_roster_v1.js';
+import {adoptOrdinaryRostersV2} from './ordinary_roster_v2.js';
 import {isCryptFamily} from '../content/planned_crypt_policy_v1.js';
 import {buildCryptFamilyV2 as buildCryptFamilyV1} from '../content/crypt_family_runtime_v2.js';
 import {isRuinFamily} from '../content/planned_ruin_policy_v1.js';
@@ -90,6 +91,6 @@ export function commitSiteResetD13C(state,plan,{transitioningPlayerIds=[]}={}){
  state.d9World.runtime.resources.push(...next.resources.map(copyWire));state.d9World.runtime.revision++;state.encounterEconomy.revision++;
  for(let index=0;index<site.floors.length;index++){site.floors[index].groupId=next.groups[index].groupId;site.floors[index].enemyIds=[...next.groups[index].entityIds];site.floors[index].encounter=copyWire(next.functionalSite.floors[index].encounter);}
  site.encounterProvenance=copyWire(next.functionalSite.encounterProvenance);
- site.interior.groupId=site.floors[0].groupId;adoptOrdinaryRosters(state,{groupIds:newGroupIds});
+ site.interior.groupId=site.floors[0].groupId;adoptOrdinaryRosters(state,{groupIds:newGroupIds});adoptOrdinaryRostersV2(state,{groupIds:newGroupIds});
  return freezeWire({status:'reset',version:SITE_RESET_D13C,resetId:plan.resetId,siteId:site.siteId,fromEpisode:plan.fromEpisode,toEpisode:plan.toEpisode,episodeSeed:state.campaign.siteRunEpisodesById[site.siteId].episodeSeed,newGroupIds,newEntityIds});
 }

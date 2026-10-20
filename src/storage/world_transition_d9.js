@@ -18,7 +18,9 @@ import {siteResetIdentityMatchesD13C} from '../shared/contracts/site_reset_d13c.
 import {validateSiteFinaleReservationProgressD13D_A} from '../shared/contracts/site_finale_d13d.js';
 import {originHordeUpgradeForGroup,validateOriginHordeProgress} from '../shared/contracts/origin_hordes_v1.js';
 import {isDungeonMobCatalogUpgrade} from '../shared/contracts/dungeon_mob_catalog_v1.js';
+import {isDungeonMobCatalogUpgradeV2,validateDungeonMobCatalogProgress} from '../shared/contracts/dungeon_mob_catalog_v2.js';
 import {validateOrdinaryRosterProgress} from '../shared/contracts/ordinary_roster_v1.js';
+import {validateOrdinaryRosterV2Progress} from '../shared/contracts/ordinary_roster_v2.js';
 
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 // Frame rebasing is not movement of a reward or a change to a historical receipt.
@@ -42,7 +44,8 @@ export function alignWorldReceiptComparisonD9(state,frames){
 }
 export async function validateWorldAdvanceD9(a,b,options){
  validateActivityState(b);check(a.d9World&&b.d9World,'D9 transition required');
- const catalogUpgrade=isDungeonMobCatalogUpgrade(a,b);
+ const catalogUpgrade=isDungeonMobCatalogUpgrade(a,b)||isDungeonMobCatalogUpgradeV2(a,b);
+ validateDungeonMobCatalogProgress(a,b);
  for(const key of ['content','session','overworldInstanceId','proofCase'])check(same(a[key],b[key])||key==='content'&&catalogUpgrade,'Immutable campaign identity changed');
  for(const key of ['campaignId','seed','charactersById'])check(same(a.campaign[key],b.campaign[key]),'Campaign identity changed');
  check(a.campaign.saveRevision===b.campaign.saveRevision&&a.campaign.checkpointId===b.campaign.checkpointId,'Unconfirmed campaign revision');
@@ -74,7 +77,7 @@ export async function validateWorldAdvanceD9(a,b,options){
  if(options)await reconcileWorldComparisonPagesD9(a,b,options);
  alignWorldReceiptComparisonD9(a,result.d9World.runtime.frames);alignWorldReceiptComparisonD9(b,result.d9World.runtime.frames);
  for(const id of a.session.playerIds)for(const [source,row] of Object.entries(a.playersById[id].d8.causalXp))if(!retiredEntities.has(source))for(const [kind,sequence] of Object.entries(row))check((b.playersById[id].d8.causalXp[source]?.[kind]??0)>=sequence,'Mastery causal receipt regressed across paging');
-  validateEncounterEconomyProgress(a,b);validateOriginHordeProgress(a,b);validateOrdinaryRosterProgress(a,b);validateSiteRunEpisodeProgressD13B(a,b);validateSiteFinaleReservationProgressD13D_A(a,b);
+  validateEncounterEconomyProgress(a,b);validateOriginHordeProgress(a,b);validateOrdinaryRosterProgress(a,b);validateOrdinaryRosterV2Progress(a,b);validateSiteRunEpisodeProgressD13B(a,b);validateSiteFinaleReservationProgressD13D_A(a,b);
  for(const [id,g] of Object.entries(a.groupsById)){
   if(retiredGroups.has(id)){check(!b.groupsById[id]&&!b.encounterEconomy.groups[id]&&!b.d9World.episodes[id],'Retired group remained in live authority');continue;}
   const h=b.groupsById[id],originUpgrade=originHordeUpgradeForGroup(a,b,id);check(h&&(same(g.entityIds,h.entityIds)||originUpgrade)&&g.spaceInstanceId===h.spaceInstanceId&&g.siteId===h.siteId,'Resident group identity changed');

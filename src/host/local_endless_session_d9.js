@@ -1,7 +1,9 @@
 import {ferrySourceEligible,ferryArrivalAddress,ferryPreparationChunks} from '../shared/contracts/ferry_travel_v1.js';
 import {upgradeOriginHordes} from '../shared/contracts/origin_hordes_v1.js';
 import {adoptOrdinaryRosters} from '../shared/contracts/ordinary_roster_v1.js';
+import {adoptOrdinaryRostersV2} from '../shared/contracts/ordinary_roster_v2.js';
 import {upgradeDungeonMobCatalog} from '../shared/contracts/dungeon_mob_catalog_v1.js';
+import {upgradeDungeonMobCatalogV2} from '../shared/contracts/dungeon_mob_catalog_v2.js';
 import {tileAddress} from '../shared/generation/planned_world_foundation_v1.js';
 import {interiorGroundCoverageReadyD9} from '../shared/contracts/world_ground_occupancy_d9.js';
 import {createDeveloperProjectionPort} from './developer_projection_port.js';
@@ -95,11 +97,13 @@ export async function createLocalEndlessSessionD9(options){
  // Append only the verified new definitions in a separate same-tick commit.
  // Existing actors, manifests, wounds, rewards and episode history are unchanged.
  {const draft=copyWire(opened.state),upgrade=await upgradeDungeonMobCatalog(draft,{sha256});if(upgrade.changed){let saved=await worker.commit({state:draft,expectedRoot:opened.publication.id,checkpointId:createId('checkpointId',nextToken())});if(saved.status==='unknown')saved=await worker.reconcile();check(saved.status==='committed',saved.reason??'Dungeon mob catalog publication did not commit');opened=await worker.open(draft.campaign.campaignId);}}
+ {const draft=copyWire(opened.state),upgrade=await upgradeDungeonMobCatalogV2(draft,{sha256});if(upgrade.changed){let saved=await worker.commit({state:draft,expectedRoot:opened.publication.id,checkpointId:createId('checkpointId',nextToken())});if(saved.status==='unknown')saved=await worker.reconcile();check(saved.status==='committed',saved.reason??'Dungeon mob V2 catalog publication did not commit');opened=await worker.open(draft.campaign.campaignId);}}
  // Publish the deterministic origin extension against the verified old root.
  // Opening a snapshot itself remains read-only; an interrupted publication can
  // be reconciled using the same normal Worker commit protocol as all saves.
  {const draft=copyWire(opened.state),upgrade=upgradeOriginHordes(draft);if(upgrade.changed){let saved=await worker.commit({state:draft,expectedRoot:opened.publication.id,checkpointId:createId('checkpointId',nextToken())});if(saved.status==='unknown')saved=await worker.reconcile();check(saved.status==='committed',saved.reason??'Origin horde publication did not commit');opened=await worker.open(draft.campaign.campaignId);}}
  {const draft=copyWire(opened.state),adoption=adoptOrdinaryRosters(draft);if(adoption.changed){let saved=await worker.commit({state:draft,expectedRoot:opened.publication.id,checkpointId:createId('checkpointId',nextToken())});if(saved.status==='unknown')saved=await worker.reconcile();check(saved.status==='committed',saved.reason??'Dungeon mob roster publication did not commit');opened=await worker.open(draft.campaign.campaignId);}}
+ {const draft=copyWire(opened.state),adoption=adoptOrdinaryRostersV2(draft);if(adoption.changed){let saved=await worker.commit({state:draft,expectedRoot:opened.publication.id,checkpointId:createId('checkpointId',nextToken())});if(saved.status==='unknown')saved=await worker.reconcile();check(saved.status==='committed',saved.reason??'Dungeon mob V2 roster publication did not commit');opened=await worker.open(draft.campaign.campaignId);}}
  check(opened?.state.proofCase===proofCase&&opened.state.playersById[localPlayerId],'D9 stored controller/case mismatch');
  const origin={originWidthChunks:opened.state.d9World.origin.width/1024,originHeightChunks:opened.state.d9World.origin.height/832,egress:opened.state.d9World.origin.egress};
  if(!opened.state.d9World.plannedWorld&&!Object.keys(opened.state.d9World.siteReservationsById??{}).length&&worker.siteReservations){

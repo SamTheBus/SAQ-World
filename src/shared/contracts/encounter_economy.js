@@ -20,6 +20,7 @@ import {rewardClassForCompletionResourceD13D_C} from './boss_completion_reward_d
 import {ensurePersonalFinaleClaimsD13D_G1,markPersonalFinaleClaimD13D_G1,personalFinaleClaimD13D_G1,validatePersonalFinaleClaimsD13D_G1} from './site_finale_completion_d13d.js';
 import {originHordeUpgradeForGroup} from './origin_hordes_v1.js';
 import {adoptOrdinaryRosters} from './ordinary_roster_v1.js';
+import {adoptOrdinaryRostersV2} from './ordinary_roster_v2.js';
 const stateMax=a=>(typeof a.maxHp==='string'||a.maxHp.n!==undefined||a.maxHp.chunks)?0:boundedCombatInteger(a.maxHp);
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 export const inSettlement=(s,m,a)=>a.residency.spaceInstanceId===s.overworldInstanceId&&m.safeRegions.some(r=>a.position.x>=r.x&&a.position.x<r.x+r.width&&a.position.y>=r.y&&a.position.y<r.y+r.height);
@@ -92,14 +93,14 @@ export function createEncounterRenewal(s,m,onRenew){const layout=encounterResour
    if(s.d9World){
     const rank=ordinaryTier(s.entitiesById[g.entityIds[0]].contentDefinitionId)??'C',highest=Object.values(s.playersById).filter(p=>visitors.includes(s.entitiesById[p.entityId])).reduce((n,p)=>progressionBigInt(p.progression.level)>n?progressionBigInt(p.progression.level):n,1n);admitContentNumericD9(progressionWire(highest),rank);
     const address=legacyWorldPosition(defs.get(g.groupId).members[0].position);
-    originEpisode={...unfrozenEpisodeD9('origin:'+g.groupId,safeInteger(e.episode+1),{origin:true}),...(existing?.ordinaryRoster?{ordinaryRoster:copyWire(existing.ordinaryRoster)}:{}),geography:existing?.geography??{chunkX:address.chunkX,chunkY:address.chunkY,anchorOrdinal:0,minimumLevel:1,rank}};
+    originEpisode={...unfrozenEpisodeD9('origin:'+g.groupId,safeInteger(e.episode+1),{origin:true}),...(existing?.ordinaryRoster?{ordinaryRoster:copyWire(existing.ordinaryRoster)}:{}),...(existing?.ordinaryRosterV2?{ordinaryRosterV2:copyWire(existing.ordinaryRosterV2)}:{}),geography:existing?.geography??{chunkX:address.chunkX,chunkY:address.chunkY,anchorOrdinal:0,minimumLevel:1,rank}};
    }
    // Eligibility was recorded only while the entire space was vacant. Returning
    // participants encounter the new occupation together; there is no live reset.
    retireEncounterRewards(s,g.groupId);e.episode=safeInteger(e.episode+1,1);e.startedTick=s.tick;e.clearedTick=null;e.vacatedTick=null;e.eligibleReturn=0;e.usedResources={};delete e.personalCompletionClaimsBySourceId;g.cleared=false;
    if(originEpisode){s.d9World.episodes[g.groupId]=originEpisode;e.contentDepth=1;g.threatSnapshot=null;g.threatReady=true;}
    for(const member of defs.get(g.groupId).members){const a=s.entitiesById[member.entityId],profile=encounterActorProfile(s,g,a);a.position={...member.position};a.hp=structuredClone((s.subweaponCombat?combatInteger(profile.maxHp):profile.maxHp));a.maxHp=structuredClone(a.hp);a.attackDamage=structuredClone((s.subweaponCombat?combatInteger(profile.attackDamage):profile.attackDamage));a.alive=true;a.attackTimer=0;a.movementIntent={x:0,y:0};a.movedLastTick=false;delete a.ai.defeatedTick;if(a.ai.melee)Object.assign(a.ai.melee,{phase:'idle',phaseStartedTick:s.tick,phaseEndsTick:s.tick,targetEntityId:null});if(a.ai.motion)Object.assign(a.ai.motion,{startedTick:null,lastMovedTick:null});}
-   if(g.siteId===null)g.threatReady=true;adoptOrdinaryRosters(s,{groupIds:[g.groupId],safe:false,freshEpisodes:{[g.groupId]:e.episode-1}});econ.revision++;onRenew(g);
+   if(g.siteId===null)g.threatReady=true;adoptOrdinaryRosters(s,{groupIds:[g.groupId],safe:false,freshEpisodes:{[g.groupId]:e.episode-1}});adoptOrdinaryRostersV2(s,{groupIds:[g.groupId],safe:false,freshEpisodes:{[g.groupId]:e.episode-1}});econ.revision++;onRenew(g);
   }
  }
  return {tick};

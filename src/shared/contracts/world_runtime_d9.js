@@ -1,5 +1,6 @@
 import {D9_PROFILE as P} from '../content/world_profile_d9.js';
 import {ordinaryRosterDefinition} from './ordinary_roster_v1.js';
+import {ordinaryRosterV2Definition} from './ordinary_roster_v2.js';
 import {projectToLocalFrameD9,localFramePositionD9} from './local_world_frames_d9.js';
 import {copyWire,requireContract as check} from './wire.js';
 import {assertNoNewActorGeometryFailureD9} from './actor_geometry_d9.js';
@@ -11,9 +12,10 @@ export function runtimeManifestD9(state,origin){
   chunks.push({chunkId:id,areaId:id,origin:{x:p.x,y:p.y},dimensions:{width:P.chunkWidth,height:P.chunkHeight},label:page.region.name,biome:page.region.biome,minimumLevel:copyWire(page.region.minimumLevel)});
   let region=regions.find(r=>r.regionId===regionId);if(!region){region={regionId,label:page.region.name,biome:page.region.biome,minimumLevel:copyWire(page.region.minimumLevel),chunkIds:[],discoveryId:regionId};regions.push(region);}region.chunkIds.push(id);
  }
- const originGroups=(origin.population?.groups??[]).map(g=>ordinaryRosterDefinition(state,state.d9World.originHordes?.groupsById[g.groupId]?.definition??g));
- const siteInteriors=origin.siteInteriors?.map(site=>({...site,groups:site.groups.map(g=>ordinaryRosterDefinition(state,state.d9World.originHordes?.groupsById[g.groupId]?.definition??g))}));
- const next={...origin,chunks,regions,population:{...origin.population,groups:[...originGroups,...runtime.groups.map(g=>ordinaryRosterDefinition(state,g))]},...(siteInteriors?{siteInteriors}:{}),d9:true};
+ const rosterDefinition=g=>ordinaryRosterV2Definition(state,ordinaryRosterDefinition(state,g));
+ const originGroups=(origin.population?.groups??[]).map(g=>rosterDefinition(state.d9World.originHordes?.groupsById[g.groupId]?.definition??g));
+ const siteInteriors=origin.siteInteriors?.map(site=>({...site,groups:site.groups.map(g=>rosterDefinition(state.d9World.originHordes?.groupsById[g.groupId]?.definition??g))}));
+ const next={...origin,chunks,regions,population:{...origin.population,groups:[...originGroups,...runtime.groups.map(rosterDefinition)]},...(siteInteriors?{siteInteriors}:{}),d9:true};
  // Authority helpers may retain the projection identity while its bounded
  // membership changes. This is derived geometry, never a second campaign fact.
  if(cached){for(const key of Object.keys(cached.manifest))delete cached.manifest[key];Object.assign(cached.manifest,next);cached.revision=runtime.revision;}else{cached={manifest:next,revision:runtime.revision};views.set(state,cached);}return cached.manifest;

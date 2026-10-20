@@ -22,21 +22,21 @@ source_rows=[]
 for p in sorted((BUILD/'src').rglob('*.js')):
  source_rows.append({'path':p.relative_to(BUILD).as_posix(),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
 digest=hashlib.sha256(json.dumps(source_rows,separators=(',',':')).encode()).hexdigest()
-release='dungeon-mobs-v1-'+digest[:12]
+release='dungeon-mobs-v2-'+digest[:12]
 worker_dir=BUILD/'worker'/release
 worker_dir.mkdir(parents=True,exist_ok=True)
 for name in sorted(visited):
  p=worker_dir/name;p.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(BUILD/name,p)
 (BUILD/('save-worker.'+release+'.js')).write_text("import('./worker/"+release+"/src/entrypoints/activity_save_worker.js').then(module=>module.startActivitySaveWorker(self));\n")
 changed={r['path'] for r in source_rows if prior_hashes.get(r['path'])!=r['sha256']}
-for document in ['index.html','world-cumulative-dev.html','review/current/hostile-attack-gallery.html','review/current/dungeon-mobs-gallery.html']:
+for document in ['index.html','world-cumulative-dev.html','review/current/hostile-attack-gallery.html','review/current/dungeon-mobs-gallery.html','review/current/dungeon-mobs-v2-gallery.html']:
  existing=re.search(r'<script type="importmap">(.*?)</script>',(BUILD/document).read_text(),re.S)
  if existing:
   for key in json.loads(existing.group(1))['imports']:
    module=posixpath.normpath(posixpath.join(posixpath.dirname(document),key))
    if module.startswith('src/') and (BUILD/module).is_file():changed.add(module)
 changed=sorted(changed)
-for name in ['index.html','world-cumulative-dev.html','review/current/hostile-attack-gallery.html','review/current/dungeon-mobs-gallery.html']:
+for name in ['index.html','world-cumulative-dev.html','review/current/hostile-attack-gallery.html','review/current/dungeon-mobs-gallery.html','review/current/dungeon-mobs-v2-gallery.html']:
  p=BUILD/name;raw=p.read_bytes();s=raw.decode()
  mappings={}
  for rel in changed:
@@ -66,7 +66,7 @@ print(json.dumps({k:report[k] for k in report if k!='workerFiles'}))
 paths={r['path'] for r in prior['files']}
 paths.update(p.relative_to(BUILD).as_posix() for p in (BUILD/'src').rglob('*.js'))
 paths.update(p.relative_to(BUILD).as_posix() for p in (BUILD/'worker').rglob('*.js'))
-paths.update(p.relative_to(BUILD).as_posix() for p in BUILD.glob('save-worker.dungeon-mobs-v1-*.js'))
+paths.update(p.relative_to(BUILD).as_posix() for p in BUILD.glob('save-worker.dungeon-mobs-*.js'))
 rows=[]
 for name in sorted(paths):
  raw=(BUILD/name).read_bytes()
@@ -78,5 +78,7 @@ manifest={'runtimeId':sha[:16],'runtimeSha256':sha,'parentRuntimeId':prior['runt
  'addedRuntimeFiles':[r['path'] for r in rows if r['path'] not in prior_hashes],
  'unchangedRuntimeFiles':[r['path'] for r in rows if prior_hashes.get(r['path'])==r['sha256']],
  'files':rows}
+if sha==prior.get('runtimeSha256'):
+ manifest=prior  # Repackaging identical source keeps the existing parent/revision.
 (BUILD/'runtime-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps({'runtimeId':sha[:16],'committedFiles':len(rows)}))

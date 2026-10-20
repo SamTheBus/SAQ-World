@@ -33,7 +33,7 @@ export function cancelHostileProjectiles(state,entityId){
 export function validateHostileProjectiles(state){
  const root=state.hostileCombat;if(!root)return;
  check(hasWorldCombat(state),'Hostile projectiles outside World combat');
- closedRecord(root,['version','actionsByEntityId','projectiles'],['catalogUpgrade']);
+ closedRecord(root,['version','actionsByEntityId','projectiles'],['catalogUpgrade','catalogUpgradeV2']);
  check(root.version===HOSTILE_PROJECTILES_VERSION,'Hostile projectile version');
  closedRecord(root.actionsByEntityId,[],Object.keys(root.actionsByEntityId));
  closedRecord(root.projectiles,[],Object.keys(root.projectiles));

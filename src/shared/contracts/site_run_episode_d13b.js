@@ -1,3 +1,5 @@
+import {hasWorldCombat,WORLD_COMBAT_POLICY} from '../content/world_combat_v1.js';
+import {MULTIROOM_POLICY} from '../content/multiroom_policy_v1.js';
 import {isCryptFamily} from '../content/planned_crypt_policy_v1.js';
 import {isRuinFamily} from '../content/planned_ruin_policy_v1.js';
 import {isFortFamily} from '../content/planned_fort_policy_v1.js';
@@ -17,6 +19,9 @@ const SITE_RUN_COMPLETION_RECEIPT_D13C1='site-run-completion-receipt-d13c1-v1';
 const SITE_RUN_REWARD_ARCHIVE_D13C1='site-run-reward-archive-d13c1-v1';
 const SITE_RESET_RECEIPT_D13C1='site-reset-d13c1-v1';
 const WOODLAND_FORT_WIDTH_TILES=48,WOODLAND_FORT_HEIGHT_TILES=36;
+// Compact history admits the same horde/floor envelope as living World sites.
+// Legacy receipts retain their original ten-per-group/four-floor bounds.
+const receiptBounds=state=>{const groups=Math.max(...Object.values(MULTIROOM_POLICY.floors)),members=hasWorldCombat(state)?WORLD_COMBAT_POLICY.maximumFloorMembers:10;return {groups,members,total:groups*members};};
 
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 const hash32=text=>{
@@ -176,7 +181,7 @@ export function validateSiteRunRewardArchiveD13C1(state,sourceEntityId,source){
  requireContract(proof.version===SITE_RUN_REWARD_ARCHIVE_D13C1&&proof.sourceEntityId===sourceEntityId&&proof.groupId===source.groupId&&proof.sourceEpisode===source.episode&&(source.sourceEntityId===undefined||source.sourceEntityId===sourceEntityId),'Archived reward source identity drift');
  if(source.kind!==undefined)requireContract(proof.kind===source.kind&&proof.ordinal===source.ordinal&&proof.rank===source.rank,'Archived reward source detail drift');
  const record=state.campaign.siteRunEpisodesById?.[proof.siteId];requireContract(record&&record.episode>proof.episode&&proof.episodeSeed===deriveSiteRunEpisodeSeedD13B(worldSeedHex(state),proof.siteId,proof.episode),'Archived reward episode is not retired');
- safeInteger(proof.startedTick,0,proof.clearedTick);safeInteger(proof.clearedTick,proof.startedTick,proof.resetTick);safeInteger(proof.resetTick,proof.clearedTick,state.tick);safeInteger(proof.groupCount,1,4);safeInteger(proof.enemyCount,1,40);safeInteger(proof.ordinal,0,40);
+ safeInteger(proof.startedTick,0,proof.clearedTick);safeInteger(proof.clearedTick,proof.startedTick,proof.resetTick);safeInteger(proof.resetTick,proof.clearedTick,state.tick);const bounds=receiptBounds(state);safeInteger(proof.groupCount,1,bounds.groups);safeInteger(proof.enemyCount,1,bounds.total);safeInteger(proof.ordinal,0,40);
  requireContract(['enemy','breakable','chest'].includes(proof.kind)&&typeof proof.rank==='string'&&proof.rank.length<=8&&Array.isArray(proof.participantIds)&&proof.participantIds.length<=4&&proof.participantIds.every((id,index)=>state.playersById[id]&&(index===0||proof.participantIds[index-1]<id)),'Invalid archived reward source');
  requireContract(proof.receiptIdentityCommitment===receiptIdentity(proof),'Archived reward receipt identity drift');const {sourceCommitment:ignored,...base}=proof;requireContract(proof.sourceCommitment===commitment('SAQ-WORLD-SITE-RUN-REWARD-SOURCE-D13C1',base),'Archived reward source commitment drift');
  const retained=record.completionHistory.find(row=>row.episode===proof.episode);if(retained)requireContract(retained.identityCommitment===proof.receiptIdentityCommitment&&retained.rewardSourceIds.includes(sourceEntityId),'Archived reward absent from retained receipt');else requireContract(record.historyArchive.archivedEpisodes>=proof.episode,'Archived reward predates no committed history');
@@ -288,8 +293,8 @@ export function siteResetTransitionsD13C(before,after){
 function validateCompletionEntry(state,siteId,entry,index,record){
  closedRecord(entry,['version','siteId','episode','episodeSeed','startedTick','clearedTick','resetTick','groupCount','enemyCount','groups','rewardSourceIds','previousCommitment','identityCommitment','commitment']);
  const expectedEpisode=record.historyArchive.archivedEpisodes+index+1;requireContract(entry.version===SITE_RUN_COMPLETION_RECEIPT_D13C1&&entry.siteId===siteId&&entry.episode===expectedEpisode&&entry.episode<record.episode&&entry.episodeSeed===deriveSiteRunEpisodeSeedD13B(worldSeedHex(state),siteId,entry.episode),'Invalid site completion receipt identity');
- safeInteger(entry.startedTick,0,entry.clearedTick);safeInteger(entry.clearedTick,entry.startedTick,entry.resetTick);safeInteger(entry.resetTick,entry.clearedTick,state.tick);safeInteger(entry.groupCount,1,4);safeInteger(entry.enemyCount,1,40);
- requireContract(entry.groups.length===entry.groupCount&&entry.groups.reduce((sum,row)=>sum+row.enemyCount,0)===entry.enemyCount&&entry.groups.every((row,n)=>{closedRecord(row,['groupId','enemyCount']);safeInteger(row.enemyCount,1,10);return typeof row.groupId==='string'&&(n===0||entry.groups[n-1].groupId<row.groupId);})&&entry.rewardSourceIds.length<=256&&entry.rewardSourceIds.every((id,n)=>typeof id==='string'&&(n===0||entry.rewardSourceIds[n-1]<id)),'Invalid compact site completion inventory');
+ safeInteger(entry.startedTick,0,entry.clearedTick);safeInteger(entry.clearedTick,entry.startedTick,entry.resetTick);safeInteger(entry.resetTick,entry.clearedTick,state.tick);const bounds=receiptBounds(state);safeInteger(entry.groupCount,1,bounds.groups);safeInteger(entry.enemyCount,1,bounds.total);
+ requireContract(entry.groups.length===entry.groupCount&&entry.groups.reduce((sum,row)=>sum+row.enemyCount,0)===entry.enemyCount&&entry.groups.every((row,n)=>{closedRecord(row,['groupId','enemyCount']);safeInteger(row.enemyCount,1,bounds.members);return typeof row.groupId==='string'&&(n===0||entry.groups[n-1].groupId<row.groupId);})&&entry.rewardSourceIds.length<=256&&entry.rewardSourceIds.every((id,n)=>typeof id==='string'&&(n===0||entry.rewardSourceIds[n-1]<id)),'Invalid compact site completion inventory');
  const previous=index?record.completionHistory[index-1].commitment:record.historyArchive.archivedCommitment;requireContract(entry.previousCommitment===previous&&entry.identityCommitment===receiptIdentity(entry)&&entry.commitment===receiptCommitment(entry),'Site completion commitment drift');
 }
 

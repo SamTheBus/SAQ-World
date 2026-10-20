@@ -1,10 +1,15 @@
 {
   "pass": true,
-  "scope": "Actual old V2.2 modules construct all 35 retained sites with structural positioning and normal entry/exit. A parent bulk snapshot is published/reopened, then candidate normal save-task catalog append and safe roster adoption each commit and reopen. Structural wound/clear setup; actual normal chest and pickup commands create the protected gear receipt. No native combat or 35 sequential save-task publications claimed.",
+  "scope": "All35sites are constructed with structural positioning and normal entry/exit, then published/reopened as a parent bulk fixture. parentPreparation records whether the full18 V1 baseline was built directly by frozen V1 or migrated through its actual catalog+roster normal durable commits. Candidate V2 catalog append and safe second roster adoption each use a separate normal save-task commit and reopen. Structural wound/clear setup; normal chest and pickup commands create the protected gear receipt. No native combat or35sequential save-task publications claimed.",
+  "parentPreparation": {
+    "kind": "Verified cached V2.2 all35site snapshot upgraded by frozen V1 catalog and roster modules with two normal durable publications/reopens",
+    "durableCatalogRosterPublications": 2
+  },
   "sites": 35,
   "floors": 72,
   "candidateDurablePublications": 2,
-  "adoptedGroups": 79,
+  "retainedV1Substitutions": 450,
+  "adoptedGroups": 46,
   "actorCount": 1872,
   "groupCount": 87,
   "spaceCount": 76,
@@ -21,37 +26,54 @@
     ]
   },
   "families": {
-    "rust_nibbler": 324,
-    "golem": 144,
-    "slime": 207,
-    "gargoyle": 418,
+    "rust_nibbler": 272,
+    "gilded_scuttler": 39,
+    "slime": 191,
+    "gargoyle": 334,
     "toxic_fly": 100,
     "corroded_golem": 87,
-    "cursed_blade": 168,
+    "temporal_watcher": 16,
+    "cursed_blade": 113,
     "marsh_ghost": 85,
+    "mimic_shield": 41,
     "thorn_wyrm": 62,
+    "coin_elemental": 16,
     "wyrmling": 53,
-    "animated_armor": 104,
+    "cyber_wraith": 16,
+    "golem": 117,
+    "animated_armor": 85,
     "hell_bat": 8,
+    "clockwork_drone": 16,
     "slag_slime": 8,
     "sprout": 50,
     "magma_elemental": 16,
+    "void_spectre": 11,
+    "star_weaver": 14,
+    "void_crawler": 11,
+    "rift_drifter": 14,
     "lava_serpent": 8,
+    "wireframe_orb": 14,
     "void_orb": 16,
-    "swamp_basilisk": 7
+    "neon_spider": 17,
+    "swamp_basilisk": 7,
+    "clockwork_scarab": 16,
+    "void_wraith": 12
   },
   "newFamiliesPresent": [
-    "thorn_wyrm",
-    "wyrmling",
-    "magma_elemental",
-    "lava_serpent",
-    "hell_bat",
-    "slag_slime",
-    "swamp_basilisk",
-    "toxic_fly",
-    "marsh_ghost",
-    "corroded_golem",
-    "void_orb"
+    "gilded_scuttler",
+    "mimic_shield",
+    "void_crawler",
+    "void_spectre",
+    "void_wraith",
+    "rift_drifter",
+    "clockwork_scarab",
+    "star_weaver",
+    "coin_elemental",
+    "temporal_watcher",
+    "clockwork_drone",
+    "neon_spider",
+    "wireframe_orb",
+    "cyber_wraith"
   ],
   "newFamiliesAbsent": [],
   "rows": [
@@ -443,5 +465,5 @@
       "ms": 3275
     }
   ],
-  "ms": 179938
+  "ms": 66106
 }

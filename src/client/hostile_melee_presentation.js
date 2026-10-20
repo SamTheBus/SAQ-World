@@ -1,3 +1,5 @@
+import {dungeonMobMeleePoseV2A,drawDungeonMobMeleeLimbV2A,drawDungeonMobContactV2A} from './creature_presentation_dungeon_mobs_v2a.js';
+import {dungeonMobMeleePoseV2B,drawDungeonMobMeleeLimbV2B,drawDungeonMobContactV2B} from './dungeon_mob_melee_presentation_v2b.js';
 const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
 const smooth = x => { const p=clamp(x,0,1); return p*p*(3-2*p); };
 const turn = a => Math.atan2(Math.sin(a),Math.cos(a));
@@ -6,6 +8,7 @@ export const HOSTILE_STRIKE_FEEDBACK_MS = 190;
 // These are disposable poses, not movement, attack shapes or timing rules.
 // The near face is bounded by the same combat radii as the authoritative hit.
 export function hostileMeleePose(actor, tick) {
+  const imported=dungeonMobMeleePoseV2A(actor,tick)??dungeonMobMeleePoseV2B(actor,tick);if(imported)return imported;
   const phase=actor.meleePhase,g=actor.meleeGeometry;
   if(!actor.alive||!g||!phase||phase.phase==='idle')return null;
   const dx=g.targetPosition?g.targetPosition.x-actor.position.x:actor.presentationFacingX??1;
@@ -105,6 +108,7 @@ export function hostileMeleePose(actor, tick) {
 // Real fists, claws, mandibles and weapons replace their idle carried parts.
 // They are drawn at body height. No warning is painted on the ground.
 export function drawHostileMeleeLimb(c,pose,flash=false){
+  if(drawDungeonMobMeleeLimbV2A(c,pose,flash)||drawDungeonMobMeleeLimbV2B(c,pose,flash))return;
   if(!pose)return;
   const {family,body,limb}=pose;
   if(!['golem','gargoyle','rust_nibbler','animated_armor','corroded_golem'].includes(family))return;
@@ -148,6 +152,7 @@ export function hostileContactPose(contact,age){
 // A local contact flourish survives a missed impact frame. Nothing joins the
 // enemy to the victim: all marks stay within eleven pixels of the near face.
 export function drawHostileContact(c,contact,age){
+  if(drawDungeonMobContactV2A(c,contact,age)||drawDungeonMobContactV2B(c,contact,age))return;
   const pose=hostileContactPose(contact,age);if(!pose)return;
   const {family,progress:t,direction,contactPosition:p}=pose,s=1-t;
   c.save();c.translate(p.x,p.y-8);c.rotate(Math.atan2(direction.y,direction.x));c.globalAlpha*=(1-t)**1.25;c.lineCap='round';

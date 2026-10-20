@@ -2,7 +2,9 @@ import { freezeWire, canonicalStringify, requireContract } from '../contracts/wi
 import { combatIntegerWire } from '../contracts/combat_integer.js';
 import { resolveThreatPower, THREAT_TIERS, BASELINE_PROGRESSION_POWER } from '../contracts/threat_power.js';
 import {DUNGEON_MOBS_V1_ENEMIES} from './dungeon_mobs_v1.js';
+import {DUNGEON_MOBS_V2_ENEMIES} from './dungeon_mobs_v2.js';
 export {DUNGEON_MOBS_V1_ENEMIES} from './dungeon_mobs_v1.js';
+export {DUNGEON_MOBS_V2_ENEMIES} from './dungeon_mobs_v2.js';
 export const ORDINARY_CATALOG_VERSION='d11-world-creatures-v1';
 // Dungeon's source threshold remains part of the immutable content catalog.
 // World applies a modest runtime acquisition adaptation without changing that
@@ -37,7 +39,8 @@ export const LEGACY_ORDINARY_ENEMIES=freezeWire([
 ].map(d=>({...d,contentDefinitionId:d.enemyDefinitionId})));
 // Catalog extension is append-only: historical indices own their exact profile
 // IDs. Migration can validate the legacy arrays without changing old records.
-export const ORDINARY_ENEMIES=Object.freeze([...LEGACY_ORDINARY_ENEMIES,...DUNGEON_MOBS_V1_ENEMIES]);
+export const DUNGEON_MOBS_V1_CATALOG_ENEMIES=Object.freeze([...LEGACY_ORDINARY_ENEMIES,...DUNGEON_MOBS_V1_ENEMIES]);
+export const ORDINARY_ENEMIES=Object.freeze([...DUNGEON_MOBS_V1_CATALOG_ENEMIES,...DUNGEON_MOBS_V2_ENEMIES]);
 export function resolveOrdinaryProfile(enemy,tier,progressionPower=BASELINE_PROGRESSION_POWER){
   requireContract(ORDINARY_ENEMIES.includes(enemy),'Unknown ordinary definition');const i=ORDINARY_ENEMIES.indexOf(enemy),rank=THREAT_TIERS.indexOf(tier),power=resolveThreatPower(progressionPower,tier);
   return freezeWire({contentDefinitionId:'def:d420'+(i*4+rank+1).toString(16).padStart(28,'0'),kind:'actorProfile',profileKey:`ordinary-${enemy.family.replaceAll('_','-')}-${tier.toLowerCase()}`,
@@ -46,7 +49,9 @@ export function resolveOrdinaryProfile(enemy,tier,progressionPower=BASELINE_PROG
 }
 export const ORDINARY_PROFILES=freezeWire(ORDINARY_ENEMIES.flatMap(d=>THREAT_TIERS.map(tier=>resolveOrdinaryProfile(d,tier))));
 export const LEGACY_ORDINARY_PROFILES=Object.freeze(ORDINARY_PROFILES.slice(0,LEGACY_ORDINARY_ENEMIES.length*THREAT_TIERS.length));
-export const DUNGEON_MOBS_V1_PROFILES=Object.freeze(ORDINARY_PROFILES.slice(LEGACY_ORDINARY_PROFILES.length));
+export const DUNGEON_MOBS_V1_CATALOG_PROFILES=Object.freeze(ORDINARY_PROFILES.slice(0,DUNGEON_MOBS_V1_CATALOG_ENEMIES.length*THREAT_TIERS.length));
+export const DUNGEON_MOBS_V1_PROFILES=Object.freeze(DUNGEON_MOBS_V1_CATALOG_PROFILES.slice(LEGACY_ORDINARY_PROFILES.length));
+export const DUNGEON_MOBS_V2_PROFILES=Object.freeze(ORDINARY_PROFILES.slice(DUNGEON_MOBS_V1_CATALOG_PROFILES.length));
 // Immutable catalog lookup: horde AI/presentation call this for every active actor.
 const enemyByProfile=new Map(ORDINARY_PROFILES.map(p=>[p.contentDefinitionId,ORDINARY_ENEMIES.find(d=>p.profileKey.startsWith(`ordinary-${d.family.replaceAll('_','-')}-`))]));
 export function ordinaryEnemyForProfile(id){return enemyByProfile.get(id)??null;}

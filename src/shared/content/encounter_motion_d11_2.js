@@ -1,5 +1,6 @@
 import {freezeWire} from '../contracts/wire.js';
 import {DUNGEON_MOBS_V1_MELEE_MOTION} from './dungeon_mobs_v1.js';
+import {DUNGEON_MOBS_V2_MELEE_MOTION} from './dungeon_mobs_v2.js';
 
 export const ENCOUNTER_CONTAINMENT_D11_2_VERSION='encounter-containment-d11.2-v1';
 export const HOSTILE_MOTION_D11_2_VERSION='hostile-motion-d11.2-v1';
@@ -18,7 +19,7 @@ export const LEGACY_HOSTILE_MELEE_MOTION_D11_2=freezeWire({
  animated_armor:{windupTicks:14,impactTicks:3,recoveryTicks:12},
  cursed_blade:{windupTicks:9,impactTicks:3,recoveryTicks:8}
 });
-export const HOSTILE_MELEE_MOTION_D11_2=freezeWire({...LEGACY_HOSTILE_MELEE_MOTION_D11_2,...DUNGEON_MOBS_V1_MELEE_MOTION});
+export const HOSTILE_MELEE_MOTION_D11_2=freezeWire({...LEGACY_HOSTILE_MELEE_MOTION_D11_2,...DUNGEON_MOBS_V1_MELEE_MOTION,...DUNGEON_MOBS_V2_MELEE_MOTION});
 
 export const hostileMeleeMotionD11_2=family=>HOSTILE_MELEE_MOTION_D11_2[family]??null;
 
