@@ -11,5 +11,23 @@
   "workerModulesByteIdentical": 271,
   "canonicalAndPackagedWorkerImportSmokes": 2,
   "workerGraphReused": true,
-  "nativeReview": "Pending final live review; focused checks and local rendered frames passed."
+  "nativeReview": {
+    "liveRelease": "dungeon-mobs-v2-89953a76a499",
+    "later14GalleryRendered": true,
+    "later14ReplayControlPassed": true,
+    "firstBatchGalleryRendered": true,
+    "original7GalleryRendered": true,
+    "original7ReplayControlPassed": true,
+    "existingCampaignReopened": true,
+    "seed": "5ff95b65dd5246b10c5bd33dbaffaeee",
+    "reservedSites": 35,
+    "boundSites": 2,
+    "level": 1,
+    "hp": 100,
+    "xp": 0,
+    "gold": 0,
+    "gameBrowserErrors": 0,
+    "later14GalleryBrowserErrors": 0,
+    "scope": "Desktop gallery and existing-campaign reopening. No new claim of native fights for every family, phone performance or online multiplayer."
+  }
 }
