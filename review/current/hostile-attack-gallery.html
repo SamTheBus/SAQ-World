@@ -1,33 +1,45 @@
 <!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hostile attack render inspection</title>
+<title>Family attack render inspection</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#141b20;color:#e9e4d7;font:14px system-ui,sans-serif}main{max-width:1160px;margin:0 auto;padding:18px 20px}h1{font-size:23px;margin:0 0 5px}p{margin:0 0 12px;color:#bcc7c8;line-height:1.4}.grid{display:grid;grid-template-columns:140px repeat(3,minmax(0,1fr));gap:3px 8px;align-items:center}.heading{font-size:12px;font-weight:700;color:#e1caa4;text-transform:uppercase;letter-spacing:.06em;padding:5px 0}.family{font-weight:650;font-size:13px}.cell{background:#1e292e;border:1px solid #354349;border-radius:5px;overflow:hidden}canvas{display:block;width:100%;height:88px}footer{margin-top:12px;font-size:12px;color:#acbabd}@media(max-width:760px){main{padding:12px 10px}.grid{grid-template-columns:104px repeat(3,minmax(0,1fr));gap:3px 4px}h1{font-size:20px}.family{font-size:11px}canvas{height:86px}.heading{font-size:10px}p{font-size:12px}}
+*{box-sizing:border-box}body{margin:0;background:#141b20;color:#e9e4d7;font:14px system-ui,sans-serif}main{max-width:1160px;margin:0 auto;padding:16px 20px}h1{font-size:23px;margin:0 0 5px}p{margin:0 0 10px;color:#bcc7c8;line-height:1.4}.controls{display:flex;align-items:center;gap:12px;margin:0 0 8px;font-size:12px;color:#bac8c8}button{background:#3b555c;color:#fff;border:1px solid #6c858b;border-radius:5px;padding:6px 12px;font-weight:650;cursor:pointer}.grid{display:grid;grid-template-columns:140px repeat(3,minmax(0,1fr));gap:3px 8px;align-items:center}.heading{font-size:12px;font-weight:700;color:#e1caa4;text-transform:uppercase;letter-spacing:.06em;padding:5px 0}.family{font-weight:650;font-size:13px}.family small{display:block;margin-top:3px;font-weight:400;font-size:11px;color:#99afb2}.cell{background:#1e292e;border:1px solid #354349;border-radius:5px;overflow:hidden}canvas{display:block;width:100%;height:88px}footer{margin-top:10px;font-size:12px;color:#acbabd}@media(max-width:760px){main{padding:12px 10px}.grid{grid-template-columns:104px repeat(3,minmax(0,1fr));gap:3px 4px}h1{font-size:20px}.family{font-size:11px}.family small{font-size:9px}canvas{height:86px}.heading{font-size:10px}p{font-size:12px}}
 </style>
-<main><h1>Enemy attack clarity</h1><p>Render inspection using the actual creature painters. Each hero reference sits at the maximum ordinary melee boundary: <strong>51.8 px between centers</strong>, with a 9 px combat radius. This gallery is a drawing check; native combat is verified separately.</p>
-<div class="grid" id="gallery"><div></div><div class="heading">Idle</div><div class="heading">Directed warning</div><div class="heading">Strike / contact</div></div>
-<footer>Amber marks show the incoming reach. The body extends into the strike; the ivory trail ends at the hero’s near surface. Confirmed hits retain a short contact trail even when a rendered frame skips the impact pose.</footer></main>
+<main><h1>Seven attacks, seven body tells</h1><p>Actual creature painters at the ordinary melee boundary: <strong>51.8 px between centers</strong>, hero combat radius 9 px. Routine warnings use the creature or its weapon. This is render inspection; gameplay timing and damage are unchanged.</p>
+<div class="controls"><button id="play" type="button">Play attack replay</button><span>Replay shows the actual phase durations at ½ speed, including recovery.</span></div>
+<div class="grid" id="gallery"><div></div><div class="heading">Idle</div><div class="heading">Windup</div><div class="heading" id="strike-label">Strike / contact</div></div>
+<footer>No routine ground lanes or source-to-target beams. Small family contact effects remain visible briefly after a confirmed hit. Special, elite and boss ground telegraphs remain separate.</footer></main>
 <script type="module">
 import {ORDINARY_ENEMIES} from '../../src/shared/content/ordinary_enemies.js';
 import {drawCreatureD11} from '../../src/client/creature_presentation_d11.js';
+import {drawHostileContact} from '../../src/client/hostile_melee_presentation.js';
 import {WORLD_CLASSIC_MELEE_TIMING} from '../../src/shared/content/world_hostile_melee.js';
 import {hostileMeleeMotionD11_2} from '../../src/shared/content/encounter_motion_d11_2.js';
-import {drawCombatImpact} from '../../src/client/combat_vfx.js';
-const gallery=document.querySelector('#gallery');
+const gallery=document.querySelector('#gallery'),replays=[],gestures={sprout:'Quick cap / head jab',slime:'Compress → hop → body slam',golem:'Brace → heavy stone punch',gargoyle:'Fold wings → pounce / claw',rust_nibbler:'Recoil → mandible bite',animated_armor:'Plant → raise weapon → swing',cursed_blade:'Turn → thrust → sweep back'};
 for(const enemy of ORDINARY_ENEMIES){
-  const name=document.createElement('div');name.className='family';name.textContent=enemy.name;gallery.append(name);
-  for(const phase of ['idle','windup','impact']){
-    const cell=document.createElement('div');cell.className='cell';const canvas=document.createElement('canvas');
-    canvas.width=640;canvas.height=224;canvas.setAttribute('aria-label',`${enemy.name}: ${phase}`);cell.append(canvas);gallery.append(cell);
-    const c=canvas.getContext('2d');c.scale(2,2);c.translate(20,0);c.scale(2,2);
-    const source={x:40,y:38},target={x:91.8,y:38},timing=WORLD_CLASSIC_MELEE_TIMING[enemy.family]??hostileMeleeMotionD11_2(enemy.family),end=phase==='windup'?timing.windupTicks:timing.impactTicks,tick=phase==='windup'?end*.78:0;
-    c.strokeStyle='#586b70';c.setLineDash([1.5,2]);c.lineWidth=.5;c.beginPath();c.moveTo(source.x,source.y);c.lineTo(target.x,target.y);c.stroke();c.setLineDash([]);
-    c.fillStyle='#39596b';c.strokeStyle='#a2c1d0';c.lineWidth=.8;c.beginPath();c.arc(target.x,target.y,9,0,Math.PI*2);c.fill();c.stroke();
-    c.fillStyle='#d8e6ea';c.beginPath();c.arc(target.x,target.y-10,3.4,0,Math.PI*2);c.fill();
-    drawCreatureD11(c,{alive:true,enemyFamily:enemy.family,position:source,visualSeed:7,hp:{m:1,e:0},maxHp:{m:1,e:0},hullRadius:10,presentationFacingX:1,
-      meleeAction:phase!=='idle',meleePhase:{phase,phaseStartedTick:0,phaseEndsTick:end,targetEntityId:'hero',actionSequence:1},
-      meleeGeometry:{mode:'clearHullGap',reach:32,sourceRadius:10.8,targetRadius:9,targetPosition:target}},tick);
-    if(phase==='impact')drawCombatImpact(c,'hostile',target.x,target.y,1,0,25,false);
+  const name=document.createElement('div');name.className='family';name.append(document.createTextNode(enemy.name));const detail=document.createElement('small');detail.textContent=gestures[enemy.family];name.append(detail);gallery.append(name);
+  for(const column of ['idle','windup','impact']){
+    const cell=document.createElement('div');cell.className='cell';const canvas=document.createElement('canvas');canvas.width=640;canvas.height=224;canvas.setAttribute('aria-label',`${enemy.name}: ${column}`);cell.append(canvas);gallery.append(cell);
+    const c=canvas.getContext('2d'),timing=WORLD_CLASSIC_MELEE_TIMING[enemy.family]??hostileMeleeMotionD11_2(enemy.family),source={x:40,y:38},target={x:91.8,y:38};
+    function render(phase=column,p=phase==='windup'?.78:0,hitAge=phase==='impact'?25:null){
+      c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,canvas.width,canvas.height);c.scale(2,2);c.translate(20,0);c.scale(2,2);
+      c.fillStyle='#39596b';c.strokeStyle='#a2c1d0';c.lineWidth=.8;c.beginPath();c.arc(target.x,target.y,9,0,Math.PI*2);c.fill();c.stroke();c.fillStyle='#d8e6ea';c.beginPath();c.arc(target.x,target.y-10,3.4,0,Math.PI*2);c.fill();
+      const end=phase==='windup'?timing.windupTicks:phase==='recovery'?timing.recoveryTicks:timing.impactTicks;
+      drawCreatureD11(c,{alive:true,enemyFamily:enemy.family,position:source,visualSeed:7,hp:{m:1,e:0},maxHp:{m:1,e:0},hullRadius:10,presentationFacingX:1,
+        meleeAction:phase!=='idle',meleePhase:{phase,phaseStartedTick:0,phaseEndsTick:end,targetEntityId:'hero',actionSequence:1},
+        meleeGeometry:{mode:'clearHullGap',reach:32,sourceRadius:10.8,targetRadius:9,targetPosition:target}},p*end);
+      if(hitAge!==null)drawHostileContact(c,{family:enemy.family,sourcePosition:source,targetPosition:target,reach:32,mode:'clearHullGap',sourceRadius:10.8,targetRadius:9},hitAge);
+    }
+    render();if(column==='impact')replays.push({render,timing});
   }
 }
+let running=false,started=0;const button=document.querySelector('#play'),label=document.querySelector('#strike-label');
+function frame(time){if(!running)return;const elapsed=(time-started)*.03;
+  for(const {render,timing:t} of replays){const n=elapsed%(t.windupTicks+t.impactTicks+t.recoveryTicks+14);
+    if(n<t.windupTicks)render('windup',n/t.windupTicks,null);
+    else if(n<t.windupTicks+t.impactTicks)render('impact',(n-t.windupTicks)/t.impactTicks,(n-t.windupTicks)*1000/60);
+    else if(n<t.windupTicks+t.impactTicks+t.recoveryTicks)render('recovery',(n-t.windupTicks-t.impactTicks)/t.recoveryTicks,(n-t.windupTicks)*1000/60);
+    else render('idle',0,null);
+  }requestAnimationFrame(frame);
+}
+button.addEventListener('click',()=>{running=!running;button.textContent=running?'Pause replay':'Play attack replay';label.textContent=running?'Replay · ½ speed':'Strike / contact';if(running){started=performance.now();requestAnimationFrame(frame);}else for(const r of replays)r.render();});
 </script></html>
