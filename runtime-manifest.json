@@ -1,13 +1,14 @@
 {
-  "runtimeId": "9f1ec755884b6b4d",
-  "runtimeSha256": "9f1ec755884b6b4da540dc7c33393f4fc8b595b2511f68a014e5c46963ab7e2d",
-  "parentRuntimeId": "3ff4292c108816eb",
-  "reviewRevision": 76,
+  "runtimeId": "dac078c9602d6405",
+  "runtimeSha256": "dac078c9602d6405a5257cb0e20d72e5e70e2f7a3c541b78c0a2affc2e71257b",
+  "parentRuntimeId": "9f1ec755884b6b4d",
+  "reviewRevision": 77,
   "changedRuntimeFiles": [
     "index.html",
     "src/client/playable_client.js",
     "src/client/world_renderer.js",
     "src/dev/planned_world_review_v1.js",
+    "src/entrypoints/browser_boot.js",
     "src/entrypoints/playable_browser.js",
     "src/shared/content/alpha_site_population_v1.js",
     "src/shared/contracts/alpha_population_v1.js",
@@ -453,8 +454,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 21819,
-      "sha256": "72898d38f8fbbf827fab94c0a7c8ab312531757776720813c67ae09ff41fc1b7"
+      "bytes": 21886,
+      "sha256": "e8fcc1e73fa42c19a03c8c6fa41ed8bd9445e16e2ef71f3c5398d74b7897e2e2"
     },
     {
       "path": "manifest.json",
@@ -1238,8 +1239,8 @@
     },
     {
       "path": "src/dev/planned_world_review_v1.js",
-      "bytes": 19854,
-      "sha256": "b519e1393d90fd1aacc5c57a0a439850f62d07afa05ebb7b701fbc74f1f8a1d1"
+      "bytes": 19855,
+      "sha256": "214237aa58fb38943f81490470a7fc031468936016104086b8d98402ac33a332"
     },
     {
       "path": "src/entrypoints/activity_save_worker.js",
@@ -1248,8 +1249,8 @@
     },
     {
       "path": "src/entrypoints/browser_boot.js",
-      "bytes": 428,
-      "sha256": "f68d834a9a769577dcf6f5db11d06c5843f8aa0d6a9bb601868ea7e8b9a2884e"
+      "bytes": 1686,
+      "sha256": "b80caec417daa2868e759abf241f9322f390e31e5293b73326a51a2c661505bc"
     },
     {
       "path": "src/entrypoints/playable_browser.js",
