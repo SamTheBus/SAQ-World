@@ -1,0 +1,98 @@
+import {createWorldPackSampler} from './world_combat_packs_v1.js';
+import {hasSettlementLife} from '../content/settlement_life_v1.js';
+import {createPlannedVillageTiles,villageChunkBlockers} from './planned_village_v1.js';
+import {createFerryOverlay} from './ferry_overlay_v1.js';
+import {newPopulationSelection,hasAlphaPopulation} from '../content/alpha_site_population_v1.js';
+import {CRYPT_POPULATION_VERSION} from '../content/crypt_population_v3.js';
+import {createPopulationCryptExterior,createPopulationRuinExterior,derivePopulationRuinReservation,completePopulationReservation} from './alpha_population_runtime_v1.js';
+import {PLANNED_CRYPT_V2,cryptIdsForBinding} from '../content/planned_crypt_policy_v2.js';
+import {createPlannedCryptExteriorV2,derivePlannedCryptReservationV2} from './planned_crypt_v2.js';
+import {PLANNED_CRYPT_VERSION,plannedCryptIds} from '../content/planned_crypt_policy_v1.js';
+import {createPlannedCryptExterior,derivePlannedCryptReservation} from './planned_crypt_v1.js';
+import {createPlannedRuinExteriorV2,derivePlannedRuinReservationV2} from './planned_ruin_v2.js';
+import {PLANNED_RUIN_V2,plannedRuinIdsV2} from '../content/planned_ruin_policy_v2.js';
+import {STANDARD_RUIN_KIT_VERSION} from '../content/planned_ruin_standard_kit_v1.js';
+import {PLANNED_RUIN_EXTERIOR_VERSION} from '../content/planned_ruin_exterior_v4.js';
+import {plannedRuinIds,PLANNED_RUIN_VERSION} from '../content/planned_ruin_policy_v1.js';
+import {createPlannedRuinExterior,derivePlannedRuinReservation} from './planned_ruin_v1.js';
+import {createRuinGrovePlan,RUIN_GROVE_VERSION,isRuinGrovePilot} from './ruin_groves_v1.js';
+import {plannedFortIdsV2 as plannedFortIds,PLANNED_FORT_V2} from '../content/planned_fort_policy_v2.js';
+import {PLANNED_FORT_VERSION} from '../content/planned_fort_policy_v1.js';
+import {createPlannedFortExterior,derivePlannedFortReservation} from './planned_fort_v1.js';
+import {createPlannedFortExteriorV2,derivePlannedFortReservationV2} from './planned_fort_v2.js';
+import {plannedCaveIds} from '../content/planned_cave_population_v2.js';
+import {PLANNED_CAVE_VERSION,PLANNED_CAVE_ID} from '../content/planned_cave_policy_v1.js';
+import {createPlannedCaveExterior,derivePlannedCaveReservation} from './planned_cave_v1.js';
+import {createPlannedTownTiles,townChunkBlockers} from './planned_town_v1.js';
+import {createOutdoorBridgeDecks} from './outdoor_bridge_v1.js';
+import {createPlannedTerrain,PLANNED_WORLD_VERSION,PLANNED_ADDRESS_OFFSET,mixPlan,validatePlannedBinding,requirePlan} from './planned_world_foundation_v1.js';
+import {worldIdentity} from './world_identity_d9.js';
+import {NATURAL_CLUSTER_VERSION,createNaturalClusterSampler,createNaturalProtection} from './natural_clusters_v1.js';
+import {freezeWire} from '../contracts/wire.js';
+export function createPlannedChunkGenerator(asset,binding,sha256){
+ validatePlannedBinding(binding);requirePlan(asset.assetId===binding.assetId&&asset.routeHash===binding.routeHash&&asset.upstream.planHash===binding.planHash,'Planned chunk input identity mismatch');requirePlan(hasAlphaPopulation(binding)===Boolean(asset.populationOverlay),'Missing or unexpected population overlay');const terrain=createPlannedTerrain(asset),routePages=new Map(asset.routes.routePages.map(p=>[p.key,p.rows]));
+ const caveIds=plannedCaveIds(binding),caves=caveIds.map(id=>createPlannedCaveExterior(asset,id,terrain)),caveByChunk=new Map();for(const cave of caves)for(const c of [cave.footprint,cave.approach]){const k=c.x+','+c.y;requirePlan(!caveByChunk.has(k),'Populated Cave envelopes overlap');caveByChunk.set(k,cave);}const caveReservations=Promise.all(caveIds.map(reservationId=>derivePlannedCaveReservation(asset,binding,sha256,{reservationId,terrain}).then(r=>completePopulationReservation(r,asset,binding,sha256))));
+ const fortIds=plannedFortIds(binding),forts=fortIds.map(id=>(binding.fortPrototype===PLANNED_FORT_V2?createPlannedFortExteriorV2:createPlannedFortExterior)(asset,id,terrain)),fortByChunk=new Map();for(const fort of forts)for(const c of [...fort.reservation.footprint,...fort.reservation.approach]){const k=c.x+','+c.y;requirePlan(!fortByChunk.has(k)&&!caveByChunk.has(k),'Fort/Cave envelopes overlap');fortByChunk.set(k,fort);}const fortReservations=Promise.all(fortIds.map(reservationId=>(binding.fortPrototype===PLANNED_FORT_V2?derivePlannedFortReservationV2:derivePlannedFortReservation)(asset,binding,sha256,{reservationId,terrain}).then(r=>completePopulationReservation(r,asset,binding,sha256))));
+ const ruinIds=plannedRuinIdsV2(binding),ruins=ruinIds.map(id=>hasAlphaPopulation(binding)&&newPopulationSelection(id)?createPopulationRuinExterior(asset,id,terrain):(binding.ruinPrototype===PLANNED_RUIN_V2?createPlannedRuinExteriorV2:createPlannedRuinExterior)(asset,id,terrain)),ruinByChunk=new Map();for(const ruin of ruins)for(const c of [...ruin.reservation.footprint,...ruin.reservation.approach]){const k=c.x+','+c.y;requirePlan(!ruinByChunk.has(k)&&!fortByChunk.has(k)&&!caveByChunk.has(k),'Ruin protected envelope overlap');ruinByChunk.set(k,ruin);}const ruinReservations=Promise.all(ruinIds.map(reservationId=>hasAlphaPopulation(binding)&&newPopulationSelection(reservationId)?derivePopulationRuinReservation(asset,binding,sha256,{reservationId,terrain}):(binding.ruinPrototype===PLANNED_RUIN_V2?derivePlannedRuinReservationV2:derivePlannedRuinReservation)(asset,binding,sha256,{reservationId,terrain}).then(r=>completePopulationReservation(r,asset,binding,sha256))));
+ const cryptIds=cryptIdsForBinding(binding),crypts=cryptIds.map(id=>hasAlphaPopulation(binding)&&newPopulationSelection(id)?createPopulationCryptExterior(asset,id,terrain):(id.includes(':small:')?createPlannedCryptExterior:createPlannedCryptExteriorV2)(asset,id,terrain));for(const crypt of crypts)for(const c of [...crypt.reservation.footprint,...crypt.reservation.approach]){const key=c.x+','+c.y;requirePlan(!ruinByChunk.has(key)&&!caveByChunk.has(key)&&!fortByChunk.has(key),'Crypt protected overlap');ruinByChunk.set(key,crypt);}const cryptReservations=Promise.all(cryptIds.map(reservationId=>(reservationId.includes(':small:')?derivePlannedCryptReservation:derivePlannedCryptReservationV2)(asset,binding,sha256,{reservationId,terrain}).then(r=>completePopulationReservation(r,asset,binding,sha256))));
+ const townTiles=binding.townPrototype?createPlannedTownTiles(asset,terrain):null,villageTiles=hasSettlementLife(binding)?createPlannedVillageTiles(asset,terrain,binding):null;
+ const bridgeDecks=createOutdoorBridgeDecks(asset.routes.bridges??[],terrain);
+ const mapFeatures=new Map();if(['planned-world-shoreline-v2','planned-world-water-v3'].includes(asset.version))for(const e of asset.routes.edges)for(let i=0;i<e.path.length;i++){const q=e.path[i],prev=e.path[i-1]??q,steps=Math.max(Math.abs(q.x-prev.x),Math.abs(q.y-prev.y));for(let n=0;n<=steps;n++){const x=Math.round(prev.x+(q.x-prev.x)*n/(steps||1)),y=Math.round(prev.y+(q.y-prev.y)*n/(steps||1)),key=y*terrain.widthTiles+x,value=e.kind==='main'||e.kind==='secondary'?'R':'T';if(mapFeatures.get(key)!=='R')mapFeatures.set(key,value);}}
+ // Optional versioned exploration layer. It never alters the immutable base road graph.
+ const wilderness=asset.wildernessExtension??null,branchTrails=new Map((wilderness?.trailTiles??[]).map(c=>[c.x+','+c.y,c.kind])),eventClearings=new Set((wilderness?.eventCapacities??[]).flatMap(e=>e.cells.map(c=>c.x+','+c.y)));
+ for(const c of wilderness?.trailTiles??[])if(c.kind==='footpath'&&mapFeatures.get(c.y*terrain.widthTiles+c.x)!=='R')mapFeatures.set(c.y*terrain.widthTiles+c.x,'T');
+ const ferry=createFerryOverlay(binding);
+ const routeAt=(x,y)=>Math.max(ferry.at(x,y)?1:0,Number(routePages.get(Math.floor(x/32)+','+Math.floor(y/26))?.[y%26]?.[x%32]??0));
+ // Frozen native input for the already approved authored Small ruin grove.
+ // This legacy field is never used by the reusable world cluster sampler.
+ function acceptedPilotTile(x,y){const b=terrain.base(x,y),deck=bridgeDecks.get(x+','+y);if(deck)return {...b,walkable:true,kind:'bridge',underlyingKind:deck.underlyingKind,bridgeId:deck.id,collision:'1',material:deck.material,route:routeAt(x,y)||1};if(!b.walkable)return {...b,collision:'2',material:b.kind==='ocean'?'O':b.kind==='lake'?'L':'W',route:0};const route=routeAt(x,y);let shoulder=route>0||Math.abs(x-asset.spawnTile.x)<=3&&Math.abs(y-asset.spawnTile.y)<=3;for(let yy=y-1;yy<=y+1&&!shoulder;yy++)for(let xx=x-1;xx<=x+1;xx++)if(routeAt(xx,yy))shoulder=true;
+  const field=mixPlan(asset.seedDigest+'/vegetation/'+Math.floor(x/4)+'/'+Math.floor(y/4)),density=b.biome==='w'||b.biome==='t'?13:b.biome==='m'?7:4,blocked=!shoulder&&!b.bank&&b.kind!=='shore'&&field%100<density;
+  return {...b,collision:blocked?'2':'1',material:route>=2?'r':route===1?'p':b.kind==='shore'?((b.shoreClassId?b.shoreClassId.includes('beach'):b.slope<350&&mixPlan(asset.seedDigest+'/coast/'+Math.floor(x/8)+'/'+Math.floor(y/8))%5<2)?'C':'K'):'g',route};
+ }
+ const pilotRuins=ruins.filter(r=>isRuinGrovePilot(asset,r.reservation)),groveByRuin=new Map(pilotRuins.map(r=>[r,createRuinGrovePlan(r,asset.campaignSeedHex,acceptedPilotTile)]));
+ const nature=createNaturalClusterSampler(asset.seedDigest),protection=createNaturalProtection(asset,{ruinFootprints:[...ruins,...crypts].flatMap(r=>r.reservation.footprint)}),nativeCache=new Map();
+ function originalTile(x,y){
+  // Existing authored pilot geometry/composition is an explicit local overlay.
+  if(pilotRuins.some(r=>r.inside(x,y)))return acceptedPilotTile(x,y);
+  const key=x+','+y;if(nativeCache.has(key))return nativeCache.get(key);
+  const b=terrain.base(x,y),deck=bridgeDecks.get(key),route=routeAt(x,y);let result;
+  if(deck)result={...b,walkable:true,kind:'bridge',underlyingKind:deck.underlyingKind,bridgeId:deck.id,collision:'1',material:deck.material,route:route||1};
+  else if(!b.walkable)result={...b,collision:'2',material:b.kind==='ocean'?'O':b.kind==='lake'?'L':'W',route:0};
+  else{
+   let clear=route>0||b.bank||b.kind==='shore'||protection.at(x,y)||Math.abs(x-asset.spawnTile.x)<=3&&Math.abs(y-asset.spawnTile.y)<=3;
+   for(let dy=-1;dy<=1&&!clear;dy++)for(let dx=-1;dx<=1;dx++)if(routeAt(x+dx,y+dy)||bridgeDecks.has((x+dx)+','+(y+dy))||protection.at(x+dx,y+dy)){clear=true;break;}
+   let obstacle=clear?null:nature.sample(x,y,b.biome);
+   if(obstacle)for(let dy=-1;dy<=1&&obstacle;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy,q=terrain.base(xx,yy),r=ruinByChunk.get(Math.floor(xx/32)+','+Math.floor(yy/26));if(!q.walkable||q.bank||q.kind==='shore'||r&&(r.ownsStructure(xx,yy)||r.trail.has(xx+','+yy)||r.circulation.has(xx+','+yy))){obstacle=null;break;}}
+   result={...b,collision:obstacle?'2':'1',material:route>=2?'r':route===1?'p':b.kind==='shore'?((b.shoreClassId?b.shoreClassId.includes('beach'):b.slope<350&&mixPlan(asset.seedDigest+'/coast/'+Math.floor(x/8)+'/'+Math.floor(y/8))%5<2)?'C':'K'):'g',route,...(obstacle?{naturalKind:obstacle.kind,naturalClusterId:obstacle.clusterId}: {})};
+  }
+  if(nativeCache.size===4096)nativeCache.delete(nativeCache.keys().next().value);Object.freeze(result);nativeCache.set(key,result);return result;
+ }
+ const tile=(x,y)=>{const native=townTiles?townTiles(x,y,originalTile(x,y)):originalTile(x,y),b=villageTiles?villageTiles(x,y,native):native;const cave=caveByChunk.get(Math.floor(x/32)+','+Math.floor(y/26));const fort=fortByChunk.get(Math.floor(x/32)+','+Math.floor(y/26));const ruin=ruinByChunk.get(Math.floor(x/32)+','+Math.floor(y/26));const built=ruin?ruin.apply(x,y,b):fort?fort.apply(x,y,b):cave?cave.apply(x,y,b):b,result=groveByRuin.get(ruin)?.apply(x,y,built)??built;
+  if(!wilderness||!result.walkable||result.caveExterior||result.fortExterior||result.ruinExterior||result.town||result.material==='H'||result.material==='V')return result;
+  const id=x+','+y,track=branchTrails.get(id),clearing=eventClearings.has(id);
+  if(!track&&!clearing)return result;
+  // Preserve the established hard road network and hydrology. Worn ground
+  // removes vegetation but doesn't become an announced road on the map.
+  if(result.route>0&&result.material==='r')return result;
+  return {...result,collision:'1',material:track==='footpath'?'p':result.material,route:track==='footpath'?1:result.route,wildernessTrack:track??null,wildernessClearing:clearing};};
+ const packAnchors=createWorldPackSampler(asset,binding,tile);
+ async function generate({seed,chunkX,chunkY}){
+  requirePlan(seed===asset.campaignSeedHex,'Planned campaign seed mismatch');const cx=Number(BigInt(chunkX))-PLANNED_ADDRESS_OFFSET.chunkX,cy=Number(BigInt(chunkY))-PLANNED_ADDRESS_OFFSET.chunkY;requirePlan(Number.isSafeInteger(cx)&&Number.isSafeInteger(cy),'Planned address range');
+  const reservations=[...await caveReservations,...await fortReservations,...await ruinReservations,...await cryptReservations],ruin=ruinByChunk.get(cx+','+cy),fort=fortByChunk.get(cx+','+cy),cave=caveByChunk.get(cx+','+cy),reserved=ruin?reservations.find(r=>r.socket.provenance.reservationId===ruin.reservation.id):fort?reservations.find(r=>r.socket.provenance.reservationId===fort.reservation.id):cave?reservations.find(r=>r.socket.provenance.reservationId===cave.reservation.id):null;const identity=await worldIdentity(PLANNED_WORLD_VERSION+'/'+NATURAL_CLUSTER_VERSION+'/'+seed+'/'+binding.assetHash+(binding.ferryHash?'/'+binding.ferryHash:'')+(binding.settlementLifeHash?'/'+binding.settlementLifeHash:'')+(binding.settlementServicesHash?'/'+binding.settlementServicesHash:'')+(binding.townPrototype?'/'+binding.townPrototype:'')+(binding.wildernessHash?'/'+binding.wildernessHash:'')+(ruin?'/'+([PLANNED_CRYPT_VERSION,PLANNED_CRYPT_V2,CRYPT_POPULATION_VERSION].includes(ruin.realizationVersion)?ruin.realizationVersion:ruin.realizationVersion===PLANNED_RUIN_V2?PLANNED_RUIN_V2:PLANNED_RUIN_VERSION)+'/'+PLANNED_RUIN_EXTERIOR_VERSION+(ruin.reservation.familyId==='site-family:ruin'&&ruin.reservation.tier==='standard'?'/'+STANDARD_RUIN_KIT_VERSION:'')+(isRuinGrovePilot(asset,ruin.reservation)?'/'+RUIN_GROVE_VERSION:''):fort?'/'+fort.realizationVersion:cave?'/'+PLANNED_CAVE_VERSION:''),'chunk',[chunkX,chunkY],sha256),collision=[],visual=[],biomes=[],centerline=[],clearance=[],mapRows=[],blockers=[];
+  for(let y=0;y<26;y++){let cr='',vr='',br='',rr='',sr='',mr='';for(let x=0;x<32;x++){const tx=cx*32+x,ty=cy*26+y,c=tile(tx,ty);cr+=c.collision;vr+=c.material;br+=c.biome;rr+=c.route?'1':'0';const f=ferry.at(tx,ty)?'T':mapFeatures.get(ty*terrain.widthTiles+tx);mr+=(c.caveExterior||c.fortExterior||c.ruinExterior)&&c.route?'T':c.town&&c.route?'R':f?(['H','V'].includes(c.material)?c.material:f):'?';let near=c.route>0;for(let yy=ty-1;yy<=ty+1&&!near;yy++)for(let xx=tx-1;xx<=tx+1;xx++)if(routeAt(xx,yy))near=true;sr+=(c.caveExterior||c.fortExterior||c.ruinExterior?c.collision==='1':near&&c.walkable)?'1':'0';}collision.push(cr);visual.push(vr);biomes.push(br);centerline.push(rr);clearance.push(sr);mapRows.push(mr);}
+  // Merge only vegetation, never ocean/channel collision, into existing art
+  // descriptors. Water is drawn as ground and blocks through the tile authority.
+  const townBlockers=[...(townTiles?townChunkBlockers(cx,cy):[]),...(villageTiles?villageChunkBlockers(cx,cy):[])];
+  const used=new Set(),matches=(x,y,a)=>{if(x>=32||y>=26||fort?.inside(cx*32+x,cy*26+y)||ruin?.ownsStructure(cx*32+x,cy*26+y)||collision[y][x]!=='2'||visual[y][x]!=='g'||used.has(y*32+x))return false;const b=tile(cx*32+x,cy*26+y);return b.naturalKind===a.naturalKind&&b.naturalClusterId===a.naturalClusterId&&b.biome===a.biome;};
+  for(let y=0;y<26;y++)for(let x=0;x<32;x++)if(!townBlockers.length&&!fort?.inside(cx*32+x,cy*26+y)&&!ruin?.ownsStructure(cx*32+x,cy*26+y)&&collision[y][x]==='2'&&visual[y][x]==='g'&&!used.has(y*32+x)){
+   const a=tile(cx*32+x,cy*26+y);let w=1,h=1;while(matches(x+w,y,a))w++;while(y+h<26&&Array.from({length:w},(_,i)=>matches(x+i,y+h,a)).every(Boolean))h++;
+   for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)used.add(yy*32+xx);
+   blockers.push({id:'obstacle:'+identity.digest.slice(0,16)+':'+x+':'+y,x,y,width:w,height:h,kind:a.naturalKind??(['r','l','d','s'].includes(a.biome)?'rock':'thicket'),detail:'',...(a.naturalClusterId?{naturalClusterId:a.naturalClusterId}: {})});
+  }
+  const originalArt=ruin?ruin.presentation(cx,cy,reserved.siteId):fort?fort.presentation(cx,cy,reserved.siteId):cave?cave.presentation(cx,cy,reserved.siteId):{blockers:[],decorations:[]},caveArt={...originalArt,decorations:[...originalArt.decorations,...(groveByRuin.get(ruin)?.presentation(cx,cy)??[])]};blockers.push(...townBlockers,...caveArt.blockers);
+  const c=terrain.base(cx*32+16,cy*26+13),biome=asset.biomeIds.find(id=>id.endsWith(':'+Object.keys({woodland:'w',grassland:'a',wetland:'m',upland:'r',desert:'d',frostland:'s',tropical:'t',volcanic:'l'}).find(k=>({woodland:'w',grassland:'a',wetland:'m',upland:'r',desert:'d',frostland:'s',tropical:'t',volcanic:'l'})[k]===c.biome)))?.replace('biome:','')??'ocean';
+  const edges={north:{cells:collision[0],terrain:visual[0]},south:{cells:collision[25],terrain:visual[25]},west:{cells:collision.map(r=>r[0]).join(''),terrain:visual.map(r=>r[0]).join('')},east:{cells:collision.map(r=>r[31]).join(''),terrain:visual.map(r=>r[31]).join('')}};
+  return freezeWire({version:PLANNED_WORLD_VERSION,identity,chunkX,chunkY,region:{version:asset.version,regionX:String(Math.floor(cx/2)),regionY:String(Math.floor(cy/2)),biome,name:biome==='ocean'?'Open ocean':biome[0].toUpperCase()+biome.slice(1)+' · Band '+c.band,minimumLevel:[1,1,6,11,21,41][c.band]??1,originWidthChunks:0,originHeightChunks:0},collision:{tileSize:32,width:32,height:26,tiles:collision},visual:{terrain:visual,biomes,blockers,...(caveArt.decorations.length?{decorations:caveArt.decorations}:{}),route:{centerline,clearance,...(['planned-world-shoreline-v2','planned-world-water-v3'].includes(asset.version)?{mapFeatures:mapRows}:{})}},edges,anchors:packAnchors(cx,cy,identity.digest),sites:reserved?.socket.entrance.chunkX===chunkX&&reserved?.socket.entrance.chunkY===chunkY?[reserved.socket]:[]});
+ }
+ return Object.freeze({generate,tile,terrain,routeAt,naturalStats:()=>({...nature.stats(),cachedTiles:nativeCache.size,tileCacheLimit:4096,protectedChunks:protection.chunkCount}),grovePlans:()=>[...groveByRuin.values()].map(p=>p.record),cryptReservations:()=>cryptReservations,ruinReservations:()=>ruinReservations,fortReservations:()=>fortReservations,caveReservations:()=>caveReservations,caveReservation:async()=>((await caveReservations).find(r=>r.socket.provenance.reservationId===PLANNED_CAVE_ID)??null)});
+}
