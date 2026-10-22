@@ -3,46 +3,6 @@ import {presentCombat} from '../shared/contracts/combat_amount.js';
 
 const TAU=Math.PI*2,INK='#11151a',CYAN='#65e6ec',LIGHT='#b1fcf0',BLUE='#298eaa',STONE='#405469',DARK='#233346';
 const clamp=v=>Math.max(0,Math.min(1,v));
-const ease=v=>{v=clamp(v);return v*v*(3-2*v);},mix=(a,b,p)=>a+(b-a)*p;
-
-// Pure presentation offsets: the committed warning direction and the observed
-// damage tick drive the tower. No actor, collision, or saved position changes.
-export function aegisBashPose(actor,tick){
- const b=actor.boss??{},liveAngle=b.shieldAngle??Math.PI/2;
- const pending=b.pendingAction?.ability==='shield_bash'?b.pendingAction:null;
- const last=b.bashPresentation??(b.lastAction?.ability==='shield_bash'?b.lastAction:null);
- const angle=pending?liveAngle:last?.angle??liveAngle,age=tick-(last?.resolvedTick??-999);
- const dx=Math.cos(angle),dy=Math.sin(angle),hover=Math.sin(tick*.075)*3.8;
- const rest={x:Math.cos(liveAngle)*43,y:Math.sin(liveAngle)*18-48+hover};
- const neutral={active:false,stage:'idle',angle,age,drive:0,brace:0,bodyX:0,bodyY:0,chainLag:0,towerX:rest.x,towerY:rest.y,towerTilt:0,scaleX:.55+.45*Math.abs(Math.sin(liveAngle))};
- if(actor.alive===false||b.bossDefinitionId!=='aegis_goliath')return neutral;
- const dazed=b.actionState==='dazed';
- const preparing=pending&&tick>=pending.startedTick&&tick<=pending.resolvesTick,following=last&&age>=0&&age<36;
- if(!preparing&&!following&&!dazed)return neutral;
- const brace=preparing?ease((tick-pending.startedTick)/24):1;
- const drive=preparing?ease((tick-(pending.resolvesTick-11))/11):1;
- const ready={x:dx*29,y:dy*29-27},contact={x:dx*55,y:dy*55-21};
- let x=mix(rest.x,ready.x,brace)+dx*26*drive,y=mix(rest.y,ready.y,brace)+(dy*26+6)*drive;
- let bodyX=dx*(-4*brace+11*drive),bodyY=dy*(-4*brace+11*drive)+2*brace,tilt=dx*(-.11*brace+.18*drive),chainLag=(-7*brace+15*drive)*dx;
- let amount=1,stage=preparing?(drive>0?'drive':'brace'):'contact';
- if(!preparing){
-  x=contact.x;y=contact.y;
-  if(dazed){
-   const drop=ease((age-3)/19),wake=1-ease((tick-((b.dazedUntilTick??tick+210)-18))/18);
-   x=mix(contact.x,dx*45,drop);y=mix(contact.y,dy*45-5,drop);
-   bodyX=mix(dx*7,dx*2,drop);bodyY=mix(dy*7+2,5,drop);tilt=mix(dx*.07,(dx<0?-1:1)*.27,drop);
-   chainLag=mix(dx*8,-dx*5,drop);amount=wake;
-   x=mix(rest.x,x,wake);y=mix(rest.y,y,wake);bodyX*=wake;bodyY*=wake;tilt*=wake;chainLag*=wake;
-   stage=drop<1?'overextended':'dazed';
-  }else{
-   const recover=ease((age-3)/33);amount=1-recover;
-   x=mix(contact.x,rest.x,recover);y=mix(contact.y,rest.y,recover);
-   bodyX*=amount;bodyY*=amount;tilt*=amount;chainLag=(dx*8*Math.cos(age*.24))*amount;
-   stage=age<=3?'contact':'recover';
-  }
- }
- return {...neutral,active:true,stage,drive:drive*amount,brace:brace*amount,bodyX,bodyY,chainLag,towerX:x,towerY:y,towerTilt:tilt,scaleX:mix(neutral.scaleX,.86+.14*Math.abs(dy),brace*amount)};
-}
 function plate(c,points,color,outline=true){c.beginPath();c.moveTo(...points[0]);for(const p of points.slice(1))c.lineTo(...p);c.closePath();c.fillStyle=color;c.fill();if(outline){c.strokeStyle=INK;c.lineWidth=1.26;c.lineJoin='round';c.stroke();}}
 function hex(c,r){const points=[];for(let i=0;i<6;i++){const a=i*TAU/6-Math.PI/6;points.push([Math.cos(a)*r,Math.sin(a)*r]);}return points;}
 function rune(c,x,y,scale=1){c.save();c.translate(x,y);c.scale(scale,scale);c.strokeStyle=CYAN;c.lineWidth=1.15;c.lineCap='square';c.beginPath();c.moveTo(-3,-3);c.lineTo(0,-6);c.lineTo(3,-3);c.moveTo(0,-6);c.lineTo(0,5);c.moveTo(-3,1);c.lineTo(3,1);c.stroke();c.restore();}
@@ -52,9 +12,9 @@ function shield(c,x,y,r,spin,flash=false){
  plate(c,hex(c,r*.72),DARK);plate(c,[[-r*.42,0],[0,-r*.48],[r*.42,0],[0,r*.48]],flash?'#f2ffed':CYAN);
  c.strokeStyle=LIGHT;c.lineWidth=1;c.beginPath();c.moveTo(-r*.2,-r*.04);c.lineTo(0,-r*.26);c.lineTo(r*.2,-r*.04);c.stroke();c.restore();
 }
-function chains(c,t,pose){
+function chains(c,t){
  for(const side of [-1,1]){
-  const wave=Math.sin(t*.047+side*1.5)*5-(pose?.chainLag??0);
+  const wave=Math.sin(t*.047+side*1.5)*5;
   for(let i=0;i<13;i++){
    const q=i/12,x=side*(22+Math.sin(q*Math.PI)*5)+(wave*q*q),y=-61+q*90;
    c.save();c.translate(x,y);c.rotate(side*.18+Math.cos(t*.047+side)*q*.14);
@@ -64,10 +24,10 @@ function chains(c,t,pose){
   plate(c,[[side*22-4,-65],[side*22,-70],[side*22+4,-65],[side*22,-60]],BLUE);
  }
 }
-function tower(c,b,t,front,flash,pose,bodyBaseY){
- const a=pose.active?pose.angle:b.shieldAngle??Math.PI/2;if((Math.sin(a)>=0)!==front||b.phase!==2||b.mimicEncounter&&!b.mimicEncounter.fusedOrdinals.length)return;
- const dazed=b.actionState==='dazed',s=pose.scaleX,x=pose.active?pose.towerX-pose.bodyX:Math.cos(a)*43,y=pose.active?pose.towerY-bodyBaseY-pose.bodyY:Math.sin(a)*18-18;
- c.save();c.translate(x,y);c.rotate(pose.towerTilt);c.scale(s,1);
+function tower(c,b,t,front,flash){
+ const a=b.shieldAngle??Math.PI/2;if((Math.sin(a)>=0)!==front||b.phase!==2||b.mimicEncounter&&!b.mimicEncounter.fusedOrdinals.length)return;
+ const dazed=b.actionState==='dazed',age=t-(b.lastAction?.resolvedTick??-100),bash=b.lastAction?.ability==='shield_bash'&&age>=0&&age<18?Math.sin(age/18*Math.PI)*12:0,s=.55+.45*Math.abs(Math.sin(a)),x=dazed?48:Math.cos(a)*(43+bash),y=dazed?24:Math.sin(a)*(18+bash*.5)-18;
+ c.save();c.translate(x,y);c.rotate(dazed?.22+Math.sin(t*.08)*.08:0);c.scale(s,1);
  // Compensate the horizontal perspective so the silhouette has the same ink
  // thickness as the golem and other polished creatures.
  const survivors=b.mimicEncounter?.fusedOrdinals??[0,1,2],towerWidth=.58+survivors.length*.14;c.scale(towerWidth,1);
@@ -93,16 +53,14 @@ function tower(c,b,t,front,flash,pose,bodyBaseY){
 export function drawAegisGoliath(c,actor,tick,flash=false){
  const b=actor.boss;if(b?.bossDefinitionId!=='aegis_goliath')return false;
  c.save();c.translate(actor.position.x,actor.position.y);
- const death=actor.alive?0:clamp((actor.deathAge??0)/36),hover=Math.sin(tick*.075)*3.8,bashPose=aegisBashPose(actor,tick);
+ const death=actor.alive?0:clamp((actor.deathAge??0)/36),hover=Math.sin(tick*.075)*3.8;
  c.globalAlpha=1-death*.85;c.fillStyle='#10192555';c.beginPath();c.ellipse(0,9,37+hover*.35,15+hover*.1,0,0,TAU);c.fill();
  const pending=b.pendingAction,p=pending?clamp((tick-pending.startedTick)/(pending.resolvesTick-pending.startedTick)):0;
  const enraged=b.mimicEncounter&&b.mimicEncounter.enragedTick!==null,pulse=1+Math.sin(tick*(enraged?.21:.11))*(enraged?.12:.06)+(b.actionState==='recalling'?.18:0);
  const impactAge=tick-(b.lastAction?.resolvedTick??-100),slamDrop=b.lastAction?.ability==='magnetic_pull'&&impactAge>=0&&impactAge<18?Math.sin(impactAge/18*Math.PI)*10:0;
- const bodyBaseY=-30+hover+death*16+slamDrop-(pending?.ability==='magnetic_pull'?p*5:0);
- c.translate(bashPose.bodyX,bodyBaseY+bashPose.bodyY);
- const bash=b.bashPresentation??b.lastAction,bashAge=tick-(bash?.resolvedTick??-999),towerFlash=flash||bash?.ability==='shield_bash'&&bashAge>=0&&bashAge<5&&(bash.hitEntityIds?.length??0)>0;
+ c.translate(0,-30+hover+death*16+slamDrop-(pending?.ability==='magnetic_pull'?p*5:0));
  if(b.phase===1&&!b.mimicEncounter)for(let i=0;i<3;i++){const a=tick/60+i*TAU/3;if(Math.sin(a)<0)shield(c,Math.cos(a)*55,Math.sin(a)*16-3,14,tick/80+i*.2,flash);}
- tower(c,b,tick,false,towerFlash,bashPose,bodyBaseY);chains(c,tick,bashPose);
+ tower(c,b,tick,false,flash);chains(c,tick);
  // Six large stone planes keep the original floating torso readable at game
  // scale. There is deliberately no added head, human face or tiny engraving.
  const body=[[0,-24],[20,-22],[26,-2],[0,28],[-26,-2],[-20,-22]];
@@ -123,7 +81,7 @@ export function drawAegisGoliath(c,actor,tick,flash=false){
   c.strokeStyle='#a7fff3';c.lineWidth=1.5;c.globalAlpha=.5+p*.4;c.beginPath();c.arc(0,-4,15+Math.sin(tick*.2)*2,0,TAU);c.stroke();c.globalAlpha=1-death*.85;
  }
  if(b.phase===1&&!b.mimicEncounter)for(let i=0;i<3;i++){const a=tick/60+i*TAU/3;if(Math.sin(a)>=0)shield(c,Math.cos(a)*55,Math.sin(a)*16-3,14,tick/80+i*.2,flash);}
- tower(c,b,tick,true,towerFlash,bashPose,bodyBaseY);
+ tower(c,b,tick,true,flash);
  if(b.actionState==='dazed'){
   for(let i=0;i<3;i++){const a=tick*.09+i*TAU/3;plate(c,[[0,-3],[1,-1],[3,0],[1,1],[0,3],[-1,1],[-3,0],[-1,-1]].map(([x,y])=>[x+Math.cos(a)*20,y-71+Math.sin(a)*5]),'#fff0a6');}
  }

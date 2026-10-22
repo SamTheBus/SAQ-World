@@ -15,16 +15,16 @@ function currentImpacts(model,tick){
  for(const[id,a]of actors(model)){
   const b=a.boss,last=b.lastAction,age=tick-(last?.resolvedTick??-999);
   if(!last||!impactTypes.has(last.ability)||age<0||age>=42)continue;
-  rows.push({id:identity(id,a)+'/'+last.ability+'/'+last.resolvedTick,bossId:identity(id,a),bossDefinitionId:b.bossDefinitionId,ability:last.ability,resolvedTick:last.resolvedTick,position:{...last.targetPosition},angle:b.shieldAngle??Math.PI/2,hitEntityIds:Object.freeze([...(last.hitEntityIds??[])])});
+  rows.push({id:identity(id,a)+'/'+last.ability+'/'+last.resolvedTick,bossId:identity(id,a),bossDefinitionId:b.bossDefinitionId,ability:last.ability,resolvedTick:last.resolvedTick,position:{...last.targetPosition},angle:b.shieldAngle??Math.PI/2});
  }
  return rows;
 }
 export function createBossPolishPresentation(){
- const retained=new Map(),warnings=new Map(),strikes=new Map();let context=null,lastTick=-1;
- const clear=()=>{retained.clear();warnings.clear();strikes.clear();context=null;lastTick=-1;};
+ const retained=new Map(),warnings=new Map();let context=null,lastTick=-1;
+ const clear=()=>{retained.clear();warnings.clear();context=null;lastTick=-1;};
  function update(model){
   const tick=model.tick,key=[model.context?.campaignId,model.context?.sessionId,model.context?.spaceInstanceId??model.space?.spaceId,model.context?.spaceRevision,model.context?.residencyRevision].join('/');
-  if(context!==key||tick<lastTick){retained.clear();warnings.clear();strikes.clear();}context=key;lastTick=tick;
+  if(context!==key||tick<lastTick){retained.clear();warnings.clear();}context=key;lastTick=tick;
   const live=new Set(actors(model).map(([id,a])=>identity(id,a)));
   for(const row of model.bossHazards?.aegisTelegraphs??[])if(live.has(row.bossId))warnings.set(row.bossId,{ability:row.ability,angle:row.angle,resolvesTick:row.resolvesTick});
   for(const row of currentImpacts(model,tick)){
@@ -35,23 +35,11 @@ export function createBossPolishPresentation(){
   }
   for(const[id,row]of retained)if(!live.has(row.bossId)||tick-row.resolvedTick>=42||tick<row.resolvedTick)retained.delete(id);
   for(const[id,row]of warnings)if(!live.has(id)||tick-row.resolvesTick>=42)warnings.delete(id);
-  for(const[id,a]of actors(model)){
-   const owner=identity(id,a),last=a.boss.lastAction,age=tick-(last?.resolvedTick??-999);
-   if(a.boss.bossDefinitionId!=='arachnid_treant'||last?.ability!=='strike'||age<0||age>=24)continue;
-   if(strikes.get(owner)?.resolvedTick===last.resolvedTick)continue;
-   strikes.set(owner,Object.freeze({ability:'strike',resolvedTick:last.resolvedTick,targetPosition:Object.freeze({...last.targetPosition}),originPosition:Object.freeze({...a.position})}));
-  }
-  for(const[id,row]of strikes)if(!live.has(id)||tick-row.resolvedTick>=24||tick<row.resolvedTick)strikes.delete(id);
   const counts=new Map();
   for(const[id,row]of [...retained].sort(([,a],[,b])=>b.resolvedTick-a.resolvedTick||a.id.localeCompare(b.id))){const count=counts.get(row.bossId)??0;if(count>=2)retained.delete(id);else counts.set(row.bossId,count+1);}
-  const entities={...model.entitiesById};
-  for(const[id,a]of actors(model)){
-   const owner=identity(id,a),bash=[...retained.values()].filter(row=>row.bossId===owner&&row.ability==='shield_bash').sort((a,b)=>b.resolvedTick-a.resolvedTick)[0]??null;
-   entities[id]=Object.freeze({...a,boss:Object.freeze({...a.boss,bashPresentation:bash,meleePresentation:strikes.get(owner)??null})});
-  }
-  return Object.freeze({...model,entitiesById:Object.freeze(entities),bossHazards:Object.freeze({...model.bossHazards,polishImpacts:Object.freeze([...retained.values()])})});
+  return Object.freeze({...model,bossHazards:Object.freeze({...model.bossHazards,polishImpacts:Object.freeze([...retained.values()])})});
  }
- return Object.freeze({update,clear,inspect:()=>({retained:retained.size,warnings:warnings.size,strikes:strikes.size,lastTick})});
+ return Object.freeze({update,clear,inspect:()=>({retained:retained.size,warnings:warnings.size,lastTick})});
 }
 function impacts(model,tick){return model.bossHazards?.polishImpacts??currentImpacts(model,tick);}
 function poly(c,p,fill,edge=INK,width=1.26){c.beginPath();c.moveTo(...p[0]);for(const v of p.slice(1))c.lineTo(...v);c.closePath();c.fillStyle=fill;c.fill();if(edge){c.strokeStyle=edge;c.lineWidth=width;c.lineJoin='round';c.stroke();}}
@@ -134,7 +122,7 @@ function impactGround(c,row,tick){
  c.save();c.translate(row.position.x,row.position.y);c.globalAlpha*=fade;
  if(bash){
   c.rotate(row.angle);c.beginPath();c.moveTo(0,0);c.arc(0,0,64,-.5,.5);c.closePath();c.clip();
-  c.globalAlpha*=1-ease(age/20);stroke(c,[[27,0],[43,-2],[61,0]],'#a5afa136',8);c.restore();return;
+  c.globalAlpha*=1-ease(age/20);stroke(c,[[21,0],[39,-3],[61,0]],'#d4ece54a',12);stroke(c,[[21,0],[39,-3],[61,0]],CYAN,2.4);c.restore();return;
  }
  circleClip(c,r);
  c.fillStyle=magnetic?'#2559692b':snare?'#578d3d2c':'#51352445';c.beginPath();c.arc(0,0,r-4,0,TAU);c.fill();
@@ -190,12 +178,15 @@ export function bossPolishDepthItems(model,tick,viewport=null){
   const age=tick-row.resolvedTick;if(age<0||age>=42)continue;
   const center=row.position,magnetic=row.ability==='magnetic_pull',bash=row.ability==='shield_bash',snare=row.ability==='root_snare';
   if(bash){
-   // The tower itself delivers the blow. Small displaced stone/dust follows
-   // its ground contact; a miss gets no detached hit flash or energy blade.
    if(age>=19)continue;
-   for(let i=0;i<4;i++){
-    const q=age/19,a=row.angle+(i-1.5)*.21,p={x:center.x+Math.cos(a)*(42+q*(15+i*2)),y:center.y+Math.sin(a)*(42+q*(15+i*2))};
-    add(row.id+'/bash-dust/'+i,p,c=>chip(c,p,Math.sin(q*Math.PI)*(4+i%2*3),a+q*2,1.8+i%2*.6,'#526169','#8c9691',(1-ease(q))*.65));
+   const angle=row.angle,p={x:center.x+Math.cos(angle)*51,y:center.y+Math.sin(angle)*51};
+   add(row.id+'/bash',p,c=>{
+    const q=clamp(age/19),rise=ease(age/3);c.save();c.translate(p.x,p.y-18);c.rotate(angle);c.globalAlpha*=rise*(1-ease((age-4)/15));
+    c.beginPath();c.moveTo(-7,-23);c.quadraticCurveTo(18,0,-7,23);c.lineTo(1,9);c.quadraticCurveTo(8,0,1,-9);c.closePath();c.fillStyle=CYAN;c.fill();c.strokeStyle=INK;c.lineWidth=1.26;c.stroke();stroke(c,[[-1,-15],[7,0],[-1,15]],PALE,2);c.restore();
+   });
+   for(let i=0;i<3;i++){
+    const a=angle+(i-1)*.28,q=age/19,p={x:center.x+Math.cos(a)*(42+q*20),y:center.y+Math.sin(a)*(42+q*20)};
+    add(row.id+'/bash-spark/'+i,p,c=>{c.save();c.translate(p.x,p.y-15-Math.sin(q*Math.PI)*7);c.rotate(a);c.globalAlpha*=1-ease(q);poly(c,[[-4,0],[0,-2],[7,0],[0,2]],i%2?AMBER:PALE,null);c.restore();});
    }
    continue;
   }

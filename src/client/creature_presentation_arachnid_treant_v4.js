@@ -14,35 +14,6 @@ const color=(flash,hex)=>flash?'#fff':hex;
 const point=(x,y)=>({x,y});
 const normal=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1;return {x:-dy/d,y:dx/d};};
 const offset=(p,n,r)=>point(p.x+n.x*r,p.y+n.y*r);
-const clamp=n=>Math.max(0,Math.min(1,n));
-const smooth=n=>{const p=clamp(n);return p*p*(3-2*p);};
-const mixPoint=(a,b,t)=>point(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t);
-const finitePoint=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
-
-// A strike has no authority wind-up. This pose starts at contact and only adds
-// follow-through. The cached origin/target lock the choice of leg for this hit.
-// chosenLeg.side names the world-facing half of the footprint, before mirroring.
-export function treantStrikePose(actor,tick){
- const retained=actor.boss?.meleePresentation,last=actor.boss?.lastAction;
- const action=retained?.ability==='strike'?retained:last?.ability==='strike'?last:null;
- if(actor.alive===false||!action||!Number.isFinite(action.resolvedTick))return null;
- const age=tick-action.resolvedTick,origin=action.originPosition??actor.position,target=action.targetPosition;
- if(age<0||age>=24||!finitePoint(origin)||!finitePoint(target))return null;
- const dx=target.x-origin.x,dy=target.y-origin.y,length=Math.hypot(dx,dy);
- const direction=length>.001?point(dx/length,dy/length):point(1,0);
- let chosenLeg=null,best=-Infinity;
- // Match the actual spread of the eight planted feet, rather than rotating the
- // whole creature. Equal scores have a stable right-side tie break.
- for(const side of [1,-1])for(let index=0;index<LEGS.length;index++){
-  const foot=LEGS[index][3],distance=Math.hypot(foot[0],foot[1]);
-  const score=(side*foot[0]*direction.x+foot[1]*direction.y)/distance;
-  if(score>best+1e-9){best=score;chosenLeg={index,side};}
- }
- const jab=1-smooth((age-3)/14),contact=1-smooth((age-2)/6);
- const recoil=Math.sin(Math.PI*clamp((age-5)/19));
- return {age,resolvedTick:action.resolvedTick,originPosition:{...origin},targetPosition:{...target},direction,chosenLeg,
-  jab,contact,brace:1-smooth((age-15)/9),bodyShift:contact*3.2-recoil*1.6};
-}
 
 export function arachnidTreantAnatomyV4(tick,moving=false){
  const legs=[];
@@ -58,28 +29,6 @@ export function arachnidTreantAnatomyV4(tick,moving=false){
   legs.push({index,side,root,knee,ankle,foot});
  }
  return {legs,eyes:EYES};
-}
-function strikeAnatomy(actor,tick,strike,facing){
- const live=arachnidTreantAnatomyV4(tick,!!actor.movedLastTick);
- if(!strike)return live;
- const planted=arachnidTreantAnatomyV4(strike.resolvedTick,false),direction=point(strike.direction.x*facing,strike.direction.y);
- const body=point(direction.x*strike.bodyShift,direction.y*strike.bodyShift*.6);
- const side=strike.chosenLeg.side*facing,target=point((strike.targetPosition.x-actor.position.x)*facing,strike.targetPosition.y-actor.position.y-10);
- const legs=live.legs.map((l,i)=>{
-  const rest=planted.legs[i],posed={...l};
-  for(const name of ['root','knee','ankle','foot'])posed[name]=mixPoint(l[name],rest[name],strike.brace);
-  posed.root=point(posed.root.x+body.x,posed.root.y+body.y);
-  if(l.index!==strike.chosenLeg.index||l.side!==side)return posed;
-  // Fold one existing root limb up toward the contact point. Its knee stays
-  // outboard, keeping three readable joints instead of extending a rubber arm.
-  const knee=point((posed.root.x+target.x)*.5+side*18,(posed.root.y+target.y)*.5-12);
-  const ankle=point(target.x-direction.x*8,target.y-direction.y*8-3);
-  posed.knee=mixPoint(posed.knee,knee,strike.jab);
-  posed.ankle=mixPoint(posed.ankle,ankle,strike.jab);
-  posed.foot=mixPoint(posed.foot,target,strike.jab);
-  posed.striking=true;return posed;
- });
- return {legs,eyes:EYES,body,target};
 }
 function path(c,points){c.beginPath();c.moveTo(points[0].x,points[0].y);for(const p of points.slice(1))c.lineTo(p.x,p.y);c.closePath();}
 function polygon(c,points,fill,outline=true){path(c,points);c.fillStyle=fill;c.fill();if(outline){c.strokeStyle=INK;c.lineWidth=LINE;c.stroke();}}
@@ -152,7 +101,7 @@ function crown(c,flash,tick){
  const moss=ctx=>{ctx.beginPath();ctx.moveTo(-22,-18);ctx.quadraticCurveTo(-15,-28,-7,-25);ctx.lineTo(-4,-21);ctx.lineTo(-9,-18);ctx.lineTo(-11,-11);ctx.lineTo(-15,-15);ctx.lineTo(-21,-13);ctx.closePath();};
  finish(c,moss,MOSS,flash,()=>{polygon(c,[point(-25,-21),point(-12,-29),point(-5,-24),point(-15,-20),point(-23,-16)],MOSS_LIGHT,false);});
 }
-function face(c,flash,charge,snap=0){
+function face(c,flash,charge){
  // Six insect eyes sit directly in the trunk's existing bark planes.
  if(!flash)for(const [x,y,r]of EYES){
   c.fillStyle=INK;c.beginPath();c.ellipse(x,y,r+1,r+.8,0,0,TAU);c.fill();
@@ -161,38 +110,17 @@ function face(c,flash,charge,snap=0){
  }
  // Short splinter fangs remain rooted beneath the eyes.
  for(const s of [-1,1]){
-  c.save();c.translate(s*7,-25);c.rotate(s*snap*.2);c.translate(-s*7,25);
   const fang=ctx=>{ctx.beginPath();ctx.moveTo(s*5,-25);ctx.lineTo(s*10,-25);ctx.quadraticCurveTo(s*12,-19,s*5,-16);ctx.lineTo(s*7,-21);ctx.closePath();};
-  finish(c,fang,LIGHT,flash);c.restore();
+  finish(c,fang,LIGHT,flash);
  }
-}
-function strikeContact(c,strike,target,direction){
- if(strike.age>=7)return;
- const fade=1-strike.age/7,side=point(-direction.y,direction.x);
- c.save();c.globalAlpha*=fade;c.strokeStyle='#e3bf7b';c.lineWidth=1.25;
- // A few wood splinters mark the resolved touch, with no extra damage shape.
- for(const sign of [-1,1]){
-  const spread=3+strike.age*.7;
-  c.beginPath();c.moveTo(target.x+side.x*sign*spread,target.y+side.y*sign*spread);
-  c.lineTo(target.x+side.x*sign*(spread+3)+direction.x*2,target.y+side.y*sign*(spread+3)+direction.y*2);c.stroke();
- }
- c.restore();
 }
 export function drawArachnidTreantBodyV4(c,actor,tick,flash=false){
- const strike=treantStrikePose(actor,tick),facing=actor.presentationFacingX<0?-1:1;
- const q=strikeAnatomy(actor,tick,strike,facing),pending=actor.boss?.pendingAction;
+ const q=arachnidTreantAnatomyV4(tick,!!actor.movedLastTick),pending=actor.boss?.pendingAction;
  const charge=pending?Math.max(0,Math.min(1,(tick-pending.startedTick)/Math.max(1,pending.resolvesTick-pending.startedTick))):0;
  c.save();c.lineCap='round';c.lineJoin='round';
- c.scale(facing,1);
- for(const l of q.legs.filter(l=>l.index<3&&!l.striking))leg(c,l,flash);
- c.save();if(strike)c.translate(q.body.x,q.body.y);
- wood(c,flash);crown(c,flash,tick);c.restore();
- for(const l of q.legs.filter(l=>l.index===3&&!l.striking))leg(c,l,flash);
- // The attacking limb crosses the near bark plane. It is still one of the
- // original eight legs; its other seven planted feet support the small recoil.
- for(const l of q.legs.filter(l=>l.striking))leg(c,l,flash);
- c.save();if(strike)c.translate(q.body.x,q.body.y);
- face(c,flash,Math.max(charge,strike?.contact??0),strike?.contact??0);c.restore();
- if(strike)strikeContact(c,strike,q.target,point(strike.direction.x*facing,strike.direction.y));
- c.restore();
+ if(actor.presentationFacingX<0)c.scale(-1,1);
+ for(const l of q.legs.filter(l=>l.index<3))leg(c,l,flash);
+ wood(c,flash);crown(c,flash,tick);
+ for(const l of q.legs.filter(l=>l.index===3))leg(c,l,flash);
+ face(c,flash,charge);c.restore();
 }
