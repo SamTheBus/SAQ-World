@@ -1,3 +1,4 @@
+import {aegisComponentProfile} from '../content/aegis_mimics_v2.js';
 import {hasWorldCombat,worldEnemyStats,worldBossStats,worldHeroKillXp} from '../content/world_combat_v1.js';
 import {worldOrdinaryMeleeProfile} from '../content/world_melee_geometry.js';
 import { closedRecord, requireContract, safeInteger } from './wire.js';
@@ -21,7 +22,7 @@ export function encounterActorProfile(state, group, actor) {
   const level=group.threatSnapshot?.levelsByEntityId[actor.entityId];
   let profile;if(enemy&&level!==undefined&&group.threatSnapshot.version===D9_THREAT_VERSION){const stats=hasWorldCombat(state)?worldEnemyStats(level,ordinaryTier(actor.contentDefinitionId),enemy.budget):threatEndpointsD9(level,ordinaryTier(actor.contentDefinitionId),enemy.budget);profile={...state.content.definitionsById[actor.contentDefinitionId],maxHp:stats.maxHp,attackDamage:stats.attackDamage};}
   else profile=enemy&&level!==undefined?resolveOrdinaryProfile(enemy,ordinaryTier(actor.contentDefinitionId),level):state.content.definitionsById[actor.contentDefinitionId];
-  if(hasWorldCombat(state)&&profile?.isBoss&&level!==undefined)profile={...profile,...worldBossStats(level)};return eliteActorProfileD12_4(state,actor,worldOrdinaryMeleeProfile(state,profile));
+  if(hasWorldCombat(state)&&profile?.isBoss&&level!==undefined)profile={...profile,...worldBossStats(level)};return aegisComponentProfile(state,actor,eliteActorProfileD12_4(state,actor,worldOrdinaryMeleeProfile(state,profile)));
 }
 export function ordinaryKillXp(actor, group, state=null,participant=null) {
   const enemy=ordinaryEnemyForProfile(actor.contentDefinitionId);

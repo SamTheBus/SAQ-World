@@ -1,4 +1,12 @@
 import {uprightAttackFrame} from './upright_attack_frame.js';
+import {drawRiftDrifterV4} from './creature_presentation_rift_drifter_v4.js';
+import {drawVoidWraithV4} from './creature_presentation_void_wraith_v4.js';
+import {drawVoidSpectreV4} from './creature_presentation_void_spectre_v4.js';
+import {drawVoidCrawlerV4,voidCrawlerPoseV4} from './creature_presentation_void_crawler_v4.js';
+import {drawGildedScuttlerV4,drawGildedScuttlerAttackV4} from './creature_presentation_gilded_scuttler_v4.js';
+import {drawMimicShieldV4,mimicShieldBashRadiusV4} from './creature_presentation_mimic_shield_v4.js';
+import {drawCoinElementalV4} from './creature_presentation_coin_elemental_v4.js';
+import {DUNGEON_MOBS_V2_MELEE_MOTION} from '../shared/content/dungeon_mobs_v2.js';
 // Source: SamTheBus/SAQ-Dungeon commit 387c78bfaf9f492fe7b6ff4539b956c12c2a7cdc.
 // mob_renderer.js ordinary vType branches. World injects clock/seed and attack
 // phases; none of these ordinary species gains a source-name-implied spell,
@@ -6,184 +14,6 @@ import {uprightAttackFrame} from './upright_attack_frame.js';
 export const DUNGEON_MOB_FAMILIES_V2A=Object.freeze(['gilded_scuttler','mimic_shield','void_crawler','void_spectre','void_wraith','rift_drifter','coin_elemental']);
 export const DUNGEON_MOB_V2A_IDLE_FACING_LEFT=Object.freeze(['gilded_scuttler','void_crawler']);
 export const DUNGEON_MOB_NATIVE_SCALES_V2A=Object.freeze({gilded_scuttler:.74,mimic_shield:.76,void_crawler:.75,void_spectre:.78,void_wraith:.78,rift_drifter:.82,coin_elemental:.7});
-
-function draw_gilded_scuttler(c,m,presentationTime,seed){
-  const action=m.familyAttack,wind=action?.phase==='windup'?action.progress:0,hit=action?.phase==='impact'?1-action.progress:0,settle=action?.phase==='recovery'?1-action.progress:0;
-
-        let cx = m.x + m.w / 2;
-        let cy = m.y + m.h - 15;
-        let time = presentationTime;
-        let legWalk = action?(wind?-3*wind:hit?-4*hit:-2*settle):Math.sin(time / 60) * 3;
-
-        c.strokeStyle = m.flashTimer > 0 ? "#ffffff" : "#b7950b";
-        c.lineWidth = 2.4;
-        for (let i = -1; i <= 1; i += 2) {
-          let legX = cx + i * 12;
-          c.beginPath();
-          c.moveTo(legX, cy + 4);
-          c.lineTo(legX + i * 6 + legWalk * i, cy + 12);
-          c.stroke();
-
-          c.beginPath();
-          c.moveTo(legX - i * 4, cy + 4);
-          c.lineTo(legX - i * 10 - legWalk * i, cy + 12);
-          c.stroke();
-        }
-
-        c.fillStyle = m.flashTimer > 0 ? "#ffffff" : "#ffd700";
-        c.beginPath();
-        c.ellipse(cx - 10, cy - 2, 4, 3, 0, 0, Math.PI * 2);
-        c.fill();
-        c.stroke();
-        c.beginPath();
-        c.moveTo(cx - 12, cy - 2);
-        c.quadraticCurveTo(cx - 18, cy - 8 + legWalk, cx - 22, cy - 4);
-        c.quadraticCurveTo(cx - 16, cy, cx - 12, cy - 2);
-        c.fill();
-        c.stroke();
-
-        let sAngle = Math.PI / 12 + (action?action.limb.spin:Math.sin(time / 150) * .05);
-        c.save();
-        c.translate(cx + 2, cy - 2);
-        c.rotate(sAngle);
-
-        c.fillStyle = m.flashTimer > 0 ? "#ffffff" : "#967507";
-        c.beginPath();
-        c.arc(0, 0, 13.5, 0, Math.PI * 2);
-        c.fill();
-        c.stroke();
-
-        c.fillStyle = m.flashTimer > 0 ? "#ffffff" : "#ffd700";
-        c.beginPath();
-        c.arc(0, 0, 12, 0, Math.PI * 2);
-        c.fill();
-        c.stroke();
-
-        if (m.flashTimer === 0) {
-          c.strokeStyle = "#b7950b";
-          c.lineWidth = 1.2;
-          c.beginPath();
-          c.arc(0, 0, 10, 0, Math.PI * 2);
-          c.stroke();
-
-          c.strokeStyle = "#4d2e1a";
-          c.lineWidth = 1.5;
-          c.beginPath();
-          c.moveTo(-4, -4);
-          c.lineTo(4, 4);
-          c.moveTo(4, -4);
-          c.lineTo(-4, 4);
-          c.moveTo(0, -5);
-          c.lineTo(0, 5);
-          c.stroke();
-
-          c.fillStyle = "rgba(255, 255, 255, 0.8)";
-          c.beginPath();
-          c.arc(-5, -5, 2, 0, Math.PI * 2);
-          c.fill();
-        }
-        c.restore();
-
-        if (m.flashTimer === 0) {
-          c.fillStyle = "#ff0055";
-          c.beginPath();
-          c.arc(cx - 12, cy - 3, 1.2, 0, Math.PI * 2);
-          c.fill();
-        }
-}
-
-function draw_mimic_shield(c,m,presentationTime,seed){
-  const action=m.familyAttack,wind=action?.phase==='windup'?action.progress:0,hit=action?.phase==='impact'?1-action.progress:0,settle=action?.phase==='recovery'?1-action.progress:0;
-
-        let cx = m.x + m.w / 2;
-        let cy = m.y + m.h / 2;
-        let time = presentationTime;
-        let breathe = Math.sin(time / 140) * 2;
-        let eyeBlink = action?1:Math.sin(time / 800);
-
-        c.save();
-        c.translate(cx, cy);
-
-        c.fillStyle = m.flashTimer > 0 ? "#ffffff" : "#2c3e50";
-        c.beginPath();
-        c.moveTo(-16, -16);
-        c.lineTo(16, -16);
-        c.lineTo(18, 2);
-        c.lineTo(0, 22);
-        c.lineTo(-18, 2);
-        c.closePath();
-        c.fill();
-        c.stroke();
-
-        c.strokeStyle = m.flashTimer > 0 ? "#ffffff" : "#7f8c8d";
-        c.lineWidth = 1.8;
-        c.beginPath();
-        c.moveTo(-13, -13);
-        c.lineTo(13, -13);
-        c.lineTo(15, 1);
-        c.lineTo(0, 18);
-        c.lineTo(-15, 1);
-        c.closePath();
-        c.stroke();
-
-        let mouthOpen = action?action.limb.open:Math.max(1,3.5+breathe);
-        c.fillStyle = "#110202";
-        c.beginPath();
-        c.ellipse(0, 2, 8, mouthOpen, 0, 0, Math.PI * 2);
-        c.fill();
-        c.stroke();
-
-        c.fillStyle = "#f1c40f";
-        c.strokeStyle = "#000000";
-        c.lineWidth = 1;
-        let tOffsets = [-5, -2, 2, 5];
-        tOffsets.forEach((dx) => {
-          c.beginPath();
-          c.moveTo(dx - 1.2, 2 - mouthOpen);
-          c.lineTo(dx, 2 - mouthOpen + 3);
-          c.lineTo(dx + 1.2, 2 - mouthOpen);
-          c.closePath();
-          c.fill();
-          c.stroke();
-
-          c.beginPath();
-          c.moveTo(dx - 1.2, 2 + mouthOpen);
-          c.lineTo(dx, 2 + mouthOpen - 3);
-          c.lineTo(dx + 1.2, 2 + mouthOpen);
-          c.closePath();
-          c.fill();
-          c.stroke();
-        });
-
-        if (m.flashTimer === 0) {
-          c.fillStyle = "#ffffff";
-          c.beginPath();
-          c.ellipse(0, -7, 6, 4, 0, 0, Math.PI * 2);
-          c.fill();
-          c.stroke();
-
-          if (eyeBlink > -0.85) {
-            c.fillStyle = "#e74c3c";
-            c.beginPath();
-            c.arc(0, -7, 2.5, 0, Math.PI * 2);
-            c.fill();
-
-            c.fillStyle = "#000000";
-            c.beginPath();
-            c.ellipse(0, -7, 0.8, 2.2, 0, 0, Math.PI * 2);
-            c.fill();
-          } else {
-            c.strokeStyle = "#000";
-            c.lineWidth = 2;
-            c.beginPath();
-            c.moveTo(-6, -7);
-            c.lineTo(6, -7);
-            c.stroke();
-          }
-        }
-
-        c.restore();
-}
 
 function draw_void_crawler(c,m,presentationTime,seed){
   const action=m.familyAttack,wind=action?.phase==='windup'?action.progress:0,hit=action?.phase==='impact'?1-action.progress:0,settle=action?.phase==='recovery'?1-action.progress:0;
@@ -407,145 +237,23 @@ function draw_rift_drifter(c,m,presentationTime,seed){
         }
 }
 
-function draw_coin_elemental(c,m,presentationTime,seed){
-  const action=m.familyAttack,wind=action?.phase==='windup'?action.progress:0,hit=action?.phase==='impact'?1-action.progress:0,settle=action?.phase==='recovery'?1-action.progress:0;
-
-        let cx = m.x + m.w / 2;
-        let cy = m.y + m.h / 2 + Math.sin(presentationTime / 150)*3;
-
-        // Precompute coordinates and depth state for the 6 orbiting gold coins
-        let coinsList = [];
-        for (let i = 0; i < 6; i++) {
-          let angle = presentationTime/600+(i*TAU)/6+(action?.limb.spin??0);
-          let dist = 18+Math.sin(presentationTime/150+i)*3*(1-(action?.artWeight??0))-5*(action?.artWeight??0)*(1-(action?.strikeBlend??0));
-          let ox = cx + Math.cos(angle) * dist * 1.3;
-          let oy = cy + Math.sin(angle) * dist * 0.5;
-          let isBehind = Math.sin(angle) < 0; // True if positioned behind core
-
-          let rot = angle * 2 + Math.PI/2*(action?.artWeight??0);
-          let cw = 6 * Math.abs(Math.sin(rot));
-          let ch = 6;
-
-          coinsList.push({ ox, oy, cw, ch, isBehind });
-        }
-
-        let drawCoinPiece = (cn) => {
-          c.save();
-          c.translate(cn.ox, cn.oy);
-          c.rotate(Math.PI / 12);
-
-          c.fillStyle = m.flashTimer > 0 ? "#ffffff" : "#b7950b";
-          c.beginPath();
-          c.ellipse(0, 0, cn.cw + 1.2, cn.ch + 1.2, 0, 0, Math.PI * 2);
-          c.fill();
-          c.stroke();
-
-          if (m.flashTimer === 0) {
-            c.fillStyle = "#ffd700";
-            c.beginPath();
-            c.ellipse(0, 0, cn.cw, cn.ch, 0, 0, Math.PI * 2);
-            c.fill();
-            c.strokeStyle = "#b7950b";
-            c.lineWidth = 0.8;
-            c.beginPath();
-            c.ellipse(0, 0, cn.cw * 0.8, cn.ch * 0.8, 0, 0, Math.PI * 2);
-            c.stroke();
-            c.fillStyle = "rgba(255,255,255,0.75)";
-            c.beginPath();
-            c.ellipse(
-              -cn.cw * 0.3,
-              -cn.ch * 0.3,
-              cn.cw * 0.25,
-              cn.ch * 0.2,
-              Math.PI / 4,
-              0,
-              Math.PI * 2,
-            );
-            c.fill();
-          }
-          c.restore();
-        };
-
-        // 1. Draw BACK half of orbiting rings first (Math.PI to 2*Math.PI)
-        c.save();
-        c.translate(cx, cy);
-        c.strokeStyle = "rgba(241, 196, 15, 0.35)";
-        c.lineWidth = 1;
-
-        c.save();
-        c.rotate(Math.PI / 6);
-        c.beginPath();
-        c.ellipse(0, 0, 22, 7, 0, Math.PI, 0); // Upper arc (behind)
-        c.stroke();
-        c.restore();
-
-        c.save();
-        c.rotate(-Math.PI / 4);
-        c.beginPath();
-        c.ellipse(0, 0, 26, 8, 0, Math.PI, 0); // Upper arc (behind)
-        c.stroke();
-        c.restore();
-        c.restore();
-
-        // 2. Draw BACK coins
-        coinsList.forEach((cn) => {
-          if (cn.isBehind) drawCoinPiece(cn);
-        });
-
-        // 3. Draw central glowing nucleus core
-        let coreGrad = c.createRadialGradient(cx, cy, 1, cx, cy, 10);
-        coreGrad.addColorStop(0, "#ffffff");
-        coreGrad.addColorStop(0.5, "#ffd700");
-        coreGrad.addColorStop(1, "rgba(255, 215, 0, 0)");
-        c.fillStyle = coreGrad;
-        c.beginPath();
-        c.arc(cx, cy, 12, 0, Math.PI * 2);
-        c.fill();
-
-        // 4. Draw FRONT half of orbiting rings (0 to Math.PI)
-        c.save();
-        c.translate(cx, cy);
-        c.strokeStyle = "rgba(241, 196, 15, 0.35)";
-        c.lineWidth = 1;
-
-        c.save();
-        c.rotate(Math.PI / 6);
-        c.beginPath();
-        c.ellipse(0, 0, 22, 7, 0, 0, Math.PI); // Lower arc (in front of body)
-        c.stroke();
-        c.restore();
-
-        c.save();
-        c.rotate(-Math.PI / 4);
-        c.beginPath();
-        c.ellipse(0, 0, 26, 8, 0, 0, Math.PI); // Lower arc (in front of body)
-        c.stroke();
-        c.restore();
-        c.restore();
-
-        // 5. Draw FRONT coins
-        coinsList.forEach((cn) => {
-          if (!cn.isBehind) drawCoinPiece(cn);
-        });
-}
-
-export const DUNGEON_MOB_PAINTERS_V2A=Object.freeze({gilded_scuttler:draw_gilded_scuttler,mimic_shield:draw_mimic_shield,void_crawler:draw_void_crawler,void_spectre:draw_void_spectre,void_wraith:draw_void_wraith,rift_drifter:draw_rift_drifter,coin_elemental:draw_coin_elemental});
+export const DUNGEON_MOB_PAINTERS_V2A=Object.freeze({gilded_scuttler:drawGildedScuttlerV4,mimic_shield:drawMimicShieldV4,void_crawler:drawVoidCrawlerV4,void_spectre:drawVoidSpectreV4,void_wraith:drawVoidWraithV4,rift_drifter:drawRiftDrifterV4,coin_elemental:drawCoinElementalV4});
 
 const TAU=Math.PI*2;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const smooth=v=>{const p=clamp(v,0,1);return p*p*(3-2*p);};
 const turn=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const families=new Set(DUNGEON_MOB_FAMILIES_V2A);
-const pivot={gilded_scuttler:-12,mimic_shield:-9,void_crawler:-8,void_spectre:-9,void_wraith:-11,rift_drifter:-10,coin_elemental:-8.5};
+const pivot={gilded_scuttler:-12,mimic_shield:-12*.76,void_crawler:-8,void_spectre:-9,void_wraith:-11,rift_drifter:-10,coin_elemental:-12*.7};
 
 const uprightTuning={
- gilded_scuttler:{front:16.5,recoil:3,lean:-.16,hitLean:.08,squeezeX:.94,squeezeY:.85,hitX:1.06,hitY:.95,rest:14,drawBack:11,openRest:1,openBrace:4,openHit:.4,spinBrace:-.32,spinHit:.55},
- mimic_shield:{front:13.5,recoil:4.5,lift:-1,lean:-.2,hitLean:.14,squeezeX:.88,squeezeY:1.08,hitX:1.08,hitY:.94,openRest:0,openBrace:8,openHit:1.3},
+ gilded_scuttler:{front:16.5,recoil:3,lean:-.16,hitLean:.08,squeezeX:.94,squeezeY:.85,hitX:1.06,hitY:.95,rest:16.5,drawBack:13.5,openRest:.75,openBrace:3.3,openHit:0,spinBrace:-.08,spinHit:.1},
+ mimic_shield:{front:13.5,recoil:3.5,lean:-.12,hitLean:.08,squeezeX:1,squeezeY:1,hitX:1,hitY:1,openRest:2.1,openBrace:2.8,openHit:1.1},
  void_crawler:{front:16,recoil:4,lift:-1.5,lean:-.14,hitLean:.08,squeezeX:.8,squeezeY:1.14,hitX:1.1,hitY:.9,rest:15,drawBack:12,openRest:1.2,openBrace:5,openHit:.7},
- void_spectre:{front:30,recoil:2,lift:-3,lean:-.12,hitLean:.08,squeezeX:.9,squeezeY:1.12,hitX:1.06,hitY:.97,rest:6,drawBack:4,openRest:3,openBrace:11,openHit:2,sweepHit:.5},
- void_wraith:{front:25,recoil:3.5,lift:-4,lean:.18,hitLean:-.1,squeezeX:.85,squeezeY:1.16,hitX:.96,hitY:1.06,rest:5,drawBack:2,openRest:0,openBrace:1,openHit:1,sweepBrace:-.7,sweepHit:.3},
+ void_spectre:{front:17.5,recoil:2,lift:-3,lean:-.12,hitLean:.08,squeezeX:.9,squeezeY:1.12,hitX:1.06,hitY:.97,rest:6,drawBack:4,openRest:3,openBrace:11,openHit:2,sweepHit:.5},
+ void_wraith:{front:10.5,recoil:3.5,lift:-4,lean:.18,hitLean:-.1,squeezeX:.85,squeezeY:1.16,hitX:.96,hitY:1.06,rest:5,drawBack:2,openRest:0,openBrace:1,openHit:1,sweepBrace:-.7,sweepHit:.3},
  rift_drifter:{front:15.6,recoil:5,lift:-2,lean:-.08,hitLean:.1,squeezeX:.86,squeezeY:1.1,hitX:1.04,hitY:.96,orbitBrace:1,orbitHit:1,spinHit:.25},
- coin_elemental:{front:21.5,recoil:2.5,lift:-3,lean:-.1,hitLean:.1,squeezeX:.9,squeezeY:1.13,hitX:1.03,hitY:.94,orbitBrace:1,orbitHit:1,spinHit:.65}
+ coin_elemental:{front:21.5,recoil:2.5,lift:-3,lean:-.1,hitLean:.1,squeezeX:1,squeezeY:1,hitX:1,hitY:1,rest:21.5,drawBack:12,orbitBrace:1,orbitHit:1,spinBrace:-.18,spinHit:.35}
 };
 
 // Continuous body and limb keyframes share the idle horizontal orientation.
@@ -558,23 +266,27 @@ export function dungeonMobMeleePoseV2A(actor,tick){
  const sourceRadius=g.sourceRadius,targetRadius=g.targetRadius,centerLimit=g.mode==='clearHullGap'?g.reach+sourceRadius+targetRadius:g.reach;
  const weaponReach=Math.max(sourceRadius,centerLimit-targetRadius),contactReach=clamp(distance-targetRadius,sourceRadius,weaponReach);
  const p=clamp((tick-phase.phaseStartedTick)/Math.max(1,phase.phaseEndsTick-phase.phaseStartedTick),0,1);
- const frame=uprightAttackFrame(uprightTuning[family],phase.phase,p,direction,contactReach);
- return {family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,...frame,
-  upright:true,bodyPivot:{x:0,y:pivot[family]*(actor.elite?.scale??1)},disableFacingFlip:false};
+ const tuning=family==='mimic_shield'?{...uprightTuning[family],front:mimicShieldBashRadiusV4(direction,uprightTuning[family].hitLean*direction.x,actor.presentationFacingX===-1?-1:1,actor.elite?.scale??1)}:uprightTuning[family];
+ const frame=uprightAttackFrame(tuning,phase.phase,p,direction,contactReach);
+ const coinTiming=DUNGEON_MOBS_V2_MELEE_MOTION.coin_elemental,coinPhaseOffset=phase.phase==='impact'?coinTiming.windupTicks:phase.phase==='recovery'?coinTiming.windupTicks+coinTiming.impactTicks:0;
+ const pose={family,phase:phase.phase,progress:p,direction,sourceRadius,targetRadius,centerLimit,weaponReach,contactReach,...frame,
+  upright:true,bodyPivot:{x:0,y:pivot[family]*(actor.elite?.scale??1)},disableFacingFlip:false,
+  ...(family==='gilded_scuttler'?{gildedScuttlerScale:actor.elite?.scale??1,idleFacingX:actor.presentationFacingX===-1?-1:1}:family==='mimic_shield'?{mimicShieldScale:actor.elite?.scale??1,idleFacingX:actor.presentationFacingX===-1?-1:1}:family==='coin_elemental'?{coinElementalScale:actor.elite?.scale??1,idleFacingX:actor.presentationFacingX===-1?-1:1,presentationTick:tick,coinElementalActionStartTick:phase.phaseStartedTick-coinPhaseOffset,coinElementalActionSequence:phase.actionSequence??0}:family==='void_spectre'?{voidSpectreScale:actor.elite?.scale??1,idleFacingX:actor.presentationFacingX===-1?-1:1}:family==='void_wraith'?{voidWraithScale:actor.elite?.scale??1,idleFacingX:actor.presentationFacingX===-1?-1:1}:family==='rift_drifter'?{riftDrifterScale:actor.elite?.scale??1,idleFacingX:actor.presentationFacingX===-1?-1:1}:{})};
+ return family==='void_crawler'?voidCrawlerPoseV4(actor,pose,tick):pose;
 }
 
 export function drawDungeonMobMeleeLimbV2A(c,pose,flash=false){
   if(!pose||!families.has(pose.family))return false;
+  if(drawGildedScuttlerAttackV4(c,pose,flash))return true;
+  if(pose.family==='void_crawler')return true; // The attached head and jaws perform the bite.
+  if(pose.family==='void_spectre')return true; // The connected sleeves and actual claws perform the rake.
+  if(pose.family==='void_wraith')return true; // One real claw commits while the other hand guards.
+  if(pose.family==='rift_drifter')return true; // One of its three orbiting fragments makes contact.
+  if(pose.family==='coin_elemental')return true; // One of the six real orbit coins makes contact.
   const {family,anchor,limb}=pose;
   if(!['gilded_scuttler','void_crawler','void_spectre','void_wraith','coin_elemental'].includes(family))return true;
   c.save();c.translate(anchor.x,anchor.y-8);c.rotate(Math.atan2(pose.direction.y,pose.direction.x));c.lineCap='round';c.lineJoin='round';
-  if(family==='coin_elemental'){
-    const x=limb.extension-4;c.fillStyle=flash?'#fff':'#ffd700';c.strokeStyle=flash?'#fff':'#9a7512';c.lineWidth=1.3;
-    c.beginPath();c.ellipse(x,0,4,7,0,0,TAU);c.fill();c.stroke();c.strokeStyle=flash?'#fff':'#fff0a1';c.beginPath();c.ellipse(x,0,2.3,5,0,0,TAU);c.stroke();
-  }else if(family==='gilded_scuttler'){
-    c.fillStyle=flash?'#fff':'#ffd700';c.strokeStyle=flash?'#fff':'#765b11';c.lineWidth=1;
-    for(const side of [-1,1]){c.beginPath();c.moveTo(9,side*3);c.quadraticCurveTo(limb.extension-2,side*(limb.open+3),limb.extension,side*limb.open);c.lineTo(limb.extension-3,side);c.closePath();c.fill();c.stroke();}
-  }else if(family==='void_crawler'){
+  if(family==='void_crawler'){
     c.strokeStyle=flash?'#fff':'#a57ab9';c.lineWidth=1.5;for(const side of [-1,1]){c.beginPath();c.moveTo(9,side*(limb.open+1));c.quadraticCurveTo(limb.extension-1,side*limb.open,limb.extension,side*.5);c.stroke();}
   }else if(family==='void_spectre'){
     for(const side of [-1,1]){const end=limb.extension,spread=limb.open;c.strokeStyle=flash?'#fff':'#63417f';c.lineWidth=2.8;c.beginPath();c.moveTo(1,side*6);c.quadraticCurveTo(end*.45,side*(spread+6),end-5,side*spread);c.stroke();
@@ -591,10 +303,10 @@ export function drawDungeonMobContactV2A(c,contact,age){
   if(age<0||age>=190||!contact.sourcePosition||!contact.targetPosition)return true;
   const dx=contact.targetPosition.x-contact.sourcePosition.x,dy=contact.targetPosition.y-contact.sourcePosition.y,d=Math.hypot(dx,dy),u=d>.001?{x:dx/d,y:dy/d}:{x:1,y:0};
   const max=contact.mode==='clearHullGap'?contact.reach+contact.sourceRadius:Math.max(0,contact.reach-contact.targetRadius),near=Math.min(max,Math.max(0,d-contact.targetRadius)),t=age/190;
-  c.save();c.translate(contact.sourcePosition.x+u.x*near,contact.sourcePosition.y+u.y*near-8);c.rotate(Math.atan2(u.y,u.x));c.globalAlpha*=(1-t)**1.25;c.lineCap='round';c.lineJoin='round';
+  c.save();c.translate(contact.sourcePosition.x+u.x*near,contact.sourcePosition.y+u.y*near-(contact.family==='gilded_scuttler'?12:contact.family==='mimic_shield'?12*.76:contact.family==='coin_elemental'?12*.7:8));c.rotate(Math.atan2(u.y,u.x));c.globalAlpha*=(1-t)**1.25;c.lineCap='round';c.lineJoin='round';
   switch(contact.family){
     case 'gilded_scuttler':c.strokeStyle='#e6c76b';c.lineWidth=1.6;c.beginPath();c.moveTo(-3,-4);c.lineTo(1,0);c.lineTo(-3,4);c.moveTo(3,-4);c.lineTo(5,-6);c.moveTo(3,4);c.lineTo(5,6);c.stroke();break;
-    case 'mimic_shield':c.strokeStyle='#b8bec0';c.lineWidth=1.8;c.beginPath();c.moveTo(-4,-5);c.quadraticCurveTo(4,0,-4,5);c.stroke();c.fillStyle='#d5b354';for(const side of [-1,1]){c.beginPath();c.moveTo(0,side*4);c.lineTo(2,side);c.lineTo(4,side*4);c.closePath();c.fill();}break;
+    case 'mimic_shield':c.strokeStyle='#d5bc83';c.lineWidth=1.6;c.beginPath();c.moveTo(-2,-5);c.lineTo(0,-1);c.lineTo(-1,2);c.lineTo(2,5);c.moveTo(3,-4);c.lineTo(6,-6);c.moveTo(4,0);c.lineTo(7,0);c.moveTo(3,4);c.lineTo(6,6);c.stroke();break;
     case 'void_crawler':c.strokeStyle='#a86cb4';c.lineWidth=1.4;for(const side of [-1,1]){c.beginPath();c.moveTo(-3,side*4);c.lineTo(1,side);c.lineTo(4,side*3);c.stroke();}break;
     case 'void_spectre':c.strokeStyle='#b886c8';c.lineWidth=1.3;for(const side of [-1,1]){c.beginPath();c.moveTo(-4,side*5);c.quadraticCurveTo(2,side*2,5,-side*3);c.stroke();}break;
     case 'void_wraith':c.strokeStyle='#bd76ac';c.lineWidth=1.5;for(let i=-1;i<=1;i++){c.beginPath();c.moveTo(-4,i*2-3);c.bezierCurveTo(5,i*2-4,6,i*2,2,i*2+3);c.stroke();}break;

@@ -1,4 +1,4 @@
-import {ordinaryEnemyForProfile} from '../shared/content/ordinary_enemies.js';
+import {ordinaryRangedProfile} from '../shared/content/ordinary_ranged_profiles_v2.js';
 import {copyWire} from '../shared/contracts/wire.js';
 import {collisionTile} from '../shared/rules/world_geometry.js';
 
@@ -40,16 +40,21 @@ function wallContact(collision,start,delta,radius){
 }
 
 export function createHostileProjectileSimulation(state,{damage,eligible,identity,lineClear,canAct=()=>true,canLaunch=eligible,getSourceLevel=()=>1}){
-  const profile=a=>ordinaryEnemyForProfile(a?.contentDefinitionId)?.ranged??null;
+  const profile=ordinaryRangedProfile;
   const root=()=>state.hostileCombat;
   const connected=a=>Object.values(state.playersById).some(p=>p.entityId===a?.entityId&&p.connectionStatus==='connected');
+  const resetAction=action=>({...idle(state.tick),...(action?.nextShotTick!==undefined?{nextShotTick:action.nextShotTick}:{})});
   function cancelSource(id){const c=root();if(!c)return;delete c.actionsByEntityId[id];for(const [key,p] of Object.entries(c.projectiles))if(p.sourceId===id)delete c.projectiles[key];}
-  function cancelTarget(id){const c=root();if(!c)return;for(const [key,a] of Object.entries(c.actionsByEntityId))if(a.targetEntityId===id)c.actionsByEntityId[key]=idle(state.tick);for(const [key,p] of Object.entries(c.projectiles))if(p.intendedTargetId===id)delete c.projectiles[key];}
+  function cancelTarget(id){const c=root();if(!c)return;for(const [key,a] of Object.entries(c.actionsByEntityId))if(a.targetEntityId===id)c.actionsByEntityId[key]=resetAction(a);for(const [key,p] of Object.entries(c.projectiles))if(p.intendedTargetId===id)delete c.projectiles[key];}
   function beginTick(activeIds){const c=root();if(!c)return;const active=new Set(activeIds);
     for(const [id,action] of Object.entries(c.actionsByEntityId)){
       const source=state.entitiesById[id];
-      if(!source?.alive||!profile(source)||!active.has(id)){cancelSource(id);continue;}
-      if(action.phase==='recovery'&&state.tick>=action.phaseEndsTick)c.actionsByEntityId[id]=idle(state.tick);
+      if(!source?.alive||!profile(source)){cancelSource(id);continue;}
+      if(!active.has(id)){
+        if(action.nextShotTick!==undefined){c.actionsByEntityId[id]=resetAction(action);for(const [key,p] of Object.entries(c.projectiles))if(p.sourceId===id)delete c.projectiles[key];}
+        else cancelSource(id);continue;
+      }
+      if(action.phase==='recovery'&&state.tick>=action.phaseEndsTick)c.actionsByEntityId[id]=resetAction(action);
     }
     for(const [id,shot] of Object.entries(c.projectiles)){
       const source=state.entitiesById[shot.sourceId],target=state.entitiesById[shot.intendedTargetId];
@@ -59,10 +64,14 @@ export function createHostileProjectileSimulation(state,{damage,eligible,identit
   function observeTarget(source,target,intent){const config=profile(source),c=root();if(!config||!c)return intent;
     const action=c.actionsByEntityId[source.entityId]??=idle(state.tick);
     if(action.phase!=='idle')return {x:0,y:0};
+    if(config.meleeFallback&&source.ai?.melee&&source.ai.melee.phase!=='idle')return {x:0,y:0};
     if(!target||!connected(target)||!canLaunch(source,target)||!canAct(source))return intent;
     const dx=target.position.x-source.position.x,dy=target.position.y-source.position.y,d=Math.hypot(dx,dy);
+    // Close hybrid targets use the retained contact attack and its normal reach
+    // test. A committed shot finishes its warning before modes can change.
+    if(config.meleeFallback&&d<=config.minimumRange)return intent;
     const collision=state.spacesByInstanceId[source.residency.spaceInstanceId].collision,clear=lineClear(collision,source,target);
-    if(d<=config.range&&clear&&source.attackTimer>=source.attackDelayTicks){
+    if(d<=config.range&&clear&&source.attackTimer>=source.attackDelayTicks&&state.tick>=(action.nextShotTick??0)){
       Object.assign(action,{phase:'windup',phaseStartedTick:state.tick,phaseEndsTick:state.tick+config.windupTicks,targetEntityId:target.entityId,aim:d?{x:dx/d,y:dy/d}:{x:1,y:0},actionSequence:source.nextAttackActionSequence});
       return {x:0,y:0};
     }
@@ -78,7 +87,7 @@ export function createHostileProjectileSimulation(state,{damage,eligible,identit
       if(!source?.alive||!config||!target?.alive||!connected(target)||!canLaunch(source,target)){cancelSource(id);continue;}
       if(!canAct(source))continue;
       const collision=state.spacesByInstanceId[source.residency.spaceInstanceId].collision;
-      const fullOffset=source.hullRadius+config.radius+1;
+      const fullOffset=config.muzzleOffset??source.hullRadius+config.radius+1;
       const fullDelta={x:action.aim.x*fullOffset,y:action.aim.y*fullOffset};let muzzleOffset=fullOffset;
       // Do not skip an overlapping party member between the body and muzzle.
       for(const p of Object.values(state.playersById)){
@@ -94,6 +103,7 @@ export function createHostileProjectileSimulation(state,{damage,eligible,identit
         c.projectiles[shotId]={id:shotId,actionSequence:source.nextAttackActionSequence,sourceId:id,sourceResidencyRevision:source.residency.residencyRevision,spaceInstanceId:source.residency.spaceInstanceId,intendedTargetId:target.entityId,position:muzzle,direction:{...action.aim},remaining:config.travelRange,remainingTicks:config.lifeTicks,firedTick:state.tick,radius:config.radius,type:config.projectileType,attack:copyWire(source.attackDamage),sourceLevel:copyWire(getSourceLevel(source.entityId))};
       }
       source.attackTimer=0;source.nextAttackActionSequence++;
+      if(config.cooldownTicks)action.nextShotTick=state.tick+config.cooldownTicks;
       Object.assign(action,{phase:'recovery',phaseStartedTick:state.tick,phaseEndsTick:state.tick+config.recoveryTicks});
     }
     // Keep a new shot at its muzzle for one simulation tick. Its first visible
@@ -116,5 +126,10 @@ export function createHostileProjectileSimulation(state,{damage,eligible,identit
       if(shot.remaining<=1e-9||shot.remainingTicks<=0)delete c.projectiles[id];
     }
   }
-  return Object.freeze({beginTick,observeTarget,advance,cancelSource,cancelTarget,isRanged:a=>Boolean(profile(a))});
+  function canMelee(source,target){
+    const config=profile(source);if(!config)return true;
+    if(!config.meleeFallback||!target||root()?.actionsByEntityId[source.entityId]?.phase!=='idle')return false;
+    return Math.hypot(target.position.x-source.position.x,target.position.y-source.position.y)<=config.minimumRange;
+  }
+  return Object.freeze({beginTick,observeTarget,advance,cancelSource,cancelTarget,isRanged:a=>Boolean(profile(a)),canMelee});
 }

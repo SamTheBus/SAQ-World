@@ -46,13 +46,14 @@ export function webHazardContainsActorD12_4J(hazard,actor){return hostileEllipse
 
 const multiplierFor=stacks=>(100+stacks*SWIFT_COMMANDER_D12_4D.pulse.perStackSpeedPercent)/100;
 
-export function createEliteCombatD12_4(state,{lineClear,applyPeriodicDamage=()=>null}){
+export function createEliteCombatD12_4(state,{lineClear,applyPeriodicDamage=()=>null,activeElite=()=>true}){
  const counters={scheduledPulses:0,healingPulses:0,recipients:0,hastePulses:0,hasteStackGrants:0,hasteDecays:0,guardPulses:0,guardStackGrants:0,guardDecays:0,guardMitigations:0,guardDamagePrevented:combatInteger(0),attackAuraPulses:0,attackAuraStackGrants:0,attackAuraDecays:0,attackAuraDirectHits:0,glacialPulses:0,snaresApplied:0,snaresExpired:0,toxicApplications:0,toxicStacksAdded:0,toxicTicks:0,toxicDamage:combatInteger(0),toxicDeaths:0,nullifierPulses:0,nullifiedApplied:0,nullifiedExpired:0,nullificationResistanceExpired:0,webCadences:0,webCasts:0,websFormed:0,websExpired:0,webCastsCancelled:0,slagCadences:0,slagCasts:0,slagPoolsFormed:0,slagPoolsExpired:0,slagCastsCancelled:0,slagDamageOpportunities:0,slagDamageEvents:0,slagDamage:combatInteger(0)};
  const contactQueue=new Map();
+ const swiftTargets=e=>activeElite(e.entityId)?selectSwiftCommanderTargetsD12_4D(state,e):[];
  const eliteRoot=()=>{const root=state.eliteCombat;if(root){root.hasteByEntityId??={};root.timedStatusesByEntityId??={};root.guardByEntityId??={};root.attackAuraByEntityId??={};root.nullificationResistanceByEntityId??={};root.pendingHazardsBySourceEliteId??={};root.hazardsById??={};root.webbedByEntityId??={};root.slagBurnByEntityId??={};}return root;};
  function refreshHasteSources(root,commanders){
   const sourcesByTarget=new Map();
-  for(const e of commanders){for(const target of selectSwiftCommanderTargetsD12_4D(state,e)){const rows=sourcesByTarget.get(target.entityId)??[];rows.push(e.eliteId);sourcesByTarget.set(target.entityId,rows);}}
+  for(const e of commanders){for(const target of swiftTargets(e)){const rows=sourcesByTarget.get(target.entityId)??[];rows.push(e.eliteId);sourcesByTarget.set(target.entityId,rows);}}
   for(const [entityId,sources] of sourcesByTarget){
    sources.sort();const h=root.hasteByEntityId[entityId]??={version:ELITE_HASTE_D12_4D_VERSION,entityId,stacks:0,sourceEliteIds:[],lastRefreshTick:state.tick,lingerExpiresTick:state.tick+SWIFT_COMMANDER_D12_4D.pulse.lingerTicks,nextDecayTick:null,lastStackTick:null,lastDecayTick:null};
    h.sourceEliteIds=sources;h.lastRefreshTick=state.tick;h.lingerExpiresTick=state.tick+SWIFT_COMMANDER_D12_4D.pulse.lingerTicks;h.nextDecayTick=h.lingerExpiresTick;
@@ -62,7 +63,7 @@ export function createEliteCombatD12_4(state,{lineClear,applyPeriodicDamage=()=>
  }
  function advanceSwift(root,commanders,sourcesByTarget){
   for(const e of commanders){if(state.tick<e.nextPulseTick)continue;check(state.tick===e.nextPulseTick,'Swift Commander pulse schedule skipped');e.pulseSequence++;e.nextPulseTick+=SWIFT_COMMANDER_D12_4D.pulse.cadenceTicks;counters.scheduledPulses++;counters.hastePulses++;
-   const recipients=[];for(const target of selectSwiftCommanderTargetsD12_4D(state,e)){const h=root.hasteByEntityId[target.entityId];check(h&&sourcesByTarget.get(target.entityId)?.includes(e.eliteId),'Swift Commander source refresh missing');const previousStacks=h.stacks;h.stacks=Math.min(SWIFT_COMMANDER_D12_4D.pulse.maxStacks,h.stacks+1);h.lastStackTick=state.tick;recipients.push({entityId:target.entityId,previousStacks,stacks:h.stacks});if(h.stacks>previousStacks)counters.hasteStackGrants++;}
+   const recipients=[];for(const target of swiftTargets(e)){const h=root.hasteByEntityId[target.entityId];check(h&&sourcesByTarget.get(target.entityId)?.includes(e.eliteId),'Swift Commander source refresh missing');const previousStacks=h.stacks;h.stacks=Math.min(SWIFT_COMMANDER_D12_4D.pulse.maxStacks,h.stacks+1);h.lastStackTick=state.tick;recipients.push({entityId:target.entityId,previousStacks,stacks:h.stacks});if(h.stacks>previousStacks)counters.hasteStackGrants++;}
    e.lastPulse={tick:state.tick,sequence:e.pulseSequence,recipients};counters.recipients+=recipients.length;
   }
  }

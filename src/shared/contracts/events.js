@@ -45,7 +45,7 @@ export function validateEvent(event) {
     if(event.payload.projectileContact!==undefined){
       const c=event.payload.projectileContact;closedRecord(c,['position','style']);closedRecord(c.position,['x','y']);
       requireContract(Number.isFinite(c.position.x)&&Number.isFinite(c.position.y)&&Math.abs(c.position.x)<=1000000&&Math.abs(c.position.y)<=1000000,'Invalid hostile projectile contact position');
-      requireContract(['thorn','frost','fireball','maelstrom','void'].includes(c.style)&&event.payload.combatVersion==='combat-integer-v2'&&event.payload.trigger!=='periodic'&&['hostile','barrier','block','parry'].includes(event.payload.mechanic)&&event.payload.meleeContact===undefined,'Invalid hostile projectile contact attribution');
+      requireContract(['thorn','frost','fireball','maelstrom','void','clockwork'].includes(c.style)&&event.payload.combatVersion==='combat-integer-v2'&&event.payload.trigger!=='periodic'&&['hostile','barrier','block','parry'].includes(event.payload.mechanic)&&event.payload.meleeContact===undefined,'Invalid hostile projectile contact attribution');
     }
     if(event.payload.meleeContact!==undefined){
       const c=event.payload.meleeContact;

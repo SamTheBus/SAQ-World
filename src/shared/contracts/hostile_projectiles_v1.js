@@ -1,5 +1,5 @@
 import {hasWorldCombat} from '../content/world_combat_v1.js';
-import {ordinaryEnemyForProfile} from '../content/ordinary_enemies.js';
+import {ordinaryRangedProfile} from '../content/ordinary_ranged_profiles_v2.js';
 import {closedRecord,requireContract as check,safeInteger,canonicalStringify} from './wire.js';
 import {validateId} from './identities.js';
 import {validateInteger,integerBigInt} from './integer_domain.js';
@@ -7,10 +7,10 @@ import {positiveProgression} from './progression_integer.js';
 import {collidesWithTiles} from '../rules/world_geometry.js';
 
 export const HOSTILE_PROJECTILES_VERSION='hostile-projectiles-v1';
-export const HOSTILE_PROJECTILE_STYLES=Object.freeze(['thorn','frost','fireball','maelstrom','void']);
+export const HOSTILE_PROJECTILE_STYLES=Object.freeze(['thorn','frost','fireball','maelstrom','void','clockwork']);
 export const HOSTILE_PROJECTILE_LIMITS=Object.freeze({global:128,perSource:4,lifeTicks:80,travelRange:336,radius:6,speed:4.2});
 const same=(a,b)=>a===b||a!==undefined&&b!==undefined&&canonicalStringify(a)===canonicalStringify(b);
-const ranged=a=>ordinaryEnemyForProfile(a?.contentDefinitionId)?.ranged;
+const ranged=ordinaryRangedProfile;
 const vector=(v,unit=false)=>{closedRecord(v,['x','y']);check(Number.isFinite(v.x)&&Number.isFinite(v.y),'Hostile projectile vector');if(unit)check(Math.abs(Math.hypot(v.x,v.y)-1)<1e-9,'Hostile projectile direction');};
 export const idleHostileRangedAction=tick=>({phase:'idle',phaseStartedTick:tick,phaseEndsTick:tick,targetEntityId:null,aim:null,actionSequence:0});
 
@@ -18,7 +18,7 @@ export function installHostileProjectiles(state){
  if(!hasWorldCombat(state))return;
  state.hostileCombat??={version:HOSTILE_PROJECTILES_VERSION,actionsByEntityId:{},projectiles:{}};
  for(const a of Object.values(state.entitiesById))if(a.alive&&ranged(a)){
-  if(a.ai?.melee?.phase==='idle')delete a.ai.melee;
+  if(!ranged(a).meleeFallback&&a.ai?.melee?.phase==='idle')delete a.ai.melee;
  }
 }
 
@@ -26,7 +26,7 @@ export function cancelHostileProjectiles(state,entityId){
  const root=state.hostileCombat;if(!root)return;
  for(const [id,shot] of Object.entries(root.projectiles))if(shot.sourceId===entityId||shot.intendedTargetId===entityId)delete root.projectiles[id];
  for(const [id,action] of Object.entries(root.actionsByEntityId))if(id===entityId||action.targetEntityId===entityId){
-  root.actionsByEntityId[id]={...idleHostileRangedAction(state.tick),actionSequence:action.actionSequence};
+  root.actionsByEntityId[id]={...idleHostileRangedAction(state.tick),actionSequence:action.actionSequence,...(action.nextShotTick!==undefined?{nextShotTick:action.nextShotTick}:{})};
  }
 }
 
@@ -42,8 +42,10 @@ export function validateHostileProjectiles(state){
  for(const [id,a] of Object.entries(root.actionsByEntityId)){
   const source=state.entitiesById[id],profile=ranged(source);
   check(source?.team==='hostile'&&profile,'Hostile ranged action owner');
-  closedRecord(a,['phase','phaseStartedTick','phaseEndsTick','targetEntityId','aim','actionSequence']);
+  closedRecord(a,['phase','phaseStartedTick','phaseEndsTick','targetEntityId','aim','actionSequence'],['nextShotTick']);
   check(['idle','windup','recovery'].includes(a.phase),'Hostile ranged phase');
+  if(profile.meleeFallback&&a.phase!=='idle')check(!source.ai?.melee||source.ai.melee.phase==='idle','Overlapping hybrid ranged and melee attacks');
+  if(a.nextShotTick!==undefined){check(Boolean(profile.cooldownTicks),'Unexpected ranged cooldown');safeInteger(a.nextShotTick,0,state.tick+profile.cooldownTicks);if(a.phase==='recovery')check(a.nextShotTick===a.phaseStartedTick+profile.cooldownTicks,'Ranged cooldown chronology');if(a.phase==='windup')check(a.nextShotTick<=a.phaseStartedTick,'Ranged cooldown not ready');}
   safeInteger(a.phaseStartedTick,0,state.tick);safeInteger(a.phaseEndsTick,a.phaseStartedTick,state.tick+300);safeInteger(a.actionSequence);
   check(a.phaseEndsTick-a.phaseStartedTick===(a.phase==='windup'?profile.windupTicks:a.phase==='recovery'?profile.recoveryTicks:0),'Hostile ranged phase timing');
   check(a.phase==='windup'?a.actionSequence===source.nextAttackActionSequence:a.phase==='idle'?a.actionSequence<=source.nextAttackActionSequence:a.actionSequence<source.nextAttackActionSequence,'Hostile ranged action chronology');

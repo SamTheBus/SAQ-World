@@ -1,3 +1,6 @@
+import {createBossPolishPresentation,drawBossPolishGround,bossPolishDepthItems,drawAegisProjectileTrails} from './boss_attack_polish_v3.js';
+import {createBrimstoneEruptionPresentation} from './brimstone_attack_effects_v2.js';
+import {drawBrimstoneColossus,drawBrimstoneGround,drawBrimstoneBossHud,brimstoneEffectDepthItems} from './boss_presentation_brimstone_v1.js';
 import {drawOrdinaryHostileProjectile} from './ordinary_hostile_projectile_presentation.js';
 import {drawPlannedVillageGround,plannedVillageDepthItems} from './planned_village_presentation_v1.js';
 import {civilianDepthItems} from './settlement_civilians_v1.js';
@@ -18,14 +21,37 @@ import { createEquipmentArtCache } from './equipment_art.js';
 import {createSiteEnvironment} from './site_environment_presentation.js';
 import {createCombatFeedback} from './combat_feedback.js';
 import { drawOrdinaryEnemy } from './ordinary_enemy_presentation.js';
+import {watcherLookTarget} from './temporal_watcher_eye_v1.js';
 import { createCamera, createPaintedPrompt, selectedActor, spaceKey,createHeroFacing } from "./presentation_state.js";
 import { drawWorldHero, drawProofSlime,tomeFocusPosition } from "./hero_presentation.js";
 import { drawEnvironment, drawEnvironmentMarkers, drawCollisionCoverageDebug, createEnvironmentCache } from "./environment_presentation.js";
 import {depthItem,drawDepthItems} from './world_depth_presentation.js';
 import {drawBerserkerTransfersD12_4H_A,drawGlacialSnareFrontD12_4E,drawGlacialSnareRearD12_4E,drawNullifiedFrontD12_4I,drawNullifiedRearD12_4I,drawSlagShaperHazardsD12_4K,drawToxicPoisonFrontD12_4F,drawToxicPoisonRearD12_4F,drawWebbedFrontD12_4J,drawWebbedRearD12_4J,drawWebWeaverHazardsD12_4J} from './elite_presentation_d12_4.js';
 import {drawActorStatusRow} from './actor_status_presentation.js';
-import {drawArachnidTreantBossHudD12_5A,drawArachnidTreantD12_5A,drawArachnidTreantGroundD12_5A,drawTreantCocoonD12_5A} from './boss_presentation_d12_5.js';
+import {drawAttachedAegisMimic,drawAegisMimicTethers} from './aegis_mimic_presentation_v2.js';
+import {drawAegisGoliath,drawAegisProjectiles,drawAegisBossHud} from './boss_presentation_aegis_v1.js';
+import {drawArachnidTreantBossHudD12_5A,drawArachnidTreantD12_5A,drawTreantCocoonD12_5A} from './boss_presentation_d12_5.js';
 import {createExtractionPortalPresentationD12_5C} from './extraction_portal_presentation_d12_5c.js';
+
+// Input polling observes every authority tick even when painting runs at 30 Hz.
+// Keep these actual resolution records in disposable presentation state; a
+// vanished warning alone is never evidence that an attack resolved.
+export function createBossEffectsObserver(){
+  const polish=createBossPolishPresentation(),eruptions=createBrimstoneEruptionPresentation();
+  let source=null,views=null,frameKey=null;
+  function clear(){polish.clear();eruptions.clear();source=null;views=null;frameKey=null;}
+  function observe(model){
+    if(model===source&&views)return views;
+    const frames=model.navigation?.position?model.navigation.frames:null,nextFrameKey=frames?JSON.stringify(frames):null;
+    // Local coordinates can rebase before the next painted frame. Never carry
+    // an old footprint into a new frame, or apply a Canvas transform here.
+    if(nextFrameKey!==frameKey){polish.clear();eruptions.clear();}
+    frameKey=nextFrameKey;source=model;
+    views=Object.freeze({bossPolishView:polish.update(model),brimstoneView:eruptions.update(model)});
+    return views;
+  }
+  return Object.freeze({observe,clear});
+}
 
 export function createWorldRenderer(canvas,{performanceProbe=null,developmentScene=null,environmentArt=null}={}) {
   const completionPreparation=createCompletionArtPreparation(canvas);
@@ -38,8 +64,8 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
   const camera = createCamera(), prompt = createPaintedPrompt();
   const collisionDebug=new URLSearchParams(canvas.ownerDocument.defaultView?.location?.search??'').get('collisionDebug')==='1';
   const heroFacing=createHeroFacing(),siteEnvironment=createSiteEnvironment(canvas);let invalidations=0,lastInvalidationReason='none',resizeEvents=0,resizeChanges=0,resizeNoops=0,lastResize=null;
-  let observedFrames=null,observedFrameKey=null;let animatedFlowers=0,ambientMarks=0,lastEnvironment=null,lastRenderedEntities=0,seamless=false;const feedback=createCombatFeedback();
-  function invalidate(reason='explicit') { invalidations++;lastInvalidationReason=reason;prompt.clear();environmentCache.clear(reason);lighting.clear();layout++; }
+  let observedFrames=null,observedFrameKey=null;let animatedFlowers=0,ambientMarks=0,lastEnvironment=null,lastRenderedEntities=0,seamless=false;const feedback=createCombatFeedback(),bossEffects=createBossEffectsObserver(),observeBossEffects=bossEffects.observe;
+  function invalidate(reason='explicit') { invalidations++;lastInvalidationReason=reason;bossEffects.clear();prompt.clear();environmentCache.clear(reason);lighting.clear();layout++; }
   function resize(width, height) {
     const nextWidth=Math.max(1,Math.round(width)),nextHeight=Math.max(1,Math.round(height));resizeEvents++;lastResize={from:{width:canvas.width,height:canvas.height},to:{width:nextWidth,height:nextHeight}};
     if(canvas.width===nextWidth&&canvas.height===nextHeight){resizeNoops++;return false;}
@@ -103,7 +129,7 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
       const area=model.encounter.activation;ctx.strokeStyle="#d2d99588";ctx.lineWidth=2;ctx.beginPath();ctx.arc(area.x,area.y,area.radius,0,Math.PI*2);ctx.stroke();
       ctx.fillStyle="#dce2ba";ctx.font="12px system-ui";ctx.fillText("Slime clearing",area.x-40,area.y-area.radius-10);
     }
-    drawWebWeaverHazardsD12_4J(ctx,model,model.tick);drawSlagShaperHazardsD12_4K(ctx,model,model.tick);drawArachnidTreantGroundD12_5A(ctx,model,model.tick);groundItems.draw(ctx,model,time,viewport,equipmentArt);
+    drawWebWeaverHazardsD12_4J(ctx,model,model.tick);drawSlagShaperHazardsD12_4K(ctx,model,model.tick);const {bossPolishView,brimstoneView}=observeBossEffects(model);drawBossPolishGround(ctx,bossPolishView,model.tick);depthItems.push(...bossPolishDepthItems(bossPolishView,model.tick,viewport));drawBrimstoneGround(ctx,brimstoneView,model.tick);depthItems.push(...brimstoneEffectDepthItems(brimstoneView,model.tick,viewport));drawAegisMimicTethers(ctx,model,model.tick);groundItems.draw(ctx,model,time,viewport,equipmentArt);
     for(const shot of model.hostileProjectiles??[])depthItems.push(depthItem({id:'hostile-shot/'+shot.id,anchorX:shot.position.x,anchorY:shot.position.y+4.5,draw:ctx=>drawOrdinaryHostileProjectile(ctx,shot,model.tick)}));
     const liveBolts=new Set((model.bolts??[]).map(b=>b.id));for(const id of boltOrigins.keys())if(!liveBolts.has(id))boltOrigins.delete(id);
     for(const bolt of model.bolts??[]){const source=model.entitiesById[bolt.sourceId],pose=heroPoses[bolt.sourceId];
@@ -115,12 +141,13 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
     drawBerserkerTransfersD12_4H_A(ctx,model,model.tick);
     lastRenderedEntities=0;
     for (const [id,drawn] of Object.entries(model.entitiesById)) {
-      if(seamless&&(drawn.position.x<viewport.x-64||drawn.position.y<viewport.y-64||
-        drawn.position.x>viewport.x+viewport.width+64||drawn.position.y>viewport.y+viewport.height+64))continue;
+      const margin=['aegis_goliath','overlord_iron_vault'].includes(drawn.boss?.bossDefinitionId)?128:64;
+      if(seamless&&(drawn.position.x<viewport.x-margin||drawn.position.y<viewport.y-margin||
+        drawn.position.x>viewport.x+viewport.width+margin||drawn.position.y>viewport.y+viewport.height+margin))continue;
       lastRenderedEntities++;const reaction=drawn.alive?feedback.reaction(id,time):null;
       depthItems.push(depthItem({id:'actor/'+id,anchorX:drawn.position.x,anchorY:drawn.position.y+(drawn.groundAnchorY??(drawn.hullRadius??10)*.45),draw:ctx=>{
        lighting.ground(ctx,drawn);ctx.save();if(reaction)ctx.translate(reaction.offsetX,reaction.offsetY);
-       if(drawn.team==="hostile"){if(drawn.boss)drawArachnidTreantD12_5A(ctx,drawn,model.tick,Boolean(reaction?.flash));else if(drawn.bossSummon?.stage==='cocoon')drawTreantCocoonD12_5A(ctx,drawn,model.tick,Boolean(reaction?.flash));else if(drawn.enemyFamily)drawOrdinaryEnemy(ctx,drawn,model.tick,Boolean(reaction?.flash),equipmentArt);else drawProofSlime(ctx,drawn,Boolean(reaction?.flash),equipmentArt);}
+       if(drawn.team==="hostile"){if(drawn.boss){if(!drawBrimstoneColossus(ctx,drawn,model.tick,Boolean(reaction?.flash))&&!drawAegisGoliath(ctx,bossPolishView.entitiesById[id]??drawn,model.tick,Boolean(reaction?.flash)))drawArachnidTreantD12_5A(ctx,bossPolishView.entitiesById[id]??drawn,model.tick,Boolean(reaction?.flash));}else if(drawAttachedAegisMimic(ctx,drawn,model.tick,Boolean(reaction?.flash))){}else if(drawn.bossSummon?.stage==='cocoon')drawTreantCocoonD12_5A(ctx,drawn,model.tick,Boolean(reaction?.flash));else if(drawn.enemyFamily)drawOrdinaryEnemy(ctx,drawn,model.tick,Boolean(reaction?.flash),equipmentArt,drawn.enemyFamily==='temporal_watcher'?watcherLookTarget(drawn,model.entitiesById):null);else drawProofSlime(ctx,drawn,Boolean(reaction?.flash),equipmentArt);}
        else {const pose=heroPoses[id];drawGlacialSnareRearD12_4E(ctx,drawn,model.tick);drawToxicPoisonRearD12_4F(ctx,drawn,model.tick);drawNullifiedRearD12_4I(ctx,drawn,model.tick);drawWebbedRearD12_4J(ctx,drawn,model.tick);drawWorldHero(ctx,drawn,pose.facing,time,pose.primary,model.tick,Boolean(reaction?.flash),equipmentArt);drawGlacialSnareFrontD12_4E(ctx,drawn,model.tick);drawToxicPoisonFrontD12_4F(ctx,drawn,model.tick);drawNullifiedFrontD12_4I(ctx,drawn,model.tick);drawWebbedFrontD12_4J(ctx,drawn,model.tick);ctx.save();ctx.translate(drawn.position.x,drawn.position.y);drawActorStatusRow(ctx,drawn,{labels:{healthBarY:-42}});ctx.restore();}
        if(drawn.subType==='tome'&&id===model.playersById[model.localPlayerId].entityId&&model.subweapon?.maxBarrierLabel!=='0'){ctx.fillStyle='#07242a';ctx.fillRect(drawn.position.x-16,drawn.position.y-37,32,4);ctx.fillStyle='#4ddfea';ctx.fillRect(drawn.position.x-16,drawn.position.y-37,32*model.subweapon.barrierRatio,4);}
        ctx.restore();
@@ -129,8 +156,9 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
     drawFerryLandings(ctx,model.space.exits);
     drawDepthItems(ctx,depthItems);
     combatVfx.draw(ctx,model,time,viewport);if(performanceProbe)performanceProbe.measure("combatFeedback",()=>feedback.draw(ctx,time,equipmentArt,viewport));else feedback.draw(ctx,time,equipmentArt,viewport);
+    drawAegisProjectileTrails(ctx,model,model.tick);drawAegisProjectiles(ctx,model,model.tick);
     ctx.restore();
-    drawArachnidTreantBossHudD12_5A(ctx,canvas,model);
+    if(!drawBrimstoneBossHud(ctx,canvas,model)&&!drawAegisBossHud(ctx,canvas,model))drawArachnidTreantBossHudD12_5A(ctx,canvas,model);
     const available = Boolean(exit)&&((exit.siteAction||exit.forgeAction||exit.ferryLandingId||exit.serviceNpcId)?exit.available&&["safe","encounter"].includes(model.persistence.phase):model.persistence.phase === "safe") && Math.hypot(actor.position.x-exit.x, actor.position.y-exit.y) <= exit.radius;
     if (available) {
       const label = exit.label ?? (model.space.label.endsWith("A") ? "Enter test room B" : "Return to test field A");
@@ -153,7 +181,7 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
     return Object.freeze({ xpDisplay:rewards.xp(), walletDisplay:rewards.wallet(), camera: cam, actorX: actor.position.x, actorY: actor.position.y, prompt: prompt.read() });
   }
   function prepare(model,time,input){completionPreparation.prepare();const first=render(model,time,input);if(seamless&&!model.space.site)environmentCache.prepareVisible();return render(model,time,input)??first;}
-  return Object.freeze({ render, prepare, resize, invalidate, camera, prompt,
+  return Object.freeze({ render, prepare, resize, invalidate, observeBossEffects, camera, prompt,
     resources: () => Object.freeze({ ...(environmentArt?.resources()??{}),...feedback.resources(), ...rewards.resources(), ...siteEnvironment.resources(), ...environmentCache.resources(), ...lighting.resources(),rendererInvalidations:invalidations,rendererLastInvalidationReason:lastInvalidationReason,rendererResizeEvents:resizeEvents,rendererResizeChanges:resizeChanges,rendererResizeNoops:resizeNoops,rendererLastResize:lastResize, ambientMarks, animatedFlowers, activeSpaceViews: previous ? 1 : 0, rasterCaches: siteEnvironment.resources().siteRasterPages, paintedPrompts: prompt.read() ? 1 : 0,
       completionArtPreparation:completionPreparation.inspect(),collisionCoverageDebug:collisionDebug,...(seamless?{paintedTerrainTiles:lastEnvironment?.paintedTerrainTiles??0,totalTerrainTiles:lastEnvironment?.totalTerrainTiles??0,
         paintedBlockers:lastEnvironment?.paintedBlockers??0,renderedEntities:lastRenderedEntities}: {}) }),

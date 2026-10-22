@@ -17,6 +17,7 @@ const cellCenter=value=>{const [x,y]=value.split(',').map(Number);return {x:(x+.
 
 function contextForGroup(state,groupId){
  for(const site of Object.values(state.d9World?.functionalSitesById??{})){
+  if(site.familyId==='site-family:fort'){const floor=site.floors.find(f=>f.groupId===groupId),boss=floor&&state.bossCombat?.bossesByEntityId?.[floor.enemyIds[0]];if(['aegis_goliath','overlord_iron_vault'].includes(boss?.bossDefinitionId))return {site,floor,boss,rewardClass:BOSS_COMPLETION_REWARD_CLASS};continue;}
   if((isRuinFamily(site)||isCryptFamily(site))){const floor=site.floors.find(f=>f.groupId===groupId);if(floor)return {site,floor,rewardClass:null};continue;}
   // The immutable reservation identifies the sole completion group. Avoid
   // validating unrelated finales when projecting a different floor/resource.
@@ -106,9 +107,23 @@ export function projectSmallCaveFinaleCompletionChestD13D_C(state,resource){
 
 export function projectStandardCaveBossCompletionChestD13D_E(state,resource){
  if(resource.kind!=='chest'||resource.completion!==true||resource.ordinal!==0)return null;
- const context=contextForGroup(state,resource.groupId);if(context?.rewardClass!==BOSS_COMPLETION_REWARD_CLASS||context.site.sizeTier!=='standard')return null;const boss=Object.values(state.bossCombat?.bossesByEntityId??{}).find(row=>row.groupId===resource.groupId&&row.siteId===context.site.siteId&&row.floorId===context.floor.floorId);if(!boss)return null;
+ const context=contextForGroup(state,resource.groupId);if(context?.rewardClass!==BOSS_COMPLETION_REWARD_CLASS||context.site.familyId==='site-family:fort'||context.site.sizeTier!=='standard')return null;const boss=Object.values(state.bossCombat?.bossesByEntityId??{}).find(row=>row.groupId===resource.groupId&&row.siteId===context.site.siteId&&row.floorId===context.floor.floorId);if(!boss)return null;
  const group=state.groupsById[resource.groupId],economy=state.encounterEconomy.groups[resource.groupId],visible=Boolean(group?.cleared&&economy?.clearedTick!==null);
  return freezeWire({kind:'arachnid-treant-completion',bossId:boss.bossId,profileId:context.reservation.rewardBinding.profileId,siteId:context.site.siteId,floorId:context.floor.floorId,episode:context.episode.episode,visible,clearTick:visible?economy.clearedTick:null});
+}
+
+export function projectBrimstoneCompletionChest(state,resource){
+ if(resource.kind!=='chest'||!resource.completion||resource.ordinal!==0)return null;
+ const context=contextForGroup(state,resource.groupId);if(context?.boss?.bossDefinitionId!=='overlord_iron_vault')return null;
+ const economy=state.encounterEconomy.groups[resource.groupId],visible=Boolean(state.groupsById[resource.groupId]?.cleared&&economy?.clearedTick!==null);
+ return freezeWire({kind:'brimstone-colossus-completion',bossId:context.boss.bossId,siteId:context.site.siteId,floorId:context.floor.floorId,episode:economy.episode,visible,clearTick:visible?economy.clearedTick:null});
+}
+
+export function projectAegisCompletionChest(state,resource){
+ if(resource.kind!=='chest'||!resource.completion||resource.ordinal!==0)return null;
+ const context=contextForGroup(state,resource.groupId);if(context?.boss?.bossDefinitionId!=='aegis_goliath')return null;
+ const economy=state.encounterEconomy.groups[resource.groupId],visible=Boolean(state.groupsById[resource.groupId]?.cleared&&economy.clearedTick!==null);
+ return freezeWire({kind:'aegis-goliath-completion',bossId:context.boss.bossId,siteId:context.site.siteId,floorId:context.floor.floorId,episode:economy.episode,visible,clearTick:visible?economy.clearedTick:null});
 }
 
 export function projectLargeCaveFinaleCompletionChestD13D_G(state,resource){

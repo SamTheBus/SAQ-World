@@ -1,3 +1,4 @@
+import {aegisMimicFor} from '../content/aegis_mimics_v2.js';
 import {ORDINARY_ENEMIES,DUNGEON_MOBS_V2_ENEMIES,DUNGEON_MOBS_V2_PROFILES,ordinaryEnemyForProfile,resolveOrdinaryProfile} from '../content/ordinary_enemies.js';
 import {hasWorldCombat,worldEnemyStats} from '../content/world_combat_v1.js';
 import {worldOrdinaryMeleeProfile} from '../content/world_melee_geometry.js';
@@ -87,7 +88,7 @@ export function adoptOrdinaryRostersV2(s,{groupIds=null,safe=true,freshEpisodes=
 export function restoreOrdinaryRosterV2Profiles(s,groupId){const row=recordFor(s,groupId);if(row)apply(s,s.groupsById[groupId],row);}
 export function validateOrdinaryRosterV2State(s){
  const root=s.d9World?.ordinaryRosterV2,newIds=new Set(DUNGEON_MOBS_V2_PROFILES.map(p=>p.contentDefinitionId));
- for(const g of Object.values(s.groupsById))for(const id of g.entityIds)if(newIds.has(s.entitiesById[id].contentDefinitionId))check(root&&recordFor(s,g.groupId)?.substitutionsById[id]?.toProfileId===s.entitiesById[id].contentDefinitionId,'New V2 ordinary actor lacks roster provenance');
+ for(const g of Object.values(s.groupsById))for(const id of g.entityIds)if(newIds.has(s.entitiesById[id].contentDefinitionId)&&!aegisMimicFor(s,id))check(root&&recordFor(s,g.groupId)?.substitutionsById[id]?.toProfileId===s.entitiesById[id].contentDefinitionId,'New V2 ordinary actor lacks roster provenance');
  if(!root)return;
  closedRecord(root,['version','activatedTick']);check(completeCatalog(s),'V2 ordinary roster requires the complete appended catalog');check(hasWorldCombat(s)&&root.version===ORDINARY_ROSTER_V2,'Unrecognized V2 ordinary roster binding');safeInteger(root.activatedTick,0,s.tick);
  for(const [id,episode]of Object.entries(s.d9World.episodes)){
