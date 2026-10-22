@@ -23,6 +23,8 @@ function launcherCapability(environment) {
 }
 
 function showStartupRecovery(environment, failure, actions) {
+  environment.__SAQ_STARTUP_LOADING_V1__?.fail();
+  environment.document.getElementById('saq-startup-scene')?.setAttribute('hidden','');
   const doc=environment.document, panel=doc.getElementById("startup-recovery");
   doc.getElementById("primary-attack").hidden=true;
   doc.getElementById("local-world-controls").hidden=true;
@@ -46,12 +48,14 @@ function cleanAndReload(environment, policy) {
 
 // Explicit composition of browser capabilities; no ambient access at import.
 export async function startWorldClient(environment) {
+  const startupLoading=environment.__SAQ_STARTUP_LOADING_V1__ ?? null;
   let client=null;
   coordinateWorldViewport({environment,shell:environment.document.getElementById('world-app'),onResize:()=>client?.resize()});
   const sha256 = async (bytes) => Array.from(new Uint8Array(await environment.crypto.subtle.digest("SHA-256", new Uint8Array(bytes))));
   const nextToken = () => Array.from(environment.crypto.getRandomValues(new Uint8Array(16)), (v) => v.toString(16).padStart(2, "0")).join("");
   const location = new URL(environment.location.href);
   const plannedReview=environment.document.body.dataset.plannedWorldReview==='true'?await loadPlannedReviewV1(environment,location.searchParams.get('plan')??'alpha',sha256):null;
+  startupLoading?.stage(2, 'Finding your saved campaign…');
   const artV2=environment.document.body.dataset.artV2==='true';
   const townReview=environment.document.body.dataset.townReview==='true';
   const caveReview=environment.document.body.dataset.caveReview==='true',cavePopulation=environment.document.body.dataset.cavePopulation==='true';
@@ -88,6 +92,7 @@ export async function startWorldClient(environment) {
       retry:()=>environment.location.reload(),forget,reset,
       startNew:async()=>{await forget();const url=policy.cleanUrl();url.searchParams.set('activityNew','1');environment.history.replaceState(null,'',url.href);environment.location.reload();}});return null;
   }
+  startupLoading?.stage(3, 'Opening your world…');
   let session,saveBridge=null,worldBridge=null;
   try {
     if(activity){const workerUrl=new URL(environment.document.documentElement.dataset.worldSaveWorker??'./save-worker.js',location);if(plannedReview){workerUrl.searchParams.set('plannedReview','1');if(environment.document.body.dataset.worldCombat==='v1')workerUrl.searchParams.set('worldCombat','1');if(environment.document.body.dataset.sitePopulation==='true')workerUrl.searchParams.set('sitePopulation','1');if(environment.document.body.dataset.settlementServices==='v2')workerUrl.searchParams.set('settlementServices','2');if(environment.document.body.dataset.settlementLife==='true')workerUrl.searchParams.set('settlementLife','1');if(environment.document.body.dataset.ferryReview==='true')workerUrl.searchParams.set('ferryReview','1');if(environment.document.body.dataset.multiroom==='true')workerUrl.searchParams.set('multiroom','1');if(townReview)workerUrl.searchParams.set('townReview','1');if(caveReview)workerUrl.searchParams.set('caveReview','1');if(cavePopulation)workerUrl.searchParams.set('cavePopulation','1');if(fortReview){workerUrl.searchParams.set('fortReview','1');if(environment.document.body.dataset.fortVersion==='v2')workerUrl.searchParams.set('fortVersion','2');}if(environment.document.body.dataset.cryptReview==='true'){workerUrl.searchParams.set('cryptReview','1');if(environment.document.body.dataset.cryptVersion==='v2')workerUrl.searchParams.set('cryptVersion','2');}if(environment.document.body.dataset.ruinReview==='true'){workerUrl.searchParams.set('ruinReview','1');if(environment.document.body.dataset.ruinVersion==='v2')workerUrl.searchParams.set('ruinVersion','2');}if(artV2)workerUrl.searchParams.set('artV2','1');if(environment.document.body.dataset.artPilot==='true')workerUrl.searchParams.set('artPilot','1');if(environment.document.body.dataset.waterReview==='true')workerUrl.searchParams.set('waterReview','1');if(environment.document.body.dataset.shorelineReview==='true')workerUrl.searchParams.set('shorelineReview','1');workerUrl.searchParams.set('plan',plannedReview.asset.assetId);if(environment.document.body.dataset.wildernessV3==='true')workerUrl.searchParams.set('wildernessV3','1');}workerUrl.searchParams.set('v',environment.document.documentElement.dataset.worldRelease??'source');
@@ -95,6 +100,7 @@ export async function startWorldClient(environment) {
       if(['A','F','G','H','I','J','K','L','M','N','O'].includes(proofCase))worldBridge=createWorldWorkerBridgeD9(new environment.Worker(workerUrl),{record:performanceProbe?.record,diagnostics:()=>performanceProbe?.isRecording()===true,now:()=>environment.performance.now(),expectedDatabaseName:environment.document.body.dataset.wildernessV3==='true'?databaseName:null});}
     session = await (worldBridge?createLocalEndlessSessionD9:activity?createLocalActivitySession:createLocalWorldSession)({ sha256, nextToken, scenario, proofCase, runtimeId:environment.document.documentElement.dataset.worldRelease??'source',measure:performanceProbe?.measure, manualPrimary: scenario !== "fixture", resume: launch.resume,worldWorker:worldBridge,
       durabilityTask:saveBridge,
+      onStartupProgress:message=>startupLoading?.note(message),
       plannedWorld:plannedReview?.binding,plannedTargets:plannedReview?.targets,seedInput:plannedReview?.asset.seed??location.searchParams.get("seed"),now:()=>environment.performance.now(),reviewCapabilities:{siteNavigator:siteNavigatorRequested},
       entropy:async size=>Array.from(environment.crypto.getRandomValues(new Uint8Array(size))),
       storeFactory: (expectedContentFingerprint,expectedGenerationBinding,codec) =>
@@ -110,6 +116,7 @@ export async function startWorldClient(environment) {
       startNew:async()=>{await forget();cleanAndReload(environment,policy);},reset});
     return null;
   }
+  startupLoading?.stage(4, 'Verifying game resources…');
   const gameplayPort=Object.freeze({...session.clientPort,getReadModel:()=>session.clientPort.getReadModel({includeDeveloper:false})});
   const clientPort=performanceProbe?Object.freeze({ ...gameplayPort,
     getReadModel:()=>performanceProbe.measure("getReadModel",gameplayPort.getReadModel) }):gameplayPort;
@@ -117,6 +124,7 @@ export async function startWorldClient(environment) {
   let runtimeFingerprint={declaredRuntimeId:runtimeId,manifestRuntimeId:null,runtimeSha256:null};
   const manifestPath=environment.document.documentElement.dataset.runtimeManifest;
   if(manifestPath){const response=await environment.fetch(new URL(manifestPath,location));if(!response.ok)throw Error('Missing review runtime manifest');const m=await response.json(),digest=(await sha256(new TextEncoder().encode(JSON.stringify(m.files)))).map(n=>n.toString(16).padStart(2,'0')).join('');if(digest!==m.runtimeSha256||m.runtimeId!==digest.slice(0,16))throw Error('Review runtime fingerprint mismatch');runtimeFingerprint={...runtimeFingerprint,manifestRuntimeId:m.runtimeId,runtimeSha256:digest};}
+  startupLoading?.stage(5, 'Preparing your surroundings…');
   const loopHealth=createBrowserLoopHealth({now:()=>environment.performance.now(),runtimeId:runtimeFingerprint.manifestRuntimeId??runtimeId,visibility:()=>({hidden:environment.document.hidden,visibility:environment.document.visibilityState,focused:environment.document.hasFocus()})});
 
   const inspect=fn=>{try{return fn();}catch(error){return {diagnosticCaptureError:error.stack??error.message};}};
@@ -172,14 +180,17 @@ export async function startWorldClient(environment) {
    for(const value of (environment.document.body.dataset.storybook==='true'?['candidate','storybook']:artV2?['existing','v1','candidate']:['existing','candidate'])){const b=environment.document.createElement('button');b.dataset.artMode=value;b.textContent=value==='storybook'?'Storybook ruin scene':value==='existing'?'Existing art':value==='v1'?'V1 authored art':'Existing Hybrid V2 kit';b.onclick=()=>setMode(value).catch(e=>{status.textContent=e.message;});group.append(b);}group.append(status);if(environmentArt.setSpecimens){const label=environment.document.createElement('label'),box=environment.document.createElement('input');box.type='checkbox';box.onchange=()=>environmentArt.setSpecimens(box.checked);label.append(box,' Existing enemy art specimens (presentation only; no encounter actors)');group.append(label);}controls.prepend(group);sync();
    Object.defineProperty(environment,'__SAQ_ART_REVIEW__',{configurable:true,value:Object.freeze({setMode,mode:environmentArt.mode,resources:environmentArt.resources,setSpecimens:environmentArt.setSpecimens,journey:environmentArt.journey,resetPerformance:()=>performanceProbe?.start({reset:true})})});
   }
+  startupLoading?.note('Drawing nearby terrain and the hero…');
   try{client.prepare();}
   catch(error){client.destroy();session.destroy?.();worldBridge?.destroy();showStartupRecovery(environment,{title:'Nearby world could not be prepared',detail:error.message},{retry:()=>environment.location.reload(),forget,startNew:async()=>{await forget();cleanAndReload(environment,policy);},reset});return null;}
+  startupLoading?.note('Drawing your first playable frame…');
   panel.dataset.busy='false';panel.hidden=true;environment.document.getElementById("primary-attack").hidden=false;controls.hidden=false;
-  let active = !environment.document.hidden, frame = null;
+  let active = !environment.document.hidden, frame = null, firstFrameReported=false;
   function stopAfterLoopError(phase,error){
     const context=inspect(()=>{const m=clientPort.getReadModel();return {tick:m.tick,spaceInstanceId:m.context.spaceInstanceId,persistence:m.persistence,preparation:client.resources().spacePreparation,authorityClock:clock.inspect(),runtime:session.resources?.()};});
     if(!loopHealth.fail(phase,error,context))return;session.haltForClientFault?.(error,phase);
 
+    startupLoading?.fail();
     active=false;if(frame!==null)environment.cancelAnimationFrame(frame);frame=null;stopClockTimer();
     try{client.releaseInput();}catch(secondary){loopHealth.record('input-release-error',{message:secondary.message});}
     const loading=environment.document.getElementById('world-space-loading');if(loading){loading.hidden=true;loading.style.display='none';}
@@ -188,7 +199,12 @@ export async function startWorldClient(environment) {
   }
   function paint(time) { frame=null;if(!active||loopHealth.failed())return;
     if(batteryPresentation&&lastPresentedFrame!==null&&time-lastPresentedFrame<1000/30-.5){frame=environment.requestAnimationFrame(paint);return;}
-    loopHealth.paintBegin();try{lastPresentedFrame=time;performanceProbe?.frame(time);if(performanceProbe)performanceProbe.measure('clientFrameTotal',()=>client.render(time));else client.render(time);loopHealth.paintEnd();}
+    loopHealth.paintBegin();try{lastPresentedFrame=time;performanceProbe?.frame(time);if(performanceProbe)performanceProbe.measure('clientFrameTotal',()=>client.render(time));else client.render(time);loopHealth.paintEnd();
+      // Finish only once the real game has painted a playable first frame, not when a timer elapses.
+      if(!firstFrameReported && client.resources().spacePreparation.ready && environment.document.getElementById('world-space-loading')?.hidden!==false) {
+        firstFrameReported=true;startupLoading?.finish();
+      }
+    }
     catch(error){stopAfterLoopError('render',error);throw error;}
     if(active&&!loopHealth.failed())frame=environment.requestAnimationFrame(paint);
   }

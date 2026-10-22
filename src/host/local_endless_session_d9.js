@@ -83,17 +83,23 @@ export function validateDeveloperSiteNavigatorCommandD12_4C(request){
 // historical origin. Migration publishes once before any new gameplay tick.
 export async function createLocalEndlessSessionD9(options){
  const {sha256,nextToken,worldWorker:worker,measure=(_name,fn)=>fn(),storeFactory,resume,proofCase='A',runtimeId='source',now=()=>Date.now(),reviewCapabilities={}}=options,siteNavigatorEnabled=reviewCapabilities.siteNavigator===true;
+ const report=typeof options.onStartupProgress==='function'?options.onStartupProgress:()=>{};
+ report(resume?'Restoring the saved world…':'Preparing a new world…');
  check(worker,'D9 requires its save/generation Worker');let opened=resume?await worker.open(resume.campaignId):null,localPlayerId=resume?.playerId,generationDiagnostics=null;
  if(!opened){
+  report('Generating terrain, roads and site entrances…');
   const legacy=await createLocalActivitySession(options),source=legacy.authority.withAuthority(a=>a.readState());
   generationDiagnostics=legacy.generationDiagnostics;localPlayerId=localPlayerId??legacy.clientPort.getReadModel().localPlayerId;
+  report('Building a durable world checkpoint…');
   const migration=await prepareD9OriginMigration(source,{sha256});
   let result=await worker.commit({state:migration.state,expectedRoot:null,checkpointId:createId('checkpointId',nextToken())});
   if(result.status==='unknown')result=await worker.reconcile();check(result.status==='committed',result.reason??'D9 origin publication did not commit');
   opened=await worker.open(source.campaign.campaignId);
  }
+ report('Connecting the planned wilderness…');
  if(options.plannedWorld&&!opened.state.d9World.plannedWorld){const draft=await worker.bindPlanned({state:opened.state,binding:options.plannedWorld});const published=await worker.commit({state:draft,expectedRoot:opened.publication.id,checkpointId:createId('checkpointId',nextToken())});check(published.status==='committed',published.reason??'Planned campaign binding failed');opened=await worker.open(draft.campaign.campaignId);}
  if(options.plannedWorld)check(opened.state.d9World.plannedWorld?.assetHash===options.plannedWorld.assetHash,'Saved planned world binding differs from review selection');
+ report('Checking enemy rosters and existing progress…');
  // Append only the verified new definitions in a separate same-tick commit.
  // Existing actors, manifests, wounds, rewards and episode history are unchanged.
  {const draft=copyWire(opened.state),upgrade=await upgradeDungeonMobCatalog(draft,{sha256});if(upgrade.changed){let saved=await worker.commit({state:draft,expectedRoot:opened.publication.id,checkpointId:createId('checkpointId',nextToken())});if(saved.status==='unknown')saved=await worker.reconcile();check(saved.status==='committed',saved.reason??'Dungeon mob catalog publication did not commit');opened=await worker.open(draft.campaign.campaignId);}}
@@ -119,6 +125,7 @@ export async function createLocalEndlessSessionD9(options){
   let saved=await worker.commit({state:draft,expectedRoot:opened.publication.id,checkpointId:createId('checkpointId',nextToken()),stagedPages:[...staged.values()]});
   if(saved.status==='unknown')saved=await worker.reconcile();check(saved.status==='committed',saved.reason??'Site reservation publication did not commit');opened=await worker.open(draft.campaign.campaignId);
  }
+ report('Finalizing local world streaming…');
  const boundSites=Object.values(opened.state.d9World.functionalSitesById),ruinReservation=Object.values(opened.state.d9World.siteReservationsById??{}).find(r=>r.packageId===WOODLAND_RUIN_PACKAGE_ID),boundSite=boundSites.find(site=>site.socket.version===SITE_BOOTSTRAP_SOCKET_D9),boundBootstrap=ruinReservation?.socket.version===SITE_BOOTSTRAP_SOCKET_D9?Object.freeze({bootstrap:ruinReservation.socket}):boundSite?Object.freeze({bootstrap:boundSite.socket}):null,plannedBootstrap=!opened.state.d9World.plannedWorld&&!boundSites.some(site=>site.packageId===WOODLAND_RUIN_PACKAGE_ID)&&worker.siteBootstrap?await worker.siteBootstrap({seed:opened.state.campaign.seed.seedHex,origin,maxRouteTiles:160}):null;
  // An existing binding remains authoritative. A bound bootstrap socket still
  // overlays its immutable route tile whenever that chunk streams back in;

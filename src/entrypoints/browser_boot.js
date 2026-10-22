@@ -1,5 +1,7 @@
 // Load the game asynchronously so a broken imported module cannot leave a silent blank screen.
 function reportStartupFailure(error) {
+  window.__SAQ_STARTUP_LOADING_V1__?.fail();
+  document.getElementById('saq-startup-scene')?.setAttribute('hidden','');
   const message = error?.message ?? String(error);
   console.error(error?.stack ?? message);
   const status = document.getElementById('world-status');
@@ -32,6 +34,9 @@ if (inspection) {
     .catch(reportStartupFailure);
 } else {
   import('./playable_browser.js')
-    .then(({startWorldClient}) => startWorldClient(window))
+    .then(({startWorldClient}) => {
+      window.__SAQ_STARTUP_LOADING_V1__?.stage(1, 'Reading the world map…');
+      return startWorldClient(window);
+    })
     .catch(reportStartupFailure);
 }
