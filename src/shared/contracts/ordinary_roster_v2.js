@@ -1,4 +1,5 @@
 import {aegisMimicFor} from '../content/aegis_mimics_v2.js';
+import {isWildernessStarterSiteV3} from '../content/wilderness_ecology_v3.js';
 import {ORDINARY_ENEMIES,DUNGEON_MOBS_V2_ENEMIES,DUNGEON_MOBS_V2_PROFILES,ordinaryEnemyForProfile,resolveOrdinaryProfile} from '../content/ordinary_enemies.js';
 import {hasWorldCombat,worldEnemyStats} from '../content/world_combat_v1.js';
 import {worldOrdinaryMeleeProfile} from '../content/world_melee_geometry.js';
@@ -23,6 +24,7 @@ const cyber=['neon_spider','wireframe_orb','cyber_wraith'];
 function contextFor(s,g){
  const site=Object.values(s.d9World.functionalSitesById).find(site=>site.floors?.some(f=>f.groupId===g.groupId)),floor=site?.floors.find(f=>f.groupId===g.groupId);
  if(!floor)return null; // Roads and the retained historical pair stay thematic.
+ if(isWildernessStarterSiteV3(site))return null; // Retain V3 Woodland starter habitat; no Clockwork/Cyber substitution.
  const rawFamily=site.familyId?.split(':').at(-1)??site.siteKind?.replace('procedural-',''),family=rawFamily?.includes('cave')?'cave':rawFamily,biome=site.socket.region.biome,ordinal=site.floors.indexOf(floor),lower=ordinal>0;
  let key,families;
  if(['upland','rocky-uplands','frostland'].includes(biome)&&['cave','fort'].includes(family)){key='mountain:'+family;families=mountain;}

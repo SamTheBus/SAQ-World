@@ -1,4 +1,5 @@
 import {ORDINARY_ENEMIES,DUNGEON_MOBS_V1_PROFILES,ordinaryEnemyForProfile,resolveOrdinaryProfile} from '../content/ordinary_enemies.js';
+import {starterWildernessPoolV3} from '../content/wilderness_ecology_v3.js';
 import {hasWorldCombat,worldEnemyStats} from '../content/world_combat_v1.js';
 import {worldOrdinaryMeleeProfile} from '../content/world_melee_geometry.js';
 import {DUNGEON_RANGED_FAMILIES_V1,DUNGEON_MOBS_V1_MELEE_MOTION} from '../content/dungeon_mobs_v1.js';
@@ -26,8 +27,8 @@ const poolFor=(biome,family,tier)=>{
 function contextFor(s,g){
  const m=origin(s),site=Object.values(s.d9World.functionalSitesById).find(site=>site.floors?.some(f=>f.groupId===g.groupId)),floor=site?.floors.find(f=>f.groupId===g.groupId);
  if(floor){
-  const family=site.familyId?.split(':').at(-1)??site.siteKind?.replace('procedural-',''),pool=poolFor(site.socket.region.biome,family,site.sizeTier),members=floor.encounter.members.map((member,n)=>({entityId:floor.enemyIds[n],profileId:member.role==='arachnid-treant'?s.entitiesById[floor.enemyIds[n]].contentDefinitionId:resolveOrdinaryProfile(ORDINARY_ENEMIES.find(e=>e.family===member.family),floor.encounter.rank).contentDefinitionId,roomId:member.roomId}));
-  return {pool,members,protected:new Set(),floor:true};
+  const family=site.familyId?.split(':').at(-1)??site.siteKind?.replace('procedural-',''),starter=starterWildernessPoolV3(site),pool=starter??poolFor(site.socket.region.biome,family,site.sizeTier),members=floor.encounter.members.map((member,n)=>({entityId:floor.enemyIds[n],profileId:member.role==='arachnid-treant'?s.entitiesById[floor.enemyIds[n]].contentDefinitionId:resolveOrdinaryProfile(ORDINARY_ENEMIES.find(e=>e.family===member.family),floor.encounter.rank).contentDefinitionId,roomId:member.roomId}));
+  return {pool,members,protected:new Set(),floor:true,starter:Boolean(starter)};
  }
  const legacySite=m?.siteInteriors?.find(site=>site.groups.some(d=>d.groupId===g.groupId)),original=m?.population?.groups.find(d=>d.groupId===g.groupId)??legacySite?.groups.find(d=>d.groupId===g.groupId),expanded=s.d9World.originHordes?.groupsById[g.groupId]?.definition;
  if(original){
@@ -61,7 +62,7 @@ function selection(s,g,context){
  for(const c of candidates)if(ranged.length<maxRanged&&!ranged.includes(c))ranged.push(c);
  const result={},used=new Set(ranged.map(m=>m.entityId));
  for(const [n,m] of ranged.entries()){const enemy=ORDINARY_ENEMIES.find(e=>e.family===context.pool.ranged[n%context.pool.ranged.length]),profile=resolveOrdinaryProfile(enemy,rankFor(m.profileId));result[m.entityId]={fromProfileId:m.profileId,toProfileId:profile.contentDefinitionId};}
- const meleeCount=context.pool.melee.length?Math.max(1,Math.min(context.floor?6:3,Math.floor(g.entityIds.length/4))):0,melee=candidates.filter(m=>!used.has(m.entityId)).slice(0,meleeCount);
+ const meleeCount=context.pool.melee.length?(context.starter?Math.min(candidates.length,Math.max(1,Math.ceil(candidates.length*3/4))):Math.max(1,Math.min(context.floor?6:3,Math.floor(g.entityIds.length/4)))):0,melee=candidates.filter(m=>!used.has(m.entityId)).slice(0,meleeCount);
  for(const [n,m]of melee.entries()){const enemy=ORDINARY_ENEMIES.find(e=>e.family===context.pool.melee[(hashReward(seed+'/melee')+n)%context.pool.melee.length]),profile=resolveOrdinaryProfile(enemy,rankFor(m.profileId));result[m.entityId]={fromProfileId:m.profileId,toProfileId:profile.contentDefinitionId};}
  return Object.fromEntries(Object.entries(result).sort(([a],[b])=>a.localeCompare(b)));
 }

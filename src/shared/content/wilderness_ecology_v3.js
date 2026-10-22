@@ -1,7 +1,9 @@
-// Wilderness V3 enemy ecology policy (planning-only, not yet actor spawn authority).
+// Wilderness V3 ecology policy: starter Woodland slice active via the
+// existing ordinary roster journal; other biomes remain planning-only.
 // All IDs are existing World actor families. A coverage gap is not secretly
 // filled by a universal Void/Cyber enemy or an unimplemented placeholder.
-import {creatureDefinitionForFamily} from './creatures_d11.js';
+import {ORDINARY_ENEMIES} from './ordinary_enemies.js';
+const existingCreature=family=>ORDINARY_ENEMIES.some(row=>row.family===family);
 import {freezeWire} from '../contracts/wire.js';
 
 export const WILDERNESS_ECOLOGY_V3_VERSION='wilderness-ecology-v3-planning-1';
@@ -38,6 +40,32 @@ export const WILDERNESS_ECOLOGY_STARTER_SITES=freezeWire({
 
 // Rare imported anomaly themes are NOT in the surface pools. Later activation
 // must be explicitly gated by site theme, not broad legacy metadata.
+
+// Live Wilderness V3 *starter slice*, not a general biome spawn director.
+// We deliberately retain existing immutable floor geometry, actor IDs, rewards
+// and profile catalog. Adopted substitutions use the existing deterministic
+// ordinary-roster journal and are replayed on fresh episodes/save reopen.
+export const WILDERNESS_V3_STARTER_POOLS=freezeWire({
+ 'repeatable-slot:cave:woodland:small:089':{biome:'woodland',family:'cave',tier:'small',melee:['rust_nibbler','slime']},
+ 'repeatable-slot:fort:woodland:standard:01':{biome:'woodland',family:'fort',tier:'standard',melee:['animated_armor','golem']},
+ 'repeatable-slot:ruin:woodland:standard:054':{biome:'woodland',family:'ruin',tier:'standard',melee:['cursed_blade','gargoyle']}
+});
+
+export function starterWildernessPoolV3(site){
+ const provenance=site?.socket?.provenance;
+ const reservationId=provenance?.reservationId;
+ const spec=WILDERNESS_V3_STARTER_POOLS[reservationId];
+ if(!spec)return null;
+ const rawFamily=site?.familyId?.split(':').at(-1)??site?.siteKind?.replace('procedural-','');
+ const family=rawFamily?.includes('cave')?'cave':rawFamily;
+ if(site?.socket?.region?.biome!==spec.biome || family!==spec.family || site?.sizeTier!==spec.tier)
+   throw Error('V3 starter encounter reservation geometry drift: '+reservationId);
+ return freezeWire({key:'wilderness-v3-starter:'+reservationId,ranged:[],melee:spec.melee});
+}
+export const isWildernessStarterSiteV3=site=>Boolean(WILDERNESS_V3_STARTER_POOLS[site?.socket?.provenance?.reservationId]);
+for(const spec of Object.values(WILDERNESS_V3_STARTER_POOLS))
+ for(const family of spec.melee)if(!existingCreature(family))throw Error('Missing V3 starter mob: '+family);
+
 export const WILDERNESS_ECOLOGY_RARE_SITE_THEMES=freezeWire({
  void:['void_crawler','void_spectre','void_wraith','void_orb','rift_drifter'],
  clockwork:['clockwork_scarab','clockwork_drone','temporal_watcher','star_weaver'],
@@ -50,10 +78,10 @@ for(const [biome,roles] of Object.entries(WILDERNESS_ECOLOGY_V3_MATRIX)){
  for(const [role,families] of Object.entries(roles)){
   if(role!=='surface'&&!WILDERNESS_ECOLOGY_SITE_FAMILIES.includes(role))throw Error('Invalid V3 role');
   if(new Set(families).size!==families.length)throw Error('Duplicate V3 family');
-  for(const family of families)if(!creatureDefinitionForFamily(family))throw Error('Unknown existing V3 creature '+family);
+  for(const family of families)if(!existingCreature(family))throw Error('Unknown existing V3 creature '+family);
  }
 }
-for(const f of Object.values(WILDERNESS_ECOLOGY_RARE_SITE_THEMES).flat())if(!creatureDefinitionForFamily(f))throw Error('Unknown exotic creature '+f);
+for(const f of Object.values(WILDERNESS_ECOLOGY_RARE_SITE_THEMES).flat())if(!existingCreature(f))throw Error('Unknown exotic creature '+f);
 
 export function planWildernessSiteEcologyV3(selection){
  const siteId=selection?.id,biome=selection?.biome,tier=selection?.tier,
@@ -69,7 +97,7 @@ export function planWildernessSiteEcologyV3(selection){
   boss:reviewBoss,starter:WILDERNESS_ECOLOGY_STARTER_SITES[siteId]??null,
   rareAnomalyEligible:family==='ruin'||family==='crypt',
   // Nothing here creates actors, loot, rewards, identities or persisted records.
-  activation:'planning-only'});
+  activation:WILDERNESS_V3_STARTER_POOLS[siteId]?'live-starter-roster':'planning-only'});
 }
 
 export function auditWildernessEcologyV3(selections){
