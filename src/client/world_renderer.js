@@ -28,6 +28,7 @@ import { drawEnvironment, drawEnvironmentMarkers, drawCollisionCoverageDebug, cr
 import {depthItem,drawDepthItems} from './world_depth_presentation.js';
 import {drawBerserkerTransfersD12_4H_A,drawGlacialSnareFrontD12_4E,drawGlacialSnareRearD12_4E,drawNullifiedFrontD12_4I,drawNullifiedRearD12_4I,drawSlagShaperHazardsD12_4K,drawToxicPoisonFrontD12_4F,drawToxicPoisonRearD12_4F,drawWebbedFrontD12_4J,drawWebbedRearD12_4J,drawWebWeaverHazardsD12_4J} from './elite_presentation_d12_4.js';
 import {drawActorStatusRow} from './actor_status_presentation.js';
+import {actorHealthRatio,createHealthTrailsV3,drawEnemyHealthEchoV3,drawBossHealthEchoV3} from './health_feedback_v3.js';
 import {drawAttachedAegisMimic,drawAegisMimicTethers} from './aegis_mimic_presentation_v2.js';
 import {drawAegisGoliath,drawAegisProjectiles,drawAegisBossHud} from './boss_presentation_aegis_v1.js';
 import {drawArachnidTreantBossHudD12_5A,drawArachnidTreantD12_5A,drawTreantCocoonD12_5A} from './boss_presentation_d12_5.js';
@@ -64,8 +65,8 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
   const camera = createCamera(), prompt = createPaintedPrompt();
   const collisionDebug=new URLSearchParams(canvas.ownerDocument.defaultView?.location?.search??'').get('collisionDebug')==='1';
   const heroFacing=createHeroFacing(),siteEnvironment=createSiteEnvironment(canvas);let invalidations=0,lastInvalidationReason='none',resizeEvents=0,resizeChanges=0,resizeNoops=0,lastResize=null;
-  let observedFrames=null,observedFrameKey=null;let animatedFlowers=0,ambientMarks=0,lastEnvironment=null,lastRenderedEntities=0,seamless=false;const feedback=createCombatFeedback(),bossEffects=createBossEffectsObserver(),observeBossEffects=bossEffects.observe;
-  function invalidate(reason='explicit') { invalidations++;lastInvalidationReason=reason;bossEffects.clear();prompt.clear();environmentCache.clear(reason);lighting.clear();layout++; }
+  let observedFrames=null,observedFrameKey=null;let animatedFlowers=0,ambientMarks=0,lastEnvironment=null,lastRenderedEntities=0,seamless=false;const feedback=createCombatFeedback(),healthTrails=createHealthTrailsV3(),bossEffects=createBossEffectsObserver(),observeBossEffects=bossEffects.observe;
+  function invalidate(reason='explicit') { invalidations++;lastInvalidationReason=reason;healthTrails.clear();bossEffects.clear();prompt.clear();environmentCache.clear(reason);lighting.clear();layout++; }
   function resize(width, height) {
     const nextWidth=Math.max(1,Math.round(width)),nextHeight=Math.max(1,Math.round(height));resizeEvents++;lastResize={from:{width:canvas.width,height:canvas.height},to:{width:nextWidth,height:nextHeight}};
     if(canvas.width===nextWidth&&canvas.height===nextHeight){resizeNoops++;return false;}
@@ -150,6 +151,10 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
        if(drawn.team==="hostile"){if(drawn.boss){if(!drawBrimstoneColossus(ctx,drawn,model.tick,Boolean(reaction?.flash))&&!drawAegisGoliath(ctx,drawn,model.tick,Boolean(reaction?.flash)))drawArachnidTreantD12_5A(ctx,drawn,model.tick,Boolean(reaction?.flash));}else if(drawAttachedAegisMimic(ctx,drawn,model.tick,Boolean(reaction?.flash))){}else if(drawn.bossSummon?.stage==='cocoon')drawTreantCocoonD12_5A(ctx,drawn,model.tick,Boolean(reaction?.flash));else if(drawn.enemyFamily)drawOrdinaryEnemy(ctx,drawn,model.tick,Boolean(reaction?.flash),equipmentArt,drawn.enemyFamily==='temporal_watcher'?watcherLookTarget(drawn,model.entitiesById):null);else drawProofSlime(ctx,drawn,Boolean(reaction?.flash),equipmentArt);}
        else {const pose=heroPoses[id];drawGlacialSnareRearD12_4E(ctx,drawn,model.tick);drawToxicPoisonRearD12_4F(ctx,drawn,model.tick);drawNullifiedRearD12_4I(ctx,drawn,model.tick);drawWebbedRearD12_4J(ctx,drawn,model.tick);drawWorldHero(ctx,drawn,pose.facing,time,pose.primary,model.tick,Boolean(reaction?.flash),equipmentArt);drawGlacialSnareFrontD12_4E(ctx,drawn,model.tick);drawToxicPoisonFrontD12_4F(ctx,drawn,model.tick);drawNullifiedFrontD12_4I(ctx,drawn,model.tick);drawWebbedFrontD12_4J(ctx,drawn,model.tick);ctx.save();ctx.translate(drawn.position.x,drawn.position.y);drawActorStatusRow(ctx,drawn,{labels:{healthBarY:-42}});ctx.restore();}
        if(drawn.subType==='tome'&&id===model.playersById[model.localPlayerId].entityId&&model.subweapon?.maxBarrierLabel!=='0'){ctx.fillStyle='#07242a';ctx.fillRect(drawn.position.x-16,drawn.position.y-37,32,4);ctx.fillStyle='#4ddfea';ctx.fillRect(drawn.position.x-16,drawn.position.y-37,32*model.subweapon.barrierRatio,4);}
+       if(drawn.team==='hostile'&&drawn.alive&&!drawn.boss){
+         const healthVisual=healthTrails.sample('enemy/'+id,actorHealthRatio(drawn),time);
+         drawEnemyHealthEchoV3(ctx,drawn,healthVisual,model.tick);
+       }
        ctx.restore();
       }}));
     }
@@ -159,6 +164,11 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
     drawAegisProjectileTrails(ctx,model,model.tick);drawAegisProjectiles(ctx,model,model.tick);
     ctx.restore();
     if(!drawBrimstoneBossHud(ctx,canvas,model)&&!drawAegisBossHud(ctx,canvas,model))drawArachnidTreantBossHudD12_5A(ctx,canvas,model);
+    const aliveBoss=Object.entries(model.entitiesById).find(([,entity])=>entity.alive&&entity.boss);
+    if(aliveBoss){
+      const [bossId,boss]=aliveBoss,visual=healthTrails.sample('boss/'+bossId,actorHealthRatio(boss),time);
+      drawBossHealthEchoV3(ctx,canvas,boss,visual,time);
+    }
     const available = Boolean(exit)&&((exit.siteAction||exit.forgeAction||exit.ferryLandingId||exit.serviceNpcId)?exit.available&&["safe","encounter"].includes(model.persistence.phase):model.persistence.phase === "safe") && Math.hypot(actor.position.x-exit.x, actor.position.y-exit.y) <= exit.radius;
     if (available) {
       const label = exit.label ?? (model.space.label.endsWith("A") ? "Enter test room B" : "Return to test field A");

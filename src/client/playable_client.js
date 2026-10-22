@@ -1,5 +1,6 @@
 import {createSettlementServicesMenu} from './settlement_services_menu_v1.js';
 import {createFerryMenu} from './ferry_menu_v1.js';
+import {createPlayerHealthHudV3} from './health_feedback_v3.js';
 import {createCivilianContextInput} from './civilian_context_input.js';
 import {createWorldMapD9} from './world_map_d9.js';
 import {formatLarge,integerRatio} from '../shared/contracts/large_number.js';
@@ -21,6 +22,7 @@ import {createSpacePreparationGate} from './space_preparation_gate.js';
 
 export function mountPlayableClient({ port, environment, nextCommandToken, capabilities, performanceProbe = null, environmentArt=null, readRuntimeDiagnostics=()=>null, readSaveStatus=()=>null, evidenceMode = false,evidenceIntervalMs=0, developerMode = false }) {
   const doc = environment.document, canvas = doc.getElementById("world-view"), status = doc.getElementById("world-status");
+  const playerHealthHudV3=createPlayerHealthHudV3(doc);
   doc.documentElement.dataset.gameplayHudVisible='false';
   for(const id of ['world-hud','world-level-up','primary-attack','world-bag','world-pickup','world-loot-notice'])doc.getElementById(id)?.setAttribute('data-gameplay-hud','');
   const label = doc.getElementById("space-label"), mode = doc.getElementById("control-mode"), provenance = doc.getElementById("control-provenance");
@@ -149,7 +151,7 @@ export function mountPlayableClient({ port, environment, nextCommandToken, capab
       bar.setAttribute('aria-label',progress.capped?'Maximum level':`Level ${progressionText(progress.level)}: ${progressionText(progress.current)} of ${progressionText(progress.required)} XP`);
       progressHud.title=`Max HP ${formatLarge(participant.stats.maxHp)} · Attack ${formatLarge(participant.stats.attack)} · Defense ${formatLarge(participant.stats.defense)}`;
     }}
-    const hpBar=doc.getElementById('world-hp-bar');if(hpBar)hpBar.value=100*integerRatio(hero.hpExact??'0',hero.maxHpExact??'1');setText(doc.getElementById('world-gold'),formatAmount(painted.walletDisplay??model.inventory?.gold??'0'));
+    const hpBar=doc.getElementById('world-hp-bar'),hpRatio=integerRatio(hero.hpExact??'0',hero.maxHpExact??'1');playerHealthHudV3.update(hpRatio,time);if(hpBar)hpBar.value=100*hpRatio;setText(doc.getElementById('world-gold'),formatAmount(painted.walletDisplay??model.inventory?.gold??'0'));
     const health=doc.getElementById('world-health');if(health)setText(health,`HP ${formatLarge(hero.hpExact??String(Math.round(hero.hp.m*10**hero.hp.e)))} / ${formatLarge(hero.maxHpExact??String(Math.round(hero.maxHp.m*10**hero.maxHp.e)))}`);
     setText(doc.getElementById("world-metrics"),(model.primary?`HP ${formatLarge(hero.hpExact??String(Math.round(hero.hp.m*10**hero.hp.e)))} / ${formatLarge(hero.maxHpExact??String(Math.round(hero.maxHp.m*10**hero.maxHp.e)))} · `:"")+(model.space.visual ?
       `${model.space.settlementSafe ? "Safe settlement" : model.space.label} · ${model.space.visitedCount}/${model.space.visitedTotal} semantic places/sites discovered${model.space.site?model.space.site.conqueredTick!==null?" · Conquered":" · Active site":model.space.functionalSite?model.space.functionalSite.conqueredTick!==null?" · Conquered":" · Active site":model.space.overworld?" · One continuous overworld":" · Arrival saved"}` :
@@ -171,5 +173,5 @@ export function mountPlayableClient({ port, environment, nextCommandToken, capab
   }
   resize();
   return Object.freeze({ render, invalidateArt:()=>renderer.invalidate('review-art-mode-change'), prepare:()=>renderer.prepare(port.getReadModel(),environment.performance.now(),input),pollInput:()=>{const model=port.getReadModel();renderer.observeBossEffects(model);const ready=preparation.observe(presentationSpace(model),Boolean(model.siteActivationPending));if(!ready){input.clear(false);primary?.clear(false);loadingFeedback(true);return false;}input.refresh(model);primary?.refresh(model);return true;}, releaseInput:()=>{subweaponHud?.clear();input.clear();primary?.clear();}, resize,resources:()=>Object.freeze({...renderer.resources(),...(navigation?.resources?.()??{}),spacePreparation:preparation.inspect()}),
-    destroy:()=>{serviceMenu?.destroy();ferryMenu?.destroy();loading.remove();civilianInput.destroy();navigation.destroy();siteNavigator.destroy();subweaponHud.destroy();diagnostics.destroy();inventory.destroy();death.destroy();input.destroy();primary?.destroy();gestureListeners.forEach(remove=>remove());if(disclosure){compact.removeEventListener?.('change',layoutDisclosure);disclosure.removeEventListener('toggle',resize);}} });
+    destroy:()=>{playerHealthHudV3.destroy();serviceMenu?.destroy();ferryMenu?.destroy();loading.remove();civilianInput.destroy();navigation.destroy();siteNavigator.destroy();subweaponHud.destroy();diagnostics.destroy();inventory.destroy();death.destroy();input.destroy();primary?.destroy();gestureListeners.forEach(remove=>remove());if(disclosure){compact.removeEventListener?.('change',layoutDisclosure);disclosure.removeEventListener('toggle',resize);}} });
 }

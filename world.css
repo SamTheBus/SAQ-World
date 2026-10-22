@@ -339,3 +339,13 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 @media(max-width:600px){.constellation-stage{height:640px;}}
 
 .progression-gain{position:fixed;left:18px;top:150px;z-index:12;max-width:280px;background:#20172ee8;border-left:2px solid #dfb956;color:#ffe5a3;padding:7px 10px;font:600 12px system-ui;pointer-events:none;}
+
+/* Wilderness V3: Dungeon-inspired life feedback. It never owns input or simulation. */
+.hp-track .saq-hp-echo-v3 {position:absolute;top:2px;bottom:2px;z-index:1;pointer-events:none;background:linear-gradient(180deg,#fff9d7,#ffb86c);box-shadow:0 0 5px #ffbd78b0;min-width:0;}
+.hp-track #world-health {z-index:2;pointer-events:none;}
+#world-app.saq-low-health-v3::after {content:"";position:fixed;inset:0;z-index:7;pointer-events:none;background:radial-gradient(ellipse at center,transparent 32%,rgba(91,6,17,.25) 57%,rgba(160,7,24,.92) 100%);opacity:var(--saq-injury-opacity,0);animation:saq-injury-heartbeat-v3 1.2s ease-in-out infinite;}
+#world-hud-vitals.saq-critical-health-v3 {border-color:#d54e50;box-shadow:inset 0 2px #654077,0 0 12px #bd233d7a;}
+#world-hud-vitals.saq-critical-health-v3 #world-hp-bar::-webkit-progress-value {background:linear-gradient(#ff9b94,#c82539);}
+#world-hud-vitals.saq-critical-health-v3 #world-hp-bar::-moz-progress-bar {background:#c82539;}
+@keyframes saq-injury-heartbeat-v3 {0%,100%{filter:brightness(.90)}35%{filter:brightness(1.16)}60%{filter:brightness(.95)}}
+@media(prefers-reduced-motion:reduce){#world-app.saq-low-health-v3::after {animation:none;}#world-hud-vitals.saq-critical-health-v3 {transition:none;}}

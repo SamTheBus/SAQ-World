@@ -1,27 +1,56 @@
 {
-  "runtimeId": "7a2b352270d72431",
-  "runtimeSha256": "7a2b352270d72431d0787bbff38e8e04870cae04677272852351280e8a3934cb",
-  "parentRuntimeId": "e2795ab143e31492",
-  "reviewRevision": 74,
+  "runtimeId": "3ff4292c108816eb",
+  "runtimeSha256": "3ff4292c108816eb6c7a64f06f9f54b9f9be7a8b76439c1e721879af3532585b",
+  "parentRuntimeId": "7a2b352270d72431",
+  "reviewRevision": 75,
   "changedRuntimeFiles": [
     "index.html",
-    "world-cumulative-dev.html",
+    "src/client/playable_client.js",
+    "src/client/world_renderer.js",
     "src/dev/planned_world_review_v1.js",
     "src/entrypoints/playable_browser.js",
     "src/shared/content/alpha_site_population_v1.js",
     "src/shared/contracts/alpha_population_v1.js",
-    "src/shared/generation/planned_world_foundation_v1.js",
     "src/shared/generation/planned_world_chunks_v1.js",
-    "src/storage/planned_world_assets_v1.js"
+    "src/shared/generation/planned_world_foundation_v1.js",
+    "src/storage/planned_world_assets_v1.js",
+    "world-cumulative-dev.html",
+    "world.css"
   ],
   "addedRuntimeFiles": [
     "assets/wilderness-v2/alpha.json",
-    "src/shared/content/wilderness_v2.js",
+    "save-worker.wilderness-v2-ed2f7fcafeac.js",
+    "src/client/health_feedback_v3.js",
     "src/shared/content/wilderness_reservations_v2.js",
-    "save-worker.wilderness-v2-ed2f7fcafeac.js"
+    "src/shared/content/wilderness_v2.js"
   ],
   "unchangedRuntimeFiles": [],
   "files": [
+    {
+      "path": "ART-DIRECTION.md",
+      "bytes": 102387,
+      "sha256": "b2f5824e55ed45abadc76302c48af655cdc5fc00e4530d62f2d8319fd93e45d7"
+    },
+    {
+      "path": "CONTINUE-HERE.txt",
+      "bytes": 2942,
+      "sha256": "65997fd40ce85b2b71448641a4420d075d1a9d6c0c642b2e4e20d5dc7a6f0be3"
+    },
+    {
+      "path": "README.txt",
+      "bytes": 2635,
+      "sha256": "3812492fc2e62ad464df7d70553de051726437aab5373c0b3b8651a6336fe9df"
+    },
+    {
+      "path": "RUN-CHECKS.txt",
+      "bytes": 1398,
+      "sha256": "d7a8d64ddfd4189b1e10c6d27b1a9499346f7c39bab91339b47ab839d1904b08"
+    },
+    {
+      "path": "Start-Preview.cmd",
+      "bytes": 58,
+      "sha256": "d8dff088f3a9fcdafceb5d567f464387366770ef2b7b8266ee680c22b39e8af4"
+    },
     {
       "path": "assets/alpha-site-population-v1.json",
       "bytes": 140762,
@@ -133,14 +162,29 @@
       "sha256": "2910127c5761a334c166a2a92779bba69676302a2fb2d913ee850216a790e4ae"
     },
     {
+      "path": "assets/wilderness-v2/alpha.json",
+      "bytes": 1472485,
+      "sha256": "ed2f7fcafeac4305b6658242d232d8d79dade9ecb6b43ea74125fc1318cc282f"
+    },
+    {
       "path": "index.html",
-      "bytes": 21301,
-      "sha256": "88e1dc576a54c6236ba9f15e26b6c7f9dca7a4f0a30f4d91e78633cbb5696ec8"
+      "bytes": 21335,
+      "sha256": "518077b3673603be0bbe86fadd667e68a8bd2c4ffc36c47ff84ed77ba7c9ec02"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 108589,
+      "sha256": "bb83ca3c69e38102e6c7aeac3abf7d96424ec8fe14e5ce643915706c5242ea9c"
     },
     {
       "path": "manifest.webmanifest",
       "bytes": 195,
       "sha256": "9256b4a8863f6c1ce6d6846b9db558386298902e06e20a2bde38891d0adb9646"
+    },
+    {
+      "path": "preview-server.mjs",
+      "bytes": 1296,
+      "sha256": "89ba207ac392ad6c11e5acdb385eb5d5c533afb1ff0233d3e21df59dace8c291"
     },
     {
       "path": "save-worker.dungeon-mobs-v1-2b383d7d04b6.js",
@@ -196,6 +240,11 @@
       "path": "save-worker.js",
       "bytes": 104,
       "sha256": "b3e2360f0d2e438d47e2ca37ab1e6999b9ac7c801a6da4ff8870bbca8daf6ac6"
+    },
+    {
+      "path": "save-worker.wilderness-v2-ed2f7fcafeac.js",
+      "bytes": 138,
+      "sha256": "e43e9e7b6d883c838dc67a77d5b8a834f09c2118ebb31186e28cf6f0230fd10d"
     },
     {
       "path": "src/client/activity_save_bridge.js",
@@ -603,6 +652,11 @@
       "sha256": "e05fdb9c4e73c73ed8f4ba9aee46c2f5cd4bc685e026cdec7848dfee4dc43277"
     },
     {
+      "path": "src/client/health_feedback_v3.js",
+      "bytes": 5847,
+      "sha256": "a3d1bb5d9318d2352f0ccd1df521a69e2db734b183e28770353bd369df118f51"
+    },
+    {
       "path": "src/client/hero_presentation.js",
       "bytes": 4843,
       "sha256": "be5b28f88840792e162936cbf5e6fd8ad4f550e4ddaa88bed43d78b3590c4d39"
@@ -704,8 +758,8 @@
     },
     {
       "path": "src/client/playable_client.js",
-      "bytes": 20833,
-      "sha256": "b6250d21e313a12847b7a454e5823be74f52bb9b9bb71371c0314eaac8dab2b7"
+      "bytes": 21039,
+      "sha256": "c51372159a7c5aa3320bb86beeb154442644ba869fc182ca82100ee84d477be4"
     },
     {
       "path": "src/client/presentation_state.js",
@@ -874,8 +928,8 @@
     },
     {
       "path": "src/client/world_renderer.js",
-      "bytes": 21175,
-      "sha256": "f2a0ddac114c029e9aac21cfc81b840610f1da2a5310bc4e1ab024b84ac1f22c"
+      "bytes": 21883,
+      "sha256": "efc3fe7fbb75289587f56405cd1ba4bef585c9107a738a34293d6043579d1ca2"
     },
     {
       "path": "src/client/world_worker_bridge_d9.js",
@@ -1426,6 +1480,16 @@
       "path": "src/shared/content/village_template_v1.js",
       "bytes": 8150,
       "sha256": "66427a4afbbde5ccb9f8c07084f7c32597b5053504bf2b73d77e1fb9f024981b"
+    },
+    {
+      "path": "src/shared/content/wilderness_reservations_v2.js",
+      "bytes": 213830,
+      "sha256": "bafb0385df3787c99e4527f9b42baf40068aba5690f5fc4c3898d2107814ad86"
+    },
+    {
+      "path": "src/shared/content/wilderness_v2.js",
+      "bytes": 25952,
+      "sha256": "75aad173855a025d5e64f4ba8b8ce79383e317467c06cc6e32e5cc50be481220"
     },
     {
       "path": "src/shared/content/woodland_cave_d10.js",
@@ -16273,86 +16337,6 @@
       "sha256": "ef893e1518038d7012ae767b60c840842160f0aa46216658a75ea2f6cb6fcc5f"
     },
     {
-      "path": "world-crypt-large-v2-dev.html",
-      "bytes": 7012,
-      "sha256": "62550ee33050fa7c9a6f512c7bf4e816905756f0361bafb3ec436111fda10713"
-    },
-    {
-      "path": "world-cumulative-dev.html",
-      "bytes": 21301,
-      "sha256": "88e1dc576a54c6236ba9f15e26b6c7f9dca7a4f0a30f4d91e78633cbb5696ec8"
-    },
-    {
-      "path": "world-fort-deep-v2-dev.html",
-      "bytes": 6867,
-      "sha256": "81538bde98e880d8317e51fdeeb54d1556299c12afde4991227d90a07a92ae63"
-    },
-    {
-      "path": "world-ruin-deep-v2-dev.html",
-      "bytes": 6958,
-      "sha256": "9edea91278269966046947d01ca2c6536f6c98bf2678519dc67bd9303664eeb0"
-    },
-    {
-      "path": "world.css",
-      "bytes": 44140,
-      "sha256": "4632038d4c6620018511538ee7eb44cbf79136f53c5e2726e6ccde27bf115a51"
-    },
-    {
-      "path": "ART-DIRECTION.md",
-      "bytes": 102387,
-      "sha256": "b2f5824e55ed45abadc76302c48af655cdc5fc00e4530d62f2d8319fd93e45d7"
-    },
-    {
-      "path": "CONTINUE-HERE.txt",
-      "bytes": 2942,
-      "sha256": "65997fd40ce85b2b71448641a4420d075d1a9d6c0c642b2e4e20d5dc7a6f0be3"
-    },
-    {
-      "path": "README.txt",
-      "bytes": 2635,
-      "sha256": "3812492fc2e62ad464df7d70553de051726437aab5373c0b3b8651a6336fe9df"
-    },
-    {
-      "path": "RUN-CHECKS.txt",
-      "bytes": 1398,
-      "sha256": "d7a8d64ddfd4189b1e10c6d27b1a9499346f7c39bab91339b47ab839d1904b08"
-    },
-    {
-      "path": "Start-Preview.cmd",
-      "bytes": 58,
-      "sha256": "d8dff088f3a9fcdafceb5d567f464387366770ef2b7b8266ee680c22b39e8af4"
-    },
-    {
-      "path": "assets/wilderness-v2/alpha.json",
-      "bytes": 1472485,
-      "sha256": "ed2f7fcafeac4305b6658242d232d8d79dade9ecb6b43ea74125fc1318cc282f"
-    },
-    {
-      "path": "manifest.json",
-      "bytes": 108589,
-      "sha256": "bb83ca3c69e38102e6c7aeac3abf7d96424ec8fe14e5ce643915706c5242ea9c"
-    },
-    {
-      "path": "preview-server.mjs",
-      "bytes": 1296,
-      "sha256": "89ba207ac392ad6c11e5acdb385eb5d5c533afb1ff0233d3e21df59dace8c291"
-    },
-    {
-      "path": "save-worker.wilderness-v2-ed2f7fcafeac.js",
-      "bytes": 138,
-      "sha256": "e43e9e7b6d883c838dc67a77d5b8a834f09c2118ebb31186e28cf6f0230fd10d"
-    },
-    {
-      "path": "src/shared/content/wilderness_reservations_v2.js",
-      "bytes": 213830,
-      "sha256": "bafb0385df3787c99e4527f9b42baf40068aba5690f5fc4c3898d2107814ad86"
-    },
-    {
-      "path": "src/shared/content/wilderness_v2.js",
-      "bytes": 25952,
-      "sha256": "75aad173855a025d5e64f4ba8b8ce79383e317467c06cc6e32e5cc50be481220"
-    },
-    {
       "path": "worker/wilderness-v2-ed2f7fcafeac/src/entrypoints/activity_save_worker.js",
       "bytes": 5174,
       "sha256": "590695b9d73efc46751ba9a6577681e03f134c9cea1499ce20d27b1671b05217"
@@ -17751,6 +17735,31 @@
       "path": "worker/wilderness-v2-ed2f7fcafeac/src/storage/world_worker_task_d9.js",
       "bytes": 5375,
       "sha256": "ef893e1518038d7012ae767b60c840842160f0aa46216658a75ea2f6cb6fcc5f"
+    },
+    {
+      "path": "world-crypt-large-v2-dev.html",
+      "bytes": 7012,
+      "sha256": "62550ee33050fa7c9a6f512c7bf4e816905756f0361bafb3ec436111fda10713"
+    },
+    {
+      "path": "world-cumulative-dev.html",
+      "bytes": 21301,
+      "sha256": "88e1dc576a54c6236ba9f15e26b6c7f9dca7a4f0a30f4d91e78633cbb5696ec8"
+    },
+    {
+      "path": "world-fort-deep-v2-dev.html",
+      "bytes": 6867,
+      "sha256": "81538bde98e880d8317e51fdeeb54d1556299c12afde4991227d90a07a92ae63"
+    },
+    {
+      "path": "world-ruin-deep-v2-dev.html",
+      "bytes": 6958,
+      "sha256": "9edea91278269966046947d01ca2c6536f6c98bf2678519dc67bd9303664eeb0"
+    },
+    {
+      "path": "world.css",
+      "bytes": 45394,
+      "sha256": "bf4be012a0af42893f75953c3247584d79cdfda3c849acc85023ca245374bb5b"
     }
   ]
 }
