@@ -83,3 +83,11 @@ The `main` branch on October 22, 2026 published the **Wilderness V2** source und
 5. Playtest exploration frequency, readability, save integrity, reward usefulness, and performance. In parallel, sketch two or three UI art-direction options for review before adopting one.
 
 **Instruction for future SAQ World chats:** Treat this roadmap as the agreed high-level priority baseline. Check the current GitHub `main` state and any newer explicit user decisions before implementation. Do not silently reorder priorities, assume unbuilt features are live, or overwrite more recent user choices. If the owner says 'continue SAQ World', start from Wilderness V3 enemy ecology/boss placement and the starter-region vertical slice unless a newer accepted milestone supersedes it.
+
+## October 22, 2026 — approved visual-feedback addendum
+
+Owner preference: SAQ Dungeon's **low-health red screen vignette**, satisfying **delayed-damage health bars for player, enemies and bosses**, and dark-fantasy HUD style are the preferred starting point for SAQ World's UI redesign. Improve ordinary, elite, Mimic Shield and major boss HP presentation together. Keep visual reactions separate from authoritative combat and saved-state changes, and respect reduced-motion preferences.
+
+The first reactive-health presentation checkpoint landed on `main` as commit `15c0a3bc51b1e1a22c4cc18ba20fae0dcf9b33a1`. It adds damage trails, low-health vignette, HUD critical styling, Mimic/elite hit highlights and boss damage echoes. **This is not the complete UI redesign**; inventory, menus, map, typography and controls remain on the longer visual-identity roadmap.
+
+The first 108-site ecology survey and proposed starter adventure/boss reservations are documented in [`SAQ-WORLD-WILDERNESS-V3-ECOLOGY-PLAN.md`](https://github.com/SamTheBus/SAQ-World/blob/main/SAQ-WORLD-WILDERNESS-V3-ECOLOGY-PLAN.md). This is an assignment **plan**, not live spawn authority. Notably Desert, Grassland and Tropical require new local enemy families; no large/deep Woodland site currently supports an appropriately sized Arachnid Treant encounter.
