@@ -457,3 +457,17 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; user-sel
 .saq-startup-premium .saq-load-footer button:hover {color:#edf2e9;border-color:#c5d1c9;}
 .saq-startup-premium .saq-load-footer button:focus-visible {outline:2px solid #c5d1c9;outline-offset:3px;}
 @media (max-height:700px) {.saq-startup-premium .saq-load-heading {font-size:26px;margin-bottom:17px;}}
+
+/* Source-authentic World hero + Rust Nibbler over IdleSAQ Stage 1. No title card. */
+.saq-startup-premium .saq-load-duel {position:absolute;top:0;left:0;width:100%;
+  height:clamp(310px,55vh,600px);z-index:0;display:block;pointer-events:none;
+  filter:saturate(.92) brightness(.96)}
+.saq-startup-premium .saq-load-main {z-index:1}
+.saq-startup-premium .saq-load-darken {background:linear-gradient(180deg,
+  rgba(7,12,15,.32) 0%,rgba(8,14,16,.03) 35%,rgba(8,14,16,.09) 55%,
+  #0b1113 97%,#0b1113 100%)}
+.saq-startup-premium .saq-load-content {padding-top:8px}
+.saq-startup-premium .saq-load-chapter {margin-bottom:14px}
+.saq-startup-premium .saq-load-spacer {min-height:clamp(255px,42vh,440px)}
+@media (max-height:700px){.saq-startup-premium .saq-load-spacer{min-height:clamp(215px,39vh,335px)}
+  .saq-startup-premium .saq-load-chapter{margin-bottom:9px}}

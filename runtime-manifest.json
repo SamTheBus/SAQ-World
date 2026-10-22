@@ -1,10 +1,11 @@
 {
-  "runtimeId": "58af8e9bb1c44420",
-  "runtimeSha256": "58af8e9bb1c44420209910007aa55859a4ab0070d6d8e4bc98e40e600feea7eb",
-  "parentRuntimeId": "adf10e79042e6bb4",
-  "reviewRevision": 80,
+  "runtimeId": "d15d3870f38bb272",
+  "runtimeSha256": "d15d3870f38bb27293559e748f82b29d67a45005c36aae0a474862ff941ffa9e",
+  "parentRuntimeId": "58af8e9bb1c44420",
+  "reviewRevision": 81,
   "changedRuntimeFiles": [
     "checks/startup-module-graph.test.mjs",
+    "checks/startup-stage1-visual-v2.test.mjs",
     "index.html",
     "src/client/activity_save_bridge.js",
     "src/client/playable_client.js",
@@ -26,16 +27,19 @@
     "world.css"
   ],
   "addedRuntimeFiles": [
+    "WILDERNESS-V3-STAGE1-COMBAT-LOADING.md",
     "WILDERNESS-V3-STAGE1-LOADING-V2.md",
     "WILDERNESS-V3-STARTUP-LOADING.md",
     "assets/wilderness-v2/alpha.json",
     "checks/startup-loading-v1.test.mjs",
+    "checks/startup-stage1-combat-v3.test.mjs",
     "checks/startup-stage1-visual-v2.test.mjs",
     "checks/wilderness-v3-database-routing.test.mjs",
     "save-worker.wilderness-v2-ed2f7fcafeac.js",
     "save-worker.wilderness-v3-migrationfix-20261022.js",
     "save-worker.wilderness-v3-starter-20261022.js",
     "src/client/health_feedback_v3.js",
+    "src/client/startup_combat_preview_v1.js",
     "src/client/startup_loading_v1.js",
     "src/shared/content/wilderness_ecology_v3.js",
     "src/shared/content/wilderness_reservations_v2.js",
@@ -631,6 +635,11 @@
       "sha256": "d8dff088f3a9fcdafceb5d567f464387366770ef2b7b8266ee680c22b39e8af4"
     },
     {
+      "path": "WILDERNESS-V3-STAGE1-COMBAT-LOADING.md",
+      "bytes": 1756,
+      "sha256": "dab828104c7e527d6461dba575f84fc42909f942ae668b8492c98e81170b68c7"
+    },
+    {
       "path": "WILDERNESS-V3-STAGE1-LOADING-V2.md",
       "bytes": 3416,
       "sha256": "fa350e04c7be08884ce8cd82990393aadf970225267f79dd83f28617a9857b31"
@@ -762,13 +771,18 @@
     },
     {
       "path": "checks/startup-module-graph.test.mjs",
-      "bytes": 3338,
-      "sha256": "90b6205d1013e729bcd86f825dcdc7820234463dcd6c574bdee6445707fb277c"
+      "bytes": 3472,
+      "sha256": "b1f967b045779eb5052e89419123f8423c5cea9ada9feb90165dc1c7e493a827"
+    },
+    {
+      "path": "checks/startup-stage1-combat-v3.test.mjs",
+      "bytes": 2675,
+      "sha256": "9c5f786cc987e5f5876f4f20801e1977c8ab0b63e42c5a09cba442f94302ee01"
     },
     {
       "path": "checks/startup-stage1-visual-v2.test.mjs",
-      "bytes": 2900,
-      "sha256": "1fe22381ce5cb43cea767aa4aa71d1c623aba4c8e936471fb046f4b0c99fbf08"
+      "bytes": 3074,
+      "sha256": "e53221c3fa529c85ed3eca727f3ba9176a3df928e14cde8fb216bd543325e399"
     },
     {
       "path": "checks/wilderness-v3-database-routing.test.mjs",
@@ -777,8 +791,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 34104,
-      "sha256": "e848d0bcb0102df6168e67ed8d187500a2f225c3ea6313501f7a19aceb830461"
+      "bytes": 34348,
+      "sha256": "f14657b2d600c0b84612bedbe76e5e2dbcaa34b388538076bb14c7fcb0419816"
     },
     {
       "path": "manifest.json",
@@ -1474,6 +1488,11 @@
       "path": "src/client/space_preparation_gate.js",
       "bytes": 899,
       "sha256": "d81817b334556345f25ccfbbbbf3c2430a7091345dd63f6fb5f154952873fe2a"
+    },
+    {
+      "path": "src/client/startup_combat_preview_v1.js",
+      "bytes": 13273,
+      "sha256": "fcfeac87c3a46d4cc9c7cc7a048822052ec47fba2655ae423dca5abc6a19e9c9"
     },
     {
       "path": "src/client/startup_loading_v1.js",
@@ -21197,8 +21216,8 @@
     },
     {
       "path": "world.css",
-      "bytes": 53923,
-      "sha256": "fc287dd59969d28ea0e23ad3130b6d8e1a48d03894073629f74804f46aeb9587"
+      "bytes": 54780,
+      "sha256": "ea888ba549d7bedaf93f24f2965f6dca507abdd035184d31f39454db821db971"
     }
   ]
 }
