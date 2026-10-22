@@ -25,6 +25,11 @@ assert(html.includes('browser_boot.js?v=startup-art-v1'));
 assert(html.includes('startup_loading_v1.js?v=startup-art-v1'));
 assert(html.includes('id="saq-startup-progress"'));
 assert(html.includes('id="saq-startup-scene"'));
+assert(html.includes('world.css?v=stage1-premium-v3'));
+assert(html.includes('data-runtime-manifest="runtime-manifest.json?v=stage1-premium-v3"'),'runtime manifest URL should not serve a stale hash');
+assert(html.includes('saq-load-stage1-art'));
+assert(!html.includes('saq-load-monster')); // no invented hero or monster sprites
+
 assert(html.includes('save-worker.wilderness-v3-migrationfix-20261022.js'));
 assert(html.includes('data-world-release="wilderness-v3-starter-20261022"')); // saved campaigns retain their original namespace
 for (const file of ['activity_save_bridge.js','world_worker_bridge_d9.js'])assert(Object.values(map.imports).some(url => url.includes(file+'?v=v3-migrationfix-20261022')), `Missing stable ${file}`);
