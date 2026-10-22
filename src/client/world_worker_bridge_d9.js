@@ -2,12 +2,12 @@
 // simulation ticks, exploration, content activation, or reward calculations.
 // Legacy diagnosis markers: active=queue.shift();try{worker.postMessage(active.packet);}
 // const job=active;active=null;
-export function createWorldWorkerBridgeD9(worker,{record=()=>{},diagnostics=false,now=()=>performance.now()}={}){
+export function createWorldWorkerBridgeD9(worker,{record=()=>{},diagnostics=false,now=()=>performance.now(),expectedDatabaseName=null}={}){
  const queue=[],requestDiagnostics={},requestCounts={};let active=null,ready=false,closed=false,sequence=0;
  function fail(error){closed=true;active?.reject(error);active=null;for(const job of queue.splice(0))job.reject(error);}
  function pump(){if(!ready||closed||active||!queue.length)return;active=queue.shift();try{const at=now();worker.postMessage(active.packet);record('worker.postMessage',now()-at);}catch(e){fail(e);}}
  worker.onmessage=({data})=>{
-  if(data.ready===true){ready=true;pump();return;}if(!active||data.id!==active.packet.id)return;
+  if(data.ready===true){if(expectedDatabaseName!==null&&data.databaseName!==expectedDatabaseName){fail(new Error('World Worker campaign database mismatch; existing saves remain untouched'));return;}ready=true;pump();return;}if(!active||data.id!==active.packet.id)return;
   const job=active;active=null;for(const t of data.timings??[]){record(t.name,t.ms);if(t.name==='worldWorkerTotal')record('worker.'+job.packet.kind.replace('world.',''),t.ms);}
   if(data.error){const error=new Error(data.error);if(data.code)error.code=data.code;if(data.actorGeometry)error.actorGeometry=data.actorGeometry;if(data.stack)error.stack=data.stack;job.reject(error);}else job.resolve(data.result);pump();
  };
