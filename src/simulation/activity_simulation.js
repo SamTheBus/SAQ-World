@@ -3,6 +3,7 @@ import {createHostileProjectileSimulation} from './hostile_projectiles_v1.js';
 import {installHostileProjectiles,cancelHostileProjectiles} from '../shared/contracts/hostile_projectiles_v1.js';
 import {installWorldHostileMelee,worldHostileMeleeTiming,resolvedHostileMeleeTimer} from '../shared/content/world_hostile_melee.js';
 import {hasWorldCombat,worldLevelGapMultiplier} from '../shared/content/world_combat_v1.js';
+import {usesWildernessFairnessV3_2,wildernessFairLevelGap} from '../shared/content/wilderness_fairness_v3_2.js';
 import {selectForwardActors} from './primary_rules.js';
 import {serviceActionProblem,applyServiceAction} from '../shared/contracts/settlement_services_v1.js';
 import {ferryTravelTarget} from '../shared/contracts/ferry_travel_v1.js';
@@ -103,7 +104,8 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
       }
     }
     if(!periodic){progression.prepareCombat(source,scheduler.config.prepareRadius);progression.prepareCombat(target,scheduler.config.prepareRadius);}
-    const levelGap=hasWorldCombat(state)&&source.team!==target.team?worldLevelGapMultiplier(progression.combatLevel(source.team==='party'?source.entityId:target.entityId),source.team==='hostile'&&attribution?.sourceLevel!==undefined?attribution.sourceLevel:progression.combatLevel(source.team==='hostile'?source.entityId:target.entityId)):null;
+    const levelGapForWorld = usesWildernessFairnessV3_2(state) ? wildernessFairLevelGap : worldLevelGapMultiplier;
+    const levelGap=hasWorldCombat(state)&&source.team!==target.team?levelGapForWorld(progression.combatLevel(source.team==='party'?source.entityId:target.entityId),source.team==='hostile'&&attribution?.sourceLevel!==undefined?attribution.sourceLevel:progression.combatLevel(source.team==='hostile'?source.entityId:target.entityId)):null;
     let raw=requested??asCombatAmount(source.attackDamage),critical=resolvedComponent?attribution.inheritedCritical===true:false,defense=null,defenseStats=null,barrierAbsorption=null,pendingPlayerRng=null,pendingForcedTransient=null,eliteGuard=null,eliteAttack=null;
     const sourceSubweaponSuppressed=source.team==='party'&&subweaponSuppressedD12_4I(state,source.entityId);
     if(!resolvedComponent&&mechanic==='main'){const factor=family.effects.mainMultiplier(target);raw=multiplyCombat(raw,factor.n,factor.d);}

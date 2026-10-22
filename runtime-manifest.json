@@ -1,8 +1,8 @@
 {
-  "runtimeId": "d15d3870f38bb272",
-  "runtimeSha256": "d15d3870f38bb27293559e748f82b29d67a45005c36aae0a474862ff941ffa9e",
-  "parentRuntimeId": "58af8e9bb1c44420",
-  "reviewRevision": 81,
+  "runtimeId": "5dd6804cd03958b3",
+  "runtimeSha256": "5dd6804cd03958b340e3f54a0332b0757d676a9050773fb2a75489e47bfcb60b",
+  "parentRuntimeId": "d15d3870f38bb272",
+  "reviewRevision": 82,
   "changedRuntimeFiles": [
     "checks/startup-module-graph.test.mjs",
     "checks/startup-stage1-visual-v2.test.mjs",
@@ -22,11 +22,13 @@
     "src/shared/contracts/ordinary_roster_v2.js",
     "src/shared/generation/planned_world_chunks_v1.js",
     "src/shared/generation/planned_world_foundation_v1.js",
+    "src/simulation/activity_simulation.js",
     "src/storage/planned_world_assets_v1.js",
     "world-cumulative-dev.html",
     "world.css"
   ],
   "addedRuntimeFiles": [
+    "WILDERNESS-V3-2-FAIR-COMBAT.md",
     "WILDERNESS-V3-STAGE1-COMBAT-LOADING.md",
     "WILDERNESS-V3-STAGE1-LOADING-V2.md",
     "WILDERNESS-V3-STARTUP-LOADING.md",
@@ -34,6 +36,8 @@
     "checks/startup-loading-v1.test.mjs",
     "checks/startup-stage1-combat-v3.test.mjs",
     "checks/startup-stage1-visual-v2.test.mjs",
+    "checks/wilderness-v3-2-fairness-runtime.test.mjs",
+    "checks/wilderness-v3-2-fairness.test.mjs",
     "checks/wilderness-v3-database-routing.test.mjs",
     "save-worker.wilderness-v2-ed2f7fcafeac.js",
     "save-worker.wilderness-v3-migrationfix-20261022.js",
@@ -42,6 +46,7 @@
     "src/client/startup_combat_preview_v1.js",
     "src/client/startup_loading_v1.js",
     "src/shared/content/wilderness_ecology_v3.js",
+    "src/shared/content/wilderness_fairness_v3_2.js",
     "src/shared/content/wilderness_reservations_v2.js",
     "src/shared/content/wilderness_v2.js",
     "worker/wilderness-v3-migrationfix-20261022/src/entrypoints/activity_save_worker.js",
@@ -635,6 +640,11 @@
       "sha256": "d8dff088f3a9fcdafceb5d567f464387366770ef2b7b8266ee680c22b39e8af4"
     },
     {
+      "path": "WILDERNESS-V3-2-FAIR-COMBAT.md",
+      "bytes": 2854,
+      "sha256": "77a19801a19dc5536314862fea7a2824863ce1e1b2f44b34387e3e3d3efc23aa"
+    },
+    {
       "path": "WILDERNESS-V3-STAGE1-COMBAT-LOADING.md",
       "bytes": 1756,
       "sha256": "dab828104c7e527d6461dba575f84fc42909f942ae668b8492c98e81170b68c7"
@@ -771,8 +781,8 @@
     },
     {
       "path": "checks/startup-module-graph.test.mjs",
-      "bytes": 3472,
-      "sha256": "b1f967b045779eb5052e89419123f8423c5cea9ada9feb90165dc1c7e493a827"
+      "bytes": 3779,
+      "sha256": "47ba884fd2e302427eeadc23a8edee8a5053ccd15c4d058564a9ded9b64e0a01"
     },
     {
       "path": "checks/startup-stage1-combat-v3.test.mjs",
@@ -785,14 +795,24 @@
       "sha256": "e53221c3fa529c85ed3eca727f3ba9176a3df928e14cde8fb216bd543325e399"
     },
     {
+      "path": "checks/wilderness-v3-2-fairness-runtime.test.mjs",
+      "bytes": 3800,
+      "sha256": "b901f4ee0aeb25e01f75fe489a144eb5a7c01f702e478014d011cf3c66a5d9c8"
+    },
+    {
+      "path": "checks/wilderness-v3-2-fairness.test.mjs",
+      "bytes": 3153,
+      "sha256": "8ffa7753693df6e095164051fa014818f2ebff25d99b81c4f406b23240faa8df"
+    },
+    {
       "path": "checks/wilderness-v3-database-routing.test.mjs",
       "bytes": 4686,
       "sha256": "829ea5bc16e05ea00c5db8b93ff006b5b9b3a0e78e8382d450d3df8e872f4c02"
     },
     {
       "path": "index.html",
-      "bytes": 34348,
-      "sha256": "f14657b2d600c0b84612bedbe76e5e2dbcaa34b388538076bb14c7fcb0419816"
+      "bytes": 34481,
+      "sha256": "9eb480c0612b03fea7aee33c2055fd6d5478449a95d6c18583127bbf83b684a5"
     },
     {
       "path": "manifest.json",
@@ -2130,6 +2150,11 @@
       "sha256": "cdecae5f983ff69ce0920909a50ba926dc63e3814673b4a311457bf31f524fdf"
     },
     {
+      "path": "src/shared/content/wilderness_fairness_v3_2.js",
+      "bytes": 1618,
+      "sha256": "dcbb2e19f4b52934fcc15e1391bccf9f4d005c53590ba0c471db75158d1ab0c0"
+    },
+    {
       "path": "src/shared/content/wilderness_reservations_v2.js",
       "bytes": 213830,
       "sha256": "bafb0385df3787c99e4527f9b42baf40068aba5690f5fc4c3898d2107814ad86"
@@ -3071,8 +3096,8 @@
     },
     {
       "path": "src/simulation/activity_simulation.js",
-      "bytes": 48456,
-      "sha256": "09d15dc9269f43f1eb435e2ae33049bbe01f1e1f5111d97f35cca7fb95b00584"
+      "bytes": 48677,
+      "sha256": "9128cdcf077031adf4c12e25be0e96918050206ce4d7fd0c6dbd3ab5cbd2e68a"
     },
     {
       "path": "src/simulation/activity_spatial.js",
