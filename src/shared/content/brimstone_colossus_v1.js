@@ -1,6 +1,7 @@
 import {freezeWire} from '../contracts/wire.js';
 import {ARACHNID_TREANT_PROFILE} from './bosses_d12_5.js';
 import {collidesWithTiles} from '../rules/world_geometry.js';
+import {usesWildernessFairnessV3_2} from './wilderness_fairness_v3_2.js';
 
 // Dungeon's Zone 3 identity is named Brimstone Colossus and uses this AI key.
 export const BRIMSTONE_ID='overlord_iron_vault';
@@ -20,8 +21,7 @@ export function brimstoneVolcanicRuinFloorV4(site,index,state){
   index===site.floorCount-1&&
   site.socket?.provenance?.reservationId===BRIMSTONE_VOLCANIC_LARGE_RUIN_V4&&
   site.socket?.region?.biome==='volcanic'&&
-  state?.d9World?.plannedWorld?.wildernessVersion!==undefined&&
-  state.d9World.plannedWorld.combatVersion!==undefined;
+  usesWildernessFairnessV3_2(state);
 }
 // A full-width cross fissure needs orthogonal, walkable corridors and
 // somewhere the player can retreat. This is immutable floor geometry, not VFX.
