@@ -53,16 +53,30 @@ export function archivedBossArtModel(model,tick){
    hp:a.hp,maxHp:a.maxHp,movedLastTick:a.movedLastTick,visualSeed:a.visualSeed,
    meleePhase:a.meleePhase, facingAngle:0, lastDamagedTick:a.lastDamagedTick};
  });
+ // Continuous acid ribbon derived from actual authority patches, preserving the
+ // approved V2 bank painter instead of opaque overlapping pool circles.
+ const originalTrails=[],trailGroups=new Map();
+ for(const p of acid){const key=p.bossId+'/'+p.kind,rows=trailGroups.get(key)??[];rows.push(p);trailGroups.set(key,rows);}
+ for(const[key,rows]of trailGroups){
+  rows.sort((a,b)=>a.createdTick-b.createdTick||a.id.localeCompare(b.id));
+  const owner=byBossId.get(rows[0].bossId),kind=rows[0].kind==='slag'?'slag':'boss';
+  const segments=rows.map((p,i)=>{
+   const prev=rows[i-1],near=prev&&Math.hypot(p.position.x-prev.position.x,p.position.y-prev.position.y)<=20;
+   return {sequence:i+1,from:near?point(prev.position.x,prev.position.y):point(p.position.x-1,p.position.y),
+     to:point(p.position.x,p.position.y),createdTick:p.createdTick,expiresTick:p.expiresTick};
+  });
+  originalTrails.push({id:key,sourceEntityId:owner?.entityId??rows[0].bossId,kind,radius:rows[0].radius,segments});
+ }
  const cTele=tele.filter(q=>corrosive(q.bossDefinitionId)).map(q=>{
   const b=byBossId.get(q.bossId),at=q.position,target=q.position,origin=b?.position??target;
   // The original pod painter uses the same deterministic fan as the active
   // World storm: three points offset from the locked target position.
   const positions=q.ability==='spore_storm'?[0,1,2].map(i=>{
-   const angle=i*TAU/3+rand(q.selectionSeed??0,q.sequence??0,i)*.35;
-   return point(at.x+Math.cos(angle)*43,at.y+Math.sin(angle)*43);
+   const angle=i*TAU/3;
+   return point(origin.x+Math.cos(angle)*45,origin.y+Math.sin(angle)*45);
   }):[];
   return {...q,id:q.bossId+':cast:'+q.sequence,ability:renamed(q.ability),targetPosition:target,originPosition:origin,
-   radius:q.ability==='corrosive_slam'?72:105,sporeSpawnPositions:positions};
+   radius:q.ability==='corrosive_slam'?64:12,sporeSpawnPositions:positions};
  });
  const vTele=tele.filter(q=>isVoid(q.bossDefinitionId)&&q.ability==='singularity').map(q=>{
   const b=byBossId.get(q.bossId),center=b?.position??q.position;
@@ -78,10 +92,8 @@ export function archivedBossArtModel(model,tick){
   if(isVoid(b.boss.bossDefinitionId)&&row.ability==='singularity')vImpacts.push({...common,ability:'singularity',radius:93});
  }
  const archivedHazards={...h,
-  corrosivePools:acid,corrosiveMinions:minions,corrosiveTelegraphs:cTele,corrosiveImpacts:cImpacts,
-  // Current authority has acid pool hazards, but not physical shootable spores.
-  // Never fabricate targetable spores in the purely visual adapter.
-  corrosiveSpores:[],corrosiveSheds:[],
+  corrosivePools:acid,corrosiveTrails:originalTrails,corrosiveMinions:minions,corrosiveTelegraphs:cTele,corrosiveImpacts:cImpacts,
+  corrosiveSpores:(h.recoveredSpores??[]).filter(p=>corrosive(p.bossDefinitionId)).map(s=>({...s,stage:'drifting',radius:12})),corrosiveSheds:[],
   voidTelegraphs:vTele,voidImpacts:vImpacts};
  cacheView={...model,entitiesById:bodyById,bossHazards:archivedHazards};
  return cacheView;
