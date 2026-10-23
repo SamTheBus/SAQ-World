@@ -115,7 +115,7 @@ function projected(model,tick){
   chronosFields:field,chronosImpacts:impacts.filter(q=>q.bossDefinitionId==='chronos_arbitrator'&&q.ability==='slam'),
   chronosRewinds:[],
   nexusTelegraphs:casts.filter(q=>q.bossDefinitionId==='nexus_overseer'),
-  nexusImpacts:impacts.filter(q=>q.bossDefinitionId==='nexus_overseer'),nexusBarriers:barriers,nexusProjectiles:[],nexusGlitches:glitches,
+  nexusImpacts:impacts.filter(q=>q.bossDefinitionId==='nexus_overseer'),nexusBarriers:barriers,nexusProjectiles:(h.recoveredNexusShots??[]),nexusGlitches:glitches,
   hooktailTelegraphs:casts.filter(q=>q.bossDefinitionId==='hooktail'),
   hooktailImpacts:impacts.filter(q=>q.bossDefinitionId==='hooktail'),
    hooktailCollapsedRings:(h.recoveredCollapsedRings??[]).map(r=>({id:r.bossId+':collapse:'+r.index,bossId:r.bossId,createdTick:r.createdTick,ring:{index:r.index,minColumn:r.minColumn,maxColumn:r.maxColumn,minRow:r.minRow,maxRow:r.maxRow,tileSize:r.tileSize,tiles:r.tiles}})),
