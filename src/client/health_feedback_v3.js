@@ -12,7 +12,7 @@ export function actorHealthRatio(actor){
   return clampHealthRatio(Number(hp)/Number(max));
 }
 
-// Holds missing health in pale gold for 140 ms, then catches up smoothly.
+// Holds missing health in pale gold for 100 ms, then catches up at Dungeon's ~0.015 per 60 Hz frame.
 // Reset on a new world space and after a seek so stale actors cannot flash.
 export function createHealthTrailsV3(){
   const entries=new Map();
@@ -31,7 +31,7 @@ export function createHealthTrailsV3(){
     if(actual<item.actual-.0005){item.trail=Math.max(item.trail,item.actual);item.hitAt=now;}
     else if(actual>item.actual+.0005){item.trail=actual;item.hitAt=-Infinity;}
     item.actual=actual;item.at=now;
-    if(now-item.hitAt>140)item.trail=Math.max(actual,item.trail-dt*.00065);
+    if(now-item.hitAt>100)item.trail=Math.max(actual,item.trail-dt*.0009);
     item.trail=Math.max(item.trail,actual);
     return {actual,trail:item.trail,impact:Math.max(0,1-(now-item.hitAt)/260)};
   }
@@ -40,25 +40,53 @@ export function createHealthTrailsV3(){
 
 // Draw on top of the accepted native creature/elite/Mimic bar: only the
 // lost-health segment is replaced. All colored affix labels are preserved.
+// Keep damage echoes inside the *actual* fill geometry. Native elite bars
+// use nine different widths and sit 3px above ordinary HP bars.
+const ELITE_HEALTH_BAR_SPECS_V3=Object.freeze({
+  vitality_weaver:{min:34,max:48,scale:.9},
+  swift_commander:{min:38,max:52,offset:0},
+  glacial_warden:{min:40,max:54,offset:4},
+  toxic_decay:{min:38,max:52,offset:0},
+  iron_citadel:{min:38,max:52,offset:0},
+  blood_berserker:{min:40,max:54,offset:4},
+  nullifier:{min:38,max:52,offset:2},
+  web_weaver:{min:42,max:56,offset:6},
+  slag_shaper:{min:42,max:56,offset:6}
+});
+
+export function enemyHealthBarRectV3(actor,tick=0){
+  if(!actor?.alive)return null;
+  const mimic=actor.aegisMimic;
+  if(mimic&&mimic.stage!=='detached'){
+    const lift=mimic.stage==='landing'?24*(1-clampHealthRatio((tick-mimic.detachedTick)/30)):24;
+    // Matches drawAttachedAegisMimic's interior (-13,-30,26,3), not its frame.
+    return {x:-13,y:-30-lift,w:26,h:3};
+  }
+  // Cocoons deliberately have no native health bar; don't draw a stray one.
+  if(actor.bossSummon?.stage==='cocoon')return null;
+  if(!actor.enemyFamily)return {x:-18,y:-26,w:36,h:4}; // drawProofSlime
+  const profile=creaturePresentationForRenderV3(actor.enemyFamily)||creaturePresentationForRenderV3('sprout');
+  const bodyWidth=profile.visualBounds.width,rule=ELITE_HEALTH_BAR_SPECS_V3[actor.elite?.affixId];
+  if(rule){
+    const base=rule.scale?bodyWidth*rule.scale:bodyWidth+rule.offset;
+    const w=Math.max(rule.min,Math.min(rule.max,base));
+    return {x:-w/2,y:profile.labels.healthBarY-3,w,h:6};
+  }
+  const w=Math.max(18,Math.min(34,bodyWidth*.68));
+  return {x:-w/2,y:profile.labels.healthBarY,w,h:profile.visualScale<.72?3:4};
+}
+
+// Dungeon-style response: the current bar drops instantly; the full-height
+// ivory loss segment catches up after a brief pause. No HP state is mutated.
 export function drawEnemyHealthEchoV3(c,actor,reading,tick){
   if(!actor?.alive||reading.trail-reading.actual<=.001&&reading.impact<=0)return;
-  let x=-18,y=-26,w=36,h=4;
-  if(actor.aegisMimic&&actor.aegisMimic.stage!=='detached'){
-    const m=actor.aegisMimic,landing=m.stage==='landing';
-    const lift=landing?24*(1-clampHealthRatio((tick-m.detachedTick)/30)):24;
-    x=-13;y=-30-lift;w=26;h=3;
-  } else if(actor.enemyFamily){
-    const profile=creaturePresentationForRenderV3(actor.enemyFamily)||creaturePresentationForRenderV3('sprout');
-    const width=Math.max(18,Math.min(34,profile.visualBounds.width*.68));
-    w=actor.elite?Math.max(34,Math.min(54,profile.visualBounds.width*.9)):width;
-    x=-w/2;y=profile.labels.healthBarY;
-    h=actor.elite?6:profile.visualScale<.72?3:4;
-  }
+  const bar=enemyHealthBarRectV3(actor,tick);
+  if(!bar)return;
+  const {x,y,w,h}=bar,gap=Math.max(0,reading.trail-reading.actual);
   c.save();c.translate(actor.position.x,actor.position.y);
-  const gap=Math.max(0,reading.trail-reading.actual);
   if(gap>.001){
-    c.fillStyle=`rgba(255,231,171,${.65+reading.impact*.3})`;
-    c.fillRect(x+w*reading.actual,y+h-2,Math.max(.4,w*gap),Math.min(2,h));
+    c.fillStyle=`rgba(251,248,235,${Math.min(1,.78+reading.impact*.2)})`;
+    c.fillRect(x+w*reading.actual,y,w*gap,h);
   }
   if(reading.impact>0){
     c.strokeStyle=`rgba(255,244,201,${reading.impact*.8})`;
@@ -80,7 +108,7 @@ export function drawBossHealthEchoV3(c,canvas,actor,reading,time){
   }else return;
   c.save();
   const gap=Math.max(0,reading.trail-reading.actual);
-  if(gap>.001){c.fillStyle=`rgba(255,231,171,${.76+reading.impact*.2})`;c.fillRect(bar.x+bar.w*reading.actual,bar.y,bar.w*gap,bar.h);}
+  if(gap>.001){c.fillStyle=`rgba(251,248,235,${.8+reading.impact*.18})`;c.fillRect(bar.x+bar.w*reading.actual,bar.y,bar.w*gap,bar.h);}
   if(reading.impact>0){
     c.strokeStyle=`rgba(255,228,168,${reading.impact*.9})`;c.lineWidth=1.7;c.strokeRect(bar.x-1,bar.y-1,bar.w+2,bar.h+2);
     c.fillStyle=`rgba(255,252,222,${reading.impact*.8})`;c.fillRect(bar.x+bar.w*reading.actual-1,bar.y,2,bar.h);

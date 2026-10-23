@@ -1,13 +1,14 @@
 {
-  "runtimeId": "5dd6804cd03958b3",
-  "runtimeSha256": "5dd6804cd03958b340e3f54a0332b0757d676a9050773fb2a75489e47bfcb60b",
-  "parentRuntimeId": "d15d3870f38bb272",
-  "reviewRevision": 82,
+  "runtimeId": "ea83aba386b3a440",
+  "runtimeSha256": "ea83aba386b3a4405d2336b5c69a652dbdc3085d4348419a411cb6f73c19ea6f",
+  "parentRuntimeId": "5dd6804cd03958b3",
+  "reviewRevision": 83,
   "changedRuntimeFiles": [
     "checks/startup-module-graph.test.mjs",
     "checks/startup-stage1-visual-v2.test.mjs",
     "index.html",
     "src/client/activity_save_bridge.js",
+    "src/client/health_feedback_v3.js",
     "src/client/playable_client.js",
     "src/client/world_renderer.js",
     "src/client/world_worker_bridge_d9.js",
@@ -33,6 +34,7 @@
     "WILDERNESS-V3-STAGE1-LOADING-V2.md",
     "WILDERNESS-V3-STARTUP-LOADING.md",
     "assets/wilderness-v2/alpha.json",
+    "checks/health-feedback-fullbars-v3.test.mjs",
     "checks/startup-loading-v1.test.mjs",
     "checks/startup-stage1-combat-v3.test.mjs",
     "checks/startup-stage1-visual-v2.test.mjs",
@@ -775,6 +777,11 @@
       "sha256": "ed2f7fcafeac4305b6658242d232d8d79dade9ecb6b43ea74125fc1318cc282f"
     },
     {
+      "path": "checks/health-feedback-fullbars-v3.test.mjs",
+      "bytes": 4768,
+      "sha256": "578073243b1c23230eb9de68deb1e7f0c23deec57b8e93229716c075074f1dcd"
+    },
+    {
       "path": "checks/startup-loading-v1.test.mjs",
       "bytes": 2710,
       "sha256": "55ae6001ef72e338be71c877b029fdd5c1a2c8dbbd7c020c32c4ed383755308c"
@@ -811,8 +818,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 34481,
-      "sha256": "9eb480c0612b03fea7aee33c2055fd6d5478449a95d6c18583127bbf83b684a5"
+      "bytes": 34585,
+      "sha256": "a6f550e62dff0712c71381f1195c46f0ef614fdde540354542db5bb0ceeb2f5b"
     },
     {
       "path": "manifest.json",
@@ -1306,8 +1313,8 @@
     },
     {
       "path": "src/client/health_feedback_v3.js",
-      "bytes": 5847,
-      "sha256": "a3d1bb5d9318d2352f0ccd1df521a69e2db734b183e28770353bd369df118f51"
+      "bytes": 7126,
+      "sha256": "820f5e8db09fe37e95a2e6001ac1ecbf83dcda303b0636f58af35331a7d99616"
     },
     {
       "path": "src/client/hero_presentation.js",
