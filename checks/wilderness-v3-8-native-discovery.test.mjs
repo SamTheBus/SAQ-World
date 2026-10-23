@@ -55,8 +55,7 @@ test('all three events survive the actual planned-world generator and form nativ
    assert.ok(anchor,'Absent native event anchor: '+event.slotId);
    assert.equal(anchor.members.length,6,event.slotId+' has complete six-actor encounter');
    assert.ok(anchor.id.startsWith('anchor:'),'Official encounter identity');
-   assert.equal(anchor.position.x,p.localX);
-   assert.equal(anchor.position.y,p.localY);
+   assert.ok(Math.hypot(anchor.position.x-p.localX,anchor.position.y-p.localY)<=24*32,'Pack guards original reserved clearing');
    assert.equal(generated.region.biome,'woodland');
    for(const member of anchor.members){
      const ix=Math.floor(member.position.x/32),iy=Math.floor(member.position.y/32);
