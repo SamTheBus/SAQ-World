@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {webcrypto} from 'node:crypto';
 import {combatInteger,compareCombat} from '../src/shared/contracts/combat_amount.js';
+import {integerBigInt} from '../src/shared/contracts/integer_domain.js';
 import {createRecoveredBossV1} from '../src/shared/contracts/recovered_boss_v1.js';
 import {initialBossCombatD12_5A,installBossRecordsD12_5A,validateBossCombatD12_5A,projectBossHazardsD12_5A} from '../src/shared/contracts/boss_combat_d12_5.js';
 import {createRecoveredBossCombatV1} from '../src/simulation/recovered_boss_v1.js';
@@ -184,6 +185,5 @@ test('Corrosive original acid unions apply one percentage-based burn per cadence
  for(let t=1;t<=46;t++)step(env,t);
  const burns=env.hits.filter(h=>h.mechanic==='corrosive_acid');
  assert.equal(burns.length,1,'Overlapping acid does not double-damage within a 45-tick cadence');
- assert.equal(burns[0].value.m,2.7,'1.5% of 1800 HP = 27 damage');
- assert.equal(burns[0].value.e,1);
+ assert.equal(integerBigInt(burns[0].value),27n,'1.5% of 1800 HP = 27 damage');
 });
