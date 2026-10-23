@@ -29,7 +29,7 @@ export async function createRecoveredBossV1({kind,campaignSeed,siteId,floorId,gr
   shieldHp:'0',shieldMaxHp:'0',dazedUntilTick:null,shieldBrokenTick:null,
   summonEntityIds:summons.map(s=>s.entityId),chunkStep:0,collapseStep:0,stolenGold:'0',coinShots:[],
   pools:[],statusesByEntityId:{},lastTrailPosition:copyWire(homePosition),lastAction:null,
-  ...(archivedCombatProfile(kind)?{archive:{version:ARCHIVED_FIGHT_PROFILE_VERSION,charge:null,sporesById:{},poisonByEntityId:{},contactByEntityId:{},nextWarrenTick:activatedTick+60,sludgeSequence:0}}:{})
+  ...(archivedCombatProfile(kind)?{archive:{version:ARCHIVED_FIGHT_PROFILE_VERSION,charge:null,sporesById:{},poisonByEntityId:{},contactByEntityId:{},nextWarrenTick:activatedTick+60,sludgeSequence:0,collapsedRings:[]}}:{})
  };
  return freezeWire({boss,summons});
 }
@@ -67,9 +67,16 @@ export function validateRecoveredBossV1(state,id,b){
  }
  if(b.archive!==undefined){
   const archive=b.archive;
-  closedRecord(archive,['version','charge','sporesById','poisonByEntityId','contactByEntityId','nextWarrenTick','sludgeSequence']);
+  closedRecord(archive,['version','charge','sporesById','poisonByEntityId','contactByEntityId','nextWarrenTick','sludgeSequence','collapsedRings']);
   check(Boolean(archivedCombatProfile(b.bossDefinitionId))&&archive.version===ARCHIVED_FIGHT_PROFILE_VERSION,'Archived boss profile mismatch');
   safeInteger(archive.nextWarrenTick,0,state.tick+1200);safeInteger(archive.sludgeSequence,0);
+  check(Array.isArray(archive.collapsedRings)&&archive.collapsedRings.length<=7&&(!archive.collapsedRings.length||b.bossDefinitionId==='hooktail'),'Archived collapse ledger invalid');
+  for(const r of archive.collapsedRings){
+   closedRecord(r,['index','createdTick','minColumn','maxColumn','minRow','maxRow','tileSize','tiles']);
+   safeInteger(r.index,0,7);safeInteger(r.createdTick,b.activatedTick,state.tick);
+   for(const n of ['minColumn','maxColumn','minRow','maxRow'])safeInteger(r[n],0,200);
+   check(r.tileSize>0&&r.minColumn<r.maxColumn&&r.minRow<r.maxRow&&Array.isArray(r.tiles)&&r.tiles.length<=140,'Archived ring geometry invalid');
+  }
   check(archive.charge===null||b.bossDefinitionId==='cinderhart','Invalid archived rush owner');
   if(archive.charge){
    const r=archive.charge;closedRecord(r,['startedTick','endsTick','originPosition','endPosition','hitEntityIds','lastFirePosition']);
@@ -126,7 +133,7 @@ export function projectRecoveredBossV1(b,state){
  return freezeWire({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,label:spec.label,phase:b.phase,actionState:b.actionState,
   shieldActive:BigInt(b.shieldHp)>0n,shieldHp:b.shieldHp,shieldMaxHp:b.shieldMaxHp,shieldBrokenTick:b.shieldBrokenTick,
   dazedUntilTick:b.dazedUntilTick,collapseStep:b.collapseStep,chunkStep:b.chunkStep,stolenGold:b.stolenGold,
-  coinShots:copyWire(b.coinShots??[]),archive:b.archive?{charge:copyWire(b.archive.charge),sporesById:copyWire(b.archive.sporesById),poisonByEntityId:copyWire(b.archive.poisonByEntityId)}:null,
+  coinShots:copyWire(b.coinShots??[]),archive:b.archive?{charge:copyWire(b.archive.charge),sporesById:copyWire(b.archive.sporesById),poisonByEntityId:copyWire(b.archive.poisonByEntityId),collapsedRings:copyWire(b.archive.collapsedRings)}:null,
   minions:b.summonEntityIds.map(id=>{const m=state.bossCombat.summonsByEntityId[id];return {entityId:id,kind:m.kind,stage:m.stage,position:copyWire(state.entitiesById[id].position)};}),
   lastAction:copyWire(b.lastAction),pendingAction:b.actionState==='telegraphing'?
   {ability:b.activeAbility,targetEntityId:b.targetEntityId,targetPosition:copyWire(b.targetPosition),startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick}:null});
@@ -136,7 +143,8 @@ export function projectRecoveredHazardsV1(state,spaceId){
  const bosses=Object.values(state.bossCombat?.bossesByEntityId??{}).filter(b=>recoveredBossRecord(b)&&b.spaceInstanceId===spaceId&&state.entitiesById[b.entityId]?.alive);
  return {recoveredTelegraphs:bosses.filter(b=>b.actionState==='telegraphing').map(b=>({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,ability:b.activeAbility,position:copyWire(b.targetPosition),originPosition:copyWire(state.entitiesById[b.entityId].position),sequence:b.abilitySequence,selectionSeed:b.selectionSeed,startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick})),
   recoveredPools:bosses.flatMap(b=>b.pools.map(p=>({...copyWire(p),bossDefinitionId:b.bossDefinitionId}))),
-  recoveredSpores:bosses.flatMap(b=>Object.values(b.archive?.sporesById??{}).map(s=>({...copyWire(s),bossId:b.bossId,bossDefinitionId:b.bossDefinitionId})))};
+  recoveredSpores:bosses.flatMap(b=>Object.values(b.archive?.sporesById??{}).map(s=>({...copyWire(s),bossId:b.bossId,bossDefinitionId:b.bossDefinitionId}))),
+  recoveredCollapsedRings:bosses.flatMap(b=>(b.archive?.collapsedRings??[]).map(r=>({...copyWire(r),bossId:b.bossId,bossDefinitionId:b.bossDefinitionId})))};
 }
 export function recoveredStatusForActor(state,entityId){
  for(const b of Object.values(state.bossCombat?.bossesByEntityId??{}))if(recoveredBossRecord(b)){
