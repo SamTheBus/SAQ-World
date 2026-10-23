@@ -44,3 +44,33 @@ export function wildernessPackPursuitAllowed(state,group,source,target,eligible=
  }
  return false;
 }
+
+// V3.4.2: multiple unprovoked packs share one starter-area pursuit budget.
+// The V3.4.1 rule still unleashes full retaliation after damage or a kill.
+export const WILDERNESS_GLOBAL_PACK_PACING_V3_4_2=Object.freeze({
+ version:'wilderness-v3-4-2-global-frontier-1',
+ maximumUnprovokedPursuers:3,noviceLevelMaximum:5,lowRegionLevelMaximum:5,
+ starterRadiusPixels:1536
+});
+export function wildernessGlobalPursuerCap(state,group,target,startLocal=null){
+ if(!usesWildernessFairnessV3_2(state)||group?.siteId!==null||!group?.containment
+    ||group.spaceInstanceId!==state.overworldInstanceId||!target?.alive)return null;
+ const player=Object.values(state.playersById).find(p=>p.entityId===target.entityId);
+ const level=Number(player?.progression?.level);
+ if(!Number.isFinite(level)||level<1||level>WILDERNESS_GLOBAL_PACK_PACING_V3_4_2.noviceLevelMaximum)return null;
+ if(group.entityIds.some(id=>{const a=state.entitiesById[id];return a&&(!a.alive||compareCombat(a.hp,a.maxHp)<0);}))return null;
+ const floor=Number(state.d9World?.episodes?.[group.groupId]?.geography?.minimumLevel);
+ const low=Number.isFinite(floor)&&floor>=1&&floor<=WILDERNESS_GLOBAL_PACK_PACING_V3_4_2.lowRegionLevelMaximum;
+ const near=Boolean(startLocal&&Math.hypot(target.position.x-startLocal.x,target.position.y-startLocal.y)<=WILDERNESS_GLOBAL_PACK_PACING_V3_4_2.starterRadiusPixels);
+ return low||near?WILDERNESS_GLOBAL_PACK_PACING_V3_4_2.maximumUnprovokedPursuers:null;
+}
+export function selectWildernessGlobalPursuers(candidates,limit=WILDERNESS_GLOBAL_PACK_PACING_V3_4_2.maximumUnprovokedPursuers){
+ if(!Number.isInteger(limit)||limit<1)throw Error('Invalid global pursuit limit');
+ const selected=[],seen=new Set();
+ for(const row of [...candidates].sort((a,b)=>a.distance-b.distance||a.entityId.localeCompare(b.entityId))){
+  if(!Number.isFinite(row.distance)||row.distance<0||seen.has(row.entityId))continue;
+  seen.add(row.entityId);selected.push(row.entityId);
+  if(selected.length>=limit)break;
+ }
+ return selected;
+}
