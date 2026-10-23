@@ -1,0 +1,144 @@
+{
+  "runtimeId": "16a41fa5308a6046",
+  "runtimeSha256": "16a41fa5308a60466ae2c1a9af7231532fa60cfb6a4b2586f04f43e3339ced30",
+  "parentRuntimeId": "17c29efcbb1fd574",
+  "reviewRevision": 95,
+  "changedRuntimeFiles": [
+    "index.html",
+    "game.js",
+    "save-worker.js"
+  ],
+  "addedRuntimeFiles": [
+    "game.js",
+    "startup-loading.js",
+    "startup-combat-preview.js"
+  ],
+  "unchangedRuntimeFiles": [],
+  "files": [
+    {
+      "path": ".nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/alpha-site-population-v1.json",
+      "bytes": 140762,
+      "sha256": "e2f7df0763c70e35143d4f032257b28fa9aefd0bc9326c0d140f150575406d2e"
+    },
+    {
+      "path": "assets/hybrid-art-pilot-v1/journey.json",
+      "bytes": 18448,
+      "sha256": "452601819b2d7eb533f4732004a078ecc8fb5cbb86d18b5f17d3565f34115989"
+    },
+    {
+      "path": "assets/hybrid-art-pilot-v1/kit-manifest.json",
+      "bytes": 3339,
+      "sha256": "04981276c72260bfbfd36b9cac2c7ab45669679e6608dbcbe06c6f9864b12141"
+    },
+    {
+      "path": "assets/hybrid-art-pilot-v1/woodland-atlas-source.png",
+      "bytes": 1623361,
+      "sha256": "ed9fea4aecd769896e04990ee43506c95d96f55c74cf373ec1f88b182e21a5f7"
+    },
+    {
+      "path": "assets/hybrid-art-v2/bush-sprites-source.png",
+      "bytes": 940431,
+      "sha256": "b4e6660339cfe9d4ea70eea9074917799ae211f2ceeb216387c0e89a3a91d0ab"
+    },
+    {
+      "path": "assets/hybrid-art-v2/kit-manifest.json",
+      "bytes": 2063,
+      "sha256": "d28eecd8c03e5849a4e6c76292d26fac61a177de626f231764036f0f8a870024"
+    },
+    {
+      "path": "assets/hybrid-art-v2/material-atlas-source.png",
+      "bytes": 1751166,
+      "sha256": "f95347584d69cbe0b29cf552a6f8596ff7110fee9f187377d0fb7eddf5840b98"
+    },
+    {
+      "path": "assets/planned-world-water-v3/alpha.json",
+      "bytes": 3204953,
+      "sha256": "476acfb7307b20243b081588dd885a64dff6f20e90227020011cde946fe7293a"
+    },
+    {
+      "path": "assets/planned-world-water-v3/registry.json",
+      "bytes": 562,
+      "sha256": "a5809efed1707681186767efde93b088d76bef890177216048edea69e08e90ac"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/entrance-source.png",
+      "bytes": 1269861,
+      "sha256": "d49d7de3b715a086ace39d3bafe3680a6a906227407b5f5357b384876d7ae92c"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/grove-clean-source.png",
+      "bytes": 1803272,
+      "sha256": "d6626d8a6a04c6b1a5a447379b15d874cb9de4a82a0e103b7d098fabdd1ea461"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/kit-manifest.json",
+      "bytes": 8548,
+      "sha256": "01fafed84c87911c6808a5a1c461660fdcf85760dd58701339fdbd6105668fd7"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/materials-source.png",
+      "bytes": 1629836,
+      "sha256": "5534fd20c780154f7977385655bf4f7e83bec1d2ad843638b0fef00a3f52446a"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/modular-thin-source.png",
+      "bytes": 1376494,
+      "sha256": "b15c2534086fc153e4a34f040ca353ddcb8a0f431e9caeb9b89baff7ffce6fc5"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/provenance.json",
+      "bytes": 9754,
+      "sha256": "5031b97670823a1842b6f5297db245eded4cec3ebe05dc047423c2d1efe890bb"
+    },
+    {
+      "path": "assets/ruin-storybook-v1/vertical-thin-source.png",
+      "bytes": 472319,
+      "sha256": "2910127c5761a334c166a2a92779bba69676302a2fb2d913ee850216a790e4ae"
+    },
+    {
+      "path": "assets/wilderness-v2/alpha.json",
+      "bytes": 1472485,
+      "sha256": "ed2f7fcafeac4305b6658242d232d8d79dade9ecb6b43ea74125fc1318cc282f"
+    },
+    {
+      "path": "game.js",
+      "bytes": 5073877,
+      "sha256": "71afe1db22742124911616d52117a007b79b2c99db5c1966fa3039adcbc93a23"
+    },
+    {
+      "path": "index.html",
+      "bytes": 19599,
+      "sha256": "211e3ec70ba56eba9c03ceec3d537c83de0745886d8fe8dbbc7d378a861d56eb"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 195,
+      "sha256": "9256b4a8863f6c1ce6d6846b9db558386298902e06e20a2bde38891d0adb9646"
+    },
+    {
+      "path": "save-worker.js",
+      "bytes": 2203451,
+      "sha256": "45c6949dd8cc83bd336f2b17e0e90462f24a21796f0cbb107edd061ef8abfb23"
+    },
+    {
+      "path": "startup-combat-preview.js",
+      "bytes": 13273,
+      "sha256": "fcfeac87c3a46d4cc9c7cc7a048822052ec47fba2655ae423dca5abc6a19e9c9"
+    },
+    {
+      "path": "startup-loading.js",
+      "bytes": 4171,
+      "sha256": "a6836546cbe04ca54db3eddab099aa48eba2540c564ad231dc14aad65589b414"
+    },
+    {
+      "path": "world.css",
+      "bytes": 54780,
+      "sha256": "ea888ba549d7bedaf93f24f2965f6dca507abdd035184d31f39454db821db971"
+    }
+  ]
+}
