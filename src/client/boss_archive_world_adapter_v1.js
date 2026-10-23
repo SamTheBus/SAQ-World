@@ -6,7 +6,7 @@ import {drawVoidOverseer,drawVoidGround,voidDepthItems,drawVoidBossHud} from './
 
 export const hasArchivedBossPainter=id=>id==='corrosive_abomination'||id==='void_overseer';
 const corrosive=id=>id==='corrosive_abomination';
-const void=id=>id==='void_overseer';
+const isVoid=id=>id==='void_overseer';
 const TAU=Math.PI*2;
 const point=(x,y)=>({x,y});
 const rand=(seed,n,salt=0)=>{let v=(seed^Math.imul(n+1,0x9e3779b1)^salt)>>>0;v=Math.imul(v^(v>>>16),0x85ebca6b)>>>0;v=Math.imul(v^(v>>>13),0xc2b2ae35)>>>0;return((v^(v>>>16))>>>0)/4294967296;};
@@ -25,7 +25,7 @@ function archivalActor(actor){
 }
 export function drawArchivedBossActor(c,actor,tick,flash=false){
  if(corrosive(actor.boss?.bossDefinitionId))return drawCorrosiveAbomination(c,archivalActor(actor),tick,flash);
- if(void(actor.boss?.bossDefinitionId))return drawVoidOverseer(c,archivalActor(actor),tick,flash);
+ if(isVoid(actor.boss?.bossDefinitionId))return drawVoidOverseer(c,archivalActor(actor),tick,flash);
  return false;
 }
 let cacheKey=null,cacheTick=null,cacheView=null;
@@ -62,7 +62,7 @@ export function archivedBossArtModel(model,tick){
   return {...q,id:q.bossId+':cast:'+q.sequence,ability:renamed(q.ability),targetPosition:target,originPosition:origin,
    radius:q.ability==='corrosive_slam'?72:105,sporeSpawnPositions:positions};
  });
- const vTele=tele.filter(q=>void(q.bossDefinitionId)&&q.ability==='singularity').map(q=>{
+ const vTele=tele.filter(q=>isVoid(q.bossDefinitionId)&&q.ability==='singularity').map(q=>{
   const b=byBossId.get(q.bossId),center=b?.position??q.position;
   return {...q,id:q.bossId+':cast:'+q.sequence,ability:'singularity',position:{...center},
    targetPosition:{...center},originPosition:{...center},radius:93};
@@ -73,7 +73,7 @@ export function archivedBossArtModel(model,tick){
   if(!row||age<0||age>=40)continue;
   const common={...row,bossId:b.boss.bossId,sourceEntityId:b.entityId,originPosition:{...b.position},sequence:b.boss.abilitySequence??1};
   if(corrosive(b.boss.bossDefinitionId)&&row.ability==='corrosive_slam')cImpacts.push({...common,ability:'slam',radius:72});
-  if(void(b.boss.bossDefinitionId)&&row.ability==='singularity')vImpacts.push({...common,ability:'singularity',radius:93});
+  if(isVoid(b.boss.bossDefinitionId)&&row.ability==='singularity')vImpacts.push({...common,ability:'singularity',radius:93});
  }
  const archivedHazards={...h,
   corrosivePools:acid,corrosiveMinions:minions,corrosiveTelegraphs:cTele,corrosiveImpacts:cImpacts,
