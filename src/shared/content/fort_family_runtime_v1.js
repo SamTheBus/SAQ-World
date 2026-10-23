@@ -1,4 +1,7 @@
 import {BRIMSTONE_PROFILE,brimstoneFortFloor} from './brimstone_colossus_v1.js';
+import {ARACHNID_TREANT_PROFILE} from './bosses_d12_5.js';
+import {recoveredBossForReservation} from './recovered_boss_catalog_v1.js';
+import {createRecoveredBossV1} from '../contracts/recovered_boss_v1.js';
 import {createBrimstoneColossus} from '../contracts/brimstone_colossus_v1.js';
 import {aegisHealthBudget,createAegisMimicEncounter,aegisMimicOrbitPosition} from './aegis_mimics_v2.js';
 import {aegisMimicProfile} from '../contracts/aegis_mimics_v2.js';
@@ -53,7 +56,21 @@ export async function buildFortFamilyV1(state,socket,binding,{sha256,runEpisode=
    p.group.containment.memberHomesById[a.entityId]=copyWire(a.position);
    bosses.push(await createBrimstoneColossus({campaignSeed:state.campaign.seed.seedHex,siteId:socket.siteId,floorId:floorIds[i],groupId:p.group.groupId,roomId:leader.roomId,entityId:a.entityId,homePosition:a.position,activatedTick:state.tick,spaceInstanceId:a.residency.spaceInstanceId,sourceResidencyRevision:a.residency.residencyRevision},{sha256}));
   }
-  if(!aegis&&!brimstone&&leader.eliteAffixId){const a=p.actors[0],elite=await createEliteForAffixD13D_B({campaignSeed:state.campaign.seed.seedHex,siteId:socket.siteId,floorId:floorIds[i],groupId:p.group.groupId,roomId:leader.roomId,entityId:a.entityId,activatedTick:state.tick},leader.eliteAffixId,{sha256}),stats=applyEliteActorStatsD12_4({maxHp:a.maxHp,attackDamage:a.attackDamage},elite);a.hp=combatInteger(stats.maxHp);a.maxHp=combatInteger(stats.maxHp);a.attackDamage=combatInteger(stats.attackDamage);elites.push(elite);}
+
+  const restored=!aegis&&!brimstone&&multi&&hasWorldCombat(state)&&recoveredBossForReservation(socket.provenance.reservationId,'fort',i,recipes.length,true);
+  let restoredInstalled=false;
+  if(restored&&p.actors.length){
+   const a=p.actors[0],profile=ARACHNID_TREANT_PROFILE,stats=worldBossStats(p.episode.snapshot.effectiveLevel);
+   const candidates=(recipe.graph?.rooms??[]).flatMap(r=>(r.openCells??[]).map(cell=>{const [x,y]=cell.split(',').map(Number);return{x:(x+.5)*recipe.collision.tileSize,y:(y+.5)*recipe.collision.tileSize};}));
+   const safe=[a.position,...candidates].filter(q=>!collidesWithTiles(recipe.collision,q.x,q.y,profile.hullRadius)).sort((x,y)=>Math.hypot(x.x-a.position.x,x.y-a.position.y)-Math.hypot(y.x-a.position.x,y.y-a.position.y)||x.y-y.y||x.x-y.x)[0];
+   if(safe){
+    Object.assign(a,{contentDefinitionId:profile.contentDefinitionId,position:copyWire(safe),hp:combatInteger(stats.maxHp),maxHp:combatInteger(stats.maxHp),attackDamage:combatInteger(stats.attackDamage),hullRadius:profile.hullRadius,combatRadius:profile.combatRadius,moveSpeed:profile.moveSpeed,attackReach:profile.attackReach,attackReachMode:profile.attackReachMode,attackDelayTicks:profile.attackDelayTicks,attackTimer:profile.attackDelayTicks,ai:{kind:'simpleMelee',acquireRange:290,updatesApplied:0,interiorNavigation:initialCaveInteriorNavigationD12_3A(state.tick)}});
+    p.group.containment.memberHomesById[a.entityId]=copyWire(a.position);
+    bosses.push(await createRecoveredBossV1({kind:restored.id,campaignSeed:state.campaign.seed.seedHex,siteId:socket.siteId,floorId:floorIds[i],groupId:p.group.groupId,roomId:leader.roomId,entityId:a.entityId,homePosition:a.position,activatedTick:state.tick,spaceInstanceId:a.residency.spaceInstanceId,sourceResidencyRevision:a.residency.residencyRevision,addMembers:p.actors.slice(1,restored.adds+1).map(a=>({entityId:a.entityId,position:a.position}))},{sha256}));
+    restoredInstalled=true;
+   }
+  }
+  if(!aegis&&!brimstone&&!restoredInstalled&&leader.eliteAffixId){const a=p.actors[0],elite=await createEliteForAffixD13D_B({campaignSeed:state.campaign.seed.seedHex,siteId:socket.siteId,floorId:floorIds[i],groupId:p.group.groupId,roomId:leader.roomId,entityId:a.entityId,activatedTick:state.tick},leader.eliteAffixId,{sha256}),stats=applyEliteActorStatsD12_4({maxHp:a.maxHp,attackDamage:a.attackDamage},elite);a.hp=combatInteger(stats.maxHp);a.maxHp=combatInteger(stats.maxHp);a.attackDamage=combatInteger(stats.attackDamage);elites.push(elite);}
   floors.push({...copyWire(recipe),floorId:floorIds[i],index:i,floorSeed:await token('floor-seed-'+i),logicalSpaceId:p.space.spaceId,spaceInstanceId:p.space.spaceInstanceId,groupId:p.group.groupId,enemyIds:copyWire(p.group.entityIds),rewardId:'reward:'+await token('reward-'+i),transitions:{up:null,down:null}});spaces.push(p.space);actors.push(...p.actors);groups.push(p.group);economies.push(p.economy);episodes.push(p.episode);resources.push(p.resource);
  }
  for(const f of floors)for(const direction of ['up','down']){const target=links[f.index][direction];if(target===null)continue;const dest=floors[target],reverse=direction==='up'?'down':'up';f.transitions[direction]={transitionId:'transition:'+await token(f.index+'/'+direction),floorId:dest.floorId,spaceInstanceId:dest.spaceInstanceId,anchor:copyWire(f.stairAnchors[direction]),targetAnchor:copyWire(dest.stairAnchors[reverse]),label:direction==='up'?'Ascend to '+dest.role.replaceAll('-',' '):'Descend to '+dest.role.replaceAll('-',' ')};}
