@@ -175,7 +175,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    fireCoinVolley(b,a);
   } else if(ability==='taxation'){
    a.hp=combatInteger(minCombat(a.maxHp,addCombat(a.hp,multiplyCombat(a.maxHp,8,100))),'round');
-   b.stolenGold=String(BigInt(b.stolenGold)+8n);
+   // Cosmetic vault magic only. Never deduct or escrow player gold.
   } else if(ability==='molten_shield'){
    pool(b,a.position,'molten',55,240);
   } else if(ability==='gold_rush'){
