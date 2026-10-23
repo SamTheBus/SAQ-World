@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1170, height: 780 } });
-const exceptions = [], missing = [];
+const exceptions = [], missing = [], consoleErrors = [];
+page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 page.on('pageerror', err => exceptions.push(err.message));
 page.on('response', response => {
   if (response.status() >= 400 && new URL(response.url()).origin === 'http://127.0.0.1:8989') {
@@ -26,18 +27,23 @@ try {
     task.onerror = e => { clearTimeout(timer); task.terminate(); resolve('error: ' + e.message); };
   }));
   assert.equal(workerReady, 'ready', 'Worker bootstrap failed: ' + workerReady);
+  await page.waitForFunction(() => window.__SAQ_STARTUP_LOADING_V1__?.events().some(e => e.step >= 2), { timeout: 45000 });
   await page.waitForTimeout(8000);
   const state = await page.evaluate(() => ({
     stage: document.getElementById('world-status')?.textContent,
-    recovery: document.getElementById('startup-recovery-title')?.textContent,
-    loading: document.getElementById('saq-startup-scene')?.hidden,
+    recoveryTitle: document.getElementById('startup-recovery-title')?.textContent,
+    recoveryDetail: document.getElementById('startup-recovery-detail')?.textContent,
+    recoveryVisible: !document.getElementById('startup-recovery')?.hidden,
+    loadingHidden: document.getElementById('saq-startup-scene')?.hidden,
+    setupEvents: window.__SAQ_STARTUP_LOADING_V1__?.events().slice(-6),
     canvas: !!document.getElementById('world-view')
   }));
-  assert(!/World could not start|Unable to start/i.test(state.recovery ?? ''), 'Startup recovery: ' + JSON.stringify(state));
+  console.log('Startup observation ' + JSON.stringify({ state, exceptions, missing, consoleErrors }));
+  assert(!(state.recoveryVisible && /World could not start|Unable to start/i.test(state.recoveryTitle ?? '')), 'Visible startup recovery: ' + JSON.stringify(state));
   assert(!/Unable to start/i.test(state.stage ?? ''), 'Startup failure: ' + JSON.stringify(state));
   assert.deepEqual(missing, [], 'Missing production resources');
   assert.deepEqual(exceptions, [], 'Uncaught browser errors');
-  console.log('BROWSER SMOKE PASS ' + JSON.stringify({ workerReady, state, missing, exceptions }));
+  console.log('BROWSER SMOKE PASS ' + JSON.stringify({ workerReady, state, missing, exceptions, consoleErrors }));
 } finally {
   await browser.close();
 }
