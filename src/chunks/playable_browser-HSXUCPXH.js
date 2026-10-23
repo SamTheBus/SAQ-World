@@ -11112,6 +11112,7 @@ var WOODLAND_EVENT_PILOT_V3_7 = Object.freeze([
 ]);
 var ordinals = new Set(WOODLAND_EVENT_PILOT_V3_7.map((e) => e.ordinal));
 var isWoodlandPilotEventAnchor = (anchor) => anchor?.combatVersion === WORLD_COMBAT_VERSION && ordinals.has(anchor.ordinal) && typeof anchor.id === "string" && anchor.id.startsWith("anchor:");
+var woodlandPilotEventAlreadyAdmitted = (anchor, episode) => isWoodlandPilotEventAnchor(anchor) && Boolean(episode);
 function woodlandPilotWorldPosition(slot) {
   return {
     chunkX: String(PLANNED_ADDRESS_OFFSET.chunkX + Math.floor(slot.x / 32)),
@@ -37130,7 +37131,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
       if (parcelKeys.some((k) => pinned.has(k))) for (const k of parcelKeys) pinned.add(k);
       const approach = w.runtime.chunks.some((c) => c.anchors.some((anchor) => {
         const id = "ordinary:" + anchor.id.split(":").at(-1);
-        if (isWoodlandPilotEventAnchor(anchor) && w.episodes[id]) return false;
+        if (woodlandPilotEventAlreadyAdmitted(anchor, w.episodes[id])) return false;
         if (s.groupsById[id] && !w.episodes[id]?.renewalEligible) return false;
         const q = projectToLocalFrameD9({ chunkX: c.chunkX, chunkY: c.chunkY, localX: anchor.position.x, localY: anchor.position.y }, w.runtime.frames);
         return q && Object.values(s.playersById).some((p) => {

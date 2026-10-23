@@ -3018,6 +3018,7 @@ var WOODLAND_EVENT_PILOT_V3_7 = Object.freeze([
 var ordinals = new Set(WOODLAND_EVENT_PILOT_V3_7.map((e) => e.ordinal));
 var isWoodlandPilotEventAnchor = (anchor) => anchor?.combatVersion === WORLD_COMBAT_VERSION && ordinals.has(anchor.ordinal) && typeof anchor.id === "string" && anchor.id.startsWith("anchor:");
 var isWoodlandPilotTreasureAnchor = (anchor) => isWoodlandPilotEventAnchor(anchor) && anchor.ordinal === 39;
+var woodlandPilotEventAlreadyAdmitted = (anchor, episode) => isWoodlandPilotEventAnchor(anchor) && Boolean(episode);
 var stable = (text) => {
   let h = 2166136261;
   for (const c of text) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
@@ -22967,7 +22968,7 @@ async function prepareWorldEncountersD9(before, { sha256 }) {
   const candidates = [];
   for (const chunk of state.d9World.runtime.chunks) for (const anchor of chunk.anchors) {
     const id = "ordinary:" + anchor.id.split(":").at(-1), old = state.d9World.episodes[id];
-    if (isWoodlandPilotEventAnchor(anchor) && old) continue;
+    if (woodlandPilotEventAlreadyAdmitted(anchor, old)) continue;
     if (state.groupsById[id] && !old?.renewalEligible) continue;
     const world = normalizeWorldPosition({ chunkX: chunk.chunkX, chunkY: chunk.chunkY, localX: anchor.position.x, localY: anchor.position.y }), local = projectToLocalFrameD9(world, frames);
     if (!local) continue;
@@ -22984,6 +22985,7 @@ async function prepareWorldEncountersD9(before, { sha256 }) {
     if (isWoodlandPilotTreasureAnchor(c.anchor) && plan.resources.length) {
       plan.resources[0].kind = "chest";
       plan.resources[0].art = "chest";
+      plan.resources[0].completion = true;
     }
     if (c.renewal) applyProceduralRenewalD9(state, plan);
     else admitProceduralEncounterD9(state, plan);
