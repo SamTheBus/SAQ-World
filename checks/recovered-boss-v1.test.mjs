@@ -12,6 +12,7 @@ import {buildFortFamilyV1} from '../src/shared/content/fort_family_runtime_v1.js
 import {buildCryptFamilyV2} from '../src/shared/content/crypt_family_runtime_v2.js';
 import {validateRuinFamily,validateRuinRuntimeV1} from '../src/shared/contracts/planned_ruin_v1.js';
 import {validateFortFamily,validateFortRuntimeV1} from '../src/shared/contracts/planned_fort_v1.js';
+import {validateCryptFamily,validateCryptRuntime} from '../src/shared/contracts/planned_crypt_v1.js';
 import {initialBossCombatD12_5A,installBossRecordsD12_5A,validateBossCombatD12_5A,projectBossActorD12_5A,projectBossSummonD12_5A} from '../src/shared/contracts/boss_combat_d12_5.js';
 import {ORDINARY_PROFILES} from '../src/shared/content/ordinary_enemies.js';
 import {ARACHNID_TREANT_PROFILE} from '../src/shared/content/bosses_d12_5.js';
@@ -61,6 +62,7 @@ test('Every restored boss is in its seeded real site and passes save and floor c
   assert.equal(built.bosses.length,1,id+' must generate one unique boss');
   const boss=built.bosses[0].boss,last=built.functionalSite.floors.at(-1);
   assert.equal(boss.bossDefinitionId,id);
+  if(id==='cinderhart')assert.equal(boss.summonEntityIds.length,5,'Panicked rabbit actors must be real summon entities');
   assert.equal(boss.floorId,last.floorId);
   assert.equal(boss.groupId,last.groupId);
   assert.ok(recoveredBossRecord(boss));
@@ -81,7 +83,9 @@ test('Every restored boss is in its seeded real site and passes save and floor c
   }else{
    // Crypts share the Ruin runtime validator with their generated floor model.
    if(row.family==='ruin')validateRuinFamily(state.d9World.functionalSitesById[socket.siteId]);
+   else validateCryptFamily(state.d9World.functionalSitesById[socket.siteId]);
    if(row.family==='ruin')validateRuinRuntimeV1(state,state.d9World.functionalSitesById[socket.siteId]);
+   else validateCryptRuntime(state,state.d9World.functionalSitesById[socket.siteId]);
   }
   validateBossCombatD12_5A(state);
   const projected=projectBossActorD12_5A(state,boss.entityId);
