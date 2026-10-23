@@ -1,7 +1,7 @@
 // Hand-authored Canvas silhouettes for the eight restored World boss identities.
 // Rendering follows authoritative phase/tick records; it never decides damage or targeting.
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
-import {hasArchivedBossPainter,drawArchivedBossActor,drawArchivedBossGround,drawArchivedBossHud} from './boss_archive_world_adapter_v1.js';
+import {hasArchivedBossPainter,drawArchivedBossActor,drawArchivedBossSummon,drawArchivedBossGround,drawArchivedBossHud} from './boss_archive_world_adapter_v1.js';
 const TAU=Math.PI*2;
 const circle=(c,x,y,r,fill,stroke=null,width=1)=>{c.beginPath();c.arc(x,y,r,0,TAU);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}};
 const poly=(c,pts,fill,stroke='#101925',w=2)=>{c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=w;c.stroke();}};
@@ -125,6 +125,7 @@ export function drawRecoveredSummonV1(c,a,t,flash=false){
  if(s.stage==='dormant'||s.stage==='defeated')return true;
  // Original Corrosive renderer owns the true slime/slag body and health pip.
  if(s.kind==='slime'||s.kind==='slag')return true;
+ if(s.kind==='hologram'||s.kind==='bunny')return drawArchivedBossSummon(c,a,t,flash);
  c.save();c.translate(a.position.x,a.position.y);let q=Math.sin(t*.085+a.position.x*.01);
  if(s.kind==='bunny'){rabbit(c,0,0,t*.15+(s.ordinal??0));}
  else if(s.kind==='hologram'){c.globalAlpha=.62;poly(c,[[0,-21+q*3],[16,0],[0,19+q*3],[-16,0]],'#5788cba8','#a3efff',2);circle(c,0,0,3,'#f1ddff');}
@@ -136,7 +137,7 @@ export function drawRecoveredBossGroundV1(c,model,t){
  const h=model.bossHazards??{};
  drawArchivedBossGround(c,model,t);
  for(const p of h.recoveredPools??[]){
-  if(hasArchivedBossPainter(p.bossDefinitionId))continue;
+  if(hasArchivedBossPainter(p.bossDefinitionId)&&!(p.bossDefinitionId==='hooktail'&&p.kind==='collapse'))continue;
   const life=Math.min(1,(p.expiresTick-t)/40,(t-p.createdTick)/15);if(life<=0)continue;
   const col=color(p.kind);c.save();c.translate(p.position.x,p.position.y);c.globalAlpha=.38*life;
   c.fillStyle=col;c.strokeStyle=col;c.lineWidth=3;
@@ -157,7 +158,7 @@ export function drawRecoveredBossGroundV1(c,model,t){
   }
  }
  for(const q of h.recoveredTelegraphs??[]){
-  const spec=recoveredBossForId(q.bossDefinitionId);if(!spec||q.ability==='eye_lance'||hasArchivedBossPainter(q.bossDefinitionId))continue;
+  const spec=recoveredBossForId(q.bossDefinitionId);if(!spec||q.ability==='eye_lance'||hasArchivedBossPainter(q.bossDefinitionId)&&!(q.bossDefinitionId==='hooktail'&&q.ability==='arena_collapse')&&!(q.bossDefinitionId==='nexus_overseer'&&q.ability==='prism_slam'))continue;
   const span=Math.max(1,q.resolvesTick-q.startedTick),progress=ease((t-q.startedTick)/span);
   c.save();c.translate(q.position.x,q.position.y);c.globalAlpha=.35+progress*.55;
   c.strokeStyle=spec.color;c.lineWidth=1.5+progress*2;
