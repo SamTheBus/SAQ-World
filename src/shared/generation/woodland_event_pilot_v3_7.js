@@ -22,7 +22,9 @@ export function woodlandPilotWorldPosition(slot) {
     chunkY:String(PLANNED_ADDRESS_OFFSET.chunkY+Math.floor(slot.y/26)),
     localX:(slot.x%32+.5)*32,localY:(slot.y%26+.5)*32};
 }
-const offsets=Object.freeze([[-2,-1],[0,-1],[2,-1],[-2,1],[0,1],[2,1]]);
+// Clearing centers can coincide with the corner of four D9 chunks. Keep the
+// resident actors on the same native page, close to that original clearing.
+const stable=text=>{let h=2166136261;for(const c of text)h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;return h;};
 function openThreeByThree(tile,x,y,landmassId) {
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
     const t=tile(x+dx,y+dy);
@@ -40,21 +42,33 @@ export async function createWoodlandPilotEventAnchors({asset,binding,cx,cy,seed,
     if(!slot||slot.biome!=='woodland'||slot.position.x!==event.x||slot.position.y!==event.y||!slot.cells?.length)
       throw new Error('Woodland pilot is not backed by the frozen Wilderness V2 clearing');
     const cellIds=new Set(slot.cells.map(c=>c.x+','+c.y));
-    const members=[];
-    for(let i=0;i<offsets.length;i++){
-      const [dx,dy]=offsets[i],x=event.x+dx,y=event.y+dy;
-      if(!cellIds.has(x+','+y)||!openThreeByThree(tile,x,y,slot.landmassId)){members.length=0;break;}
+    const candidates=[];
+    // Use safe shoulders adjacent to the reserved clearing rather than
+    // placing actors at negative local coordinates across chunk boundaries.
+    for(let dy=2;dy<=16;dy++)for(let dx=2;dx<=18;dx++){
+      const x=event.x+dx,y=event.y+dy;
+      if(Math.floor(x/32)!==cx||Math.floor(y/26)!==cy)continue;
+      if(!openThreeByThree(tile,x,y,slot.landmassId))continue;
       const position={x:(x-cx*32+.5)*32,y:(y-cy*26+.5)*32};
-      if(regularAnchors.some(a=>Math.hypot(position.x-a.position.x,position.y-a.position.y)<100)){members.length=0;break;}
-      members.push({family:event.families[i],position});
+      if(regularAnchors.some(a=>Math.hypot(position.x-a.position.x,position.y-a.position.y)<144))continue;
+      candidates.push({position,priority:dx+dy+(cellIds.has(x+','+y)?-3:0),
+        tie:stable(event.slotId+'/'+dx+'/'+dy)});
     }
-    // No forced vegetation clearing or collision changes: invalid reservations
-    // stay dormant instead of causing enemies to spawn inside obstacles.
+    candidates.sort((a,b)=>a.priority-b.priority||a.tie-b.tie);
+    const members=[];
+    for(const p of candidates){
+      if(members.some(m=>Math.hypot(m.position.x-p.position.x,m.position.y-p.position.y)<78))continue;
+      members.push({family:event.families[members.length],position:p.position});
+      if(members.length===6)break;
+    }
+    // Invalid geography stays dormant rather than carving new terrain.
     if(members.length!==6)continue;
     const identity=await worldIdentity(seed,'anchor',['woodland-event-pilot-v3-7',event.slotId],sha256);
+    const anchor=members.reduce((best,m)=>!best||m.position.x+m.position.y<best.position.x+best.position.y?m:best,null);
     result.push({id:identity.id,ordinal:event.ordinal,
-      position:{x:(event.x-cx*32+.5)*32,y:(event.y-cy*26+.5)*32},
+      position:{...anchor.position},
       rank:event.rank,combatVersion:WORLD_COMBAT_VERSION,members});
+
   }
   return result;
 }
