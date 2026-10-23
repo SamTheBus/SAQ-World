@@ -47,7 +47,7 @@ function originalActor(actor,tick){
  if(kind==='nexus_overseer')add.barrier=barrierRecord(b,actor,tick);
  // The World charge currently resolves in one authority tick. The original
  // rush painter still receives the real cast and actual ignition patches.
- if(kind==='cinderhart')add.rush=null;
+ if(kind==='cinderhart')add.rush=b.archive?.charge??null;
  return {...actor,boss:{...b,...add}};
 }
 function syntheticBunny(actor,tick,owner=null){
@@ -84,10 +84,12 @@ function projected(model,tick){
  const casts=tele.map(q=>{
   const b=byId.get(q.bossId),at=b?.position??q.originPosition??q.position;
   const ability=renamed(q.bossDefinitionId,q.ability),common={...q,id:q.bossId+':cast:'+q.sequence,ability,originPosition:point(at),targetPosition:point(q.position)};
-  if(q.bossDefinitionId==='chronos_arbitrator')return {...common,position:point(q.position),radius:q.ability==='time_field'?105:65,sourceEntityId:b?.entityId};
+  if(q.bossDefinitionId==='chronos_arbitrator')return {...common,position:point(q.position),radius:q.ability==='time_field'?35:64,sourceEntityId:b?.entityId};
   if(q.bossDefinitionId==='cinderhart')return {...common,position:point(q.position),radius:18,spawnCount:b?.boss?.minions?.length??5,
    rushEndPosition:q.ability==='fire_charge'?point(q.position):null};
-  return {...common,position:point(q.position),radius:q.ability==='prism_collapse'?120:80,sourceEntityId:b?.entityId};
+  return {...common,position:point(q.position),facing:q.position.x<at.x?-1:1,
+   range:q.ability==='scarlet_fire'?110:null,halfAngle:q.ability==='scarlet_fire'?.8:null,
+   radius:q.ability==='prism_collapse'?64:q.ability==='hooked_tail'?64:80,sourceEntityId:b?.entityId};
  });
  const impacts=[];
  for(const b of bosses){
@@ -96,8 +98,8 @@ function projected(model,tick){
   impacts.push({...last,ability:renamed(b.boss.bossDefinitionId,last.ability),bossDefinitionId:b.boss.bossDefinitionId,
    bossId:b.boss.bossId,sourceEntityId:b.entityId,originPosition:point(b.position),radius:75,sequence:b.boss.abilitySequence??0});
  }
- const field=pools.filter(p=>p.bossDefinitionId==='chronos_arbitrator'&&p.kind==='time').map(p=>({...p,radius:105}));
- const fires=pools.filter(p=>p.bossDefinitionId==='cinderhart'&&p.kind==='fire').map(p=>({...p,ignitesTick:p.createdTick}));
+ const field=pools.filter(p=>p.bossDefinitionId==='chronos_arbitrator'&&p.kind==='time').map(p=>({...p,radius:35}));
+ const fires=pools.filter(p=>p.bossDefinitionId==='cinderhart'&&p.kind==='fire').map(p=>({...p,ignitesTick:p.createdTick+12}));
  const barriers=bosses.filter(b=>b.boss.bossDefinitionId==='nexus_overseer').map(b=>barrierRecord(b.boss,b,tick)).filter(Boolean);
  const glitches=[];
  for(const b of bosses.filter(x=>x.boss.bossDefinitionId==='nexus_overseer')){
@@ -115,7 +117,8 @@ function projected(model,tick){
   nexusTelegraphs:casts.filter(q=>q.bossDefinitionId==='nexus_overseer'),
   nexusImpacts:impacts.filter(q=>q.bossDefinitionId==='nexus_overseer'),nexusBarriers:barriers,nexusProjectiles:[],nexusGlitches:glitches,
   hooktailTelegraphs:casts.filter(q=>q.bossDefinitionId==='hooktail'),
-  hooktailImpacts:impacts.filter(q=>q.bossDefinitionId==='hooktail'),hooktailCollapsedRings:[],
+  hooktailImpacts:impacts.filter(q=>q.bossDefinitionId==='hooktail'),
+   hooktailCollapsedRings:(h.recoveredCollapsedRings??[]).map(r=>({id:r.bossId+':collapse:'+r.index,bossId:r.bossId,createdTick:r.createdTick,ring:{index:r.index,minColumn:r.minColumn,maxColumn:r.maxColumn,minRow:r.minRow,maxRow:r.maxRow,tileSize:r.tileSize,tiles:r.tiles}})),
   cinderhartFires:fires,
   cinderhartLandings:[],cinderhartTelegraphs:casts.filter(q=>q.bossDefinitionId==='cinderhart'),
   cinderhartImpacts:impacts.filter(q=>q.bossDefinitionId==='cinderhart')};
