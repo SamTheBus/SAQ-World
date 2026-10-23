@@ -3,6 +3,7 @@ import {closedRecord,copyWire,freezeWire,requireContract as check,safeInteger} f
 import {ARACHNID_TREANT_PROFILE} from '../content/bosses_d12_5.js';
 import {RECOVERED_BOSS_VERSION,recoveredBossForId,recoveredBossForReservation} from '../content/recovered_boss_catalog_v1.js';
 import {collidesWithTiles} from '../rules/world_geometry.js';
+import {archivedCombatProfile,ARCHIVED_FIGHT_PROFILE_VERSION} from '../content/archived_boss_fight_profiles_v1.js';
 
 export const RECOVERED_SUMMON_VERSION='recovered-boss-summon-v1';
 const point=p=>Boolean(p&&Number.isFinite(p.x)&&Number.isFinite(p.y));
@@ -27,7 +28,8 @@ export async function createRecoveredBossV1({kind,campaignSeed,siteId,floorId,gr
   selectionSeed:parseInt(digest.slice(0,8),16)>>>0,
   shieldHp:'0',shieldMaxHp:'0',dazedUntilTick:null,shieldBrokenTick:null,
   summonEntityIds:summons.map(s=>s.entityId),chunkStep:0,collapseStep:0,stolenGold:'0',coinShots:[],
-  pools:[],statusesByEntityId:{},lastTrailPosition:copyWire(homePosition),lastAction:null
+  pools:[],statusesByEntityId:{},lastTrailPosition:copyWire(homePosition),lastAction:null,
+  ...(archivedCombatProfile(kind)?{archive:{version:ARCHIVED_FIGHT_PROFILE_VERSION,charge:null,sporesById:{},poisonByEntityId:{},contactByEntityId:{},nextWarrenTick:activatedTick+60,sludgeSequence:0}}:{})
  };
  return freezeWire({boss,summons});
 }
@@ -36,7 +38,7 @@ export function validateRecoveredBossV1(state,id,b){
  closedRecord(b,['version','bossId','bossDefinitionId','entityId','siteId','floorId','groupId','roomId','homePosition','activatedTick',
   'spaceInstanceId','sourceResidencyRevision','phase','phase2Triggered','actionState','activeAbility','targetEntityId','targetPosition',
   'telegraphStartedTick','resolvesTick','nextActionTick','abilitySequence','selectionSeed','shieldHp','shieldMaxHp','dazedUntilTick',
-  'shieldBrokenTick','summonEntityIds','chunkStep','collapseStep','stolenGold','pools','statusesByEntityId','lastTrailPosition','lastAction'],['coinShots']);
+  'shieldBrokenTick','summonEntityIds','chunkStep','collapseStep','stolenGold','pools','statusesByEntityId','lastTrailPosition','lastAction'],['coinShots','archive']);
  const spec=recoveredBossForId(b.bossDefinitionId),actor=state.entitiesById[id],group=state.groupsById[b.groupId],c=state.spacesByInstanceId[b.spaceInstanceId]?.collision;
  check(spec&&b.version===RECOVERED_BOSS_VERSION&&b.entityId===id&&/^boss:[a-f0-9]{32}$/.test(b.bossId)&&actor?.team==='hostile'&&
   actor.contentDefinitionId===ARACHNID_TREANT_PROFILE.contentDefinitionId&&group?.entityIds.includes(id)&&group.siteId===b.siteId&&
@@ -61,6 +63,33 @@ export function validateRecoveredBossV1(state,id,b){
   closedRecord(shot,['id','position','velocity','firedTick','expiresTick','sequence','ordinal','bounces']);
   check(typeof shot.id==='string'&&shot.id===b.bossId+':coin:'+shot.sequence+':'+shot.ordinal&&point(shot.position)&&point(shot.velocity)&&Math.hypot(shot.velocity.x,shot.velocity.y)<13&&shot.bounces<=2,'Invalid flying Marcus coin');
   safeInteger(shot.firedTick,b.activatedTick,state.tick);safeInteger(shot.expiresTick,shot.firedTick+120,shot.firedTick+120);safeInteger(shot.sequence,1,b.abilitySequence);safeInteger(shot.ordinal,0,7);safeInteger(shot.bounces,0,2);check(state.tick<shot.expiresTick,'Expired coin shot');
+ }
+ if(b.archive!==undefined){
+  const archive=b.archive;
+  closedRecord(archive,['version','charge','sporesById','poisonByEntityId','contactByEntityId','nextWarrenTick','sludgeSequence']);
+  check(Boolean(archivedCombatProfile(b.bossDefinitionId))&&archive.version===ARCHIVED_FIGHT_PROFILE_VERSION,'Archived boss profile mismatch');
+  safeInteger(archive.nextWarrenTick,0,state.tick+1200);safeInteger(archive.sludgeSequence,0);
+  check(archive.charge===null||b.bossDefinitionId==='cinderhart','Invalid archived rush owner');
+  if(archive.charge){
+   const r=archive.charge;closedRecord(r,['startedTick','endsTick','originPosition','endPosition','hitEntityIds','lastFirePosition']);
+   safeInteger(r.startedTick,b.activatedTick,state.tick);check(r.endsTick===r.startedTick+24&&state.tick<=r.endsTick&&point(r.originPosition)&&point(r.endPosition)&&point(r.lastFirePosition),'Invalid original 24-tick rush');
+   check(Array.isArray(r.hitEntityIds)&&new Set(r.hitEntityIds).size===r.hitEntityIds.length&&r.hitEntityIds.every(id=>state.entitiesById[id]?.team==='party'),'Invalid rush targets');
+  }
+  check(Object.keys(archive.sporesById).length<=9&&Object.keys(archive.poisonByEntityId).length<=4&&Object.keys(archive.contactByEntityId).length<=4,'Archived projectile/status budget exceeded');
+  for(const [id,s] of Object.entries(archive.sporesById)){
+   closedRecord(s,['id','position','previousPosition','createdTick','expiresTick','sequence','ordinal','targetEntityId']);
+   check(id===s.id&&id.startsWith(b.bossId+':spore:')&&point(s.position)&&point(s.previousPosition)&&s.expiresTick===s.createdTick+360,'Invalid original drifting spore');
+   safeInteger(s.createdTick,b.activatedTick,state.tick);safeInteger(s.sequence,1,b.abilitySequence);safeInteger(s.ordinal,0,2);check(state.tick<s.expiresTick,'Expired archived spore');
+  }
+  for(const [id,p] of Object.entries(archive.poisonByEntityId)){
+   closedRecord(p,['stacks','lastAppliedTick','nextTick','expiresTick']);
+   check(state.entitiesById[id]?.team==='party','Archived poison target mismatch');
+   safeInteger(p.stacks,1,5);safeInteger(p.lastAppliedTick,b.activatedTick,state.tick);safeInteger(p.nextTick,0,state.tick+300);
+   safeInteger(p.expiresTick,state.tick+1,state.tick+240);
+  }
+  for(const [id,last] of Object.entries(archive.contactByEntityId)){
+   check(state.entitiesById[id]?.team==='party','Archived contact target mismatch');safeInteger(last,0,state.tick);
+  }
  }
  check(Array.isArray(b.pools)&&b.pools.length<=(b.bossDefinitionId==='cinderhart'?64:20)&&point(b.lastTrailPosition),'Recovered boss hazard budget invalid');
  for(const p of b.pools){closedRecord(p,['id','kind','position','radius','createdTick','expiresTick','nextDamageTick']);check(typeof p.id==='string'&&p.id.startsWith(b.bossId+':pool:')&&['acid','slag','fire','void','time','collapse','molten','gold','prism'].includes(p.kind)&&point(p.position)&&Number.isFinite(p.radius)&&p.radius>=8&&p.radius<=300,'Recovered boss pool invalid');safeInteger(p.createdTick,b.activatedTick,state.tick);safeInteger(p.expiresTick,state.tick+1,p.createdTick+600);safeInteger(p.nextDamageTick,p.createdTick,p.expiresTick);}
