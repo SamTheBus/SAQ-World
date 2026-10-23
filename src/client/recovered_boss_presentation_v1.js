@@ -19,7 +19,7 @@ function drawCinderhart(c,a,t){
  circle(c,14,-36,8,'#35252a','#b34f32',2);
  circle(c,17,-37,3,'#ffcd55');circle(c,3,-16,5,'#f47230');
  for(let i=0;i<9;i++){let x=-24+i*6,y=-24-Math.sin(t*.055+i*1.9)*14;circle(c,x,y,1.5+(i%3),i%2?'#f0a53d':'#ed5133');}
- for(let i=0;i<5;i++){const q=t*.025+i*2.9,x=Math.cos(i*2.7)*83+Math.sin(q)*14,y=18+Math.sin(i*8)*44+Math.cos(q)*9;rabbit(c,x,y,q*2);}
+
 }
 function drawHooktail(c,a,t){
  const q=Math.sin(t*.045),w=Math.sin(t*.07)*12;
@@ -111,7 +111,7 @@ export function drawRecoveredBossV1(c,a,t,flash=false){
  if(id==='gilded_vault_keeper')drawGilded(c,a,t);
  if(id==='nexus_overseer')drawNexus(c,a,t);
  if(id==='chronos_arbitrator')drawChronos(c,a,t);
- if(id==='void_overseer')drawVoid(c,a,t);
+ if(id==='void_overseer'){drawVoid(c,a,t);if(a.boss.pendingAction?.ability==='eye_lance'){const q=ease((t-a.boss.pendingAction.startedTick)/Math.max(1,a.boss.pendingAction.resolvesTick-a.boss.pendingAction.startedTick));circle(c,0,-28,6+q*11,'#ffd9ffa0','#ff8cf8',2+q*2);}}
  if(id==='corrosive_abomination')drawCorrosive(c,a,t);
  if(a.boss.phase===2){c.globalAlpha=.44;c.strokeStyle=spec.color;c.lineWidth=2;c.beginPath();c.arc(0,-12,41+Math.sin(t*.06)*2,0,TAU);c.stroke();}
  if(a.boss.shieldActive){c.globalAlpha=.75;c.strokeStyle='#b2f8f3';c.lineWidth=3;c.beginPath();c.arc(0,-12,51,0,TAU);c.stroke();}
@@ -119,10 +119,11 @@ export function drawRecoveredBossV1(c,a,t,flash=false){
  c.restore();return true;
 }
 export function drawRecoveredSummonV1(c,a,t,flash=false){
- const s=a.bossSummon;if(!s||!['slime','slag','hologram'].includes(s.kind))return false;
+ const s=a.bossSummon;if(!s||!['slime','slag','hologram','bunny'].includes(s.kind))return false;
  if(s.stage==='dormant'||s.stage==='defeated')return true;
  c.save();c.translate(a.position.x,a.position.y);let q=Math.sin(t*.085+a.position.x*.01);
- if(s.kind==='hologram'){c.globalAlpha=.62;poly(c,[[0,-21+q*3],[16,0],[0,19+q*3],[-16,0]],'#5788cba8','#a3efff',2);circle(c,0,0,3,'#f1ddff');}
+ if(s.kind==='bunny'){rabbit(c,0,0,t*.15+(s.ordinal??0));}
+ else if(s.kind==='hologram'){c.globalAlpha=.62;poly(c,[[0,-21+q*3],[16,0],[0,19+q*3],[-16,0]],'#5788cba8','#a3efff',2);circle(c,0,0,3,'#f1ddff');}
  else{poly(c,[[-17,7],[-16,-4],[-7,-14+q*3],[8,-13+q*3],[17,3],[12,13],[-11,13]],s.kind==='slag'?'#b26942':'#71aa77',s.kind==='slag'?'#ffbe5d':'#c6f49b',2);circle(c,-6,-3,3,'#fcf4d6');circle(c,6,-3,3,'#fcf4d6');}
  if(flash)circle(c,0,0,18,'#ffffff45');c.restore();return true;
 }
@@ -133,13 +134,24 @@ export function drawRecoveredBossGroundV1(c,model,t){
   const life=Math.min(1,(p.expiresTick-t)/40,(t-p.createdTick)/15);if(life<=0)continue;
   const col=color(p.kind);c.save();c.translate(p.position.x,p.position.y);c.globalAlpha=.38*life;
   c.fillStyle=col;c.strokeStyle=col;c.lineWidth=3;
-  c.beginPath();c.arc(0,0,p.radius,0,TAU);
-  if(p.kind==='collapse'){c.setLineDash([12,10]);c.stroke();c.setLineDash([]);}else{c.fill();c.globalAlpha=.72*life;c.stroke();}
+  c.beginPath();c.arc(0,0,p.kind==='prism'?p.radius*(1-.64*Math.min(1,(t-p.createdTick)/(p.expiresTick-p.createdTick))):p.radius,0,TAU);
+  if(p.kind==='collapse'||p.kind==='prism'){c.setLineDash([12,10]);c.stroke();c.setLineDash([]);}else{c.fill();c.globalAlpha=.72*life;c.stroke();}
   if(p.kind==='fire'||p.kind==='molten'||p.kind==='slag')for(let i=0;i<8;i++){const q=i*TAU/8+t*.013;circle(c,Math.cos(q)*p.radius*.7,Math.sin(q)*p.radius*.62,2+Math.sin(t*.08+i),'#ffdda1');}
   c.restore();
  }
+ // Void's Eye Lance is warned by its glowing eyes: the floor has NO warning line.
+ for(const a of Object.values(model.entitiesById??{})){
+  if(a?.boss?.bossDefinitionId!=='void_overseer'||!a.alive)continue;
+  const action=a.boss.lastAction;
+  if(action?.ability==='eye_lance'&&t-action.resolvedTick>=0&&t-action.resolvedTick<16){
+   const from={x:a.position.x,y:a.position.y-23},v={x:action.targetPosition.x-a.position.x,y:action.targetPosition.y-a.position.y};
+   const norm=Math.hypot(v.x,v.y)||1,to={x:from.x+v.x/norm*260,y:from.y+v.y/norm*260};
+   c.save();c.globalAlpha=1-(t-action.resolvedTick)/16;
+   line(c,[[from.x,from.y],[to.x,to.y]],'#a949c6',8);line(c,[[from.x,from.y],[to.x,to.y]],'#ffe2ff',2.3);c.restore();
+  }
+ }
  for(const q of h.recoveredTelegraphs??[]){
-  const spec=recoveredBossForId(q.bossDefinitionId);if(!spec)continue;
+  const spec=recoveredBossForId(q.bossDefinitionId);if(!spec||q.ability==='eye_lance')continue;
   const span=Math.max(1,q.resolvesTick-q.startedTick),progress=ease((t-q.startedTick)/span);
   c.save();c.translate(q.position.x,q.position.y);c.globalAlpha=.35+progress*.55;
   c.strokeStyle=spec.color;c.lineWidth=1.5+progress*2;
