@@ -4,6 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {webcrypto} from 'node:crypto';
 import {loadPlannedReviewV1} from '../src/dev/planned_world_review_v1.js';
+import {createPlannedChunkGenerator} from '../src/shared/generation/planned_world_chunks_v1.js';
 import {WOODLAND_EVENT_PILOT_V3_7,woodlandPilotWorldPosition} from '../src/shared/generation/woodland_event_pilot_v3_7.js';
 import {woodlandEventCluesV3_8,woodlandEventDistanceV3_8,WOODLAND_RUMOR_RADIUS_TILES,WOODLAND_SIGHT_RADIUS_TILES} from '../src/shared/content/wilderness_event_discovery_v3_8.js';
 import {normalizeWorldPosition} from '../src/shared/contracts/world_address.js';
@@ -43,7 +44,8 @@ test('all three events survive the actual planned-world generator and form nativ
        return {ok:true,text:async()=>content};}
      catch(error){return {ok:false,text:async()=>''};}
    }};
- const {generator,asset,binding}=await loadPlannedReviewV1(environment,'alpha',sha256);
+ const {asset,binding}=await loadPlannedReviewV1(environment,'alpha',sha256);
+ const generator=createPlannedChunkGenerator(asset,binding,sha256);
  assert.equal(binding.wildernessVersion,'wilderness-distribution-v2-native');
  assert.equal(asset.wildernessExtension.eventCapacities.length,176);
  for(const event of WOODLAND_EVENT_PILOT_V3_7){
