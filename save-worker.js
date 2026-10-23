@@ -3018,7 +3018,11 @@ var WOODLAND_EVENT_PILOT_V3_7 = Object.freeze([
 var ordinals = new Set(WOODLAND_EVENT_PILOT_V3_7.map((e) => e.ordinal));
 var isWoodlandPilotEventAnchor = (anchor) => anchor?.combatVersion === WORLD_COMBAT_VERSION && ordinals.has(anchor.ordinal) && typeof anchor.id === "string" && anchor.id.startsWith("anchor:");
 var isWoodlandPilotTreasureAnchor = (anchor) => isWoodlandPilotEventAnchor(anchor) && anchor.ordinal === 39;
-var offsets = Object.freeze([[-2, -1], [0, -1], [2, -1], [-2, 1], [0, 1], [2, 1]]);
+var stable = (text) => {
+  let h = 2166136261;
+  for (const c of text) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
+  return h;
+};
 function openThreeByThree(tile, x, y, landmassId) {
   for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
     const t = tile(x + dx, y + dy);
@@ -3036,26 +3040,33 @@ async function createWoodlandPilotEventAnchors({ asset, binding, cx, cy, seed, s
     if (!slot || slot.biome !== "woodland" || slot.position.x !== event.x || slot.position.y !== event.y || !slot.cells?.length)
       throw new Error("Woodland pilot is not backed by the frozen Wilderness V2 clearing");
     const cellIds = new Set(slot.cells.map((c) => c.x + "," + c.y));
-    const members = [];
-    for (let i = 0; i < offsets.length; i++) {
-      const [dx, dy] = offsets[i], x = event.x + dx, y = event.y + dy;
-      if (!cellIds.has(x + "," + y) || !openThreeByThree(tile, x, y, slot.landmassId)) {
-        members.length = 0;
-        break;
-      }
+    const safeCandidates = [];
+    for (let dy = 2; dy <= 16; dy++) for (let dx = 2; dx <= 18; dx++) {
+      const x = event.x + dx, y = event.y + dy;
+      if (Math.floor(x / 32) !== cx || Math.floor(y / 26) !== cy) continue;
+      if (!openThreeByThree(tile, x, y, slot.landmassId)) continue;
       const position = { x: (x - cx * 32 + 0.5) * 32, y: (y - cy * 26 + 0.5) * 32 };
-      if (regularAnchors.some((a) => Math.hypot(position.x - a.position.x, position.y - a.position.y) < 100)) {
-        members.length = 0;
-        break;
-      }
-      members.push({ family: event.families[i], position });
+      if (regularAnchors.some((a) => Math.hypot(position.x - a.position.x, position.y - a.position.y) < 144)) continue;
+      safeCandidates.push({
+        position,
+        priority: dx + dy + (cellIds.has(x + "," + y) ? -3 : 0),
+        tie: stable(event.slotId + "/" + dx + "/" + dy)
+      });
+    }
+    safeCandidates.sort((a, b) => a.priority - b.priority || a.tie - b.tie);
+    const members = [];
+    for (const p of safeCandidates) {
+      if (members.some((m) => Math.hypot(m.position.x - p.position.x, m.position.y - p.position.y) < 78)) continue;
+      members.push({ family: event.families[members.length], position: p.position });
+      if (members.length === 6) break;
     }
     if (members.length !== 6) continue;
     const identity = await worldIdentity(seed, "anchor", ["woodland-event-pilot-v3-7", event.slotId], sha256);
+    const anchor = members.reduce((best, m) => !best || m.position.x + m.position.y < best.position.x + best.position.y ? m : best, null);
     result.push({
       id: identity.id,
       ordinal: event.ordinal,
-      position: { x: (event.x - cx * 32 + 0.5) * 32, y: (event.y - cy * 26 + 0.5) * 32 },
+      position: { ...anchor.position },
       rank: event.rank,
       combatVersion: WORLD_COMBAT_VERSION,
       members
@@ -6376,7 +6387,7 @@ async function derivePlannedCaveReservation(asset, binding, sha256, { reservatio
   const g = createPlannedCaveExterior(asset, reservationId, terrain2), r = g.reservation, identity = await worldIdentity(asset.campaignSeedHex, PLANNED_CAVE_VERSION, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), biome = r.id.split(":")[2];
   requireContract(Object.hasOwn(BIOME_CODES, biome) && g.terrain.base(g.entrance.x, g.entrance.y).biome === BIOME_CODES[biome], "Cave entrance biome disagrees with reservation");
   const chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + "/" + binding.townPrototype + "/" + PLANNED_CAVE_VERSION, "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: PLANNED_CAVE_SOCKET, siteId, siteSeed: identity.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_CAVE_VERSION, identityDomain: "planned-reservation-cave", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunk: copyWire(g.footprint), approachChunk: copyWire(g.approach) } };
-  const regionName = biome[0].toUpperCase() + biome.slice(1), stable = await deriveWoodlandCaveIdentityD12_2({ campaignSeed: asset.campaignSeedHex, site: socket, label: regionName + " Cave", regionName, geographicQualifier: "" }, { sha256 }), parcel = { version: PLANNED_CAVE_PARCEL, siteId, socket: copyWire(socket), familyId: WOODLAND_CAVE_FAMILY_ID, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, spawnOrdinal: 0, regionKey: region.regionX + "," + region.regionY, regionName, geographicQualifier: "", label: stable.label, tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: WOODLAND_CAVE_EXTERIOR.width, height: WOODLAND_CAVE_EXTERIOR.height, orientation: "south-facing", pages: [{ chunkX: entrance.chunkX, chunkY: entrance.chunkY, baseDigest: chunk.digest }], roadAnchor: { tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.entrance.x), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top + WOODLAND_CAVE_EXTERIOR.height - 1) }, tier: r.tier, siteSeed: stable.siteSeed, layoutSeed: stable.layoutSeed, placementProvenance: { version: PLANNED_CAVE_VERSION, kind: "existing-planned-reservation", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash } };
+  const regionName = biome[0].toUpperCase() + biome.slice(1), stable2 = await deriveWoodlandCaveIdentityD12_2({ campaignSeed: asset.campaignSeedHex, site: socket, label: regionName + " Cave", regionName, geographicQualifier: "" }, { sha256 }), parcel = { version: PLANNED_CAVE_PARCEL, siteId, socket: copyWire(socket), familyId: WOODLAND_CAVE_FAMILY_ID, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, spawnOrdinal: 0, regionKey: region.regionX + "," + region.regionY, regionName, geographicQualifier: "", label: stable2.label, tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: WOODLAND_CAVE_EXTERIOR.width, height: WOODLAND_CAVE_EXTERIOR.height, orientation: "south-facing", pages: [{ chunkX: entrance.chunkX, chunkY: entrance.chunkY, baseDigest: chunk.digest }], roadAnchor: { tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.entrance.x), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top + WOODLAND_CAVE_EXTERIOR.height - 1) }, tier: r.tier, siteSeed: stable2.siteSeed, layoutSeed: stable2.layoutSeed, placementProvenance: { version: PLANNED_CAVE_VERSION, kind: "existing-planned-reservation", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash } };
   return freezeWire({ version: PLANNED_CAVE_RESERVATION, siteId, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, socket, parcel });
 }
 
@@ -14327,7 +14338,7 @@ function originHordeDefinition(s, origin2, collision2, g) {
   const site = siteFor(origin2, g.groupId), room2 = site?.rooms.find((r) => r.roomId === g.roomId), anchor = g.anchor ?? g.members[0].position, spaceInstanceId = site ? s.campaign.sitesById[site.siteId].spaceInstanceId : s.overworldInstanceId;
   const count = 6 + hashReward(`${s.campaign.seed.seedHex}/${g.groupId}/horde-size`) % (site ? 3 : 7), members = copyWire(g.members), rank = tier(g.members[0].profileId), first = ORDINARY_ENEMIES.findIndex((e) => e.enemyDefinitionId === g.members[0].enemyDefinitionId);
   if (site) collision2 = site.collision;
-  const offsets2 = [[0, -32], [32, 0], [0, 32], [-32, 0]], turn = hashReward(g.groupId + "/directions") % 4, queue = [copyWire(anchor)], seen = /* @__PURE__ */ new Set([anchor.x + "," + anchor.y]), resources = (s.d9World.origin.resources ?? []).filter((r) => r.spaceInstanceId === spaceInstanceId);
+  const offsets = [[0, -32], [32, 0], [0, 32], [-32, 0]], turn = hashReward(g.groupId + "/directions") % 4, queue = [copyWire(anchor)], seen = /* @__PURE__ */ new Set([anchor.x + "," + anchor.y]), resources = (s.d9World.origin.resources ?? []).filter((r) => r.spaceInstanceId === spaceInstanceId);
   for (let i = 0; i < queue.length && members.length < count; i++) {
     const p = queue[i];
     if (distance4(p, anchor) <= 160 && members.every((m) => distance4(m.position, p) >= 40) && resources.every((r) => distance4(r.position, p) >= 30)) {
@@ -14335,7 +14346,7 @@ function originHordeDefinition(s, origin2, collision2, g) {
       members.push({ entityId: entityId(s, g, n), enemyDefinitionId: enemy.enemyDefinitionId, profileId: profile2.contentDefinitionId, position: copyWire(p) });
     }
     for (let n = 0; n < 4; n++) {
-      const d = offsets2[(n + turn) % 4], p2 = { x: p.x + d[0], y: p.y + d[1] }, key8 = p2.x + "," + p2.y;
+      const d = offsets[(n + turn) % 4], p2 = { x: p.x + d[0], y: p.y + d[1] }, key8 = p2.x + "," + p2.y;
       if (seen.has(key8) || distance4(p2, anchor) > 160) continue;
       seen.add(key8);
       if (site ? p2.x <= room2.x * 32 + 14 || p2.x >= (room2.x + room2.width) * 32 - 14 || p2.y <= room2.y * 32 + 14 || p2.y >= (room2.y + room2.height) * 32 - 14 || distance4(p2, site.entrance) <= 320 : populationRegionAt(origin2, p2)?.regionId !== g.regionId || !populationPointAllowed(origin2, collision2, p2)) continue;
@@ -16404,7 +16415,7 @@ async function planWoodlandCaveRegionD12_2({ seed, origin: origin2, regionX, reg
   for (const [ordinal, c] of chosen.entries()) {
     const identity = await worldIdentity(seed, "site-family-region-owned-reservation", [WOODLAND_CAVE_FAMILY_VERSION_D12_2, WOODLAND_CAVE_FAMILY_ID, regionX, regionY, String(ordinal), String(c.left), String(c.top)], sha256), siteId = "site:" + identity.digest.slice(0, 32), ex = c.left + BigInt(WOODLAND_CAVE_EXTERIOR.entranceTile.x), ey = c.top + BigInt(WOODLAND_CAVE_EXTERIOR.entranceTile.y), ecx = floorDiv(ex, CW3), ecy = floorDiv(ey, CH3), socket = { version: SITE_REGIONAL_SOCKET_D12_2, siteId, siteSeed: identity.digest, entrance: { chunkX: String(ecx), chunkY: String(ecy), localX: Number(ex - ecx * CW3) * T6 + 16, localY: Number(ey - ecy * CH3) * T6 + 16 }, siteClass: "dungeon", capabilities: ["interior"], region: { regionX, regionY, biome: "woodland" }, minimumLevel: copyWire(region.minimumLevel), provenance: { geographyVersion: c.page.version, chunkId: c.page.identity.id, placementVersion: WOODLAND_CAVE_FAMILY_PARCEL_D12_2, identityDomain: "region-owned-cave", regionKey: woodlandCaveRegionKeyD12_2(regionX, regionY), ordinal } };
     validateSiteSocketD9(socket);
-    const geographicQualifier = actualCount === 1 ? "" : c.direction, label = actualCount === 1 ? `${region.name} Cave` : `${c.direction} ${region.name} Cave`, stable = await deriveWoodlandCaveIdentityD12_2({ campaignSeed: seed, site: socket, label, regionName: region.name, geographicQualifier }, { sha256 }), parcel = freezeWire({ version: WOODLAND_CAVE_FAMILY_PARCEL_D12_2, siteId, socket, familyId: WOODLAND_CAVE_FAMILY_ID, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, spawnOrdinal: ordinal, regionKey: woodlandCaveRegionKeyD12_2(regionX, regionY), regionName: region.name, geographicQualifier, label, tileX: String(c.left), tileY: String(c.top), width: Number(W6), height: Number(H6), orientation: "north-of-road", pages: [{ chunkX: c.page.chunkX, chunkY: c.page.chunkY, baseDigest: c.page.identity.digest }], roadAnchor: { tileX: String(c.road.x), tileY: String(c.road.y) }, tier: stable.tier, siteSeed: stable.siteSeed, layoutSeed: stable.layoutSeed, placementProvenance: { version: WOODLAND_CAVE_FAMILY_PARCEL_D12_2, kind: "lazy-region-owned-reservation", regionKey: woodlandCaveRegionKeyD12_2(regionX, regionY), ordinal, guaranteed: guarantee } });
+    const geographicQualifier = actualCount === 1 ? "" : c.direction, label = actualCount === 1 ? `${region.name} Cave` : `${c.direction} ${region.name} Cave`, stable2 = await deriveWoodlandCaveIdentityD12_2({ campaignSeed: seed, site: socket, label, regionName: region.name, geographicQualifier }, { sha256 }), parcel = freezeWire({ version: WOODLAND_CAVE_FAMILY_PARCEL_D12_2, siteId, socket, familyId: WOODLAND_CAVE_FAMILY_ID, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, spawnOrdinal: ordinal, regionKey: woodlandCaveRegionKeyD12_2(regionX, regionY), regionName: region.name, geographicQualifier, label, tileX: String(c.left), tileY: String(c.top), width: Number(W6), height: Number(H6), orientation: "north-of-road", pages: [{ chunkX: c.page.chunkX, chunkY: c.page.chunkY, baseDigest: c.page.identity.digest }], roadAnchor: { tileX: String(c.road.x), tileY: String(c.road.y) }, tier: stable2.tier, siteSeed: stable2.siteSeed, layoutSeed: stable2.layoutSeed, placementProvenance: { version: WOODLAND_CAVE_FAMILY_PARCEL_D12_2, kind: "lazy-region-owned-reservation", regionKey: woodlandCaveRegionKeyD12_2(regionX, regionY), ordinal, guaranteed: guarantee } });
     parcels.push(parcel);
   }
   return freezeWire({ version: "woodland-cave-region-plan-d12-2-v1", regionKey: woodlandCaveRegionKeyD12_2(regionX, regionY), regionName: region.name, count: parcels.length, parcels });

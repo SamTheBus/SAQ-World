@@ -2048,7 +2048,7 @@ var smooth = (x) => {
   return p * p * (3 - 2 * p);
 };
 var mix = (a, b, t) => a + (b - a) * t;
-function uprightAttackFrame(tuning, phase, p, direction, contactReach) {
+function uprightAttackFrame(tuning, phase, p, direction2, contactReach) {
   const front2 = tuning.front, reach = Math.max(0, contactReach - front2);
   const idle2 = { travel: 0, lift: 0, rotation: 0, scaleX: 1, scaleY: 1, extension: tuning.rest ?? front2, sweep: 0, open: tuning.openRest ?? 0, orbit: 0, spin: 0 };
   const brace = {
@@ -2080,13 +2080,13 @@ function uprightAttackFrame(tuning, phase, p, direction, contactReach) {
   const first = phase === "windup" && p < 0.4, from = phase === "recovery" ? hit : first ? idle2 : brace, to = phase === "recovery" ? idle2 : first ? brace : hit;
   const t = phase === "windup" ? smooth(first ? p / 0.4 : (p - 0.4) / 0.6) : phase === "recovery" ? smooth(p) : 1;
   const f = Object.fromEntries(Object.keys(idle2).map((k) => [k, mix(from[k], to[k], t)]));
-  const anchor = { x: direction.x * f.travel, y: direction.y * f.travel + f.lift };
+  const anchor = { x: direction2.x * f.travel, y: direction2.y * f.travel + f.lift };
   const artWeight = phase === "windup" ? smooth(p / 0.4) : phase === "recovery" ? 1 - smooth(p) : 1;
   const strikeBlend = phase === "windup" ? smooth((p - 0.4) / 0.6) : phase === "recovery" ? 1 - smooth(p) : 1;
   return {
     artWeight,
     strikeBlend,
-    body: { ...anchor, rotation: f.rotation * direction.x, scaleX: f.scaleX, scaleY: f.scaleY },
+    body: { ...anchor, rotation: f.rotation * direction2.x, scaleX: f.scaleX, scaleY: f.scaleY },
     anchor,
     limb: { extension: f.extension, sweep: f.sweep, open: f.open, orbit: f.orbit, spin: f.spin },
     frontExtent: front2
@@ -2106,15 +2106,15 @@ function cursedBladeMeleePoseV4(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry;
   if (actor.enemyFamily !== "cursed_blade" || !actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, d = Math.hypot(dx, dy);
-  const direction = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
+  const direction2 = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = Math.max(sourceRadius, Math.min(weaponReach, d - targetRadius));
   const p = clamp2((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick)), size = actor.elite?.scale ?? 1;
-  const frame = uprightAttackFrame({ front: TIP * SCALE * size, recoil: 5, lift: -2, lean: 0, hitLean: 0, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction, contactReach);
+  const frame = uprightAttackFrame({ front: TIP * SCALE * size, recoil: 5, lift: -2, lean: 0, hitLean: 0, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction2, contactReach);
   return {
     family: "cursed_blade",
     phase: phase.phase,
     progress: p,
-    direction,
+    direction: direction2,
     sourceRadius,
     targetRadius,
     centerLimit,
@@ -2265,30 +2265,30 @@ var clamp3 = (x) => Math.max(0, Math.min(1, x));
 var mix3 = (a, b, t) => a + (b - a) * t;
 var color3 = (flash, hex2) => flash ? "#fff" : hex2;
 var rotate = (x, y, a) => ({ x: Math.cos(a) * x - Math.sin(a) * y, y: Math.sin(a) * x + Math.cos(a) * y });
-function localDirection(direction, rotation, facing) {
+function localDirection(direction2, rotation, facing) {
   const co = Math.cos(rotation), si = Math.sin(rotation);
-  return { x: (co * direction.x + si * direction.y) * facing, y: -si * direction.x + co * direction.y };
+  return { x: (co * direction2.x + si * direction2.y) * facing, y: -si * direction2.x + co * direction2.y };
 }
 function swordRay(u) {
   const dot = STRIKE_GRIP.x * u.x + STRIKE_GRIP.y * u.y, perp2 = STRIKE_GRIP.x ** 2 + STRIKE_GRIP.y ** 2 - dot * dot;
   return dot + Math.sqrt(Math.max(0, BLADE_REACH ** 2 - perp2));
 }
-function armorSwordFrontV4(direction, rotation, facing = 1, size = 1) {
-  return swordRay(localDirection(direction, rotation, facing)) * SCALE2 * size;
+function armorSwordFrontV4(direction2, rotation, facing = 1, size = 1) {
+  return swordRay(localDirection(direction2, rotation, facing)) * SCALE2 * size;
 }
 function animatedArmorMeleePoseV4(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry;
   if (actor.enemyFamily !== "animated_armor" || !actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, d = Math.hypot(dx, dy);
-  const direction = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
+  const direction2 = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = Math.max(sourceRadius, Math.min(weaponReach, d - targetRadius));
   const p = clamp3((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick)), facing = actor.presentationFacingX === -1 ? -1 : 1, size = actor.elite?.scale ?? 1;
-  const frame = uprightAttackFrame({ front: armorSwordFrontV4(direction, 0.08 * direction.x, facing, size), recoil: 2, lift: 1, lean: -0.1, hitLean: 0.08, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction, contactReach);
+  const frame = uprightAttackFrame({ front: armorSwordFrontV4(direction2, 0.08 * direction2.x, facing, size), recoil: 2, lift: 1, lean: -0.1, hitLean: 0.08, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction2, contactReach);
   return {
     family: "animated_armor",
     phase: phase.phase,
     progress: p,
-    direction,
+    direction: direction2,
     sourceRadius,
     targetRadius,
     centerLimit,
@@ -2535,16 +2535,16 @@ var IDLE_GRIP = Object.freeze({ x: -11 - Math.sin(IDLE_ANGLE) * 8, y: 7 + Math.c
 var clamp4 = (x) => Math.max(0, Math.min(1, x));
 var mix4 = (a, b, t) => a + (b - a) * t;
 var color4 = (flash, hex2) => flash ? "#fff" : hex2;
-function localDirection2(direction, rotation, facing) {
+function localDirection2(direction2, rotation, facing) {
   const co = Math.cos(rotation), si = Math.sin(rotation);
-  return { x: (co * direction.x + si * direction.y) * facing, y: -si * direction.x + co * direction.y };
+  return { x: (co * direction2.x + si * direction2.y) * facing, y: -si * direction2.x + co * direction2.y };
 }
 function swordRay2(u) {
   const dot = STRIKE_GRIP2.x * u.x + STRIKE_GRIP2.y * u.y, perp2 = STRIKE_GRIP2.x ** 2 + STRIKE_GRIP2.y ** 2 - dot * dot;
   return dot + Math.sqrt(Math.max(0, BLADE_REACH2 ** 2 - perp2));
 }
-function gargoyleSwordFrontV4(direction, rotation, facing = 1, size = 1) {
-  return swordRay2(localDirection2(direction, rotation, facing)) * SCALE3 * size;
+function gargoyleSwordFrontV4(direction2, rotation, facing = 1, size = 1) {
+  return swordRay2(localDirection2(direction2, rotation, facing)) * SCALE3 * size;
 }
 function gargoyleSwordGeometryV4(action = null) {
   const weight2 = action?.artWeight ?? 0, strike = action?.strikeBlend ?? 0, facing = action?.idleFacingX ?? 1;
@@ -2561,16 +2561,16 @@ function gargoyleMeleePoseV4(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry;
   if (actor.enemyFamily !== "gargoyle" || !actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, d = Math.hypot(dx, dy);
-  const direction = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
+  const direction2 = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = Math.max(sourceRadius, Math.min(weaponReach, d - targetRadius));
   const p = clamp4((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick)), facing = actor.presentationFacingX === -1 ? -1 : 1, size = actor.elite?.scale ?? 1;
-  const tuning = { front: gargoyleSwordFrontV4(direction, 0.1 * direction.x, facing, size), recoil: 3, lift: 2, lean: -0.12, hitLean: 0.1, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 };
-  const frame = uprightAttackFrame(tuning, phase.phase, p, direction, contactReach);
+  const tuning = { front: gargoyleSwordFrontV4(direction2, 0.1 * direction2.x, facing, size), recoil: 3, lift: 2, lean: -0.12, hitLean: 0.1, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 };
+  const frame = uprightAttackFrame(tuning, phase.phase, p, direction2, contactReach);
   return {
     family: "gargoyle",
     phase: phase.phase,
     progress: p,
-    direction,
+    direction: direction2,
     sourceRadius,
     targetRadius,
     centerLimit,
@@ -2828,8 +2828,8 @@ function watcherLookDirection(actor, target, pose = null) {
   const cos = Math.cos(angle3), sin = Math.sin(angle3), facing = actor.presentationFacingX === -1 ? -1 : 1;
   return { x: (dx * cos + dy * sin) * facing, y: dy * cos - dx * sin };
 }
-function watcherEyePose(tick, seed2, direction = null, phase = "idle", flash = false) {
-  const dx = point(direction) ? direction.x : 0, dy = point(direction) ? direction.y : 0, length = Math.max(64, Math.hypot(dx, dy));
+function watcherEyePose(tick, seed2, direction2 = null, phase = "idle", flash = false) {
+  const dx = point(direction2) ? direction2.x : 0, dy = point(direction2) ? direction2.y : 0, length = Math.max(64, Math.hypot(dx, dy));
   const visualSeed = seed2 >>> 0, period = 260 + visualSeed % 101, offset2 = (visualSeed * 37 + 19) % period;
   const elapsed = Number.isFinite(tick) ? tick : 0, cycle = ((elapsed + offset2) % period + period) % period, blinkAge = cycle - (period - 10);
   const openness = phase === "idle" && !flash && blinkAge >= 0 ? 1 - Math.sin(Math.PI * blinkAge / 10) ** 2 : 1;
@@ -3260,8 +3260,8 @@ function voidSpectreMotionV4(m, time, seed2 = 0) {
     if (a) {
       const d = a.direction, n2 = { x: -d.y, y: d.x }, spread = side * mix7(5, -5, rake);
       const center2 = { x: d.x * a.contactReach + n2.x * spread, y: d.y * a.contactReach - 8 + n2.y * spread };
-      const goal = toLocal(a, center2), origin = toLocal(a, { x: 0, y: 0 }), direction = toLocal(a, d);
-      const targetAngle = Math.atan2(direction.y - origin.y, direction.x - origin.x);
+      const goal = toLocal(a, center2), origin = toLocal(a, { x: 0, y: 0 }), direction2 = toLocal(a, d);
+      const targetAngle = Math.atan2(direction2.y - origin.y, direction2.x - origin.x);
       angle3 = idleAngle + turn3(targetAngle - idleAngle) * weight2;
       const forward = { x: Math.cos(angle3), y: Math.sin(angle3) };
       const targetWrist = { x: goal.x - forward.x * 6, y: goal.y - forward.y * 6 };
@@ -3838,15 +3838,15 @@ var smooth4 = (x) => {
   return p * p * (3 - 2 * p);
 };
 var HULL = Object.freeze([[-16, -16], [16, -16], [18, 2], [0, 22], [-18, 2]].map((p) => Object.freeze(p)));
-function mimicShieldBashRadiusV4(direction, rotation, facing = 1, size = 1) {
+function mimicShieldBashRadiusV4(direction2, rotation, facing = 1, size = 1) {
   const co = Math.cos(rotation), si = Math.sin(rotation), scale = SCALE9 * size;
   const vertices = HULL.map(([x, y]) => ({ x: (co * x * facing - si * y) * scale, y: (si * x * facing + co * y) * scale }));
   const cross = (a, b) => a.x * b.y - a.y * b.x;
   let distance7 = Infinity;
   for (let i = 0; i < vertices.length; i++) {
-    const a = vertices[i], b = vertices[(i + 1) % vertices.length], edge = { x: b.x - a.x, y: b.y - a.y }, den = cross(direction, edge);
+    const a = vertices[i], b = vertices[(i + 1) % vertices.length], edge = { x: b.x - a.x, y: b.y - a.y }, den = cross(direction2, edge);
     if (Math.abs(den) < 1e-9) continue;
-    const t = cross(a, edge) / den, u = cross(a, direction) / den;
+    const t = cross(a, edge) / den, u = cross(a, direction2) / den;
     if (t >= 0 && u >= -1e-9 && u <= 1 + 1e-9) distance7 = Math.min(distance7, t);
   }
   return Number.isFinite(distance7) ? distance7 : 13.5 * size;
@@ -4104,18 +4104,18 @@ function dungeonMobMeleePoseV2A(actor, tick) {
   const family = actor.enemyFamily, phase = actor.meleePhase, g = actor.meleeGeometry;
   if (!families.has(family) || !actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance7 = Math.hypot(dx, dy);
-  const direction = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
+  const direction2 = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
   const sourceRadius = g.sourceRadius, targetRadius = g.targetRadius, centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach;
   const weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = clamp7(distance7 - targetRadius, sourceRadius, weaponReach);
   const p = clamp7((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick), 0, 1);
-  const tuning = family === "mimic_shield" ? { ...uprightTuning[family], front: mimicShieldBashRadiusV4(direction, uprightTuning[family].hitLean * direction.x, actor.presentationFacingX === -1 ? -1 : 1, actor.elite?.scale ?? 1) } : uprightTuning[family];
-  const frame = uprightAttackFrame(tuning, phase.phase, p, direction, contactReach);
+  const tuning = family === "mimic_shield" ? { ...uprightTuning[family], front: mimicShieldBashRadiusV4(direction2, uprightTuning[family].hitLean * direction2.x, actor.presentationFacingX === -1 ? -1 : 1, actor.elite?.scale ?? 1) } : uprightTuning[family];
+  const frame = uprightAttackFrame(tuning, phase.phase, p, direction2, contactReach);
   const coinTiming = DUNGEON_MOBS_V2_MELEE_MOTION.coin_elemental, coinPhaseOffset = phase.phase === "impact" ? coinTiming.windupTicks : phase.phase === "recovery" ? coinTiming.windupTicks + coinTiming.impactTicks : 0;
   const pose = {
     family,
     phase: phase.phase,
     progress: p,
-    direction,
+    direction: direction2,
     sourceRadius,
     targetRadius,
     centerLimit,
@@ -5562,7 +5562,7 @@ function voidOrbRangedPoseV4(actor, tick) {
   const r = actor.ranged;
   if (!actor.alive || !r || !["windup", "recovery"].includes(r.phase)) return null;
   const d = r.aim ?? (r.targetPosition ? { x: r.targetPosition.x - actor.position.x, y: r.targetPosition.y - actor.position.y } : { x: actor.presentationFacingX ?? 1, y: 0 });
-  const length = Math.hypot(d.x, d.y), direction = length > 1e-3 ? { x: d.x / length, y: d.y / length } : { x: 1, y: 0 };
+  const length = Math.hypot(d.x, d.y), direction2 = length > 1e-3 ? { x: d.x / length, y: d.y / length } : { x: 1, y: 0 };
   const progress = clamp9((tick - r.phaseStartedTick) / Math.max(1, r.phaseEndsTick - r.phaseStartedTick));
   const hold = r.phase === "windup" ? smooth6(progress) : 1 - smooth6(progress);
   const kick = r.phase === "recovery" ? Math.sin(Math.PI * clamp9(progress * 3)) : 0;
@@ -5580,11 +5580,11 @@ function voidOrbRangedPoseV4(actor, tick) {
     recovery: r.phase === "recovery" ? 1 - progress : 0,
     hold,
     kick,
-    direction,
+    direction: direction2,
     body: {
-      x: direction.x * travel,
-      y: direction.y * travel - 0.7 * hold,
-      rotation: -direction.x * 0.07 * hold,
+      x: direction2.x * travel,
+      y: direction2.y * travel - 0.7 * hold,
+      rotation: -direction2.x * 0.07 * hold,
       scaleX: 1 - 0.11 * hold + 0.07 * kick,
       scaleY: 1 + 0.08 * hold - 0.04 * kick
     },
@@ -5800,7 +5800,7 @@ function thornWyrmRangedPoseV4(actor, tick) {
   const r = actor.ranged;
   if (!actor.alive || !r || r.phase === "idle") return null;
   const aim2 = r.aim ?? (r.targetPosition ? { x: r.targetPosition.x - actor.position.x, y: r.targetPosition.y - actor.position.y } : { x: actor.presentationFacingX ?? 1, y: 0 });
-  const length = Math.hypot(aim2.x, aim2.y), direction = length > 1e-3 ? { x: aim2.x / length, y: aim2.y / length } : { x: 1, y: 0 };
+  const length = Math.hypot(aim2.x, aim2.y), direction2 = length > 1e-3 ? { x: aim2.x / length, y: aim2.y / length } : { x: 1, y: 0 };
   const p = clamp10((tick - r.phaseStartedTick) / Math.max(1, r.phaseEndsTick - r.phaseStartedTick));
   const weight2 = r.phase === "windup" ? smooth7(p) : 1 - smooth7(p), size = actor.elite?.scale ?? 1;
   const muzzle = (actor.hullRadius ?? 10) + 6 + 1;
@@ -5813,14 +5813,14 @@ function thornWyrmRangedPoseV4(actor, tick) {
     preserveFacingFlip: true,
     phase: r.phase,
     progress: p,
-    direction,
+    direction: direction2,
     artWeight: weight2,
     charge: r.phase === "windup" ? weight2 : 0,
     release: r.phase === "recovery" ? Math.max(0, 1 - (tick - r.phaseStartedTick) / 3) : 0,
     recovery: r.phase === "recovery" ? 1 - p : 0,
     drawFacingX: actor.presentationFacingX === -1 ? 1 : -1,
     bodyPivot: { x: 0, y: -10 * SCALE13 * size },
-    body: { x: direction.x * travel, y: direction.y * travel + (10 * SCALE13 * size - 8) * weight2, rotation: 0, scaleX: 1, scaleY: 1 },
+    body: { x: direction2.x * travel, y: direction2.y * travel + (10 * SCALE13 * size - 8) * weight2, rotation: 0, scaleX: 1, scaleY: 1 },
     limb: { extension: 0, sweep: 0, open: weight2 }
   };
 }
@@ -6029,7 +6029,7 @@ function frostWyrmlingRangedPoseV4(actor, tick) {
   const r = actor.ranged;
   if (!actor.alive || !r || r.phase === "idle") return null;
   const aim2 = r.aim ?? (r.targetPosition ? { x: r.targetPosition.x - actor.position.x, y: r.targetPosition.y - actor.position.y } : { x: actor.presentationFacingX ?? 1, y: 0 });
-  const length = Math.hypot(aim2.x, aim2.y), direction = length > 1e-3 ? { x: aim2.x / length, y: aim2.y / length } : { x: 1, y: 0 };
+  const length = Math.hypot(aim2.x, aim2.y), direction2 = length > 1e-3 ? { x: aim2.x / length, y: aim2.y / length } : { x: 1, y: 0 };
   const p = clamp11((tick - r.phaseStartedTick) / Math.max(1, r.phaseEndsTick - r.phaseStartedTick));
   const weight2 = r.phase === "windup" ? smooth8(p) : 1 - smooth8(p), size = actor.elite?.scale ?? 1;
   const muzzle = (actor.hullRadius ?? 10) + 6 + 1;
@@ -6042,14 +6042,14 @@ function frostWyrmlingRangedPoseV4(actor, tick) {
     preserveFacingFlip: true,
     phase: r.phase,
     progress: p,
-    direction,
+    direction: direction2,
     artWeight: weight2,
     charge: r.phase === "windup" ? weight2 : 0,
     release: r.phase === "recovery" ? Math.max(0, 1 - (tick - r.phaseStartedTick) / 3) : 0,
     recovery: r.phase === "recovery" ? 1 - p : 0,
     drawFacingX: actor.presentationFacingX === -1 ? 1 : -1,
     bodyPivot: { x: 0, y: -12 * SCALE14 * size },
-    body: { x: direction.x * travel, y: direction.y * travel + (12 * SCALE14 * size - 8) * weight2, rotation: 0, scaleX: 1, scaleY: 1 },
+    body: { x: direction2.x * travel, y: direction2.y * travel + (12 * SCALE14 * size - 8) * weight2, rotation: 0, scaleX: 1, scaleY: 1 },
     limb: { extension: 0, sweep: 0, open: weight2 }
   };
 }
@@ -6237,15 +6237,15 @@ function corrodedGolemMeleePoseV4(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry;
   if (actor.enemyFamily !== "corroded_golem" || !actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, d = Math.hypot(dx, dy);
-  const direction = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
+  const direction2 = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = Math.max(sourceRadius, Math.min(weaponReach, d - targetRadius));
   const p = clamp12((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick)), size = actor.elite?.scale ?? 1;
-  const frame = uprightAttackFrame({ front: Math.max(6 * size, contactReach - 4), recoil: 2, lift: -1, lean: -0.08, hitLean: 0.06, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction, contactReach);
+  const frame = uprightAttackFrame({ front: Math.max(6 * size, contactReach - 4), recoil: 2, lift: -1, lean: -0.08, hitLean: 0.06, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction2, contactReach);
   return {
     family: "corroded_golem",
     phase: phase.phase,
     progress: p,
-    direction,
+    direction: direction2,
     sourceRadius,
     targetRadius,
     centerLimit,
@@ -7073,29 +7073,29 @@ var FRONT4 = (NECK2 + NOSE) * SCALE21;
 var clamp13 = (x) => Math.max(0, Math.min(1, x));
 var mix11 = (a, b, t) => a + (b - a) * t;
 var color23 = (flash, hex2) => flash ? "#fff" : hex2;
-function localDirection3(direction, rotation, facing) {
+function localDirection3(direction2, rotation, facing) {
   const co = Math.cos(rotation), si = Math.sin(rotation);
-  return { x: (co * direction.x + si * direction.y) * facing, y: -si * direction.x + co * direction.y };
+  return { x: (co * direction2.x + si * direction2.y) * facing, y: -si * direction2.x + co * direction2.y };
 }
 function hellBatMeleePoseV4(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry;
   if (actor.enemyFamily !== "hell_bat" || !actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, d = Math.hypot(dx, dy);
-  const direction = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
+  const direction2 = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = Math.max(sourceRadius, Math.min(weaponReach, d - targetRadius));
   const p = clamp13((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick)), size = actor.elite?.scale ?? 1;
-  const frame = uprightAttackFrame({ front: FRONT4 * size, recoil: 3, lift: -3, lean: -0.1, hitLean: 0.12, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction, contactReach);
+  const frame = uprightAttackFrame({ front: FRONT4 * size, recoil: 3, lift: -3, lean: -0.1, hitLean: 0.12, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction2, contactReach);
   if (phase.phase === "windup") {
     const travel = Math.max(0, contactReach - FRONT4 * size) * p * p * (3 - 2 * p) - 3 * Math.sin(Math.PI * p);
-    frame.body.x = direction.x * travel;
-    frame.body.y = direction.y * travel - 3 * Math.sin(Math.PI * p);
+    frame.body.x = direction2.x * travel;
+    frame.body.y = direction2.y * travel - 3 * Math.sin(Math.PI * p);
     frame.anchor = { x: frame.body.x, y: frame.body.y };
   }
   return {
     family: "hell_bat",
     phase: phase.phase,
     progress: p,
-    direction,
+    direction: direction2,
     sourceRadius,
     targetRadius,
     centerLimit,
@@ -7256,23 +7256,23 @@ var FRONT5 = (NECK3 + NOSE2) * SCALE22;
 var clamp14 = (x) => Math.max(0, Math.min(1, x));
 var mix12 = (a, b, t) => a + (b - a) * t;
 var color24 = (flash, hex2) => flash ? "#fff" : hex2;
-function localDirection4(direction, rotation, facing) {
+function localDirection4(direction2, rotation, facing) {
   const co = Math.cos(rotation), si = Math.sin(rotation);
-  return { x: (co * direction.x + si * direction.y) * facing, y: -si * direction.x + co * direction.y };
+  return { x: (co * direction2.x + si * direction2.y) * facing, y: -si * direction2.x + co * direction2.y };
 }
 function lavaSerpentMeleePoseV4(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry;
   if (actor.enemyFamily !== "lava_serpent" || !actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, d = Math.hypot(dx, dy);
-  const direction = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
+  const direction2 = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = Math.max(sourceRadius, Math.min(weaponReach, d - targetRadius));
   const p = clamp14((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick)), size = actor.elite?.scale ?? 1;
-  const frame = uprightAttackFrame({ front: FRONT5 * size, recoil: 4, lift: -1, lean: -0.1, hitLean: 0.08, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction, contactReach);
+  const frame = uprightAttackFrame({ front: FRONT5 * size, recoil: 4, lift: -1, lean: -0.1, hitLean: 0.08, squeezeX: 1, squeezeY: 1, hitX: 1, hitY: 1 }, phase.phase, p, direction2, contactReach);
   return {
     family: "lava_serpent",
     phase: phase.phase,
     progress: p,
-    direction,
+    direction: direction2,
     sourceRadius,
     targetRadius,
     centerLimit,
@@ -7288,7 +7288,7 @@ function lavaSerpentMeleePoseV4(actor, tick) {
 function lavaSerpentRangedPoseV4(actor, tick) {
   const r = actor.ranged;
   if (!actor.alive || !r || r.phase === "idle") return null;
-  const aim2 = r.aim ?? { x: actor.presentationFacingX ?? 1, y: 0 }, d = Math.hypot(aim2.x, aim2.y), direction = d > 1e-3 ? { x: aim2.x / d, y: aim2.y / d } : { x: 1, y: 0 };
+  const aim2 = r.aim ?? { x: actor.presentationFacingX ?? 1, y: 0 }, d = Math.hypot(aim2.x, aim2.y), direction2 = d > 1e-3 ? { x: aim2.x / d, y: aim2.y / d } : { x: 1, y: 0 };
   const p = clamp14((tick - r.phaseStartedTick) / Math.max(1, r.phaseEndsTick - r.phaseStartedTick)), smooth17 = (x) => x * x * (3 - 2 * x), weight2 = r.phase === "windup" ? smooth17(p) : 1 - smooth17(p), size = actor.elite?.scale ?? 1;
   return {
     family: "lava_serpent",
@@ -7297,7 +7297,7 @@ function lavaSerpentRangedPoseV4(actor, tick) {
     preserveFacingFlip: true,
     phase: r.phase,
     progress: p,
-    direction,
+    direction: direction2,
     artWeight: weight2,
     strikeBlend: 1,
     charge: r.phase === "windup" ? weight2 : 0,
@@ -7305,7 +7305,7 @@ function lavaSerpentRangedPoseV4(actor, tick) {
     recovery: r.phase === "recovery" ? 1 - p : 0,
     drawFacingX: actor.presentationFacingX === -1 ? 1 : -1,
     bodyPivot: { x: 0, y: -10 * SCALE22 * size },
-    body: { x: -direction.x * 2 * weight2, y: -direction.y * 2 * weight2, rotation: 0, scaleX: 1, scaleY: 1 },
+    body: { x: -direction2.x * 2 * weight2, y: -direction2.y * 2 * weight2, rotation: 0, scaleX: 1, scaleY: 1 },
     limb: { extension: 0, sweep: 0, open: weight2 }
   };
 }
@@ -7473,7 +7473,7 @@ var TAU27 = Math.PI * 2;
 function clockworkDroneRangedPose(actor, tick) {
   const r = actor.ranged;
   if (!actor.alive || !r || r.phase === "idle") return null;
-  const aim2 = r.aim ?? { x: actor.presentationFacingX ?? 1, y: 0 }, d = Math.hypot(aim2.x, aim2.y), direction = d > 1e-3 ? { x: aim2.x / d, y: aim2.y / d } : { x: 1, y: 0 };
+  const aim2 = r.aim ?? { x: actor.presentationFacingX ?? 1, y: 0 }, d = Math.hypot(aim2.x, aim2.y), direction2 = d > 1e-3 ? { x: aim2.x / d, y: aim2.y / d } : { x: 1, y: 0 };
   const p = clamp15((tick - r.phaseStartedTick) / Math.max(1, r.phaseEndsTick - r.phaseStartedTick));
   const charge = r.phase === "windup" ? smooth14(p) : 0, hold = r.phase === "windup" ? charge : 1 - smooth14(p);
   const release = r.phase === "recovery" ? clamp15(1 - (tick - r.phaseStartedTick) / 3) : 0;
@@ -7489,8 +7489,8 @@ function clockworkDroneRangedPose(actor, tick) {
     charge,
     release,
     recovery: r.phase === "recovery" ? 1 - p : 0,
-    direction,
-    body: { x: -direction.x * (hold + kick * 1.5), y: -direction.y * (hold + kick * 1.5), rotation: direction.x * (-0.035 * hold + 0.025 * kick), scaleX: 1 - 0.025 * hold, scaleY: 1 + 0.025 * hold },
+    direction: direction2,
+    body: { x: -direction2.x * (hold + kick * 1.5), y: -direction2.y * (hold + kick * 1.5), rotation: direction2.x * (-0.035 * hold + 0.025 * kick), scaleX: 1 - 0.025 * hold, scaleY: 1 + 0.025 * hold },
     limb: { extension: 0, sweep: 0, open: charge }
   };
 }
@@ -7550,7 +7550,7 @@ function hostileRangedPose(actor, tick) {
   if (actor.enemyFamily === "clockwork_drone") return clockworkDroneRangedPose(actor, tick);
   const r = actor.ranged;
   if (!actor.alive || !r || r.phase === "idle" || !rangedFamilies.has(actor.enemyFamily)) return null;
-  const d = r.aim ?? (r.targetPosition ? { x: r.targetPosition.x - actor.position.x, y: r.targetPosition.y - actor.position.y } : { x: actor.presentationFacingX ?? 1, y: 0 }), length = Math.hypot(d.x, d.y), direction = length > 1e-3 ? { x: d.x / length, y: d.y / length } : { x: 1, y: 0 };
+  const d = r.aim ?? (r.targetPosition ? { x: r.targetPosition.x - actor.position.x, y: r.targetPosition.y - actor.position.y } : { x: actor.presentationFacingX ?? 1, y: 0 }), length = Math.hypot(d.x, d.y), direction2 = length > 1e-3 ? { x: d.x / length, y: d.y / length } : { x: 1, y: 0 };
   const p = clamp16((tick - r.phaseStartedTick) / Math.max(1, r.phaseEndsTick - r.phaseStartedTick), 0, 1), charge = r.phase === "windup" ? smooth15(p) : 0;
   const release = r.phase === "recovery" ? Math.max(0, 1 - (tick - r.phaseStartedTick) / 3) : 0, recovery = r.phase === "recovery" ? 1 - p : 0, family = actor.enemyFamily;
   const body4 = { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 };
@@ -7558,34 +7558,34 @@ function hostileRangedPose(actor, tick) {
   const hold = r.phase === "windup" ? charge : 1 - smooth15(p), kick = r.phase === "recovery" ? Math.sin(Math.PI * clamp16((tick - r.phaseStartedTick) / 4, 0, 1)) : 0;
   switch (family) {
     case "thorn_wyrm":
-      body4.rotation = direction.x * (0.08 * hold - 0.04 * kick);
+      body4.rotation = direction2.x * (0.08 * hold - 0.04 * kick);
       body4.scaleX = 1 - 0.16 * hold + 0.05 * kick;
       body4.scaleY = 1 + 0.12 * hold;
       travel = -3 * hold - 2 * kick;
       break;
     case "wyrmling":
-      body4.rotation = direction.x * (-0.09 * hold + 0.06 * kick);
+      body4.rotation = direction2.x * (-0.09 * hold + 0.06 * kick);
       body4.y = -3 * hold;
       body4.scaleY = 1 + 0.08 * hold - 0.06 * kick;
       travel = -2 * hold - 3 * kick;
       break;
     case "magma_elemental":
-      body4.rotation = direction.x * (-0.06 * hold + 0.08 * kick);
+      body4.rotation = direction2.x * (-0.06 * hold + 0.08 * kick);
       body4.scaleX = 1 + 0.08 * hold;
       body4.scaleY = 1 - 0.08 * hold + 0.06 * kick;
       travel = -hold - 4 * kick;
       break;
     case "toxic_fly":
-      body4.rotation = direction.x * (-0.12 * hold + 0.08 * kick);
+      body4.rotation = direction2.x * (-0.12 * hold + 0.08 * kick);
       body4.scaleX = 1 + 0.12 * hold;
       body4.scaleY = 1 - 0.13 * hold + 0.1 * kick;
       body4.y = -2 * hold;
       travel = -2 * hold + 1.5 * kick;
       break;
   }
-  body4.x += direction.x * travel;
-  body4.y += direction.y * travel;
-  return { family, ranged: true, upright: true, bodyPivot: { x: 0, y: -10 }, ...family === "toxic_fly" ? { drawFacingX: actor.presentationFacingX === -1 ? -1 : 1 } : {}, phase: r.phase, progress: p, charge, release, recovery, direction, body: body4, limb: { extension: 0, sweep: 0, open: charge } };
+  body4.x += direction2.x * travel;
+  body4.y += direction2.y * travel;
+  return { family, ranged: true, upright: true, bodyPivot: { x: 0, y: -10 }, ...family === "toxic_fly" ? { drawFacingX: actor.presentationFacingX === -1 ? -1 : 1 } : {}, phase: r.phase, progress: p, charge, release, recovery, direction: direction2, body: body4, limb: { extension: 0, sweep: 0, open: charge } };
 }
 
 // src/client/dungeon_mob_melee_presentation_v2b.js
@@ -7606,16 +7606,16 @@ function dungeonMobMeleePoseV2B(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry, family = actor.enemyFamily;
   if (!families2.has(family) || !actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance7 = Math.hypot(dx, dy);
-  const direction = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
+  const direction2 = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = clamp17(distance7 - targetRadius, sourceRadius, weaponReach);
   const p = clamp17((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick), 0, 1);
-  const frame = uprightAttackFrame(uprightTuning2[family], phase.phase, p, direction, contactReach);
+  const frame = uprightAttackFrame(uprightTuning2[family], phase.phase, p, direction2, contactReach);
   const timing = DUNGEON_MOBS_V2_MELEE_MOTION.wireframe_orb, orbPhaseOffset = phase.phase === "impact" ? timing.windupTicks : phase.phase === "recovery" ? timing.windupTicks + timing.impactTicks : 0;
   return {
     family,
     phase: phase.phase,
     progress: p,
-    direction,
+    direction: direction2,
     sourceRadius,
     targetRadius,
     centerLimit,
@@ -7664,11 +7664,11 @@ function drawDungeonMobContactV2B(c, contact, age) {
   if (age < 0 || age >= DUNGEON_MOB_CONTACT_MS_V2B) return true;
   const source2 = contact.sourcePosition, target = contact.targetPosition;
   if (!source2 || !target) return true;
-  const dx = target.x - source2.x, dy = target.y - source2.y, d = Math.hypot(dx, dy), direction = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 };
+  const dx = target.x - source2.x, dy = target.y - source2.y, d = Math.hypot(dx, dy), direction2 = d > 1e-3 ? { x: dx / d, y: dy / d } : { x: 1, y: 0 };
   const reach = contact.mode === "clearHullGap" ? contact.reach + contact.sourceRadius : Math.max(0, contact.reach - contact.targetRadius), near = Math.min(reach, Math.max(0, d - contact.targetRadius)), p = age / DUNGEON_MOB_CONTACT_MS_V2B, s = 1 - p;
   c.save();
-  c.translate(source2.x + direction.x * near, source2.y + direction.y * near + bodyHeights[contact.family]);
-  c.rotate(Math.atan2(direction.y, direction.x));
+  c.translate(source2.x + direction2.x * near, source2.y + direction2.y * near + bodyHeights[contact.family]);
+  c.rotate(Math.atan2(direction2.y, direction2.x));
   c.globalAlpha *= s ** 1.25;
   c.lineCap = "round";
   c.lineJoin = "round";
@@ -7782,7 +7782,7 @@ var uprightDungeonMelee = {
   marsh_ghost: { front: 23, recoil: 2, lift: -5, lean: -0.12, hitLean: 0.18, squeezeX: 0.85, squeezeY: 1.2, hitX: 0.92, hitY: 1.08 }
 };
 var mix13 = (a, b, t) => a + (b - a) * t;
-function uprightMeleeBody(tuning, phase, p, direction, contactReach) {
+function uprightMeleeBody(tuning, phase, p, direction2, contactReach) {
   const reach = Math.max(0, contactReach - tuning.front), idle2 = [0, 0, 0, 1, 1];
   const brace = [-tuning.recoil, tuning.lift, tuning.lean, tuning.squeezeX, tuning.squeezeY];
   const hit = [reach, 0, tuning.hitLean, tuning.hitX, tuning.hitY];
@@ -7790,7 +7790,7 @@ function uprightMeleeBody(tuning, phase, p, direction, contactReach) {
   const to = phase === "recovery" ? idle2 : phase === "windup" && p < 0.4 ? brace : hit;
   const blend4 = phase === "windup" ? smooth16(p < 0.4 ? p / 0.4 : (p - 0.4) / 0.6) : phase === "recovery" ? smooth16(p) : 1;
   const [travel, lift, rotation, scaleX, scaleY] = from.map((v, i) => mix13(v, to[i], blend4));
-  return { x: direction.x * travel, y: direction.y * travel + lift, rotation: rotation * direction.x, scaleX, scaleY };
+  return { x: direction2.x * travel, y: direction2.y * travel + lift, rotation: rotation * direction2.x, scaleX, scaleY };
 }
 function hostileMeleePose(actor, tick) {
   const imported = corrodedGolemMeleePoseV4(actor, tick) ?? dungeonMobMeleePoseV2A(actor, tick) ?? dungeonMobMeleePoseV2B(actor, tick) ?? gargoyleMeleePoseV4(actor, tick) ?? animatedArmorMeleePoseV4(actor, tick) ?? cursedBladeMeleePoseV4(actor, tick) ?? lavaSerpentMeleePoseV4(actor, tick) ?? hellBatMeleePoseV4(actor, tick);
@@ -7799,7 +7799,7 @@ function hostileMeleePose(actor, tick) {
   if (!actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1;
   const dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance7 = Math.hypot(dx, dy);
-  const direction = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
+  const direction2 = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
   const sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach;
   const weaponReach = Math.max(sourceRadius, centerLimit - targetRadius);
@@ -7816,7 +7816,7 @@ function hostileMeleePose(actor, tick) {
       family,
       phase: phase.phase,
       progress: p,
-      direction,
+      direction: direction2,
       sourceRadius,
       targetRadius,
       centerLimit,
@@ -7824,7 +7824,7 @@ function hostileMeleePose(actor, tick) {
       contactReach,
       upright: true,
       bodyPivot: { x: 0, y: -10 },
-      body: uprightMeleeBody(uprightDungeonMelee[family], phase.phase, p, direction, contactReach),
+      body: uprightMeleeBody(uprightDungeonMelee[family], phase.phase, p, direction2, contactReach),
       limb
     };
   }
@@ -7834,7 +7834,7 @@ function hostileMeleePose(actor, tick) {
       const reach = Math.min(7, Math.max(0, contactReach - 28));
       travel = windup ? -2 * w : impact ? reach : reach * r;
       lift = windup ? 2 * w : impact ? 2 * (1 - p) : r;
-      body4.rotation = (windup ? -0.12 * w : impact ? 0.09 : 0.09 * r) * (direction.x < 0 ? -1 : 1);
+      body4.rotation = (windup ? -0.12 * w : impact ? 0.09 : 0.09 * r) * (direction2.x < 0 ? -1 : 1);
       body4.scaleY = 1 + (windup ? 0.04 * w : impact ? -0.035 : -0.035 * r);
       limb.extension = windup ? 8 - 15 * w : impact ? contactReach - travel : (contactReach - reach) * r + 8 * (1 - r);
       limb.sweep = windup ? -0.18 * w : impact ? 0.07 * p : 0.07 * r;
@@ -7842,9 +7842,9 @@ function hostileMeleePose(actor, tick) {
       break;
     }
   }
-  body4.x = direction.x * travel;
-  body4.y = direction.y * travel + lift;
-  return { family, phase: phase.phase, progress: p, direction, sourceRadius, targetRadius, centerLimit, weaponReach, contactReach, body: body4, limb };
+  body4.x = direction2.x * travel;
+  body4.y = direction2.y * travel + lift;
+  return { family, phase: phase.phase, progress: p, direction: direction2, sourceRadius, targetRadius, centerLimit, weaponReach, contactReach, body: body4, limb };
 }
 function drawHostileMeleeLimb(c, pose, flash = false) {
   if (pose?.ranged) {
@@ -7906,20 +7906,20 @@ function hostileContactPose(contact, age) {
   if (age < 0 || age >= HOSTILE_STRIKE_FEEDBACK_MS) return null;
   const source2 = contact.sourcePosition, target = contact.targetPosition;
   if (!source2 || !target) return null;
-  const dx = target.x - source2.x, dy = target.y - source2.y, distance7 = Math.hypot(dx, dy), direction = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
+  const dx = target.x - source2.x, dy = target.y - source2.y, distance7 = Math.hypot(dx, dy), direction2 = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
   const max = contact.mode === "clearHullGap" ? contact.reach + contact.sourceRadius : Math.max(0, contact.reach - contact.targetRadius);
   const near = Math.min(max, Math.max(0, distance7 - contact.targetRadius));
-  const contactPosition = { x: source2.x + direction.x * near, y: source2.y + direction.y * near };
-  return { family: contact.family ?? null, progress: age / HOSTILE_STRIKE_FEEDBACK_MS, direction, contactPosition, radius: 11 };
+  const contactPosition = { x: source2.x + direction2.x * near, y: source2.y + direction2.y * near };
+  return { family: contact.family ?? null, progress: age / HOSTILE_STRIKE_FEEDBACK_MS, direction: direction2, contactPosition, radius: 11 };
 }
 function drawHostileContact(c, contact, age) {
   if (drawDungeonMobContactV2A(c, contact, age) || drawDungeonMobContactV2B(c, contact, age)) return;
   const pose = hostileContactPose(contact, age);
   if (!pose) return;
-  const { family, progress: t, direction, contactPosition: p } = pose, s = 1 - t;
+  const { family, progress: t, direction: direction2, contactPosition: p } = pose, s = 1 - t;
   c.save();
   c.translate(p.x, p.y - (family === "gargoyle" ? 12 * 0.82 : family === "animated_armor" ? 16 * 0.76 : family === "cursed_blade" ? 12.5 * 0.78 + 1 : family === "lava_serpent" ? 10 * 0.78 : 8));
-  c.rotate(Math.atan2(direction.y, direction.x));
+  c.rotate(Math.atan2(direction2.y, direction2.x));
   c.globalAlpha *= (1 - t) ** 1.25;
   c.lineCap = "round";
   switch (family) {
@@ -11120,7 +11120,11 @@ function woodlandPilotWorldPosition(slot) {
     localY: (slot.y % 26 + 0.5) * 32
   };
 }
-var offsets = Object.freeze([[-2, -1], [0, -1], [2, -1], [-2, 1], [0, 1], [2, 1]]);
+var stable = (text) => {
+  let h = 2166136261;
+  for (const c of text) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
+  return h;
+};
 function openThreeByThree(tile, x, y, landmassId) {
   for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
     const t = tile(x + dx, y + dy);
@@ -11138,26 +11142,33 @@ async function createWoodlandPilotEventAnchors({ asset, binding, cx, cy, seed: s
     if (!slot || slot.biome !== "woodland" || slot.position.x !== event.x || slot.position.y !== event.y || !slot.cells?.length)
       throw new Error("Woodland pilot is not backed by the frozen Wilderness V2 clearing");
     const cellIds = new Set(slot.cells.map((c) => c.x + "," + c.y));
-    const members = [];
-    for (let i = 0; i < offsets.length; i++) {
-      const [dx, dy] = offsets[i], x = event.x + dx, y = event.y + dy;
-      if (!cellIds.has(x + "," + y) || !openThreeByThree(tile, x, y, slot.landmassId)) {
-        members.length = 0;
-        break;
-      }
+    const safeCandidates = [];
+    for (let dy = 2; dy <= 16; dy++) for (let dx = 2; dx <= 18; dx++) {
+      const x = event.x + dx, y = event.y + dy;
+      if (Math.floor(x / 32) !== cx || Math.floor(y / 26) !== cy) continue;
+      if (!openThreeByThree(tile, x, y, slot.landmassId)) continue;
       const position2 = { x: (x - cx * 32 + 0.5) * 32, y: (y - cy * 26 + 0.5) * 32 };
-      if (regularAnchors.some((a) => Math.hypot(position2.x - a.position.x, position2.y - a.position.y) < 100)) {
-        members.length = 0;
-        break;
-      }
-      members.push({ family: event.families[i], position: position2 });
+      if (regularAnchors.some((a) => Math.hypot(position2.x - a.position.x, position2.y - a.position.y) < 144)) continue;
+      safeCandidates.push({
+        position: position2,
+        priority: dx + dy + (cellIds.has(x + "," + y) ? -3 : 0),
+        tie: stable(event.slotId + "/" + dx + "/" + dy)
+      });
+    }
+    safeCandidates.sort((a, b) => a.priority - b.priority || a.tie - b.tie);
+    const members = [];
+    for (const p of safeCandidates) {
+      if (members.some((m) => Math.hypot(m.position.x - p.position.x, m.position.y - p.position.y) < 78)) continue;
+      members.push({ family: event.families[members.length], position: p.position });
+      if (members.length === 6) break;
     }
     if (members.length !== 6) continue;
     const identity2 = await worldIdentity(seed2, "anchor", ["woodland-event-pilot-v3-7", event.slotId], sha256);
+    const anchor = members.reduce((best, m) => !best || m.position.x + m.position.y < best.position.x + best.position.y ? m : best, null);
     result.push({
       id: identity2.id,
       ordinal: event.ordinal,
-      position: { x: (event.x - cx * 32 + 0.5) * 32, y: (event.y - cy * 26 + 0.5) * 32 },
+      position: { ...anchor.position },
       rank: event.rank,
       combatVersion: WORLD_COMBAT_VERSION,
       members
@@ -12369,7 +12380,7 @@ async function derivePlannedCaveReservation(asset, binding, sha256, { reservatio
   const g = createPlannedCaveExterior(asset, reservationId, terrain), r = g.reservation, identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_CAVE_VERSION, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), biome = r.id.split(":")[2];
   requireContract(Object.hasOwn(BIOME_CODES, biome) && g.terrain.base(g.entrance.x, g.entrance.y).biome === BIOME_CODES[biome], "Cave entrance biome disagrees with reservation");
   const chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + "/" + binding.townPrototype + "/" + PLANNED_CAVE_VERSION, "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: PLANNED_CAVE_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_CAVE_VERSION, identityDomain: "planned-reservation-cave", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunk: copyWire(g.footprint), approachChunk: copyWire(g.approach) } };
-  const regionName = biome[0].toUpperCase() + biome.slice(1), stable = await deriveWoodlandCaveIdentityD12_2({ campaignSeed: asset.campaignSeedHex, site: socket, label: regionName + " Cave", regionName, geographicQualifier: "" }, { sha256 }), parcel = { version: PLANNED_CAVE_PARCEL, siteId, socket: copyWire(socket), familyId: WOODLAND_CAVE_FAMILY_ID, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, spawnOrdinal: 0, regionKey: region.regionX + "," + region.regionY, regionName, geographicQualifier: "", label: stable.label, tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: WOODLAND_CAVE_EXTERIOR.width, height: WOODLAND_CAVE_EXTERIOR.height, orientation: "south-facing", pages: [{ chunkX: entrance.chunkX, chunkY: entrance.chunkY, baseDigest: chunk.digest }], roadAnchor: { tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.entrance.x), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top + WOODLAND_CAVE_EXTERIOR.height - 1) }, tier: r.tier, siteSeed: stable.siteSeed, layoutSeed: stable.layoutSeed, placementProvenance: { version: PLANNED_CAVE_VERSION, kind: "existing-planned-reservation", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash } };
+  const regionName = biome[0].toUpperCase() + biome.slice(1), stable2 = await deriveWoodlandCaveIdentityD12_2({ campaignSeed: asset.campaignSeedHex, site: socket, label: regionName + " Cave", regionName, geographicQualifier: "" }, { sha256 }), parcel = { version: PLANNED_CAVE_PARCEL, siteId, socket: copyWire(socket), familyId: WOODLAND_CAVE_FAMILY_ID, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, spawnOrdinal: 0, regionKey: region.regionX + "," + region.regionY, regionName, geographicQualifier: "", label: stable2.label, tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: WOODLAND_CAVE_EXTERIOR.width, height: WOODLAND_CAVE_EXTERIOR.height, orientation: "south-facing", pages: [{ chunkX: entrance.chunkX, chunkY: entrance.chunkY, baseDigest: chunk.digest }], roadAnchor: { tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.entrance.x), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top + WOODLAND_CAVE_EXTERIOR.height - 1) }, tier: r.tier, siteSeed: stable2.siteSeed, layoutSeed: stable2.layoutSeed, placementProvenance: { version: PLANNED_CAVE_VERSION, kind: "existing-planned-reservation", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash } };
   return freezeWire({ version: PLANNED_CAVE_RESERVATION, siteId, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, socket, parcel });
 }
 
@@ -13588,9 +13599,9 @@ function canShadowDash(actor, combat, stats, suppressed = false) {
 }
 function beginShadowDash(actor, combat, stats, aim2, suppressed = false) {
   if (!canShadowDash(actor, combat, stats, suppressed)) return false;
-  const intent = actor.movementIntent, direction = Math.hypot(intent.x, intent.y) > 0.01 ? intent : aim2, length = Math.hypot(direction.x, direction.y);
+  const intent = actor.movementIntent, direction2 = Math.hypot(intent.x, intent.y) > 0.01 ? intent : aim2, length = Math.hypot(direction2.x, direction2.y);
   if (!length) return false;
-  Object.assign(combat.dash, { frames: 8, cooldown: 90, remaining: 64, x: direction.x / length, y: direction.y / length });
+  Object.assign(combat.dash, { frames: 8, cooldown: 90, remaining: 64, x: direction2.x / length, y: direction2.y / length });
   return true;
 }
 function advanceShadowDash(actor, combat, stats, collision, suppressed = false) {
@@ -13744,7 +13755,7 @@ function originHordeDefinition(s, origin, collision, g) {
   const site = siteFor(origin, g.groupId), room = site?.rooms.find((r) => r.roomId === g.roomId), anchor = g.anchor ?? g.members[0].position, spaceInstanceId = site ? s.campaign.sitesById[site.siteId].spaceInstanceId : s.overworldInstanceId;
   const count = 6 + hashReward(`${s.campaign.seed.seedHex}/${g.groupId}/horde-size`) % (site ? 3 : 7), members = copyWire(g.members), rank = tier(g.members[0].profileId), first = ORDINARY_ENEMIES.findIndex((e) => e.enemyDefinitionId === g.members[0].enemyDefinitionId);
   if (site) collision = site.collision;
-  const offsets2 = [[0, -32], [32, 0], [0, 32], [-32, 0]], turn7 = hashReward(g.groupId + "/directions") % 4, queue = [copyWire(anchor)], seen = /* @__PURE__ */ new Set([anchor.x + "," + anchor.y]), resources = (s.d9World.origin.resources ?? []).filter((r) => r.spaceInstanceId === spaceInstanceId);
+  const offsets = [[0, -32], [32, 0], [0, 32], [-32, 0]], turn7 = hashReward(g.groupId + "/directions") % 4, queue = [copyWire(anchor)], seen = /* @__PURE__ */ new Set([anchor.x + "," + anchor.y]), resources = (s.d9World.origin.resources ?? []).filter((r) => r.spaceInstanceId === spaceInstanceId);
   for (let i = 0; i < queue.length && members.length < count; i++) {
     const p = queue[i];
     if (distance(p, anchor) <= 160 && members.every((m) => distance(m.position, p) >= 40) && resources.every((r) => distance(r.position, p) >= 30)) {
@@ -13752,7 +13763,7 @@ function originHordeDefinition(s, origin, collision, g) {
       members.push({ entityId: entityId(s, g, n), enemyDefinitionId: enemy.enemyDefinitionId, profileId: profile.contentDefinitionId, position: copyWire(p) });
     }
     for (let n = 0; n < 4; n++) {
-      const d = offsets2[(n + turn7) % 4], p2 = { x: p.x + d[0], y: p.y + d[1] }, key2 = p2.x + "," + p2.y;
+      const d = offsets[(n + turn7) % 4], p2 = { x: p.x + d[0], y: p.y + d[1] }, key2 = p2.x + "," + p2.y;
       if (seen.has(key2) || distance(p2, anchor) > 160) continue;
       seen.add(key2);
       if (site ? p2.x <= room.x * 32 + 14 || p2.x >= (room.x + room.width) * 32 - 14 || p2.y <= room.y * 32 + 14 || p2.y >= (room.y + room.height) * 32 - 14 || distance(p2, site.entrance) <= 320 : populationRegionAt(origin, p2)?.regionId !== g.regionId || !populationPointAllowed(origin, collision, p2)) continue;
@@ -16568,9 +16579,9 @@ function createEncounterContainmentD11_2(state, { participantPolicy = () => null
   function approach(actor, target, collision) {
     const group = groupsByActor.get(actor.entityId), c = group?.containment;
     if (!c) return toward(actor.position, target.position, actor.moveSpeed);
-    const ordinal = group.entityIds.indexOf(actor.entityId), count = Math.max(1, group.entityIds.length), base = angleSeed(group.groupId + "/" + target.entityId) + ordinal * Math.PI * 2 / count, offsets2 = [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6];
+    const ordinal = group.entityIds.indexOf(actor.entityId), count = Math.max(1, group.entityIds.length), base = angleSeed(group.groupId + "/" + target.entityId) + ordinal * Math.PI * 2 / count, offsets = [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6];
     let point4 = null;
-    for (const offset2 of offsets2) {
+    for (const offset2 of offsets) {
       const angle3 = base + offset2 * Math.PI / 12, p = { x: target.position.x + Math.cos(angle3) * c.approachRadius, y: target.position.y + Math.sin(angle3) * c.approachRadius };
       if (!collidesWithTiles(collision, p.x, p.y, actor.hullRadius)) {
         point4 = p;
@@ -20296,6 +20307,59 @@ function deterministicCreatureVisualSeed(entityId2) {
   return h >>> 0;
 }
 
+// src/shared/content/wilderness_event_discovery_v3_8.js
+var WOODLAND_RUMOR_RADIUS_TILES = 54;
+var WOODLAND_SIGHT_RADIUS_TILES = 20;
+var hints = Object.freeze({
+  "density-v2-event-capacity-030": "Faint campfire smoke drifts between the trees",
+  "density-v2-event-capacity-070": "Broken saplings and fresh tracks mark the undergrowth",
+  "density-v2-event-capacity-132": "Weathered stones hide something among the roots"
+});
+var direction = (dx, dy) => {
+  const east = Math.abs(dx) > Math.abs(dy) * 0.42 ? dx > 0 ? "east" : "west" : "";
+  const north = Math.abs(dy) > Math.abs(dx) * 0.42 ? dy > 0 ? "south" : "north" : "";
+  return north + east || "nearby";
+};
+function woodlandEventDistanceV3_8(from, to) {
+  if (!from || !to) return Infinity;
+  const cx = BigInt(to.chunkX) - BigInt(from.chunkX), cy = BigInt(to.chunkY) - BigInt(from.chunkY);
+  if (cx > 3n || cx < -3n || cy > 3n || cy < -3n) return Infinity;
+  return Math.hypot(
+    Number(cx) * 1024 + to.localX - from.localX,
+    Number(cy) * 832 + to.localY - from.localY
+  );
+}
+function woodlandEventCluesV3_8(position2, statuses = []) {
+  if (!position2) return Object.freeze([]);
+  const stateById = new Map(statuses.map((s) => [s.slotId, s.state]));
+  const candidates = [];
+  for (const event of WOODLAND_EVENT_PILOT_V3_7) {
+    const point4 = woodlandPilotWorldPosition(event);
+    const distance7 = woodlandEventDistanceV3_8(position2, point4), tiles = distance7 / 32;
+    if (tiles > WOODLAND_RUMOR_RADIUS_TILES) continue;
+    const state = stateById.get(event.slotId) ?? "undiscovered";
+    if (state === "completed" && tiles > WOODLAND_SIGHT_RADIUS_TILES) continue;
+    const dx = Number(BigInt(point4.chunkX) - BigInt(position2.chunkX)) * 1024 + point4.localX - position2.localX;
+    const dy = Number(BigInt(point4.chunkY) - BigInt(position2.chunkY)) * 832 + point4.localY - position2.localY;
+    const bearing = direction(dx, dy);
+    const sighted = tiles <= WOODLAND_SIGHT_RADIUS_TILES;
+    candidates.push(Object.freeze({
+      slotId: event.slotId,
+      kind: event.kind,
+      state,
+      stage: sighted ? "sighted" : "rumor",
+      title: sighted ? event.label : "Something in the wilderness",
+      text: state === "completed" ? event.label + " \xB7 cleared" : sighted ? event.label : hints[event.slotId],
+      direction: bearing,
+      distanceTiles: Math.round(tiles),
+      // The minimap receives exact coordinates only after the player is close.
+      ...sighted ? { position: point4 } : {}
+    }));
+  }
+  candidates.sort((a, b) => a.distanceTiles - b.distanceTiles || a.slotId.localeCompare(b.slotId));
+  return Object.freeze(candidates);
+}
+
 // src/shared/contracts/site_truth_d12_4c.js
 var SITE_TRUTH_D12_4C = "site-truth-d12-4c.1-v1";
 var tileAnchor = (anchor) => {
@@ -20507,9 +20571,9 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
         const events = eventView;
         const place = inOverworld ? semanticPlaceAtWorldPosition(m, local4.position) : null, area = inOverworld ? areaAtWorldPosition(m, local4.position) : null, d = state.campaign.overworld.discovery, siteTruth = state.d9World ? presentationSiteTruth(state) : null;
         const exits = (m.siteInteriors ?? []).filter((d2) => inOverworld || d2 === interior).map((d2) => {
-          const semantic = m.sites.find((s) => s.locationId === d2.siteId), direction = inOverworld ? "enter" : "exit", anchor = inOverworld ? semantic.position : d2.entrance, payload = { siteId: d2.siteId, direction };
+          const semantic = m.sites.find((s) => s.locationId === d2.siteId), direction2 = inOverworld ? "enter" : "exit", anchor = inOverworld ? semantic.position : d2.entrance, payload = { siteId: d2.siteId, direction: direction2 };
           return {
-            exitId: `site-${direction}:${d2.siteId}`,
+            exitId: `site-${direction2}:${d2.siteId}`,
             siteAction: payload,
             x: anchor.x,
             y: anchor.y,
@@ -20525,11 +20589,11 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
                 const payload = { siteId: functional.siteId, direction: "exit" }, anchor = functionalFloor.entrance;
                 exits.push({ exitId: `site-exit:${functional.siteId}`, siteAction: payload, siteKind: functional.siteKind, x: anchor.x, y: anchor.y, radius: SITE_INTERACTION_RADIUS, available: Boolean(functionalSiteTransitionTargetD9(state, local4, payload)), label: functional.siteKind === "procedural-fort" ? "Leave Fort" : functional.siteKind === "procedural-ruin" ? "Leave Ruin" : functional.siteKind === "procedural-crypt" ? "Leave Crypt" : `Leave Cave` });
               }
-              for (const direction of ["up", "down"]) {
-                const transition2 = functionalFloor.transitions[direction];
+              for (const direction2 of ["up", "down"]) {
+                const transition2 = functionalFloor.transitions[direction2];
                 if (!transition2) continue;
-                const payload = { siteId: functional.siteId, direction, transitionId: transition2.transitionId }, anchor = transition2.anchor;
-                exits.push({ exitId: `site-${direction}:${transition2.transitionId}`, siteAction: payload, siteKind: functional.siteKind, ...functionalFloor.graph?.navigation?.arrivalFacing !== void 0 ? { stairFacing: functionalFloor.graph.navigation[direction === "up" ? "arrivalFacing" : "onwardFacing"] } : {}, x: anchor.x, y: anchor.y, radius: SITE_INTERACTION_RADIUS, available: Boolean(functionalSiteTransitionTargetD9(state, local4, payload)), label: transition2.label ?? (direction === "down" ? "Descend" : "Ascend") });
+                const payload = { siteId: functional.siteId, direction: direction2, transitionId: transition2.transitionId }, anchor = transition2.anchor;
+                exits.push({ exitId: `site-${direction2}:${transition2.transitionId}`, siteAction: payload, siteKind: functional.siteKind, ...functionalFloor.graph?.navigation?.arrivalFacing !== void 0 ? { stairFacing: functionalFloor.graph.navigation[direction2 === "up" ? "arrivalFacing" : "onwardFacing"] } : {}, x: anchor.x, y: anchor.y, radius: SITE_INTERACTION_RADIUS, available: Boolean(functionalSiteTransitionTargetD9(state, local4, payload)), label: transition2.label ?? (direction2 === "down" ? "Descend" : "Ascend") });
               }
               const extraction = projectSmallCaveFinaleExtractionD13D_C(state, functional, functionalFloor) ?? projectStandardCaveBossExtractionD13D_E(state, functional, functionalFloor) ?? projectLargeCaveFinaleExtractionD13D_G(state, functional, functionalFloor) ?? projectArachnidTreantExtractionD12_5C(state, functional, functionalFloor);
               if (extraction?.visible) {
@@ -20555,6 +20619,10 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
         const nearest = visible2.filter((a) => a.alive && a.team === "hostile").sort((a, b) => clearHullGap(local4, a) - clearHullGap(local4, b))[0], tomeTarget = !nearest ? "NO TARGET" : clearHullGap(local4, nearest) > 128 ? "OUT OF RANGE" : visible2.some((a) => a.alive && a.team === "hostile" && clearHullGap(local4, a) <= 128 && subweaponLineClear(c, local4, a)) ? "READY" : "LOS BLOCKED";
         const plannedPosition = state.d9World?.plannedWorld && inOverworld ? localFramePositionD9(local4.position, state.d9World.runtime.frames) : null, plannedRegion = plannedPosition ? state.d9World.runtime.chunks.find((c2) => c2.chunkX === plannedPosition.chunkX && c2.chunkY === plannedPosition.chunkY)?.region : null;
         for (const n of [...serviceNpcs].reverse()) exits.unshift({ exitId: n.id, serviceNpcId: n.id, x: n.position.x, y: n.position.y, radius: 72, available: n.available, label: "Talk to " + n.name + " \xB7 " + n.roleLabel });
+        const woodlandPilotEvents = state.d9World?.plannedWorld && inOverworld ? WOODLAND_EVENT_PILOT_V3_7.map((event) => {
+          const anchor = state.d9World.runtime.chunks.flatMap((chunk) => chunk.anchors).find((a) => a.ordinal === event.ordinal && isWoodlandPilotEventAnchor(a)), groupId = anchor ? "ordinary:" + anchor.id.split(":").at(-1) : null, group = groupId ? state.groupsById[groupId] : null;
+          return { slotId: event.slotId, state: group?.cleared ? "completed" : group ? "active" : "undiscovered" };
+        }) : [];
         cachedModel = Object.freeze({
           serviceNpcs: freezeProjection(serviceNpcs),
           navigation: state.d9World ? freezeProjection({ frames: copyWire(state.d9World.runtime.frames), position: inOverworld ? localFramePositionD9(local4.position, state.d9World.runtime.frames) : null, revision: state.d9World.navigation.revision, root: state.d9World.discoveryIndex, boundSitesById: Object.fromEntries(functionalSitesD10(state).map((site2) => [site2.siteId, { siteId: site2.siteId, label: mapSiteLabel(state, site2.siteId, site2.label), state: site2.conqueredTick === null ? "active" : "completed" }])), navigableSitesById: Object.fromEntries(siteTruth.sites.map((site2) => [site2.siteId, { siteId: site2.siteId, label: mapSiteLabel(state, site2.siteId, site2.label), state: site2.completed ? "completed" : site2.bound ? "active" : "unidentified" }])), pending: copyWire(state.d9World.navigation.pending.filter((r) => r.playerId === localPlayerId)), pips: inOverworld ? visible2.filter((a) => a.alive && a.entityId !== local4.entityId && Math.hypot(a.position.x - local4.position.x, a.position.y - local4.position.y) <= revealRadiusD9(playersById[localPlayerId].stats.attributes.int) * 32).map((a) => ({ position: localFramePositionD9(a.position, state.d9World.runtime.frames), kind: a.team === "party" ? "ally" : "hostile" })) : [] }) : null,
@@ -20575,10 +20643,8 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
           hostileHazards,
           bossHazards,
           context: freezeProjection({ protocolVersion: 1, campaignId: state.campaign.campaignId, sessionId: state.session.sessionId, expectedSaveRevision: state.campaign.saveRevision, ...ctx, nextClientSequence: engine.nextClientSequence(localPlayerId) }),
-          woodlandPilotEvents: freezeProjection(state.d9World?.plannedWorld && inOverworld ? WOODLAND_EVENT_PILOT_V3_7.map((event) => {
-            const anchor = state.d9World.runtime.chunks.flatMap((chunk) => chunk.anchors).find((a) => a.ordinal === event.ordinal && isWoodlandPilotEventAnchor(a)), groupId = anchor ? "ordinary:" + anchor.id.split(":").at(-1) : null, group = groupId ? state.groupsById[groupId] : null;
-            return { slotId: event.slotId, state: group?.cleared ? "completed" : group ? "active" : "undiscovered" };
-          }) : []),
+          woodlandPilotEvents: freezeProjection(woodlandPilotEvents),
+          woodlandPilotClues: freezeProjection(state.d9World?.plannedWorld && inOverworld ? woodlandEventCluesV3_8(localFramePositionD9(local4.position, state.d9World.runtime.frames), woodlandPilotEvents) : []),
           primary: freezeProjection({ actorsById: primaryActors, events }),
           encounter: null,
           recovery: Object.freeze({ canRespawn: !local4.alive, anchorLabel: state.d9World?.plannedWorld?.townPrototype === "planned-town-start-art-candidate-v2" ? "town street" : m.settlements.find((s) => s.settlementId === m.start.settlementId).label }),
@@ -22032,6 +22098,47 @@ function createPlayerHealthHudV3(doc) {
   });
 }
 
+// src/client/wilderness_event_clue_hud_v3_8.js
+function createWoodlandClueHudV3_8(document) {
+  const root = document.createElement("aside");
+  root.id = "woodland-clue-v3-8";
+  root.hidden = true;
+  root.setAttribute("aria-label", "Nearby wilderness clue");
+  root.setAttribute("data-gameplay-hud", "");
+  const heading = document.createElement("strong"), message = document.createElement("span");
+  root.append(heading, message);
+  const style = document.createElement("style");
+  style.textContent = [
+    "#woodland-clue-v3-8{position:fixed;z-index:7;top:calc(114px + var(--world-safe-top,0px));left:calc(10px + var(--world-safe-left,0px));max-width:242px;box-sizing:border-box;padding:8px 12px 9px;pointer-events:none;border:1px solid rgba(158,141,93,.57);border-left:3px solid #9f9761;border-radius:3px 8px 8px 3px;background:linear-gradient(125deg,rgba(19,27,23,.94),rgba(13,21,23,.86));box-shadow:0 5px 19px rgba(0,0,0,.34);color:#e1d7b8;font:12px/1.4 Georgia,serif;text-shadow:0 1px 1px #0009}",
+    "#woodland-clue-v3-8[hidden]{display:none!important}",
+    "#woodland-clue-v3-8 strong{display:block;font:700 10px/1.4 system-ui,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#b5b99b;margin-bottom:3px}",
+    "#woodland-clue-v3-8 span{display:block}",
+    "@media(max-width:600px){#woodland-clue-v3-8{top:calc(115px + var(--world-safe-top,0px));max-width:min(186px,48vw);padding:7px 9px;font-size:11px}}",
+    "@media(prefers-reduced-motion:reduce){#woodland-clue-v3-8{transition:none}}"
+  ].join("\n");
+  document.head.append(style);
+  (document.getElementById("world-app") ?? document.body).append(root);
+  let previous = "";
+  function refresh(model, visible2 = true) {
+    const clue = model?.woodlandPilotClues?.[0];
+    const show = Boolean(visible2 && clue && model?.space?.overworld);
+    root.hidden = !show;
+    if (!show) {
+      previous = "";
+      return;
+    }
+    const next = (clue.stage === "sighted" ? "DISCOVERED" : "WILDERNESS SIGN") + "|" + clue.text + "|" + clue.direction + "|" + clue.state;
+    if (next === previous) return;
+    previous = next;
+    heading.textContent = clue.state === "completed" ? "CLEARED" : clue.stage === "sighted" ? "DISCOVERY NEARBY" : "WILDERNESS SIGN";
+    message.textContent = clue.text + (clue.direction === "nearby" ? "" : " \xB7 " + clue.direction);
+  }
+  return Object.freeze({ refresh, destroy() {
+    root.remove();
+    style.remove();
+  } });
+}
+
 // src/client/civilian_context_input.js
 function createCivilianContextInput({ environment, readModel, activate, isBlocked = () => false }) {
   const key2 = (e) => {
@@ -22550,6 +22657,41 @@ function createWorldMapD9({ document: doc, environment, port, releaseInput }) {
       ctx.beginPath();
       ctx.arc(x, y, 2.5, 0, Math.PI * 2);
       ctx.fill();
+    }
+    for (const clue of model.woodlandPilotClues ?? []) {
+      if (clue.stage !== "sighted" || !clue.position) continue;
+      const pos = clue.position;
+      let x, y;
+      if (open) {
+        const size = 1n << BigInt(lod), cx = floorDiv(BigInt(pos.chunkX), size), cy = floorDiv(BigInt(pos.chunkY), size);
+        const dx = cx - BigInt(v.x), dy = cy - BigInt(v.y);
+        if (dx < 0n || dy < 0n || dx >= BigInt(v.width) || dy >= BigInt(v.height)) continue;
+        x = v.screenX + Number(dx) * v.cellW + (Number(BigInt(pos.chunkX) - cx * size) * 1024 + pos.localX) * scale;
+        y = v.screenY + Number(dy) * v.cellH + (Number(BigInt(pos.chunkY) - cy * size) * 832 + pos.localY) * scale;
+      } else {
+        const delta3 = worldScreenDeltaD9(pos, displayCenter, scale);
+        x = width / 2 + delta3.x;
+        y = height / 2 + delta3.y;
+      }
+      if (x < 8 || y < 8 || x > width - 8 || y > height - 8) continue;
+      const completed = clue.state === "completed", label3 = clue.text;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.fillStyle = completed ? "#657267" : "#cba970";
+      ctx.strokeStyle = "#16211e";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, open ? 7 : 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = completed ? "#d6e1cd" : "#1c1a15";
+      ctx.font = "bold " + (open ? 10 : 8) + "px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(completed ? "\u2713" : "?", 0, 0.5);
+      ctx.restore();
+      if (open) reviewMarks.push({ x, y, label: label3 + " \xB7 woodland discovery" });
+      else miniMarks.push({ x, y, label: label3 + " \xB7 woodland discovery" });
     }
     const actual = n.position, local4 = model.playersById[model.localPlayerId], facing = model.primary?.actorsById?.[local4.entityId]?.facing;
     if (!open) drawPlayer(ctx, width / 2, height / 2, facing, planned ? 16 : 8);
@@ -26508,8 +26650,8 @@ var TAU35 = Math.PI * 2;
 var clamp22 = (v, a, b) => Math.max(a, Math.min(b, v));
 var styles = /* @__PURE__ */ new Set(["thorn", "frost", "fireball", "maelstrom", "void", "clockwork"]);
 function ordinaryHostileProjectilePose(projectile, presentationTick) {
-  const direction = projectile.direction ?? { x: 1, y: 0 }, length = Math.hypot(direction.x, direction.y);
-  const unit3 = length > 1e-3 ? { x: direction.x / length, y: direction.y / length } : { x: 1, y: 0 };
+  const direction2 = projectile.direction ?? { x: 1, y: 0 }, length = Math.hypot(direction2.x, direction2.y);
+  const unit3 = length > 1e-3 ? { x: direction2.x / length, y: direction2.y / length } : { x: 1, y: 0 };
   const age = Number.isFinite(projectile.firedTick) ? Math.max(0, presentationTick - projectile.firedTick) : 3;
   const radius = clamp22(Number.isFinite(projectile.radius) ? projectile.radius : 6, 2, 8);
   return {
@@ -28524,9 +28666,9 @@ function drawMasteryWorld(ctx, m, time) {
     ctx.restore();
   }
 }
-function drawEarthBreaker(ctx, p, direction, age) {
+function drawEarthBreaker(ctx, p, direction2, age) {
   if (age < 0 || age >= 250) return;
-  const t = age / 250, heading = Math.atan2(direction.y, direction.x);
+  const t = age / 250, heading = Math.atan2(direction2.y, direction2.x);
   ctx.save();
   ctx.translate(p.x, p.y);
   ctx.rotate(heading);
@@ -31209,9 +31351,9 @@ function caveSlope(ctx, x, y, up, v = 0) {
   ctx.strokeStyle = OUT2;
   ctx.lineWidth = 3;
   ctx.stroke();
-  const direction = up ? -1 : 1;
+  const direction2 = up ? -1 : 1;
   for (let i = 0; i < 4; i++) {
-    const yy = y + direction * (i * 8 - 12), wide = 36 - i * 4;
+    const yy = y + direction2 * (i * 8 - 12), wide = 36 - i * 4;
     ctx.fillStyle = i % 2 ? "#58675f" : "#69766c";
     poly3(ctx, [[-wide + x, yy + 5], [wide + x, yy + 5], [wide - 4 + x, yy - 2], [-wide + 4 + x, yy - 2]], ctx.fillStyle, OUT2, 1.8);
   }
@@ -32522,14 +32664,14 @@ function createCombatFeedback() {
       const primary = primaries.get(e.source.entityId), heavy = target.team === "hostile" && primary?.commandId === e.causation.commandId && primary?.step === 3;
       const contact = e.payload.meleeContact, projectileContact = e.payload.projectileContact, position2 = { ...projectileContact?.position ?? contact?.targetPosition ?? target.position }, sourcePosition = contact ? { ...contact.sourcePosition } : source2 ? { ...source2.position } : null;
       const dx = sourcePosition ? position2.x - sourcePosition.x : 0, dy = sourcePosition ? position2.y - sourcePosition.y : 0, length = Math.hypot(dx, dy);
-      const direction = length > 1e-3 ? { x: dx / length, y: dy / length } : { x: 0, y: 0 };
+      const direction2 = length > 1e-3 ? { x: dx / length, y: dy / length } : { x: 0, y: 0 };
       const player = target.team === "party";
-      boundedSet(reactions, e.subject.entityId, { born: time, direction, position: position2, heavy, player, defended: Boolean(e.payload.defenseKind) });
+      boundedSet(reactions, e.subject.entityId, { born: time, direction: direction2, position: position2, heavy, player, defended: Boolean(e.payload.defenseKind) });
       const same10 = numbers.filter((n) => n.targetId === e.subject.entityId);
       if (same10.length >= HIT_FEEDBACK.maxPerTarget) numbers = numbers.filter((n) => n !== same10[0]);
       if (numbers.length >= HIT_FEEDBACK.maxNumbers) numbers.shift();
       const damage = e.payload.damage, value = formatLarge(combatInteger(damage));
-      numbers.push({ sourceId: e.source.entityId, sourcePosition, projectileContact: projectileContact ? { style: projectileContact.style } : null, hostileMelee: contact ? { ...contact, family: source2?.enemyFamily ?? null } : source2?.team === "hostile" && !source2.ranged && !projectileContact && source2.enemyFamily && source2.meleeGeometry && e.payload.trigger !== "periodic" && (e.payload.mechanic === "hostile" || e.kind === "combat.defenseResolved") ? { ...source2.meleeGeometry, family: source2.enemyFamily } : null, earthBreaker: e.payload.mechanic === "bash" && model.combatPresentation?.families[e.source.entityId]?.mastery?.earthBreaker, eventTick: e.tick, eventSequence: e.eventSequence, targetId: e.subject.entityId, born: time, position: position2, player, heavy, direction, chainFrom: e.payload.chainFrom ?? null, barrierAbsorption: e.payload.barrierAbsorption ?? null, sourceItem: e.payload.sourceItem ?? null, trigger: e.payload.trigger ?? null, defenseKind: e.payload.defenseKind, mechanic: e.payload.mechanic, critical: e.payload.critical === true, defended: Boolean(e.payload.defenseKind), text: e.kind === "combat.defenseResolved" ? (e.payload.defenseKind ?? "block").toUpperCase() : (player ? "-" : "") + value });
+      numbers.push({ sourceId: e.source.entityId, sourcePosition, projectileContact: projectileContact ? { style: projectileContact.style } : null, hostileMelee: contact ? { ...contact, family: source2?.enemyFamily ?? null } : source2?.team === "hostile" && !source2.ranged && !projectileContact && source2.enemyFamily && source2.meleeGeometry && e.payload.trigger !== "periodic" && (e.payload.mechanic === "hostile" || e.kind === "combat.defenseResolved") ? { ...source2.meleeGeometry, family: source2.enemyFamily } : null, earthBreaker: e.payload.mechanic === "bash" && model.combatPresentation?.families[e.source.entityId]?.mastery?.earthBreaker, eventTick: e.tick, eventSequence: e.eventSequence, targetId: e.subject.entityId, born: time, position: position2, player, heavy, direction: direction2, chainFrom: e.payload.chainFrom ?? null, barrierAbsorption: e.payload.barrierAbsorption ?? null, sourceItem: e.payload.sourceItem ?? null, trigger: e.payload.trigger ?? null, defenseKind: e.payload.defenseKind, mechanic: e.payload.mechanic, critical: e.payload.critical === true, defended: Boolean(e.payload.defenseKind), text: e.kind === "combat.defenseResolved" ? (e.payload.defenseKind ?? "block").toUpperCase() : (player ? "-" : "") + value });
       if (impacts2.length >= 128) impacts2.shift();
       impacts2.push(numbers[numbers.length - 1]);
       if (e.payload.barrierAbsorption) {
@@ -35830,6 +35972,7 @@ var progressionText = (v) => formatLarge(integerWire(v));
 function mountPlayableClient({ port, environment, nextCommandToken, capabilities, performanceProbe = null, environmentArt = null, readRuntimeDiagnostics = () => null, readSaveStatus = () => null, evidenceMode = false, evidenceIntervalMs = 0, developerMode = false }) {
   const doc = environment.document, canvas = doc.getElementById("world-view"), status = doc.getElementById("world-status");
   const playerHealthHudV3 = createPlayerHealthHudV3(doc);
+  const woodlandClueHud = createWoodlandClueHudV3_8(doc);
   doc.documentElement.dataset.gameplayHudVisible = "false";
   for (const id of ["world-hud", "world-level-up", "primary-attack", "world-bag", "world-pickup", "world-loot-notice"]) doc.getElementById(id)?.setAttribute("data-gameplay-hud", "");
   const label3 = doc.getElementById("space-label"), mode = doc.getElementById("control-mode"), provenance = doc.getElementById("control-provenance");
@@ -36008,6 +36151,7 @@ function mountPlayableClient({ port, environment, nextCommandToken, capabilities
     else death.refresh(model);
     const presentation = applyGameplayPresentationState(doc, gameplayPresentationState(model, { foregroundModalOpen: inventory.isOpen() || serviceMenu.isOpen() || !doc.getElementById("world-death").hidden || !doc.getElementById("startup-recovery").hidden, fullScreenPanelOpen: navigation.isOpen() }));
     navigation.refresh(model, time, presentation);
+    woodlandClueHud.refresh(model, presentation.gameplayHudVisible);
     if (disclosure.open && time >= nextSiteNavAt) {
       siteNavigator.refresh(model);
       nextSiteNavAt = time + 250;
@@ -36127,6 +36271,7 @@ function mountPlayableClient({ port, environment, nextCommandToken, capabilities
     resize,
     resources: () => Object.freeze({ ...renderer.resources(), ...navigation?.resources?.() ?? {}, spacePreparation: preparation.inspect() }),
     destroy: () => {
+      woodlandClueHud.destroy();
       playerHealthHudV3.destroy();
       serviceMenu?.destroy();
       ferryMenu?.destroy();
@@ -37877,8 +38022,8 @@ function projectFunctionalSiteClueD9(model, clueSearch) {
   const tile = { x: BigInt(position2.chunkX) * 32n + BigInt(Math.floor(position2.localX / 32)), y: BigInt(position2.chunkY) * 26n + BigInt(Math.floor(position2.localY / 32)) }, score = (clue2) => {
     const x = BigInt(clue2.target.chunkX) * 32n + BigInt(Math.floor(clue2.target.localX / 32)), y = BigInt(clue2.target.chunkY) * 26n + BigInt(Math.floor(clue2.target.localY / 32));
     return (x > tile.x ? x - tile.x : tile.x - x) + (y > tile.y ? y - tile.y : tile.y - y);
-  }, clue = [...valid].sort((a, b) => Number(score(a) - score(b)) || a.side.localeCompare(b.side))[0], direction = clueBearing(position2, clue.target), egress = model.space.overworld.egresses.find((value) => value.side === clue.side), projected = clue.trailheadTarget ? projectToLocalFrameD9(clue.trailheadTarget, model.navigation.frames) : null, trailLabel = clue.trailLabel ?? (clue.label ? "Fort road" : "Woodland trail");
-  return Object.freeze({ version: clueSearch.version, siteId: clue.siteId, direction, distanceTiles: clue.distanceTiles, side: clue.side, label: `${clue.label ?? "Unidentified Woodland Site"} \xB7 ${direction}`, trailhead: projected ? Object.freeze({ x: projected.x, y: projected.y, side: clue.side, direction, trailLabel }) : egress ? Object.freeze({ x: egress.x, y: egress.y, side: egress.side, direction, trailLabel }) : null });
+  }, clue = [...valid].sort((a, b) => Number(score(a) - score(b)) || a.side.localeCompare(b.side))[0], direction2 = clueBearing(position2, clue.target), egress = model.space.overworld.egresses.find((value) => value.side === clue.side), projected = clue.trailheadTarget ? projectToLocalFrameD9(clue.trailheadTarget, model.navigation.frames) : null, trailLabel = clue.trailLabel ?? (clue.label ? "Fort road" : "Woodland trail");
+  return Object.freeze({ version: clueSearch.version, siteId: clue.siteId, direction: direction2, distanceTiles: clue.distanceTiles, side: clue.side, label: `${clue.label ?? "Unidentified Woodland Site"} \xB7 ${direction2}`, trailhead: projected ? Object.freeze({ x: projected.x, y: projected.y, side: clue.side, direction: direction2, trailLabel }) : egress ? Object.freeze({ x: egress.x, y: egress.y, side: egress.side, direction: direction2, trailLabel }) : null });
 }
 function createFunctionalSiteCluePortD10({ clientPort, plannedBootstrap, fortClue, ruinSiteId }) {
   let clueSource = null, clueModel = null;
@@ -38281,12 +38426,12 @@ async function createLocalEndlessSessionD9(options) {
     return false;
   };
   const landingFor = (record, preferred = null, preparedTarget = null) => authority.withReadyAuthority((a) => a.withAuthorityState((s) => {
-    const player = s.playersById[localPlayerId], actor = s.entitiesById[player.entityId], entrance = record.entrance, base = preferred?.position ?? preparedTarget ?? record.approachAnchor, away = directionFromEntrance(record, base), side = { x: -away.y, y: away.x }, starts = preferred ? [{ x: 0, y: 0 }] : [{ x: 0, y: 0 }, { x: away.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize }, { x: side.x * D9_PROFILE.tileSize, y: side.y * D9_PROFILE.tileSize }, { x: -side.x * D9_PROFILE.tileSize, y: -side.y * D9_PROFILE.tileSize }, { x: away.x * D9_PROFILE.tileSize + side.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize + side.y * D9_PROFILE.tileSize }, { x: away.x * D9_PROFILE.tileSize - side.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize - side.y * D9_PROFILE.tileSize }], offsets2 = starts.concat(Array.from({ length: 4 }, (_, ring) => {
+    const player = s.playersById[localPlayerId], actor = s.entitiesById[player.entityId], entrance = record.entrance, base = preferred?.position ?? preparedTarget ?? record.approachAnchor, away = directionFromEntrance(record, base), side = { x: -away.y, y: away.x }, starts = preferred ? [{ x: 0, y: 0 }] : [{ x: 0, y: 0 }, { x: away.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize }, { x: side.x * D9_PROFILE.tileSize, y: side.y * D9_PROFILE.tileSize }, { x: -side.x * D9_PROFILE.tileSize, y: -side.y * D9_PROFILE.tileSize }, { x: away.x * D9_PROFILE.tileSize + side.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize + side.y * D9_PROFILE.tileSize }, { x: away.x * D9_PROFILE.tileSize - side.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize - side.y * D9_PROFILE.tileSize }], offsets = starts.concat(Array.from({ length: 4 }, (_, ring) => {
       const d = D9_PROFILE.tileSize * (ring + 2);
       return [{ x: away.x * d, y: away.y * d }, { x: side.x * d, y: side.y * d }, { x: -side.x * d, y: -side.y * d }];
     }).flat()), collision = s.spacesByInstanceId[s.overworldInstanceId].collision, revealDistance = navigatorRevealDistance(s);
     const rejected = { unprojected: 0, insideReveal: 0, blockedLanding: 0, blockedApproach: 0 };
-    for (const offset2 of offsets2) {
+    for (const offset2 of offsets) {
       const world = normalizeWorldPosition({ ...base, localX: base.localX + offset2.x, localY: base.localY + offset2.y }), local4 = projectToLocalFrameD9(world, s.d9World.runtime.frames), entry = projectToLocalFrameD9(entrance, s.d9World.runtime.frames);
       if (!local4 || !entry) {
         rejected.unprojected++;
