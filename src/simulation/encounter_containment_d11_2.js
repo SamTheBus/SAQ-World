@@ -1,5 +1,6 @@
 import {collidesWithTiles} from '../shared/rules/world_geometry.js';
 import {hasWorldCombat} from '../shared/content/world_combat_v1.js';
+import {wildernessPackPursuitAllowed} from '../shared/content/wilderness_pack_pacing_v3_4.js';
 import {meleeLineClear} from './melee_assist.js';
 
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -21,7 +22,7 @@ export function createEncounterContainmentD11_2(state,{participantPolicy=()=>nul
    else if(c.mode==='returning'&&acquire.length)setMode(group,'engaged');
    participantsByGroup.set(group.groupId,c.mode==='engaged'?(modeAtStart==='engaged'?pursuit:participants(group,c.pursuitRadius,'pursuit')):[]);
   }}
- function targetFor(actor,eligible){const group=groupsByActor.get(actor.entityId);if(!group||group.containment.mode!=='engaged')return null;return (participantsByGroup.get(group.groupId)??[]).filter(target=>eligible(actor,target)).map(target=>({target,d:distance(actor.position,target.position)})).sort((a,b)=>a.d-b.d||a.target.entityId.localeCompare(b.target.entityId))[0]?.target??null;}
+ function targetFor(actor,eligible){const group=groupsByActor.get(actor.entityId);if(!group||group.containment.mode!=='engaged')return null;return (participantsByGroup.get(group.groupId)??[]).filter(target=>eligible(actor,target)&&wildernessPackPursuitAllowed(state,group,actor,target,eligible)).map(target=>({target,d:distance(actor.position,target.position)})).sort((a,b)=>a.d-b.d||a.target.entityId.localeCompare(b.target.entityId))[0]?.target??null;}
  function approach(actor,target,collision){const group=groupsByActor.get(actor.entityId),c=group?.containment;if(!c)return toward(actor.position,target.position,actor.moveSpeed);const ordinal=group.entityIds.indexOf(actor.entityId),count=Math.max(1,group.entityIds.length),base=angleSeed(group.groupId+'/'+target.entityId)+ordinal*Math.PI*2/count,offsets=[0,1,-1,2,-2,3,-3,4,-4,5,-5,6];let point=null;
   for(const offset of offsets){const angle=base+offset*Math.PI/12,p={x:target.position.x+Math.cos(angle)*c.approachRadius,y:target.position.y+Math.sin(angle)*c.approachRadius};if(!collidesWithTiles(collision,p.x,p.y,actor.hullRadius)){point=p;break;}}
   if(!point)return toward(actor.position,target.position,actor.moveSpeed);if(distance(actor.position,point)<=Math.max(1.5,actor.moveSpeed*1.25))return {x:0,y:0};return toward(actor.position,point,actor.moveSpeed);
