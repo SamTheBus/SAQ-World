@@ -73,7 +73,7 @@ test('Treasury shield remains active after cast, intercepts damage, breaks into 
   assert.ok(BigInt(b.shieldHp)>0n,'Shield must remain breakable after cast');
   validateBossCombatD12_5A(state);
   const first=controller.mitigateIncoming(boss,combatInteger(100),hero);
-  assert.equal(first.shielded,true);assert.equal(first.damage.m,0);
+  assert.equal(first.shielded,true);assert.equal(integerBigInt(first.damage),0n);
   const broke=controller.mitigateIncoming(boss,combatInteger(500),hero);
   assert.equal(broke.shielded,true);assert.equal(b.actionState,'dazed');
   assert.equal(b.shieldHp,'0');validateBossCombatD12_5A(state);
