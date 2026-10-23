@@ -1,6 +1,7 @@
 // Hand-authored Canvas silhouettes for the eight restored World boss identities.
 // Rendering follows authoritative phase/tick records; it never decides damage or targeting.
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
+import {hasArchivedBossPainter,drawArchivedBossActor,drawArchivedBossGround,drawArchivedBossHud} from './boss_archive_world_adapter_v1.js';
 const TAU=Math.PI*2;
 const circle=(c,x,y,r,fill,stroke=null,width=1)=>{c.beginPath();c.arc(x,y,r,0,TAU);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}};
 const poly=(c,pts,fill,stroke='#101925',w=2)=>{c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=w;c.stroke();}};
@@ -98,6 +99,7 @@ function drawCorrosive(c,a,t){
  for(let i=0;i<4;i++){const x=-25+i*16;poly(c,[[x,16],[x+6,36+Math.sin(t*.06+i)*5],[x+12,19]],'#77ae69a8',null);}
 }
 export function drawRecoveredBossV1(c,a,t,flash=false){
+ if(hasArchivedBossPainter(a.boss?.bossDefinitionId))return drawArchivedBossActor(c,a,t,flash);
  const spec=recoveredBossForId(a.boss?.bossDefinitionId);if(!spec)return false;
  c.save();c.translate(a.position.x,a.position.y);
  c.globalAlpha=a.alive?1:.3;
@@ -121,6 +123,8 @@ export function drawRecoveredBossV1(c,a,t,flash=false){
 export function drawRecoveredSummonV1(c,a,t,flash=false){
  const s=a.bossSummon;if(!s||!['slime','slag','hologram','bunny'].includes(s.kind))return false;
  if(s.stage==='dormant'||s.stage==='defeated')return true;
+ // Original Corrosive renderer owns the true slime/slag body and health pip.
+ if(s.kind==='slime'||s.kind==='slag')return true;
  c.save();c.translate(a.position.x,a.position.y);let q=Math.sin(t*.085+a.position.x*.01);
  if(s.kind==='bunny'){rabbit(c,0,0,t*.15+(s.ordinal??0));}
  else if(s.kind==='hologram'){c.globalAlpha=.62;poly(c,[[0,-21+q*3],[16,0],[0,19+q*3],[-16,0]],'#5788cba8','#a3efff',2);circle(c,0,0,3,'#f1ddff');}
@@ -130,7 +134,9 @@ export function drawRecoveredSummonV1(c,a,t,flash=false){
 const color=(kind)=>({acid:'#90dc63',slag:'#f3ab3e',fire:'#f17131',molten:'#da683f',void:'#ba75d9',time:'#74bed4',gold:'#e7b749',collapse:'#eb5a69'})[kind]??'#c87866';
 export function drawRecoveredBossGroundV1(c,model,t){
  const h=model.bossHazards??{};
+ drawArchivedBossGround(c,model,t);
  for(const p of h.recoveredPools??[]){
+  if(hasArchivedBossPainter(p.bossDefinitionId))continue;
   const life=Math.min(1,(p.expiresTick-t)/40,(t-p.createdTick)/15);if(life<=0)continue;
   const col=color(p.kind);c.save();c.translate(p.position.x,p.position.y);c.globalAlpha=.38*life;
   c.fillStyle=col;c.strokeStyle=col;c.lineWidth=3;
@@ -151,7 +157,7 @@ export function drawRecoveredBossGroundV1(c,model,t){
   }
  }
  for(const q of h.recoveredTelegraphs??[]){
-  const spec=recoveredBossForId(q.bossDefinitionId);if(!spec||q.ability==='eye_lance')continue;
+  const spec=recoveredBossForId(q.bossDefinitionId);if(!spec||q.ability==='eye_lance'||hasArchivedBossPainter(q.bossDefinitionId))continue;
   const span=Math.max(1,q.resolvesTick-q.startedTick),progress=ease((t-q.startedTick)/span);
   c.save();c.translate(q.position.x,q.position.y);c.globalAlpha=.35+progress*.55;
   c.strokeStyle=spec.color;c.lineWidth=1.5+progress*2;
@@ -167,6 +173,7 @@ function attackRadiusForVisual(a){return ({eye_lance:24,singularity:95,corrosive
  taxation:70,coin_barrage:110,gold_rush:130,gilded_lasso:75,molten_shield:80,scarlet_fire:115,hooked_tail:75,
  arena_collapse:200,fire_charge:110,landing_fire:90})[a]??75;}
 export function drawRecoveredBossHudV1(c,canvas,model){
+ if(drawArchivedBossHud(c,canvas,model))return true;
  const actor=Object.values(model.entitiesById??{}).find(a=>a.alive&&recoveredBossForId(a.boss?.bossDefinitionId));
  if(!actor)return false;
  const spec=recoveredBossForId(actor.boss.bossDefinitionId),width=Math.min(430,canvas.width-28),x=(canvas.width-width)/2,y=14;
