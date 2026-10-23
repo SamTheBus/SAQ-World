@@ -137,7 +137,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    const theta=angle+i*Math.PI/4;
    const shot={id:b.bossId+':coin:'+b.abilitySequence+':'+i,sequence:b.abilitySequence,ordinal:i,
     position:{x:a.position.x+Math.cos(theta)*20,y:a.position.y+Math.sin(theta)*20},
-    velocity:{x:Math.cos(theta)*7,y:Math.sin(theta)*7},firedTick:state.tick,expiresTick:state.tick+120,bounces:0};
+    velocity:{x:Math.cos(theta)*4.2,y:Math.sin(theta)*4.2},firedTick:state.tick,expiresTick:state.tick+240,bounces:0};
    b.coinShots.push(shot);
    stats.coinsSpawned++;
   }
@@ -149,15 +149,15 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    if(state.tick<=p.firedTick)continue;
    if(state.tick>=p.expiresTick){p.expired=true;continue;}
    let next={x:p.position.x+p.velocity.x,y:p.position.y+p.velocity.y};
-   if(!collisionFree(c,next,7)){
-    const collideX=!collisionFree(c,{x:p.position.x+p.velocity.x,y:p.position.y},7);
-    const collideY=!collisionFree(c,{x:p.position.x,y:p.position.y+p.velocity.y},7);
+   if(!collisionFree(c,next,4.5)){
+    const collideX=!collisionFree(c,{x:p.position.x+p.velocity.x,y:p.position.y},4.5);
+    const collideY=!collisionFree(c,{x:p.position.x,y:p.position.y+p.velocity.y},4.5);
     if(collideX||!collideY)p.velocity.x*=-1;
     if(collideY||!collideX)p.velocity.y*=-1;
     p.bounces++;stats.coinRicochets++;
-    if(p.bounces>1){p.expired=true;continue;}
+    if(p.bounces>2){p.expired=true;continue;}
     next={x:p.position.x+p.velocity.x,y:p.position.y+p.velocity.y};
-    if(!collisionFree(c,next,7)){p.expired=true;continue;}
+    if(!collisionFree(c,next,4.5)){p.expired=true;continue;}
    }
    // A real swept segment contact prevents a coin teleporting past a hero.
    let struck=null,best=2;
@@ -165,13 +165,13 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    for(const t of targets){
     if(!t?.alive)continue;
     const u=clamp(((t.position.x-p.position.x)*vx+(t.position.y-p.position.y)*vy)/vv);
-    const x=p.position.x+u*vx,y=p.position.y+u*vy,r=7+(t.combatRadius??t.hullRadius??10);
+    const x=p.position.x+u*vx,y=p.position.y+u*vy,r=4.5+(t.combatRadius??t.hullRadius??10);
     if((t.position.x-x)**2+(t.position.y-y)**2<=r*r&&u<best){struck=t;best=u;}
    }
    if(struck){
-    const damage=combatInteger(multiplyCombat(a.attackDamage,14,10),'round');
+    const damage=combatInteger(multiplyCombat(a.attackDamage,42,100),'round');
     const result=applyDirectDamage(a,struck,damage,'marcus_ricochet_coin',{sourceActionSequence:p.sequence,
-     directEnemyAttack:'ranged',projectileImpact:true,projectileDirection:{x:p.velocity.x/7,y:p.velocity.y/7}});
+     directEnemyAttack:'ranged',projectileImpact:true,projectileDirection:{x:p.velocity.x/4.2,y:p.velocity.y/4.2}});
     if(result!==undefined&&result!==false)stats.coinHits++;
     p.expired=true;continue;
    }
@@ -218,10 +218,10 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
     if(ability==='gold_fall')inside=[0,1,2].some(i=>{const v=i*Math.PI*2/3;return dist(t.position,{x:pos.x+Math.cos(v)*62,y:pos.y+Math.sin(v)*62})<=26;});
     if(ability==='arena_collapse')inside=Math.abs(dist(t.position,b.homePosition)-(205-b.collapseStep*26))<=23;
     if(!inside||!lineFree(collision,a.position,t.position)||!lineClear(a,t))continue;
-    if(ability==='inversion'){if(t.alive){effect(b,t,'control_glitch',180,.94);hits.push(t.entityId);}continue;}
+    if(ability==='inversion'){if(t.alive){effect(b,t,'control_glitch',180,1);hits.push(t.entityId);}continue;}
     if(hit(a,t,b,ability,dmg))hits.push(t.entityId);
     if(['control_glitch','inversion'].includes(ability)&&t.alive)effect(b,t,'control_glitch',180,.94);
-    if(ability==='gilded_lasso'&&t.alive)effect(b,t,'lasso',90,.5);
+    if(ability==='gilded_lasso'&&t.alive)effect(b,t,'lasso',180,.4);
    }
   }
   if(ability==='spore_storm')for(let i=0;i<3;i++){
