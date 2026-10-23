@@ -113,7 +113,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   // so kiting or using walls is an actual defense rather than instant AoE.
   const angle=Math.atan2(b.targetPosition.y-a.position.y,b.targetPosition.x-a.position.x);
   for(let i=0;i<8;i++){
-   const theta=angle+(i-3.5)*Math.PI/4;
+   const theta=angle+i*Math.PI/4;
    const shot={id:b.bossId+':coin:'+b.abilitySequence+':'+i,sequence:b.abilitySequence,ordinal:i,
     position:{x:a.position.x+Math.cos(theta)*20,y:a.position.y+Math.sin(theta)*20},
     velocity:{x:Math.cos(theta)*7,y:Math.sin(theta)*7},firedTick:state.tick,expiresTick:state.tick+120,bounces:0};
