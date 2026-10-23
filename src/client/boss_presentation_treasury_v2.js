@@ -14,9 +14,9 @@ function lines(c,pts,color,width=2){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(
 function arc(c,x,y,rad,start,end,color,width=2){c.beginPath();c.arc(x,y,rad,start,end);c.strokeStyle=color;c.lineWidth=width;c.stroke();}
 function coin(c,x,y,scale=1,rotation=0,brightness=1){
  c.save();c.translate(x,y);c.rotate(rotation);c.scale(scale,scale);
- ellipse(c,0,1.4,7.9,5.1,'#56310e','#100b12',2.2);
- ellipse(c,-.3,-.2,7.7,4.9,brightness>=1?'#f0b637':'#b48127','#23121a',1.8);
- ellipse(c,-.5,-1.0,5.3,2.8,brightness>=1?'#ffe08a':'#c3a15e','#a36a19',.9);
+ ellipse(c,0,1.4,7.9,6.0,'#56310e','#100b12',2.2);
+ ellipse(c,-.3,-.2,7.7,5.9,brightness>=1?'#f0b637':'#b48127','#23121a',1.8);
+ ellipse(c,-.5,-1.0,5.3,3.4,brightness>=1?'#ffe08a':'#c3a15e','#a36a19',.9);
  ellipse(c,-1.3,-2.0,3.4,.9,'#fff4b5');
  lines(c,[[-4,1],[-1,2.3],[4,1.5]],'#9d681d',.9);
  c.restore();
@@ -77,10 +77,10 @@ function drawMarcusBody(c,actor,tick,flash){
  const boss=actor.boss??{},orbits=orbitPoints(actor,tick),shots=boss.coinShots??boss.coinsInFlight??[];
  c.save();c.translate(actor.position.x,actor.position.y);
  // Floating coins use full back/front depth, not a decorative flat ring or halo.
- const currentlyFired=Array.isArray(shots)?shots.length:0;
- for(const co of orbits.filter(x=>x.depth<0).slice(0,Math.max(0,8-currentlyFired)))coin(c,co.x,co.y,1.04,co.theta*.2,co.brightness);
+ const firingOrdinals=new Set(Array.isArray(shots)?shots.map(s=>s.ordinal):[]);
+ for(const co of orbits.filter(x=>x.depth<0&&!firingOrdinals.has(x.i)))coin(c,co.x,co.y,1.04,co.theta*.2,co.brightness);
  cloakedMarcus(c,tick,flash);
- for(const co of orbits.filter(x=>x.depth>=0).slice(0,Math.max(0,8-currentlyFired)))coin(c,co.x,co.y,1.04,co.theta*.2,co.brightness);
+ for(const co of orbits.filter(x=>x.depth>=0&&!firingOrdinals.has(x.i)))coin(c,co.x,co.y,1.04,co.theta*.2,co.brightness);
  ornateMarcShield(c,tick,boss);
  const a=boss.pendingAction;
  if(a?.ability==='coin_barrage'){
@@ -101,10 +101,13 @@ function drawVaultBody(c,actor,tick,flash){
  c.save();c.translate(actor.position.x,actor.position.y);
  ellipse(c,0,8,66,10,'#0b0b14b0');
  // Outline eight separated bars, thicker on the lit lower rim.
+ const hasShield=Number(b.shieldHp??0)>0;
+ if(hasShield){
  const frame=[[0,-145],[57,-145],[86,-124],[88,-19],[54,8],[-53,8],[-89,-19],[-86,-124],[-57,-145]];
  c.lineWidth=9;c.strokeStyle='#0d101b';c.beginPath();frame.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();c.stroke();
  c.lineWidth=5;c.strokeStyle='#d89a30';c.beginPath();frame.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();c.stroke();
  for(const [x,y]of[[-86,-91],[86,-91],[-64,-142],[65,-142],[0,-145],[-83,-22],[83,-22]])circle(c,x,y,3,'#ffe6a2','#4a300d',1);
+ }
  // Crown floats above the lid with ruby crest.
  path(c,[[-28,-146],[-14,-134],[0,-160],[13,-136],[31,-146],[26,-124],[-23,-122]],flash?'#fffbe4':'#e5a637','#36211d',3);
  path(c,[[-24,-144],[-12,-137],[0,-156],[11,-136],[26,-144],[22,-131],[-21,-131]],'#ffde62',null);
@@ -155,7 +158,7 @@ function drawVaultBody(c,actor,tick,flash){
  // Overflow coins: individually raised piles under the keeper, no generic loot icon.
  const fixed=[[0,4],[-22,1],[23,1],[-47,2],[47,3],[-8,-4],[10,-5],[-35,-4],[35,-5],[-53,8],[53,9],[0,11],[-20,13],[19,12],[-39,11],[39,12]];
  for(const [i,[x,y]]of fixed.entries())coin(c,x,y,(i%3===0?.98:.85),Math.sin(i*4.1)*.08,i%4===0?.9:1);
- if(Number(b.shieldHp??0)>0){shield(c,0,-76,tick,86);}
+ // The original Taxation shield is angular: its outlined frame is painted behind the chest.
  // The pupil of the chest ruby brightens during Taxation.
  if(b.pendingAction?.ability==='taxation'){
   const p=smooth((tick-b.pendingAction.startedTick)/(b.pendingAction.resolvesTick-b.pendingAction.startedTick));
