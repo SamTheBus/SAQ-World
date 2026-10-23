@@ -6,6 +6,7 @@ import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js
 import {collidesWithTiles} from '../shared/rules/world_geometry.js';
 import {moveAegisAffectedActor} from './aegis_goliath_v1.js';
 
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const direction=(a,b)=>{const d=dist(a,b)||1;return {x:(b.x-a.x)/d,y:(b.y-a.y)/d};};
 const roll=(seed,seq,salt=0)=>{let v=(seed^Math.imul(seq+1,0x9e3779b1)^salt)>>>0;v=Math.imul(v^(v>>>16),0x85ebca6b)>>>0;v=Math.imul(v^(v>>>13),0xc2b2ae35)>>>0;return ((v^(v>>>16))>>>0)/4294967296;};
