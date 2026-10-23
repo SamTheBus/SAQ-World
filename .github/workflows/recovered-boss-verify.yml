@@ -28,6 +28,8 @@ jobs:
           node --check src/shared/content/fort_family_runtime_v1.js
       - name: Verify all eight real seeded boss site bindings and save contracts
         run: node --test checks/recovered-boss-v1.test.mjs
+      - name: Replay eight boss fights for 1050 ticks with persisted state validation
+        run: node --test checks/recovered-boss-combat.test.mjs
       - name: Preserve original Volcanic Ruin Brimstone
         run: node --test checks/wilderness-v4-brimstone-volcanic-ruin.test.mjs
       - name: Build playable-only bundle
