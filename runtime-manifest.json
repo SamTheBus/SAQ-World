@@ -1,19 +1,6 @@
 {
-  "runtimeId": "16a41fa5308a6046",
-  "runtimeSha256": "16a41fa5308a60466ae2c1a9af7231532fa60cfb6a4b2586f04f43e3339ced30",
-  "parentRuntimeId": "17c29efcbb1fd574",
-  "reviewRevision": 95,
-  "changedRuntimeFiles": [
-    "index.html",
-    "game.js",
-    "save-worker.js"
-  ],
-  "addedRuntimeFiles": [
-    "game.js",
-    "startup-loading.js",
-    "startup-combat-preview.js"
-  ],
-  "unchangedRuntimeFiles": [],
+  "runtimeId": "2d023bbaf64e0c9d",
+  "runtimeSha256": "2d023bbaf64e0c9d889bd578004fb7471a2e87b886ce171f80906d40fa84bd41",
   "files": [
     {
       "path": ".nojekyll",
@@ -106,14 +93,9 @@
       "sha256": "ed2f7fcafeac4305b6658242d232d8d79dade9ecb6b43ea74125fc1318cc282f"
     },
     {
-      "path": "game.js",
-      "bytes": 5073877,
-      "sha256": "71afe1db22742124911616d52117a007b79b2c99db5c1966fa3039adcbc93a23"
-    },
-    {
       "path": "index.html",
-      "bytes": 19599,
-      "sha256": "211e3ec70ba56eba9c03ceec3d537c83de0745886d8fe8dbbc7d378a861d56eb"
+      "bytes": 19626,
+      "sha256": "c76798ef874450f6477575f40508bc88d65cf854044b37433901d27ace46b45e"
     },
     {
       "path": "manifest.webmanifest",
@@ -122,18 +104,38 @@
     },
     {
       "path": "save-worker.js",
-      "bytes": 2203451,
-      "sha256": "45c6949dd8cc83bd336f2b17e0e90462f24a21796f0cbb107edd061ef8abfb23"
+      "bytes": 2043073,
+      "sha256": "275f2242da64796f395b200f3b7c03d9feb578340d59b1c2be6062c94fcf585a"
     },
     {
-      "path": "startup-combat-preview.js",
+      "path": "src/chunks/chunk-O334KQ6V.js",
+      "bytes": 1813538,
+      "sha256": "c79b807f2ff7445f6bc278122065c5cdd29436d877528f799574f0b9bad80b24"
+    },
+    {
+      "path": "src/chunks/playable_browser-RKNVW4VF.js",
+      "bytes": 3130280,
+      "sha256": "9db3c0517e28177d3a34f16104c0105c582112c4413ca4b3a7835679ccbf697f"
+    },
+    {
+      "path": "src/chunks/world_browser-JDRSQXAF.js",
+      "bytes": 1416,
+      "sha256": "ed74fb770a085d0c86ea12122aa30eab9215216120537b87388b5132cbf50118"
+    },
+    {
+      "path": "src/client/startup_combat_preview_v1.js",
       "bytes": 13273,
       "sha256": "fcfeac87c3a46d4cc9c7cc7a048822052ec47fba2655ae423dca5abc6a19e9c9"
     },
     {
-      "path": "startup-loading.js",
+      "path": "src/client/startup_loading_v1.js",
       "bytes": 4171,
       "sha256": "a6836546cbe04ca54db3eddab099aa48eba2540c564ad231dc14aad65589b414"
+    },
+    {
+      "path": "src/entrypoints/browser_boot.js",
+      "bytes": 1862,
+      "sha256": "1b918018ebd1ae294a18e83006dcac9a6d7f9328d9f2ad9e12f3ed5c0520a084"
     },
     {
       "path": "world.css",
