@@ -43,6 +43,12 @@ jobs:
         run: |
           node --check src/client/boss_presentation_treasury_v2.js
           node --test checks/treasury-boss-polish.test.mjs
+      - name: Verify exact Marcus and Gilded renderer code from original playable files
+        run: |
+          node --check src/client/boss_presentation_marcus_the_outlaw_v1.js
+          node --check src/client/boss_presentation_gilded_vault_keeper_v1.js
+          node --check src/client/boss_original_treasury_world_adapter_v1.js
+          node --test checks/original-treasury-painters.test.mjs
       - name: Verify source-authentic boss behaviors, attack geometry and save records
         run: |
           node --check src/shared/content/archived_boss_fight_profiles_v1.js
