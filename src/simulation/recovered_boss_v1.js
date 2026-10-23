@@ -260,7 +260,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    }
    if(state.tick<p.nextDamageTick)continue;
    p.nextDamageTick=Math.min(p.expiresTick,state.tick+45);
-   if(p.kind==='time'||p.kind==='gold_spill'||b.archive&&b.bossDefinitionId==='corrosive_abomination'&&['acid','slag'].includes(p.kind)||b.archive&&b.bossDefinitionId==='hooktail'&&p.kind==='collapse')continue;
+   if(p.kind==='time'||p.kind==='gold_spill'||b.archive&&b.bossDefinitionId==='corrosive_abomination'&&['acid','slag'].includes(p.kind)||b.archive&&b.bossDefinitionId==='hooktail'&&p.kind==='collapse'||b.archive&&b.bossDefinitionId==='cinderhart'&&p.kind==='fire')continue;
    const effectiveRadius=p.kind==='prism'?p.radius*(1-.64*Math.min(1,(state.tick-p.createdTick)/(p.expiresTick-p.createdTick))):p.radius;
    for(const t of targets){
     const d=dist(t.position,p.position);
