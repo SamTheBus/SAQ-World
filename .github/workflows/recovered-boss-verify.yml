@@ -1,0 +1,42 @@
+name: Verify recovered bosses (isolated)
+on:
+  push:
+    branches: [boss-restoration-20261023]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Check new boss source syntax
+        run: |
+          node --check src/shared/content/recovered_boss_catalog_v1.js
+          node --check src/shared/contracts/recovered_boss_v1.js
+          node --check src/simulation/recovered_boss_v1.js
+          node --check src/client/recovered_boss_presentation_v1.js
+          node --check src/shared/content/ruin_family_runtime_v1.js
+          node --check src/shared/content/fort_family_runtime_v1.js
+      - name: Verify all eight real seeded boss site bindings and save contracts
+        run: node --test checks/recovered-boss-v1.test.mjs
+      - name: Preserve original Volcanic Ruin Brimstone
+        run: node --test checks/wilderness-v4-brimstone-volcanic-ruin.test.mjs
+      - name: Build playable-only bundle
+        run: npm run build:playable
+      - name: Verify compact playable package
+        run: npm run verify:playable
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Browser start and worker smoke
+        run: npm run smoke:playable
