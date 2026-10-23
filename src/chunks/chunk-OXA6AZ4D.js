@@ -7634,7 +7634,7 @@ var RECOVERED_BOSSES = Object.freeze({
     color: "#ffd16a",
     secondary: "#aa3155",
     adds: 0,
-    attacks: Object.freeze({ vault_crush: 75, gold_fall: 100, taxation: 210 })
+    attacks: Object.freeze({ vault_crush: 75, gold_fall: 100, taxation: 240 })
   }),
   marcus: Object.freeze({
     id: "marcus",
@@ -7645,7 +7645,7 @@ var RECOVERED_BOSSES = Object.freeze({
     color: "#ffb968",
     secondary: "#bd4d39",
     adds: 0,
-    attacks: Object.freeze({ coin_barrage: 75, gold_rush: 65, gilded_lasso: 65, molten_shield: 210 })
+    attacks: Object.freeze({ coin_barrage: 75, gold_rush: 65, gilded_lasso: 65, inversion: 75, molten_shield: 210 })
   }),
   hooktail: Object.freeze({
     id: "hooktail",
@@ -7736,6 +7736,7 @@ async function createRecoveredBossV1({ kind, campaignSeed, siteId, floorId, grou
     chunkStep: 0,
     collapseStep: 0,
     stolenGold: "0",
+    coinShots: [],
     pools: [],
     statusesByEntityId: {},
     lastTrailPosition: copyWire(homePosition),
@@ -7780,7 +7781,7 @@ function validateRecoveredBossV1(state, id, b) {
     "statusesByEntityId",
     "lastTrailPosition",
     "lastAction"
-  ]);
+  ], ["coinShots"]);
   const spec = recoveredBossForId(b.bossDefinitionId), actor = state.entitiesById[id], group = state.groupsById[b.groupId], c = state.spacesByInstanceId[b.spaceInstanceId]?.collision;
   requireContract(spec && b.version === RECOVERED_BOSS_VERSION && b.entityId === id && /^boss:[a-f0-9]{32}$/.test(b.bossId) && actor?.team === "hostile" && actor.contentDefinitionId === ARACHNID_TREANT_PROFILE.contentDefinitionId && group?.entityIds.includes(id) && group.siteId === b.siteId && actor.residency.spaceInstanceId === b.spaceInstanceId && actor.residency.residencyRevision === b.sourceResidencyRevision && c && point2(b.homePosition) && !collidesWithTiles(c, b.homePosition.x, b.homePosition.y, ARACHNID_TREANT_PROFILE.hullRadius), "Recovered boss identity invalid");
   requireContract([1, 2].includes(b.phase) && b.phase2Triggered === (b.phase === 2) && states.includes(b.actionState), "Recovered boss phase invalid");
@@ -7802,6 +7803,17 @@ function validateRecoveredBossV1(state, id, b) {
   if (b.shieldBrokenTick !== null) safeInteger(b.shieldBrokenTick, b.activatedTick, state.tick);
   if (!actor.alive) requireContract(b.actionState === "defeated", "Recovered boss not retired");
   else requireContract(b.actionState !== "defeated", "Recovered boss defeated while alive");
+  requireContract(Array.isArray(b.coinShots ?? []) && b.coinShots.length <= 16 && (!b.coinShots.length || b.bossDefinitionId === "marcus"), "Coin volley budget invalid");
+  for (const shot of b.coinShots ?? []) {
+    closedRecord(shot, ["id", "position", "velocity", "firedTick", "expiresTick", "sequence", "ordinal", "bounces"]);
+    requireContract(typeof shot.id === "string" && shot.id === b.bossId + ":coin:" + shot.sequence + ":" + shot.ordinal && point2(shot.position) && point2(shot.velocity) && Math.hypot(shot.velocity.x, shot.velocity.y) < 13 && shot.bounces <= 2, "Invalid flying Marcus coin");
+    safeInteger(shot.firedTick, b.activatedTick, state.tick);
+    safeInteger(shot.expiresTick, shot.firedTick + 120, shot.firedTick + 120);
+    safeInteger(shot.sequence, 1, b.abilitySequence);
+    safeInteger(shot.ordinal, 0, 7);
+    safeInteger(shot.bounces, 0, 2);
+    requireContract(state.tick < shot.expiresTick, "Expired coin shot");
+  }
   requireContract(Array.isArray(b.pools) && b.pools.length <= (b.bossDefinitionId === "cinderhart" ? 64 : 20) && point2(b.lastTrailPosition), "Recovered boss hazard budget invalid");
   for (const p of b.pools) {
     closedRecord(p, ["id", "kind", "position", "radius", "createdTick", "expiresTick", "nextDamageTick"]);
@@ -7861,6 +7873,7 @@ function projectRecoveredBossV1(b, state) {
     collapseStep: b.collapseStep,
     chunkStep: b.chunkStep,
     stolenGold: b.stolenGold,
+    coinShots: copyWire(b.coinShots ?? []),
     minions: b.summonEntityIds.map((id) => {
       const m = state.bossCombat.summonsByEntityId[id];
       return { entityId: id, kind: m.kind, stage: m.stage, position: copyWire(state.entitiesById[id].position) };
