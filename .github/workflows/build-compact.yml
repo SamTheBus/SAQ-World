@@ -30,6 +30,11 @@ jobs:
         run: |
           python3 -m http.server 8989 --directory dist > /tmp/saq-http.log 2>&1 &
           node scripts/smoke-compact.mjs
+      - name: Diagnose unbundled source when playable check fails
+        if: failure()
+        run: |
+          python3 -m http.server 8990 --directory . > /tmp/saq-source-http.log 2>&1 &
+          SAQ_SMOKE_URL=http://127.0.0.1:8990/ node scripts/smoke-compact.mjs
       - name: Stage isolated playable branch (main remains untouched)
         shell: bash
         run: |
