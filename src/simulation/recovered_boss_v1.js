@@ -65,7 +65,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   }
   return awakened;
  }
- const archived=createArchivedBossFightRuntime(state,{pool,damage:applyDirectDamage,hit,clear,awaken});
+ const archived=createArchivedBossFightRuntime(state,{pool,damage:applyDirectDamage,hit,clear,awaken,effect});
  function sync(b,a){
   if(!a?.alive||a.residency.spaceInstanceId!==b.spaceInstanceId||a.residency.residencyRevision!==b.sourceResidencyRevision){
    if(b.actionState!=='defeated'){clear(b);b.actionState='defeated';}
@@ -177,6 +177,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  function resolve(b,a,targets){
   const ability=b.activeAbility,pos=copyWire(b.targetPosition),collision=state.spacesByInstanceId[b.spaceInstanceId].collision;
   const hits=[],dmg=centerDamage(ability),radius=attackRadius(ability);
+  if(archived.resolveOriginal(b,a,targets,ability,pos,collision))return;
   if(ability==='warren_call'){
    awaken(b,b.phase===2?5:3);
    if(b.archive)b.archive.nextWarrenTick=state.tick+480;
@@ -250,7 +251,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    }
    if(state.tick<p.nextDamageTick)continue;
    p.nextDamageTick=Math.min(p.expiresTick,state.tick+45);
-   if(p.kind==='time'||p.kind==='gold_spill')continue;
+   if(p.kind==='time'||p.kind==='gold_spill'||b.archive&&b.bossDefinitionId==='corrosive_abomination'&&['acid','slag'].includes(p.kind)||b.archive&&b.bossDefinitionId==='hooktail'&&p.kind==='collapse')continue;
    const effectiveRadius=p.kind==='prism'?p.radius*(1-.64*Math.min(1,(state.tick-p.createdTick)/(p.expiresTick-p.createdTick))):p.radius;
    for(const t of targets){
     const d=dist(t.position,p.position);
@@ -286,15 +287,16 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    const targets=players(a);updatePools(b,a,targets,c);advanceCoinShots(b,a,targets,c);
    for(const[id,s]of Object.entries(b.statusesByEntityId))if(state.tick>=s.expiresTick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
    enterPhaseTwo(b,a);
+   if(archived.tick(b,a,targets,c))continue;
    if(b.bossDefinitionId==='cinderhart')advanceBunnies(b,c);
    if(b.bossDefinitionId==='nexus_overseer')advanceHolograms(b,targets,c);
    if(b.bossDefinitionId==='corrosive_abomination'){
     for(let step=b.chunkStep+1;step<=12;step++){
      if(compareCombat(a.hp,multiplyCombat(a.maxHp,100-step*8,100))>0)break;
      b.chunkStep=step;awaken(b,1);
-     pool(b,a.position,step%3===0?'slag':'acid',step%3===0?28:20,step%3===0?240:180);
+     if(!b.archive)pool(b,a.position,step%3===0?'slag':'acid',step%3===0?28:20,step%3===0?240:180);
     }
-    if(state.tick%24===0&&dist(a.position,b.lastTrailPosition)>12){pool(b,a.position,'acid',19,480);b.lastTrailPosition=copyWire(a.position);}
+    if(!b.archive&&state.tick%24===0&&dist(a.position,b.lastTrailPosition)>12){pool(b,a.position,'acid',19,480);b.lastTrailPosition=copyWire(a.position);}
    }
    if(b.actionState==='dazed')continue;
    if(b.actionState==='telegraphing'){
@@ -309,7 +311,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    if(state.tick<b.nextActionTick)continue;
    const preferred=targets.find(t=>t.entityId===observed.get(a.entityId));
    const target=preferred??targets.filter(t=>lineClear(a,t)).sort((x,y)=>dist(a.position,x.position)-dist(a.position,y.position)||x.entityId.localeCompare(y.entityId))[0];
-   if(!target||dist(a.position,target.position)>280||!lineClear(a,target))continue;
+   if(!target||dist(a.position,target.position)>(b.archive&&b.bossDefinitionId==='cinderhart'?520:280)||!lineClear(a,target))continue;
    const ability=choose(b,a,target);if(ability)beginAbility(b,a,target,ability);
   }
   observed.clear();
@@ -317,12 +319,13 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  function beginTick(){for(const b of records()){
   b.pools=b.pools.filter(p=>p.expiresTick>state.tick);
   b.coinShots=(b.coinShots??[]).filter(p=>p.expiresTick>state.tick);
+  if(b.archive)for(const[id,p]of Object.entries(b.archive.sporesById))if(state.tick>=p.expiresTick)delete b.archive.sporesById[id];
   for(const[id,s] of Object.entries(b.statusesByEntityId))if(s.expiresTick<=state.tick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
  }}
  function reconcile(){for(const b of records())sync(b,state.entitiesById[b.entityId]);beginTick();}
- function frozen(id){const s=summon(id);if(s)return s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram';const b=record(id);return Boolean(b&&['telegraphing','dazed','defeated'].includes(b.actionState));}
+ function frozen(id){const s=summon(id);if(s)return s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram';const b=record(id);return Boolean(b&&['telegraphing','rushing','dazed','defeated'].includes(b.actionState));}
  function movementMultiplier(id){
-  const b=record(id);if(b)return b.actionState==='dazed'?0:b.phase===2?1.2:.8;
+  const b=record(id);if(b)return b.actionState==='dazed'||b.actionState==='rushing'?0:b.phase===2?1.2:.8;
   const s=summon(id);if(s&&(s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram'))return 0;
   let value=1;
   for(const boss of bossesForPlayer(id))value=Math.min(value,boss.statusesByEntityId[id].movementMultiplier);
