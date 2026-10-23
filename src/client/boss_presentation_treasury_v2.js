@@ -275,6 +275,6 @@ export function drawTreasuryBossHudV2(c,canvas,model){
  const shieldHp=Math.max(0,Number(b.boss.shieldHp??0)),shieldMax=Math.max(1,Number(b.boss.shieldMaxHp??0)),width=Math.min(430,canvas.width-28);
  c.save();let y=53;
  if(shieldHp>0){const x=(canvas.width-width)/2; c.fillStyle='#12111acc';c.fillRect(x,y,width,9);c.fillStyle='#e5a841';c.fillRect(x+2,y+2,(width-4)*clamp(shieldHp/shieldMax),5);c.strokeStyle='#e6c373';c.strokeRect(x+.5,y+.5,width-1,8);y+=13;}
- if(Number(b.boss.stolenGold??0)>0){c.font='bold 10px system-ui';c.textAlign='center';c.fillStyle='#f3d579';c.fillText('STOLEN GOLD  '+b.boss.stolenGold,canvas.width/2,y+10);}
+ // Old saves may retain legacy stolenGold metadata. Never display a false theft claim.
  c.restore();return true;
 }
