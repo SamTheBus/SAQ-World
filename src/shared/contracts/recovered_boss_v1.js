@@ -7,7 +7,7 @@ import {archivedCombatProfile,ARCHIVED_FIGHT_PROFILE_VERSION} from '../content/a
 
 export const RECOVERED_SUMMON_VERSION='recovered-boss-summon-v1';
 const point=p=>Boolean(p&&Number.isFinite(p.x)&&Number.isFinite(p.y));
-const states=['idle','telegraphing','dazed','defeated'];
+const states=['idle','telegraphing','dazed','defeated','rushing'];
 export const recoveredBossRecord=b=>b?.version===RECOVERED_BOSS_VERSION&&Boolean(recoveredBossForId(b.bossDefinitionId));
 
 export async function createRecoveredBossV1({kind,campaignSeed,siteId,floorId,groupId,roomId,entityId,homePosition,activatedTick,spaceInstanceId,sourceResidencyRevision,addMembers=[]},{sha256}) {
@@ -50,10 +50,11 @@ export function validateRecoveredBossV1(state,id,b){
  check(/^\d+$/.test(b.shieldHp)&&/^\d+$/.test(b.shieldMaxHp)&&BigInt(b.shieldHp)<=BigInt(b.shieldMaxHp)&&/^\d+$/.test(b.stolenGold),'Recovered boss resources invalid');
  check(Array.isArray(b.summonEntityIds)&&b.summonEntityIds.length<=spec.adds&&new Set(b.summonEntityIds).size===b.summonEntityIds.length&&b.summonEntityIds.every(k=>state.bossCombat.summonsByEntityId[k]?.bossId===b.bossId),'Recovered boss adds invalid');
  if(b.actionState==='telegraphing'){
-  check(Object.hasOwn(spec.attacks,b.activeAbility)&&point(b.targetPosition)&&state.entitiesById[b.targetEntityId]?.team==='party','Recovered boss telegraph invalid');
+  check(Object.hasOwn(b.archive?archivedCombatProfile(b.bossDefinitionId).attack:spec.attacks,b.activeAbility)&&point(b.targetPosition)&&state.entitiesById[b.targetEntityId]?.team==='party','Recovered boss telegraph invalid');
   safeInteger(b.telegraphStartedTick,b.activatedTick,state.tick);
-  safeInteger(b.resolvesTick,b.telegraphStartedTick+spec.attacks[b.activeAbility],b.telegraphStartedTick+spec.attacks[b.activeAbility]);
+  safeInteger(b.resolvesTick,b.telegraphStartedTick+(b.archive?archivedCombatProfile(b.bossDefinitionId).attack[b.activeAbility]:spec.attacks[b.activeAbility]),b.telegraphStartedTick+(b.archive?archivedCombatProfile(b.bossDefinitionId).attack[b.activeAbility]:spec.attacks[b.activeAbility]));
  }else check(b.activeAbility===null&&b.targetEntityId===null&&b.targetPosition===null&&b.telegraphStartedTick===null&&b.resolvesTick===null,'Recovered boss stale telegraph');
+ if(b.actionState==='rushing')check(b.bossDefinitionId==='cinderhart'&&b.archive?.charge,'Archived Cinderhart rush missing');
  if(b.actionState==='dazed')safeInteger(b.dazedUntilTick,state.tick+1,state.tick+300);
  else check(b.dazedUntilTick===null,'Recovered boss stale daze');
  if(b.shieldBrokenTick!==null)safeInteger(b.shieldBrokenTick,b.activatedTick,state.tick);
@@ -125,7 +126,8 @@ export function projectRecoveredBossV1(b,state){
  return freezeWire({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,label:spec.label,phase:b.phase,actionState:b.actionState,
   shieldActive:BigInt(b.shieldHp)>0n,shieldHp:b.shieldHp,shieldMaxHp:b.shieldMaxHp,shieldBrokenTick:b.shieldBrokenTick,
   dazedUntilTick:b.dazedUntilTick,collapseStep:b.collapseStep,chunkStep:b.chunkStep,stolenGold:b.stolenGold,
-  coinShots:copyWire(b.coinShots??[]),minions:b.summonEntityIds.map(id=>{const m=state.bossCombat.summonsByEntityId[id];return {entityId:id,kind:m.kind,stage:m.stage,position:copyWire(state.entitiesById[id].position)};}),
+  coinShots:copyWire(b.coinShots??[]),archive:b.archive?{charge:copyWire(b.archive.charge),sporesById:copyWire(b.archive.sporesById),poisonByEntityId:copyWire(b.archive.poisonByEntityId)}:null,
+  minions:b.summonEntityIds.map(id=>{const m=state.bossCombat.summonsByEntityId[id];return {entityId:id,kind:m.kind,stage:m.stage,position:copyWire(state.entitiesById[id].position)};}),
   lastAction:copyWire(b.lastAction),pendingAction:b.actionState==='telegraphing'?
   {ability:b.activeAbility,targetEntityId:b.targetEntityId,targetPosition:copyWire(b.targetPosition),startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick}:null});
 }
@@ -133,10 +135,12 @@ export function projectRecoveredBossV1(b,state){
 export function projectRecoveredHazardsV1(state,spaceId){
  const bosses=Object.values(state.bossCombat?.bossesByEntityId??{}).filter(b=>recoveredBossRecord(b)&&b.spaceInstanceId===spaceId&&state.entitiesById[b.entityId]?.alive);
  return {recoveredTelegraphs:bosses.filter(b=>b.actionState==='telegraphing').map(b=>({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,ability:b.activeAbility,position:copyWire(b.targetPosition),originPosition:copyWire(state.entitiesById[b.entityId].position),sequence:b.abilitySequence,selectionSeed:b.selectionSeed,startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick})),
-  recoveredPools:bosses.flatMap(b=>b.pools.map(p=>({...copyWire(p),bossDefinitionId:b.bossDefinitionId})))};
+  recoveredPools:bosses.flatMap(b=>b.pools.map(p=>({...copyWire(p),bossDefinitionId:b.bossDefinitionId}))),
+  recoveredSpores:bosses.flatMap(b=>Object.values(b.archive?.sporesById??{}).map(s=>({...copyWire(s),bossId:b.bossId,bossDefinitionId:b.bossDefinitionId})))};
 }
 export function recoveredStatusForActor(state,entityId){
  for(const b of Object.values(state.bossCombat?.bossesByEntityId??{}))if(recoveredBossRecord(b)){
+  const poison=b.archive?.poisonByEntityId?.[entityId];if(poison&&poison.expiresTick>state.tick)return {statusId:'corrosive_poison',sourceBossId:b.bossId,applicationTick:poison.lastAppliedTick,expirationTick:poison.expiresTick,remainingTicks:poison.expiresTick-state.tick,stacks:poison.stacks,movementMultiplier:1};
   const s=b.statusesByEntityId[entityId];if(s&&s.expiresTick>state.tick)return {statusId:s.kind,sourceBossId:b.bossId,applicationTick:s.startedTick,expirationTick:s.expiresTick,remainingTicks:s.expiresTick-state.tick,movementMultiplier:s.movementMultiplier,reversed:s.kind==='control_glitch'};
  }
  return null;
