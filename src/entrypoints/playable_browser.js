@@ -107,6 +107,7 @@ export async function startWorldClient(environment) {
       createLocalIndexedDbCampaignStore({ indexedDB: environment.indexedDB, sha256, expectedContentFingerprint, expectedGenerationBinding, codec, ...(activity?{databaseName}:{}) }) });
     if(worldBridge){saveBridge?.destroy();saveBridge=null;}
   } catch(error) {
+    console.error('[SAQ World] Session startup failed:', error?.stack ?? error);
     saveBridge?.destroy();
     worldBridge?.destroy();
     const failure=classifyLocalLaunchError(error);
