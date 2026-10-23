@@ -10171,7 +10171,7 @@ var RECOVERED_BOSSES = Object.freeze({
     color: "#ffd16a",
     secondary: "#aa3155",
     adds: 0,
-    attacks: Object.freeze({ vault_crush: 75, gold_fall: 100, taxation: 240 })
+    attacks: Object.freeze({ vault_crush: 75, gold_fall: 75, taxation: 240 })
   }),
   marcus: Object.freeze({
     id: "marcus",
@@ -10182,7 +10182,7 @@ var RECOVERED_BOSSES = Object.freeze({
     color: "#ffb968",
     secondary: "#bd4d39",
     adds: 0,
-    attacks: Object.freeze({ coin_barrage: 75, gold_rush: 65, gilded_lasso: 65, inversion: 75, molten_shield: 210 })
+    attacks: Object.freeze({ coin_barrage: 65, gold_rush: 55, gilded_lasso: 55, inversion: 80, molten_shield: 240 })
   }),
   hooktail: Object.freeze({
     id: "hooktail",
@@ -10218,10 +10218,70 @@ function recoveredBossForId(id) {
   return RECOVERED_BOSSES[id] ?? null;
 }
 
+// src/shared/content/archived_boss_fight_profiles_v1.js
+var ARCHIVED_FIGHT_PROFILE_VERSION = "boss-archive-parity-v1";
+var ARCHIVED_FIGHT_PROFILES = Object.freeze({
+  corrosive_abomination: Object.freeze({
+    originalContentSha: "5fc523adb50b9149a4cbb36a79eeb6717d7704ff92f8935e69c17f339e992f1d",
+    attack: Object.freeze({ corrosive_slam: 65, spore_storm: 85, acid_spill: 45 }),
+    hop: Object.freeze({ speed: 1.6, cycleTicks: 30, movingTicks: 15, stopRange: 14 }),
+    acid: Object.freeze({ radius: 12, lifeTicks: 480, cadenceTicks: 45, maxHpPercent: 1.5, minimumHp: 1 }),
+    slag: Object.freeze({ radius: 9, lifeTicks: 240, cadenceTicks: 30, maxHpPercent: 1 }),
+    contact: Object.freeze({ radius: 30.72, cadenceTicks: 40, damageMultiplier: 0.5 }),
+    spore: Object.freeze({ count: 3, radius: 12, speed: 1, lifeTicks: 360, initialRange: 45, poisonTicks: 240, poisonCadenceTicks: 60 }),
+    shedding: Object.freeze({ stepPercent: 8, maxLive: 6, maxSlag: 2, slagEveryPhaseTwoChunks: 3, flightTicks: 18, coalescenceTicks: 12 })
+  }),
+  void_overseer: Object.freeze({
+    originalContentSha: "01fae024dffd8d5dc9e186f0e9fccf96b98bd6b030fe9a356962bc06e6ee087a",
+    attack: Object.freeze({ eye_lance: 75, singularity: 360 }),
+    movement: Object.freeze({ speed: 1.6, cycleTicks: 30, movingTicks: 15 }),
+    singularity: Object.freeze({ radius: 90, pullNumerator: 4500, pullSoftening: 400, pullMax: 4.8, stopRange: 10 }),
+    contact: Object.freeze({ radius: 30.72, cadenceTicks: 40, damageMultiplier: 0.5 })
+  }),
+  chronos_arbitrator: Object.freeze({
+    originalContentSha: "fc26a4070fa2fb59a31c5a5680166f83c7ea54c48fcf79940dd9a4d83fed80af",
+    attack: Object.freeze({ chronos_slam: 75, time_field: 60, chronos_rewind: 240 }),
+    timeField: Object.freeze({ radius: 35, lifetimeTicks: 420, movementMultiplier: 0.6, attackDelayMultiplier: 1.67 }),
+    rewind: Object.freeze({ phaseThresholdPercent: 40, shieldPercent: 15, healPercent: 20, dazeTicks: 210 })
+  }),
+  nexus_overseer: Object.freeze({
+    originalContentSha: "7bb6421365be1900a9c0c62cc91532bd8671fbd363c58c182e1fd15814fdfff7",
+    attack: Object.freeze({ prism_collapse: 75, control_glitch: 60, prism_slam: 75 }),
+    cage: Object.freeze({ radius: 64, damageMultiplier: 1.8 }),
+    glitch: Object.freeze({ radius: 180, durationTicks: 180 }),
+    decoy: Object.freeze({ max: 2, hullRadius: 12, range: 220, speed: 1.35, projectileSpeed: 4.2, projectileRadius: 6, projectileLifeTicks: 180 })
+  }),
+  hooktail: Object.freeze({
+    originalContentSha: "2b4afc45bdc731d1b7079dbc44611aabefd87c05cd2be06dc2450ebb46373a91",
+    attack: Object.freeze({ scarlet_fire: 60, hooked_tail: 75, arena_collapse: 85 }),
+    fire: Object.freeze({ range: 110, halfAngle: 0.8, damageMultiplier: 1.55 }),
+    collapse: Object.freeze({ damageCadenceTicks: 40, damageMaxHpPercent: 8, minimumRemainingHp: 1, phaseTwoThresholdPercent: 50 })
+  }),
+  cinderhart: Object.freeze({
+    originalContentSha: "9a7d9db40f00fe79048274b975d3b63a8b5cee67d6e75a124c9f60206bbfb54a",
+    attack: Object.freeze({ warren_call: 60, fire_charge: 54 }),
+    rush: Object.freeze({ durationTicks: 24, maxDistance: 220, radius: 25, damageMultiplier: 1.3 }),
+    bunny: Object.freeze({
+      restTicks: 18,
+      flightTicks: 28,
+      phase2RestTicks: 12,
+      phase2FlightTicks: 24,
+      lifetimeTicks: 900,
+      minimumLeap: 55,
+      maximumLeap: 75,
+      landingFireLifeTicks: 300
+    }),
+    fire: Object.freeze({ radius: 18, chargeLifeTicks: 180, ignitionTicks: 12, hitCadenceTicks: 30, damage: 24 })
+  })
+});
+function archivedCombatProfile(kind) {
+  return ARCHIVED_FIGHT_PROFILES[kind] ?? null;
+}
+
 // src/shared/contracts/recovered_boss_v1.js
 var RECOVERED_SUMMON_VERSION = "recovered-boss-summon-v1";
 var point3 = (p) => Boolean(p && Number.isFinite(p.x) && Number.isFinite(p.y));
-var states = ["idle", "telegraphing", "dazed", "defeated"];
+var states = ["idle", "telegraphing", "dazed", "defeated", "rushing"];
 var recoveredBossRecord = (b) => b?.version === RECOVERED_BOSS_VERSION && Boolean(recoveredBossForId(b.bossDefinitionId));
 async function createRecoveredBossV1({ kind, campaignSeed, siteId, floorId, groupId, roomId, entityId: entityId2, homePosition, activatedTick, spaceInstanceId, sourceResidencyRevision, addMembers = [] }, { sha256 }) {
   const spec = recoveredBossForId(kind);
@@ -10277,7 +10337,8 @@ async function createRecoveredBossV1({ kind, campaignSeed, siteId, floorId, grou
     pools: [],
     statusesByEntityId: {},
     lastTrailPosition: copyWire(homePosition),
-    lastAction: null
+    lastAction: null,
+    ...archivedCombatProfile(kind) ? { archive: { version: ARCHIVED_FIGHT_PROFILE_VERSION, charge: null, sporesById: {}, poisonByEntityId: {}, contactByEntityId: {}, nexusShotsById: {}, nextWarrenTick: activatedTick + 60, sludgeSequence: 0, collapsedRings: [] } } : {}
   };
   return freezeWire({ boss, summons });
 }
@@ -10318,7 +10379,7 @@ function validateRecoveredBossV1(state, id, b) {
     "statusesByEntityId",
     "lastTrailPosition",
     "lastAction"
-  ], ["coinShots"]);
+  ], ["coinShots", "archive"]);
   const spec = recoveredBossForId(b.bossDefinitionId), actor = state.entitiesById[id], group = state.groupsById[b.groupId], c = state.spacesByInstanceId[b.spaceInstanceId]?.collision;
   requireContract(spec && b.version === RECOVERED_BOSS_VERSION && b.entityId === id && /^boss:[a-f0-9]{32}$/.test(b.bossId) && actor?.team === "hostile" && actor.contentDefinitionId === ARACHNID_TREANT_PROFILE.contentDefinitionId && group?.entityIds.includes(id) && group.siteId === b.siteId && actor.residency.spaceInstanceId === b.spaceInstanceId && actor.residency.residencyRevision === b.sourceResidencyRevision && c && point3(b.homePosition) && !collidesWithTiles(c, b.homePosition.x, b.homePosition.y, ARACHNID_TREANT_PROFILE.hullRadius), "Recovered boss identity invalid");
   requireContract([1, 2].includes(b.phase) && b.phase2Triggered === (b.phase === 2) && states.includes(b.actionState), "Recovered boss phase invalid");
@@ -10331,10 +10392,11 @@ function validateRecoveredBossV1(state, id, b) {
   requireContract(/^\d+$/.test(b.shieldHp) && /^\d+$/.test(b.shieldMaxHp) && BigInt(b.shieldHp) <= BigInt(b.shieldMaxHp) && /^\d+$/.test(b.stolenGold), "Recovered boss resources invalid");
   requireContract(Array.isArray(b.summonEntityIds) && b.summonEntityIds.length <= spec.adds && new Set(b.summonEntityIds).size === b.summonEntityIds.length && b.summonEntityIds.every((k) => state.bossCombat.summonsByEntityId[k]?.bossId === b.bossId), "Recovered boss adds invalid");
   if (b.actionState === "telegraphing") {
-    requireContract(Object.hasOwn(spec.attacks, b.activeAbility) && point3(b.targetPosition) && state.entitiesById[b.targetEntityId]?.team === "party", "Recovered boss telegraph invalid");
+    requireContract(Object.hasOwn(b.archive ? archivedCombatProfile(b.bossDefinitionId).attack : spec.attacks, b.activeAbility) && point3(b.targetPosition) && state.entitiesById[b.targetEntityId]?.team === "party", "Recovered boss telegraph invalid");
     safeInteger(b.telegraphStartedTick, b.activatedTick, state.tick);
-    safeInteger(b.resolvesTick, b.telegraphStartedTick + spec.attacks[b.activeAbility], b.telegraphStartedTick + spec.attacks[b.activeAbility]);
+    safeInteger(b.resolvesTick, b.telegraphStartedTick + (b.archive ? archivedCombatProfile(b.bossDefinitionId).attack[b.activeAbility] : spec.attacks[b.activeAbility]), b.telegraphStartedTick + (b.archive ? archivedCombatProfile(b.bossDefinitionId).attack[b.activeAbility] : spec.attacks[b.activeAbility]));
   } else requireContract(b.activeAbility === null && b.targetEntityId === null && b.targetPosition === null && b.telegraphStartedTick === null && b.resolvesTick === null, "Recovered boss stale telegraph");
+  if (b.actionState === "rushing") requireContract(b.bossDefinitionId === "cinderhart" && b.archive?.charge, "Archived Cinderhart rush missing");
   if (b.actionState === "dazed") safeInteger(b.dazedUntilTick, state.tick + 1, state.tick + 300);
   else requireContract(b.dazedUntilTick === null, "Recovered boss stale daze");
   if (b.shieldBrokenTick !== null) safeInteger(b.shieldBrokenTick, b.activatedTick, state.tick);
@@ -10343,15 +10405,69 @@ function validateRecoveredBossV1(state, id, b) {
   requireContract(Array.isArray(b.coinShots ?? []) && b.coinShots.length <= 16 && (!b.coinShots.length || b.bossDefinitionId === "marcus"), "Coin volley budget invalid");
   for (const shot of b.coinShots ?? []) {
     closedRecord(shot, ["id", "position", "velocity", "firedTick", "expiresTick", "sequence", "ordinal", "bounces"]);
-    requireContract(typeof shot.id === "string" && shot.id === b.bossId + ":coin:" + shot.sequence + ":" + shot.ordinal && point3(shot.position) && point3(shot.velocity) && Math.hypot(shot.velocity.x, shot.velocity.y) < 13 && shot.bounces <= 2, "Invalid flying Marcus coin");
+    requireContract(typeof shot.id === "string" && shot.id === b.bossId + ":coin:" + shot.sequence + ":" + shot.ordinal && point3(shot.position) && point3(shot.velocity) && Math.hypot(shot.velocity.x, shot.velocity.y) < 6 && shot.bounces <= 2, "Invalid flying Marcus coin");
     safeInteger(shot.firedTick, b.activatedTick, state.tick);
-    safeInteger(shot.expiresTick, shot.firedTick + 120, shot.firedTick + 120);
+    safeInteger(shot.expiresTick, shot.firedTick + 240, shot.firedTick + 240);
     safeInteger(shot.sequence, 1, b.abilitySequence);
     safeInteger(shot.ordinal, 0, 7);
     safeInteger(shot.bounces, 0, 2);
     requireContract(state.tick < shot.expiresTick, "Expired coin shot");
   }
-  requireContract(Array.isArray(b.pools) && b.pools.length <= (b.bossDefinitionId === "cinderhart" ? 64 : 20) && point3(b.lastTrailPosition), "Recovered boss hazard budget invalid");
+  if (b.archive !== void 0) {
+    const archive = b.archive;
+    closedRecord(archive, ["version", "charge", "sporesById", "poisonByEntityId", "contactByEntityId", "nextWarrenTick", "sludgeSequence", "collapsedRings"], ["nexusShotsById"]);
+    requireContract(Boolean(archivedCombatProfile(b.bossDefinitionId)) && archive.version === ARCHIVED_FIGHT_PROFILE_VERSION, "Archived boss profile mismatch");
+    safeInteger(archive.nextWarrenTick, 0, state.tick + 1200);
+    safeInteger(archive.sludgeSequence, 0);
+    requireContract(Array.isArray(archive.collapsedRings) && archive.collapsedRings.length <= 7 && (!archive.collapsedRings.length || b.bossDefinitionId === "hooktail"), "Archived collapse ledger invalid");
+    for (const r of archive.collapsedRings) {
+      closedRecord(r, ["index", "createdTick", "minColumn", "maxColumn", "minRow", "maxRow", "tileSize", "tiles"]);
+      safeInteger(r.index, 0, 7);
+      safeInteger(r.createdTick, b.activatedTick, state.tick);
+      for (const n of ["minColumn", "maxColumn", "minRow", "maxRow"]) safeInteger(r[n], 0, 200);
+      requireContract(r.tileSize > 0 && r.minColumn < r.maxColumn && r.minRow < r.maxRow && Array.isArray(r.tiles) && r.tiles.length <= 140, "Archived ring geometry invalid");
+    }
+    requireContract(archive.charge === null || b.bossDefinitionId === "cinderhart", "Invalid archived rush owner");
+    if (archive.charge) {
+      const r = archive.charge;
+      closedRecord(r, ["startedTick", "endsTick", "originPosition", "endPosition", "hitEntityIds", "lastFirePosition"]);
+      safeInteger(r.startedTick, b.activatedTick, state.tick);
+      requireContract(r.endsTick === r.startedTick + 24 && state.tick <= r.endsTick && point3(r.originPosition) && point3(r.endPosition) && point3(r.lastFirePosition), "Invalid original 24-tick rush");
+      requireContract(Array.isArray(r.hitEntityIds) && new Set(r.hitEntityIds).size === r.hitEntityIds.length && r.hitEntityIds.every((id2) => state.entitiesById[id2]?.team === "party"), "Invalid rush targets");
+    }
+    requireContract(Object.keys(archive.sporesById).length <= 9 && Object.keys(archive.poisonByEntityId).length <= 4 && Object.keys(archive.contactByEntityId).length <= 4, "Archived projectile/status budget exceeded");
+    requireContract(Object.keys(archive.nexusShotsById ?? {}).length <= 12 && (!Object.keys(archive.nexusShotsById ?? {}).length || b.bossDefinitionId === "nexus_overseer"), "Archived Nexus bolt budget exceeded");
+    for (const [id2, shot] of Object.entries(archive.nexusShotsById ?? {})) {
+      closedRecord(shot, ["id", "sourceEntityId", "position", "previousPosition", "velocity", "createdTick", "expiresTick", "sequence", "ordinal"]);
+      requireContract(id2 === shot.id && id2.startsWith(b.bossId + ":bolt:") && point3(shot.position) && point3(shot.previousPosition) && point3(shot.velocity) && Math.hypot(shot.velocity.x, shot.velocity.y) <= 4.20001, "Invalid original Nexus bolt");
+      requireContract(b.summonEntityIds.includes(shot.sourceEntityId) && state.bossCombat.summonsByEntityId[shot.sourceEntityId]?.kind === "hologram", "Unowned Nexus bolt");
+      safeInteger(shot.createdTick, b.activatedTick, state.tick);
+      requireContract(shot.expiresTick === shot.createdTick + 180 && state.tick < shot.expiresTick, "Expired Nexus shot");
+      safeInteger(shot.sequence, 1);
+      safeInteger(shot.ordinal, 0, 1);
+    }
+    for (const [id2, s] of Object.entries(archive.sporesById)) {
+      closedRecord(s, ["id", "position", "previousPosition", "createdTick", "expiresTick", "sequence", "ordinal", "targetEntityId"]);
+      requireContract(id2 === s.id && id2.startsWith(b.bossId + ":spore:") && point3(s.position) && point3(s.previousPosition) && s.expiresTick === s.createdTick + 360, "Invalid original drifting spore");
+      safeInteger(s.createdTick, b.activatedTick, state.tick);
+      safeInteger(s.sequence, 1, b.abilitySequence);
+      safeInteger(s.ordinal, 0, 2);
+      requireContract(state.tick < s.expiresTick, "Expired archived spore");
+    }
+    for (const [id2, p] of Object.entries(archive.poisonByEntityId)) {
+      closedRecord(p, ["stacks", "lastAppliedTick", "nextTick", "expiresTick"]);
+      requireContract(state.entitiesById[id2]?.team === "party", "Archived poison target mismatch");
+      safeInteger(p.stacks, 1, 5);
+      safeInteger(p.lastAppliedTick, b.activatedTick, state.tick);
+      safeInteger(p.nextTick, 0, state.tick + 300);
+      safeInteger(p.expiresTick, state.tick + 1, state.tick + 240);
+    }
+    for (const [id2, last] of Object.entries(archive.contactByEntityId)) {
+      requireContract(state.entitiesById[id2]?.team === "party", "Archived contact target mismatch");
+      safeInteger(last, 0, state.tick);
+    }
+  }
+  requireContract(Array.isArray(b.pools) && b.pools.length <= (b.bossDefinitionId === "cinderhart" ? 64 : b.archive && b.bossDefinitionId === "corrosive_abomination" ? 96 : 20) && point3(b.lastTrailPosition), "Recovered boss hazard budget invalid");
   for (const p of b.pools) {
     closedRecord(p, ["id", "kind", "position", "radius", "createdTick", "expiresTick", "nextDamageTick"]);
     requireContract(typeof p.id === "string" && p.id.startsWith(b.bossId + ":pool:") && ["acid", "slag", "fire", "void", "time", "collapse", "molten", "gold", "prism"].includes(p.kind) && point3(p.position) && Number.isFinite(p.radius) && p.radius >= 8 && p.radius <= 300, "Recovered boss pool invalid");
