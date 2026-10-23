@@ -31,7 +31,7 @@ export async function buildFortFamilyV1(state,socket,binding,{sha256,runEpisode=
   if(old){p.space.spaceInstanceId=old.spaceInstanceId;p.space.spaceId=old.logicalSpaceId;p.group.spaceInstanceId=old.spaceInstanceId;p.resource.spaceInstanceId=old.spaceInstanceId;for(const a of p.actors)a.residency.spaceInstanceId=old.spaceInstanceId;}
   p.episode.anchorId='site-anchor:'+socket.siteId+':floor:'+i;p.episode.episode=runEpisode-1;p.episode.geography.anchorOrdinal=i;p.episode.snapshot.snapshotId=p.episode.anchorId+'/episode/'+p.episode.episode;p.episode.snapshot.activatedTick=state.tick;p.economy.episode=runEpisode-1;
   for(const a of p.actors)a.ai.interiorNavigation=initialCaveInteriorNavigationD12_3A(state.tick);
-  const leader=recipe.encounter.members[0],brimstone=multi&&hasWorldCombat(state)&&brimstoneFortFloor({familyId:'site-family:fort',sizeTier:tier,floorCount:recipes.length},i),aegis=multi&&hasWorldCombat(state)&&aegisFortFloor({familyId:'site-family:fort',sizeTier:tier,floorCount:recipes.length,socket},i,state);
+  const leader=recipe.encounter.members[0],brimstone=multi&&hasWorldCombat(state)&&brimstoneFortFloor({familyId:'site-family:fort',sizeTier:tier,floorCount:recipes.length},i),restoredTarget=multi&&hasWorldCombat(state)&&recoveredBossForReservation(socket.provenance.reservationId,'fort',i,recipes.length,true),aegis=!restoredTarget&&multi&&hasWorldCombat(state)&&aegisFortFloor({familyId:'site-family:fort',sizeTier:tier,floorCount:recipes.length,socket},i,state);
   if(aegis){
    const a=p.actors[0],profile=AEGIS_PHYSICAL_PROFILE,stats=worldBossStats(p.episode.snapshot.effectiveLevel),budget=aegisHealthBudget(stats.maxHp);
    const safe=(recipe.graph.rooms.find(r=>r.roomId===leader.roomId)?.openCells??[]).map(v=>{const[x,y]=v.split(',').map(Number);return{x:(x+.5)*recipe.collision.tileSize,y:(y+.5)*recipe.collision.tileSize};}).filter(v=>!collidesWithTiles(recipe.collision,v.x,v.y,profile.hullRadius)).sort((x,y)=>Math.hypot(x.x-leader.position.x,x.y-leader.position.y)-Math.hypot(y.x-leader.position.x,y.y-leader.position.y)||x.y-y.y||x.x-y.x);
@@ -57,7 +57,7 @@ export async function buildFortFamilyV1(state,socket,binding,{sha256,runEpisode=
    bosses.push(await createBrimstoneColossus({campaignSeed:state.campaign.seed.seedHex,siteId:socket.siteId,floorId:floorIds[i],groupId:p.group.groupId,roomId:leader.roomId,entityId:a.entityId,homePosition:a.position,activatedTick:state.tick,spaceInstanceId:a.residency.spaceInstanceId,sourceResidencyRevision:a.residency.residencyRevision},{sha256}));
   }
 
-  const restored=!aegis&&!brimstone&&multi&&hasWorldCombat(state)&&recoveredBossForReservation(socket.provenance.reservationId,'fort',i,recipes.length,true);
+  const restored=!aegis&&!brimstone&&restoredTarget;
   let restoredInstalled=false;
   if(restored&&p.actors.length){
    const a=p.actors[0],profile=ARACHNID_TREANT_PROFILE,stats=worldBossStats(p.episode.snapshot.effectiveLevel);
