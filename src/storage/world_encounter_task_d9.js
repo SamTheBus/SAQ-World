@@ -1,5 +1,5 @@
 import{worldRetentionBudgets}from'../shared/content/world_combat_retention_v1.js';
-import {isWoodlandPilotEventAnchor,isWoodlandPilotTreasureAnchor} from '../shared/generation/woodland_event_pilot_v3_7.js';
+import {woodlandPilotEventAlreadyAdmitted,isWoodlandPilotTreasureAnchor} from '../shared/generation/woodland_event_pilot_v3_7.js';
 import {D9_RUNTIME_POLICY as B} from '../shared/content/world_runtime_policy_d9.js';
 import {retainedSiteCountsD9} from '../shared/content/alpha_population_retention_v1.js';
 import {copyWire} from '../shared/contracts/wire.js';
@@ -16,7 +16,7 @@ import {asWorldStreamCaptureD9,validateWorldStreamCaptureD9} from '../shared/con
 export async function prepareWorldEncountersD9(before,{sha256}){
  before=asWorldStreamCaptureD9(before,'encounters');const state=copyWire(before),frames=state.d9World.runtime.frames,placements=[],participants=Object.values(state.playersById).map(p=>{const a=state.entitiesById[p.entityId];return {playerId:p.playerId,alive:a.alive,spaceInstanceId:a.residency.spaceInstanceId,position:a.residency.spaceInstanceId===state.overworldInstanceId?localFramePositionD9(a.position,frames):{chunkX:'0',chunkY:'0',localX:0,localY:0}};});
  const candidates=[];
- for(const chunk of state.d9World.runtime.chunks)for(const anchor of chunk.anchors){const id='ordinary:'+anchor.id.split(':').at(-1),old=state.d9World.episodes[id];if(isWoodlandPilotEventAnchor(anchor)&&old)continue;if(state.groupsById[id]&&!old?.renewalEligible)continue;
+ for(const chunk of state.d9World.runtime.chunks)for(const anchor of chunk.anchors){const id='ordinary:'+anchor.id.split(':').at(-1),old=state.d9World.episodes[id];if(woodlandPilotEventAlreadyAdmitted(anchor,old))continue;if(state.groupsById[id]&&!old?.renewalEligible)continue;
   const world=normalizeWorldPosition({chunkX:chunk.chunkX,chunkY:chunk.chunkY,localX:anchor.position.x,localY:anchor.position.y}),local=projectToLocalFrameD9(world,frames);if(!local)continue;
   const distances=Object.values(state.playersById).map(p=>state.entitiesById[p.entityId]).filter(a=>a.alive&&a.residency.spaceInstanceId===state.overworldInstanceId).map(a=>Math.hypot(a.position.x-local.x,a.position.y-local.y)),distance=Math.min(...distances);
   if(distance<=P.prepareRadius)candidates.push({chunk,anchor,id,world,distance,renewal:Boolean(old)});
