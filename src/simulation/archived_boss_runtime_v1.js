@@ -22,7 +22,7 @@ export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awak
  };
  function beginRush(b,a,target,collision){
   const conf=cfg(b)?.rush;if(!conf)return false;
-  const end=originalCinderRushEndpoint(collision,a.position,target,Math.min(a.hullRadius,28));
+  const end=originalCinderRushEndpoint(collision,a.position,target,a.hullRadius);
   b.archive.charge={startedTick:state.tick,endsTick:state.tick+conf.durationTicks,
    originPosition:point(a.position),endPosition:end,hitEntityIds:[],lastFirePosition:point(a.position)};
   b.lastAction={ability:'fire_charge',resolvedTick:state.tick,targetPosition:point(target),hitEntityIds:[]};
@@ -35,7 +35,7 @@ export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awak
   const elapsed=Math.max(0,state.tick-r.startedTick),q=Math.min(1,elapsed/conf.durationTicks);
   const prev=point(a.position),next={x:r.originPosition.x+(r.endPosition.x-r.originPosition.x)*q,
    y:r.originPosition.y+(r.endPosition.y-r.originPosition.y)*q};
-  if(sweptPathClear(c,prev,next,Math.min(a.hullRadius,28)))a.position=next;
+  if(sweptPathClear(c,prev,next,a.hullRadius)){a.position=next;if(range(prev,next)>.001)a.movedLastTick=true;}
   const step=range(prev,a.position);
   for(const t of targetsIn(b,all)){
    if(r.hitEntityIds.includes(t.entityId)||segmentDistance(t.position,prev,a.position)>conf.radius+(t.hullRadius??9))continue;
