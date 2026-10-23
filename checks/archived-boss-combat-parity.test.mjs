@@ -113,3 +113,55 @@ test('Original ability timing and Void single phase apply to freshly activated n
   }
  }
 });
+
+
+test('Nexus original holograms physically move and fire saved projectiles; no instant hits',async()=>{
+ const env=await setup('nexus_overseer');
+ const {state,b,controller,boss,hero,hits}=env;
+ const rows=[];
+ for(let i=0;i<2;i++){
+  const eid=id(10+i),position={x:345+i*25,y:440+i*30};
+  const a=actor(eid,'hostile',position);
+  state.entitiesById[eid]=a;
+  state.groupsById[group].entityIds.push(eid);
+  const s={version:'recovered-boss-summon-v1',entityId:eid,bossId:b.bossId,groupId:group,ordinal:i,
+   homePosition:{...position},kind:'hologram',stage:'hatched',activatedTick:0,hatchTick:0,defeatedTick:null};
+  state.bossCombat.summonsByEntityId[eid]=s;
+  b.summonEntityIds.push(eid);
+  rows.push(a);
+ }
+ b.phase=2;b.phase2Triggered=true;b.nextActionTick=2000;
+ let sawProjectile=false;
+ for(let t=1;t<=180;t++){
+  step(env,t);
+  sawProjectile ||= Object.keys(b.archive.nexusShotsById).length>0;
+ }
+ assert.equal(sawProjectile,true,'Original holograms spawn real persistent moving bullets');
+ assert.ok(rows.some(a=>Math.hypot(a.position.x-345,a.position.y-440)>0),'Decoys are real moving actors');
+ assert.ok(hits.some(x=>x.mechanic==='nexus_decoy_bolt'),'Damage comes from projectile impact, not the old instant attack');
+ assert.ok(!hits.some(x=>x.mechanic==='recovered_hologram_shot'),'No reconstructed instant hits allowed');
+});
+
+test('Chronos original 35px field postpones only the next swing, not the current one',async()=>{
+ const env=await setup('chronos_arbitrator',{heroPosition:{x:470,y:420},bossPosition:{x:420,y:420}});
+ const {state,b,hero,controller}=env;
+ b.pools.push({id:b.bossId+':pool:50:0:1',kind:'time',position:{x:470,y:420},radius:35,
+  createdTick:50,expiresTick:470,nextDamageTick:95});
+ state.primary={completedById:{prior:{sourceEntityId:hero.entityId,startedTick:75,completedTick:102}}};
+ state.tick=110;
+ assert.equal(controller.primaryReady(hero.entityId),false,'Original 27→45 cadence delays the next attack');
+ state.tick=120;
+ assert.equal(controller.primaryReady(hero.entityId),true,'Delay ends at 45 ticks from prior attack start');
+ hero.position={x:680,y:420};state.tick=110;
+ assert.equal(controller.primaryReady(hero.entityId),true,'Leaving the field restores normal attack availability');
+});
+test('Chronos phase-two rewind starts immediately at the original health threshold',async()=>{
+ const env=await setup('chronos_arbitrator');
+ env.boss.hp=combatInteger(700);env.b.nextActionTick=500;
+ step(env,1);
+ assert.equal(env.b.phase,2);
+ assert.equal(env.b.activeAbility,'chronos_rewind');
+ assert.equal(env.b.actionState,'telegraphing');
+ assert.ok(BigInt(env.b.shieldHp)>0n,'Rewind has independently breakable channel shield');
+ assert.equal(env.b.resolvesTick,241);
+});
