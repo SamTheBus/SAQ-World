@@ -1,0 +1,57 @@
+name: Build SAQ World playable-only release
+on:
+  push:
+    branches: [source]
+    paths:
+      - 'src/**'
+      - 'assets/**'
+      - 'index.html'
+      - 'world.css'
+      - 'manifest.webmanifest'
+      - 'package.json'
+      - 'tools/**'
+      - '.github/workflows/compact-publish.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out complete development source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install bundler
+        run: npm install --no-audit --no-fund
+      - name: Build playable-only directory
+        run: npm run build:playable
+      - name: Verify compact inventory and hashes
+        run: npm run verify:playable
+      - name: Install headless browser
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Load the actual game in a browser
+        run: npm run smoke:playable
+      - name: Prepare production candidate without publishing to main yet
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git worktree add -B compact-release /tmp/saq-world-compact-release origin/main
+          cd /tmp/saq-world-compact-release
+          git rm -qr --ignore-unmatch .
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a "$GITHUB_WORKSPACE/dist/." .
+          git add -A
+          git -c user.email=41898282+github-actions[bot]@users.noreply.github.com -c user.name=github-actions[bot] commit -m "Publish verified playable-only SAQ World bundle"
+          git push --force origin HEAD:refs/heads/production-candidate
+          echo "Built game files: $(find . -type f -not -path './.git/*' | wc -l)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Candidate commit: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
