@@ -1,0 +1,233 @@
+import {combatInteger,compareCombat,multiplyCombat,addCombat,minCombat,subtractCombat} from '../shared/contracts/combat_amount.js';
+import {copyWire} from '../shared/contracts/wire.js';
+import {recoveredBossRecord} from '../shared/contracts/recovered_boss_v1.js';
+import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
+import {collidesWithTiles} from '../shared/rules/world_geometry.js';
+import {moveAegisAffectedActor} from './aegis_goliath_v1.js';
+
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const direction=(a,b)=>{const d=dist(a,b)||1;return {x:(b.x-a.x)/d,y:(b.y-a.y)/d};};
+const roll=(seed,seq,salt=0)=>{let v=(seed^Math.imul(seq+1,0x9e3779b1)^salt)>>>0;v=Math.imul(v^(v>>>16),0x85ebca6b)>>>0;v=Math.imul(v^(v>>>13),0xc2b2ae35)>>>0;return ((v^(v>>>16))>>>0)/4294967296;};
+const clear=b=>{b.activeAbility=null;b.targetEntityId=null;b.targetPosition=null;b.telegraphStartedTick=null;b.resolvesTick=null;};
+const stage=(row,a,state)=>{if(row.stage!=='defeated'&&!a?.alive){row.stage='defeated';row.defeatedTick=state.tick;}};
+const collisionFree=(c,p,r=15)=>!collidesWithTiles(c,p.x,p.y,r);
+const lineFree=(c,p,q)=>{const d=dist(p,q),n=Math.max(1,Math.ceil(d/7));for(let i=0;i<=n;i++){const t=i/n;if(!collisionFree(c,{x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t},2))return false;}return true;};
+const centerDamage=(ability)=>({eye_lance:16,singularity:20,corrosive_slam:18,spore_storm:11,acid_spill:10,
+ chronos_slam:18,prism_collapse:17,control_glitch:9,prism_slam:18,vault_crush:20,gold_fall:14,
+ coin_barrage:14,gold_rush:16,gilded_lasso:12,scarlet_fire:17,hooked_tail:20,arena_collapse:16,
+ fire_charge:19,landing_fire:16})[ability]??12;
+const attackRadius=(ability)=>({eye_lance:24,singularity:95,corrosive_slam:72,spore_storm:105,acid_spill:65,
+ chronos_slam:65,prism_collapse:120,control_glitch:180,prism_slam:68,vault_crush:70,gold_fall:75,
+ coin_barrage:220,gold_rush:130,gilded_lasso:75,scarlet_fire:115,hooked_tail:75,arena_collapse:200,
+ fire_charge:110,landing_fire:90})[ability]??75;
+
+export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()=>true,lineClear=()=>true}={}){
+ const observed=new Map(),stats={casts:0,hits:0,summons:0,phaseTwos:0,interrupts:0,poolHits:0};
+ const root=()=>state.bossCombat;
+ const records=()=>Object.values(root()?.bossesByEntityId??{}).filter(recoveredBossRecord).sort((a,b)=>a.bossId.localeCompare(b.bossId));
+ const record=id=>{const b=root()?.bossesByEntityId?.[id];return recoveredBossRecord(b)?b:null;};
+ const summon=id=>{const row=root()?.summonsByEntityId?.[id];return row?.version==='recovered-boss-summon-v1'?row:null;};
+ const players=a=>Object.values(state.playersById).filter(p=>p.connectionStatus==='connected').map(p=>state.entitiesById[p.entityId]).filter(t=>t?.alive&&t.residency.spaceInstanceId===a.residency.spaceInstanceId&&eligible(a,t)).sort((x,y)=>x.entityId.localeCompare(y.entityId));
+ const bossesForPlayer=id=>records().filter(b=>b.statusesByEntityId[id]?.expiresTick>state.tick);
+ function pool(b,position,kind,radius,lifetime){
+  if(b.pools.length>=20)b.pools.shift();
+  const id=b.bossId+':pool:'+state.tick+':'+b.pools.length+':'+b.abilitySequence;
+  b.pools.push({id,kind,position:copyWire(position),radius,createdTick:state.tick,expiresTick:state.tick+lifetime,nextDamageTick:state.tick+45});
+ }
+ function effect(b,target,kind,duration,multiplier=1){
+  const previous=b.statusesByEntityId[target.entityId];
+  b.statusesByEntityId[target.entityId]={kind,startedTick:previous?.kind===kind?previous.startedTick:state.tick,
+   expiresTick:Math.max(previous?.kind===kind?previous.expiresTick:0,state.tick+duration),movementMultiplier:multiplier};
+ }
+ function hit(a,t,b,ability,scale=10){
+  const damage=combatInteger(multiplyCombat(a.attackDamage,scale,10),'round');
+  const applied=applyDirectDamage(a,t,damage,'recovered_'+ability,{sourceActionSequence:b.abilitySequence});
+  if(applied!==false&&applied!==undefined){stats.hits++;return true;}
+  return false;
+ }
+ function awaken(b,count=1){
+  let awakened=0;
+  for(const id of b.summonEntityIds){
+   if(awakened>=count)break;
+   const s=summon(id),a=state.entitiesById[id];
+   if(s?.stage!=='dormant'||!a?.alive)continue;
+   s.stage='hatched';s.activatedTick=state.tick;s.hatchTick=state.tick;
+   a.attackTimer=0;
+   awakened++;stats.summons++;
+  }
+  return awakened;
+ }
+ function sync(b,a){
+  if(!a?.alive||a.residency.spaceInstanceId!==b.spaceInstanceId||a.residency.residencyRevision!==b.sourceResidencyRevision){
+   if(b.actionState!=='defeated'){clear(b);b.actionState='defeated';}
+   b.pools=[];b.statusesByEntityId={};
+   for(const id of b.summonEntityIds){
+    const s=summon(id),m=state.entitiesById[id];if(!s||!m)continue;
+    if(s.stage==='dormant'&&m.alive){m.alive=false;m.hp=combatInteger(0);s.stage='defeated';s.activatedTick=state.tick;s.hatchTick=state.tick;s.defeatedTick=state.tick;}
+   }
+   return false;
+  }
+  for(const id of b.summonEntityIds)stage(summon(id),state.entitiesById[id],state);
+  if(b.actionState==='dazed'&&state.tick>=b.dazedUntilTick){b.actionState='idle';b.dazedUntilTick=null;}
+  return true;
+ }
+ function enterPhaseTwo(b,a){
+  const cutoff=b.bossDefinitionId==='chronos_arbitrator'?4:5;
+  if(b.phase!==1||compareCombat(a.hp,multiplyCombat(a.maxHp,cutoff,10))>0)return;
+  b.phase=2;b.phaseTwoTriggered=true;stats.phaseTwos++;
+  if(b.bossDefinitionId==='nexus_overseer')awaken(b,2);
+  if(b.bossDefinitionId==='chronos_arbitrator'){
+   b.nextActionTick=state.tick;
+  }
+ }
+ function choose(b,a,target){
+  const id=b.bossDefinitionId,n=b.abilitySequence+1,r=roll(b.selectionSeed,n,0x51ed270b);
+  if(id==='corrosive_abomination')return b.phase===2&&r<.5?'spore_storm':r<.82?'corrosive_slam':'acid_spill';
+  if(id==='void_overseer')return r<.48?'eye_lance':'singularity';
+  if(id==='chronos_arbitrator')return b.phase===2&&b.chunkStep===0?'chronos_rewind':r<.5?'chronos_slam':'time_field';
+  if(id==='nexus_overseer')return r<.35?'control_glitch':r<.74?'prism_collapse':'prism_slam';
+  if(id==='gilded_vault_keeper')return b.phase===2&&r<.32?'taxation':r<.64?'vault_crush':'gold_fall';
+  if(id==='marcus')return b.phase===2&&r<.23?'molten_shield':r<.49?'coin_barrage':r<.76?'gold_rush':'gilded_lasso';
+  if(id==='hooktail')return b.phase===2&&r<.4?'arena_collapse':r<.75?'scarlet_fire':'hooked_tail';
+  if(id==='cinderhart')return r<.58?'fire_charge':'landing_fire';
+  return null;
+ }
+ function beginAbility(b,a,target,ability){
+  const cfg=recoveredBossForId(b.bossDefinitionId).attacks;
+  b.actionState='telegraphing';b.abilitySequence++;b.activeAbility=ability;b.targetEntityId=target.entityId;
+  b.targetPosition=copyWire(target.position);b.telegraphStartedTick=state.tick;b.resolvesTick=state.tick+cfg[ability];
+  a.movementIntent={x:0,y:0};stats.casts++;
+  if(ability==='chronos_rewind'){b.chunkStep=1;b.shieldMaxHp=combatInteger(multiplyCombat(a.maxHp,15,100),'round').m===0?'1':String(Math.max(1,Math.floor(Number(multiplyCombat(a.maxHp,15,100).n)/Number(multiplyCombat(a.maxHp,15,100).d))));b.shieldHp=b.shieldMaxHp;}
+  if(['taxation','molten_shield'].includes(ability)){
+   const frac=multiplyCombat(a.maxHp,12,100);b.shieldMaxHp=String(Math.max(1,Math.ceil(Number(frac.n)/Number(frac.d))));b.shieldHp=b.shieldMaxHp;
+  }
+ }
+ function daze(b,ticks=210){
+  clear(b);b.shieldHp='0';b.actionState='dazed';b.dazedUntilTick=state.tick+ticks;
+  b.shieldBrokenTick=state.tick;b.nextActionTick=b.dazedUntilTick;stats.interrupts++;
+ }
+ function resolve(b,a,targets){
+  const ability=b.activeAbility,pos=copyWire(b.targetPosition),collision=state.spacesByInstanceId[b.spaceInstanceId].collision;
+  const hits=[],dmg=centerDamage(ability),radius=attackRadius(ability);
+  if(ability==='chronos_rewind'){
+   const restore=combatInteger(multiplyCombat(a.maxHp,2,10),'round');
+   a.hp=combatInteger(minCombat(a.maxHp,addCombat(a.hp,restore)),'round');
+  } else if(ability==='taxation'){
+   a.hp=combatInteger(minCombat(a.maxHp,addCombat(a.hp,multiplyCombat(a.maxHp,8,100))),'round');
+   b.stolenGold=String(BigInt(b.stolenGold)+8n);
+  } else if(ability==='molten_shield'){
+   pool(b,a.position,'molten',55,240);
+  } else {
+   for(const t of targets){
+    const d=dist(t.position,ability==='corrosive_slam'||ability==='chronos_slam'||ability==='prism_slam'||ability==='vault_crush'||ability==='hooked_tail'?a.position:pos);
+    let inside=d<=radius;
+    if(ability==='eye_lance') {
+     const v=direction(a.position,pos),p={x:t.position.x-a.position.x,y:t.position.y-a.position.y};
+     const along=p.x*v.x+p.y*v.y,lateral=Math.abs(p.x*v.y-p.y*v.x);inside=along>=0&&along<=260&&lateral<22;
+    }
+    if(ability==='arena_collapse')inside=Math.abs(dist(t.position,b.homePosition)-(205-b.collapseStep*26))<=23;
+    if(!inside||!lineFree(collision,a.position,t.position)||!lineClear(a,t))continue;
+    if(hit(a,t,b,ability,dmg))hits.push(t.entityId);
+    if(ability==='control_glitch'&&t.alive)effect(b,t,'control_glitch',180,.94);
+    if(ability==='gilded_lasso'&&t.alive)effect(b,t,'lasso',90,.5);
+   }
+  }
+  if(ability==='spore_storm')for(let i=0;i<3;i++){
+   const angle=i*2*Math.PI/3+roll(b.selectionSeed,b.abilitySequence,i)*.35;
+   pool(b,{x:pos.x+Math.cos(angle)*43,y:pos.y+Math.sin(angle)*43},'acid',27,240);
+  }
+  if(ability==='acid_spill')pool(b,pos,'acid',54,480);
+  if(ability==='time_field')pool(b,pos,'time',105,420);
+  if(ability==='singularity')pool(b,pos,'void',93,90);
+  if(ability==='gold_fall')for(let i=0;i<3;i++)pool(b,{x:pos.x+Math.cos(i*2*Math.PI/3)*62,y:pos.y+Math.sin(i*2*Math.PI/3)*62},'gold',22,180);
+  if(ability==='prism_collapse')pool(b,pos,'void',90,180);
+  if(ability==='gold_rush')pool(b,a.position,'molten',45,180);
+  if(ability==='scarlet_fire')for(let i=0;i<3;i++){const v=direction(a.position,pos);pool(b,{x:a.position.x+v.x*(40+i*32),y:a.position.y+v.y*(40+i*32)},'fire',28,180);}
+  if(ability==='arena_collapse'){b.collapseStep=Math.min(7,b.collapseStep+1);pool(b,b.homePosition,'collapse',205-b.collapseStep*26,600);}
+  if(ability==='fire_charge'){
+   const v=direction(a.position,pos);
+   for(let i=1;i<=5;i++)pool(b,{x:a.position.x+v.x*i*23,y:a.position.y+v.y*i*23},'fire',20,180);
+   const destination={x:a.position.x+v.x*114,y:a.position.y+v.y*114};
+   if(collisionFree(collision,destination,a.hullRadius))a.position=destination;
+  }
+  if(ability==='landing_fire')pool(b,pos,'fire',75,300);
+  b.lastAction={ability,resolvedTick:state.tick,targetPosition:pos,hitEntityIds:hits};clear(b);
+  b.shieldHp='0';b.shieldMaxHp='0';b.actionState='idle';b.nextActionTick=state.tick+(b.phase===2?90:120);
+ }
+ function updatePools(b,a,targets,c){
+  b.pools=b.pools.filter(p=>p.expiresTick>state.tick);
+  for(const p of b.pools){
+   if(p.kind==='time')for(const t of targets)if(dist(t.position,p.position)<p.radius&&lineFree(c,p.position,t.position)){
+    const prior=b.statusesByEntityId[t.entityId];
+    b.statusesByEntityId[t.entityId]={kind:'time_slow',startedTick:prior?.kind==='time_slow'?prior.startedTick:state.tick,expiresTick:state.tick+6,movementMultiplier:.6};
+   }
+   if(state.tick<p.nextDamageTick)continue;
+   p.nextDamageTick=Math.min(p.expiresTick,state.tick+45);
+   if(p.kind==='time')continue;
+   for(const t of targets){
+    const d=dist(t.position,p.position);
+    const inside=p.kind==='collapse'?Math.abs(d-p.radius)<20:d<p.radius+t.hullRadius*.3;
+    if(inside&&lineFree(c,p.position,t.position)){if(hit(a,t,b,p.kind,4))stats.poolHits++;}
+   }
+  }
+ }
+ function advance(){
+  for(const b of records()){
+   const a=state.entitiesById[b.entityId];if(!sync(b,a))continue;
+   const c=state.spacesByInstanceId[b.spaceInstanceId]?.collision;if(!c)continue;
+   const targets=players(a);updatePools(b,a,targets,c);
+   for(const[id,s]of Object.entries(b.statusesByEntityId))if(state.tick>=s.expiresTick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
+   enterPhaseTwo(b,a);
+   if(b.bossDefinitionId==='corrosive_abomination'){
+    for(let step=b.chunkStep+1;step<=12;step++){
+     if(compareCombat(a.hp,multiplyCombat(a.maxHp,100-step*8,100))>0)break;
+     b.chunkStep=step;awaken(b,1);
+     pool(b,a.position,step%3===0?'slag':'acid',step%3===0?28:20,step%3===0?240:180);
+    }
+    if(state.tick%24===0&&dist(a.position,b.lastTrailPosition)>12){pool(b,a.position,'acid',19,480);b.lastTrailPosition=copyWire(a.position);}
+   }
+   if(b.actionState==='dazed')continue;
+   if(b.actionState==='telegraphing'){
+    if(b.activeAbility==='singularity')for(const t of targets){
+     const d=dist(t.position,a.position);if(d<230&&d>17&&lineFree(c,t.position,a.position)){
+      const v=direction(t.position,a.position);moveAegisAffectedActor(c,t,{x:v.x*1.8,y:v.y*1.8});
+     }
+    }
+    if(state.tick>=b.resolvesTick)resolve(b,a,targets);
+    continue;
+   }
+   if(state.tick<b.nextActionTick)continue;
+   const preferred=targets.find(t=>t.entityId===observed.get(a.entityId));
+   const target=preferred??targets.filter(t=>lineClear(a,t)).sort((x,y)=>dist(a.position,x.position)-dist(a.position,y.position)||x.entityId.localeCompare(y.entityId))[0];
+   if(!target||dist(a.position,target.position)>280||!lineClear(a,target))continue;
+   const ability=choose(b,a,target);if(ability)beginAbility(b,a,target,ability);
+  }
+  observed.clear();
+ }
+ function beginTick(){for(const b of records()){
+  b.pools=b.pools.filter(p=>p.expiresTick>state.tick);
+  for(const[id,s] of Object.entries(b.statusesByEntityId))if(s.expiresTick<=state.tick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
+ }}
+ function reconcile(){for(const b of records())sync(b,state.entitiesById[b.entityId]);beginTick();}
+ function frozen(id){const s=summon(id);if(s)return s.stage==='dormant';const b=record(id);return Boolean(b&&['telegraphing','dazed','defeated'].includes(b.actionState));}
+ function movementMultiplier(id){
+  const b=record(id);if(b)return b.actionState==='dazed'?0:b.phase===2?1.2:.8;
+  const s=summon(id);if(s&&s.stage==='dormant')return 0;
+  let value=1;
+  for(const boss of bossesForPlayer(id))value=Math.min(value,boss.statusesByEntityId[id].movementMultiplier);
+  return value;
+ }
+ function mitigateIncoming(target,damage,source,attribution){
+  const b=record(target.entityId);if(!b)return null;
+  if(b.bossDefinitionId==='nexus_overseer'&&b.phase===2&&b.summonEntityIds.some(id=>state.entitiesById[id]?.alive&&summon(id)?.stage==='hatched'))return {damage:combatInteger(0),shielded:true};
+  if(BigInt(b.shieldHp)>0n){
+   const left=BigInt(b.shieldHp)-BigInt(Math.ceil(Number(damage?.m??0)*Math.pow(10,Number(damage?.e??0))));
+   if(left<=0n){daze(b,b.bossDefinitionId==='gilded_vault_keeper'?210:210);return {damage:combatInteger(0),shielded:true};}
+   b.shieldHp=String(left);return {damage:combatInteger(0),shielded:true};
+  }
+  return {damage,shielded:false};
+ }
+ return Object.freeze({advance,beginTick,reconcile,owns:id=>Boolean(record(id)||summon(id)),frozen,
+  observeTarget:(a,t)=>{if(record(a.entityId))observed.set(a.entityId,t?.entityId);},
+  movementMultiplier,mitigateIncoming,inspect:()=>({...stats,bossCount:records().length})});
+}
