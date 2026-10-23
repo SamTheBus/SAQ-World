@@ -14,6 +14,8 @@ export const WOODLAND_EVENT_PILOT_V3_7=Object.freeze([
 const ordinals=new Set(WOODLAND_EVENT_PILOT_V3_7.map(e=>e.ordinal));
 export const isWoodlandPilotEventAnchor=anchor=>anchor?.combatVersion===WORLD_COMBAT_VERSION&&ordinals.has(anchor.ordinal)&&typeof anchor.id==='string'&&anchor.id.startsWith('anchor:');
 export const isWoodlandPilotTreasureAnchor=anchor=>isWoodlandPilotEventAnchor(anchor)&&anchor.ordinal===39;
+// A cold-paged or restored episode must not be renewed as a fresh clearing.
+export const woodlandPilotEventAlreadyAdmitted=(anchor,episode)=>isWoodlandPilotEventAnchor(anchor)&&Boolean(episode);
 
 // V2's authored positions use tile coordinates; D9 paging uses chunk coordinates
 // offset by 1024. Keep the transformation explicit so markers and actors coincide.
