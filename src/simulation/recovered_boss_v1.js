@@ -342,7 +342,22 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   }
   return {damage,shielded:false};
  }
- return Object.freeze({advance,beginTick,reconcile,owns:id=>Boolean(record(id)||summon(id)),frozen,
+ function primaryReady(entityId){
+  const hero=state.entitiesById[entityId];
+  if(!hero?.alive||!state.primary?.completedById)return true;
+  const slowed=records().some(b=>b.bossDefinitionId==='chronos_arbitrator'&&b.archive&&b.spaceInstanceId===hero.residency.spaceInstanceId&&
+   b.pools.some(p=>p.kind==='time'&&p.createdTick<state.tick&&p.expiresTick>state.tick&&
+    dist(hero.position,p.position)<=p.radius+(hero.hullRadius??9)));
+  if(!slowed)return true;
+  // Original time dilation delays the NEXT swing. The current active sword
+  // animation is allowed to finish unchanged; then ~1.67x attack interval.
+  const last=Object.values(state.primary.completedById).filter(a=>a.sourceEntityId===entityId&&a.completedTick!==null).sort((a,b)=>b.completedTick-a.completedTick)[0];
+  if(!last)return true;
+  const elapsed=Math.max(1,last.completedTick-last.startedTick);
+  const additional=Math.max(1,Math.round(elapsed*2/3));
+  return state.tick>=last.completedTick+additional;
+ }
+ return Object.freeze({advance,beginTick,reconcile,owns:id=>Boolean(record(id)||summon(id)),frozen,primaryReady,
   observeTarget:(a,t)=>{if(record(a.entityId))observed.set(a.entityId,t?.entityId);},
   movementMultiplier,mitigateIncoming,inspect:()=>({...stats,bossCount:records().length})});
 }
