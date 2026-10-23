@@ -28,7 +28,17 @@ try {
   }));
   assert.equal(workerReady, 'ready', 'Worker bootstrap failed: ' + workerReady);
   await page.waitForFunction(() => window.__SAQ_STARTUP_LOADING_V1__?.events().some(e => e.step >= 2), { timeout: 45000 });
-  await page.waitForTimeout(8000);
+  // Prove that the world reached its first real playable frame, not just a loading screen.
+  try {
+    await page.waitForFunction(() => window.__SAQ_WORLD_STARTUP_TIMINGS__ ||
+      (!document.getElementById('startup-recovery')?.hidden &&
+       /World could not start|Unable to start/i.test(document.getElementById('startup-recovery-title')?.textContent ?? '')),
+      null, { timeout: 160000, polling: 1000 });
+  } catch (error) {
+    console.log('Startup timed out: ' + JSON.stringify(await page.evaluate(() =>
+      window.__SAQ_STARTUP_LOADING_V1__?.events().slice(-10))));
+    throw error;
+  }
   const state = await page.evaluate(() => ({
     stage: document.getElementById('world-status')?.textContent,
     recoveryTitle: document.getElementById('startup-recovery-title')?.textContent,
@@ -36,11 +46,13 @@ try {
     recoveryVisible: !document.getElementById('startup-recovery')?.hidden,
     loadingHidden: document.getElementById('saq-startup-scene')?.hidden,
     setupEvents: window.__SAQ_STARTUP_LOADING_V1__?.events().slice(-6),
+    completed: window.__SAQ_WORLD_STARTUP_TIMINGS__?.failed !== true && !!window.__SAQ_WORLD_STARTUP_TIMINGS__,
     canvas: !!document.getElementById('world-view')
   }));
   console.log('Startup observation ' + JSON.stringify({ state, exceptions, missing, consoleErrors }));
   assert(!(state.recoveryVisible && /World could not start|Unable to start/i.test(state.recoveryTitle ?? '')), 'Visible startup recovery: ' + JSON.stringify(state));
   assert(!/Unable to start/i.test(state.stage ?? ''), 'Startup failure: ' + JSON.stringify(state));
+  assert(state.completed && state.loadingHidden === true, 'No playable frame: ' + JSON.stringify(state));
   assert.deepEqual(missing, [], 'Missing production resources');
   assert.deepEqual(exceptions, [], 'Uncaught browser errors');
   console.log('BROWSER SMOKE PASS ' + JSON.stringify({ workerReady, state, missing, exceptions, consoleErrors }));
