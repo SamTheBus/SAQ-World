@@ -130,14 +130,14 @@ test('Nexus original holograms physically move and fire saved projectiles; no in
   b.summonEntityIds.push(eid);
   rows.push(a);
  }
- b.phase=2;b.phase2Triggered=true;b.nextActionTick=2000;
+ b.phase=2;b.phase2Triggered=true;b.nextActionTick=400;
  let sawProjectile=false;
  for(let t=1;t<=180;t++){
   step(env,t);
   sawProjectile ||= Object.keys(b.archive.nexusShotsById).length>0;
  }
  assert.equal(sawProjectile,true,'Original holograms spawn real persistent moving bullets');
- assert.ok(rows.some(a=>Math.hypot(a.position.x-345,a.position.y-440)>0),'Decoys are real moving actors');
+ assert.ok(rows.some((a,i)=>Math.hypot(a.position.x-(345+i*25),a.position.y-(440+i*30))>0),'Decoys are real moving actors');
  assert.ok(hits.some(x=>x.mechanic==='nexus_decoy_bolt'),'Damage comes from projectile impact, not the old instant attack');
  assert.ok(!hits.some(x=>x.mechanic==='recovered_hologram_shot'),'No reconstructed instant hits allowed');
 });
