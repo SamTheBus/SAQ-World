@@ -27,7 +27,9 @@ test('provoking the group restores full retaliation; close combat and elites are
  assert.equal(wildernessPackPursuitAllowed(state,group,actors.f,hero),false);
  actors.f.hp='99';
  assert.equal(wildernessPackPursuitAllowed(state,group,actors.f,hero),true);
- actors.f.hp='100';actors.f.position={x:40,y:0};
+ actors.f.hp='100';actors.f.alive=false;
+ assert.equal(wildernessPackPursuitAllowed(state,group,actors.e,hero),true,'a one-shot pack kill must provoke every survivor');
+ actors.f.alive=true;actors.f.position={x:40,y:0};
  assert.equal(wildernessPackPursuitAllowed(state,group,actors.f,hero),true);
  actors.f.position={x:280,y:0};actors.f.ai.melee.phase='windup';
  assert.equal(wildernessPackPursuitAllowed(state,group,actors.f,hero),true);

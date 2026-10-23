@@ -21,7 +21,7 @@ export function wildernessPackPursuitAllowed(state,group,source,target,eligible=
  // Provoked packs fully retaliate. This also prevents ranged hit-and-run cheese.
  if(group.entityIds.some(id=>{
    const member=state.entitiesById[id];
-   return member?.alive&&compareCombat(member.hp,member.maxHp)<0;
+   return member&&!member.alive||member?.alive&&compareCombat(member.hp,member.maxHp)<0;
  }))return true;
  const d=Math.hypot(source.position.x-target.position.x,source.position.y-target.position.y);
  // Never deactivate a genuine close attacker or interrupt telegraphed melee.

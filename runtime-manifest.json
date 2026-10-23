@@ -1,8 +1,8 @@
 {
-  "runtimeId": "93a8c51d0999f2c6",
-  "runtimeSha256": "93a8c51d0999f2c609ab8f60f201dc6e5b458df9f5619660eb15c7c875420d81",
-  "parentRuntimeId": "b25caa83571b0191",
-  "reviewRevision": 85,
+  "runtimeId": "7c4fc4037cbecfa8",
+  "runtimeSha256": "7c4fc4037cbecfa8a8ab6838ae1b46fe6e5181b9cde23133ff814fe2d2822195",
+  "parentRuntimeId": "93a8c51d0999f2c6",
+  "reviewRevision": 86,
   "changedRuntimeFiles": [
     "checks/startup-module-graph.test.mjs",
     "checks/startup-stage1-visual-v2.test.mjs",
@@ -668,8 +668,8 @@
     },
     {
       "path": "WILDERNESS-V3-4-STARTER-PACK-PACING.md",
-      "bytes": 1318,
-      "sha256": "d6145c0fed9303e310dd81cba4212c49c2fce1f36390922fbe1e0a801f4a92af"
+      "bytes": 1343,
+      "sha256": "598f361bfc5db1042e4675ec6e8226561ff6f8af04bf993b47a747be9ddb9edc"
     },
     {
       "path": "WILDERNESS-V3-STAGE1-COMBAT-LOADING.md",
@@ -813,8 +813,8 @@
     },
     {
       "path": "checks/startup-module-graph.test.mjs",
-      "bytes": 4430,
-      "sha256": "bbc64909cbf90e4593177c72633eb66cb9ce2f3b0ad825c1e80b13c6a917402d"
+      "bytes": 4434,
+      "sha256": "1caf440e4ccef4659b00864c6f544c9869f8d21240d462bd84c4b0fba2aac3ea"
     },
     {
       "path": "checks/startup-stage1-combat-v3.test.mjs",
@@ -848,8 +848,8 @@
     },
     {
       "path": "checks/wilderness-v3-4-pack-pacing.test.mjs",
-      "bytes": 4309,
-      "sha256": "13f67bc396a4f978ad93a518222101428c24d24c11a5584b5fd8cf74cf2fc8ac"
+      "bytes": 4480,
+      "sha256": "4aa09798f2b88bccbd4d2d6ffdb7cca28841d83c1646a0102bbf3703da926ef1"
     },
     {
       "path": "checks/wilderness-v3-database-routing.test.mjs",
@@ -858,8 +858,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 35004,
-      "sha256": "fe3a95edc97c6578944d4473791053345eec3eadc8d3dcf3286fe9b22ea98c29"
+      "bytes": 35008,
+      "sha256": "24cfedffae57572f44cc1a3505c6646255614b4f43f39c9d483f2be0b9ac9acd"
     },
     {
       "path": "manifest.json",
@@ -2213,8 +2213,8 @@
     },
     {
       "path": "src/shared/content/wilderness_pack_pacing_v3_4.js",
-      "bytes": 2551,
-      "sha256": "a0e54963f10936ea277a7462e45d8876a7b2b80453656bab971f8b5d37a7e42a"
+      "bytes": 2574,
+      "sha256": "efe3795dadd41e0109529ffeef7b9b1e1909f2f005052f2e011b1849e9f3001b"
     },
     {
       "path": "src/shared/content/wilderness_reservations_v2.js",
