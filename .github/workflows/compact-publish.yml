@@ -10,6 +10,7 @@ on:
       - 'manifest.webmanifest'
       - 'package.json'
       - 'tools/**'
+      - 'checks/**'
       - '.github/workflows/compact-publish.yml'
   workflow_dispatch:
 
@@ -33,6 +34,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Verify Woodland V3.7 native encounter placement
         run: node --test checks/woodland-event-pilot-v3-7.test.mjs
+      - name: Verify actual generated Woodland event terrain and discovery clues
+        run: node --test checks/wilderness-v3-8-native-discovery.test.mjs
       - name: Build playable-only directory
         run: npm run build:playable
       - name: Verify compact inventory and hashes
