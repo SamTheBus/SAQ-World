@@ -42,7 +42,7 @@ export function validateRecoveredBossV1(state,id,b){
   actor.contentDefinitionId===ARACHNID_TREANT_PROFILE.contentDefinitionId&&group?.entityIds.includes(id)&&group.siteId===b.siteId&&
   actor.residency.spaceInstanceId===b.spaceInstanceId&&actor.residency.residencyRevision===b.sourceResidencyRevision&&
   c&&point(b.homePosition)&&!collidesWithTiles(c,b.homePosition.x,b.homePosition.y,ARACHNID_TREANT_PROFILE.hullRadius),'Recovered boss identity invalid');
- check([1,2].includes(b.phase)&&b.phaseTwoTriggered===(b.phase===2)&&states.includes(b.actionState),'Recovered boss phase invalid');
+ check([1,2].includes(b.phase)&&b.phase2Triggered===(b.phase===2)&&states.includes(b.actionState),'Recovered boss phase invalid');
  safeInteger(b.activatedTick,0,state.tick);safeInteger(b.nextActionTick,0,state.tick+600);safeInteger(b.abilitySequence,0);safeInteger(b.selectionSeed,0,0xffffffff);
  safeInteger(b.chunkStep,0,16);safeInteger(b.collapseStep,0,7);
  check(/^\d+$/.test(b.shieldHp)&&/^\d+$/.test(b.shieldMaxHp)&&BigInt(b.shieldHp)<=BigInt(b.shieldMaxHp)&&/^\d+$/.test(b.stolenGold),'Recovered boss resources invalid');
