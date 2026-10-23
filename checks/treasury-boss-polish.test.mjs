@@ -79,3 +79,21 @@ test('Treasury shield remains active after cast, intercepts damage, breaks into 
   assert.equal(b.shieldHp,'0');validateBossCombatD12_5A(state);
  }
 });
+
+test('Gilded Taxation protects every player gold balance, including zero and large fortunes',async()=>{
+ for(const amount of ['0','1','240','1000000']){
+  const {state,boss,hero,b,controller}=await battle('gilded_vault_keeper');
+  const original={gold:amount,goldAwardsByEntityId:{},economy:{gold:amount},revision:3};
+  state.playersById.p.inventory=structuredClone(original);
+  boss.hp=combatInteger(1200);
+  plan(b,hero,'taxation',0,240);
+  b.phase=2;b.phase2Triggered=true;
+  b.shieldMaxHp='270';b.shieldHp='270';
+  state.tick=240;controller.beginTick();controller.advance();
+  assert.deepEqual(state.playersById.p.inventory,original,'Taxation must never change the player gold ledger ('+amount+')');
+  assert.equal(b.stolenGold,'0','Taxation must not record fabricated stolen gold');
+  assert.ok(BigInt(b.shieldHp)>0n,'Gold collection is represented by a breakable boss ward');
+  assert.ok(integerBigInt(boss.hp)>1200n,'Gilded may heal using its own magical vault shield');
+  validateBossCombatD12_5A(state);
+ }
+});
