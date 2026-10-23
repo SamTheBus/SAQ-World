@@ -287,8 +287,9 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    const targets=players(a);updatePools(b,a,targets,c);advanceCoinShots(b,a,targets,c);
    for(const[id,s]of Object.entries(b.statusesByEntityId))if(state.tick>=s.expiresTick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
    enterPhaseTwo(b,a);
-   if(archived.tick(b,a,targets,c))continue;
+   // Rabbits hop independently even while their stag is rushing.
    if(b.bossDefinitionId==='cinderhart')advanceBunnies(b,c);
+   if(archived.tick(b,a,targets,c))continue;
    if(b.bossDefinitionId==='nexus_overseer')advanceHolograms(b,targets,c);
    if(b.bossDefinitionId==='corrosive_abomination'){
     for(let step=b.chunkStep+1;step<=12;step++){
