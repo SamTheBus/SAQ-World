@@ -42,7 +42,7 @@ export async function createWoodlandPilotEventAnchors({asset,binding,cx,cy,seed,
     if(!slot||slot.biome!=='woodland'||slot.position.x!==event.x||slot.position.y!==event.y||!slot.cells?.length)
       throw new Error('Woodland pilot is not backed by the frozen Wilderness V2 clearing');
     const cellIds=new Set(slot.cells.map(c=>c.x+','+c.y));
-    const candidates=[];
+    const safeCandidates=[];
     // Use safe shoulders adjacent to the reserved clearing rather than
     // placing actors at negative local coordinates across chunk boundaries.
     for(let dy=2;dy<=16;dy++)for(let dx=2;dx<=18;dx++){
@@ -51,12 +51,12 @@ export async function createWoodlandPilotEventAnchors({asset,binding,cx,cy,seed,
       if(!openThreeByThree(tile,x,y,slot.landmassId))continue;
       const position={x:(x-cx*32+.5)*32,y:(y-cy*26+.5)*32};
       if(regularAnchors.some(a=>Math.hypot(position.x-a.position.x,position.y-a.position.y)<144))continue;
-      candidates.push({position,priority:dx+dy+(cellIds.has(x+','+y)?-3:0),
+      safeCandidates.push({position,priority:dx+dy+(cellIds.has(x+','+y)?-3:0),
         tie:stable(event.slotId+'/'+dx+'/'+dy)});
     }
-    candidates.sort((a,b)=>a.priority-b.priority||a.tie-b.tie);
+    safeCandidates.sort((a,b)=>a.priority-b.priority||a.tie-b.tie);
     const members=[];
-    for(const p of candidates){
+    for(const p of safeCandidates){
       if(members.some(m=>Math.hypot(m.position.x-p.position.x,m.position.y-p.position.y)<78))continue;
       members.push({family:event.families[members.length],position:p.position});
       if(members.length===6)break;
