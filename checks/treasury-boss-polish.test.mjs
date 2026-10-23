@@ -5,6 +5,7 @@ import {createRecoveredBossV1} from '../src/shared/contracts/recovered_boss_v1.j
 import {initialBossCombatD12_5A,installBossRecordsD12_5A,validateBossCombatD12_5A,projectBossActorD12_5A} from '../src/shared/contracts/boss_combat_d12_5.js';
 import {createRecoveredBossCombatV1} from '../src/simulation/recovered_boss_v1.js';
 import {combatInteger} from '../src/shared/contracts/combat_amount.js';
+import {integerBigInt} from '../src/shared/contracts/integer_domain.js';
 import {ARACHNID_TREANT_PROFILE} from '../src/shared/content/bosses_d12_5.js';
 import {drawTreasuryBossV2,drawTreasuryBossGroundV2,treasuryBossDepthItems,drawTreasuryBossHudV2,hasTreasuryBossPainter} from '../src/client/boss_presentation_treasury_v2.js';
 const sha256=async bytes=>[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',new Uint8Array(bytes)))];
