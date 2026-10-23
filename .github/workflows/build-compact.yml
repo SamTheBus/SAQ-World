@@ -1,0 +1,44 @@
+name: Build compact playable SAQ World
+on:
+  push:
+    branches: [saq-source]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bundle-and-stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install bundler
+        run: npm install --no-save --no-package-lock esbuild@0.25.12
+      - name: Bundle playable game and save worker
+        run: node scripts/build-compact.mjs
+      - name: Check playable package and fingerprint
+        run: node scripts/validate-compact.mjs
+      - name: Install smoke-test browser
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Browser startup and worker smoke test
+        run: |
+          python3 -m http.server 8989 --directory dist > /tmp/saq-http.log 2>&1 &
+          node scripts/smoke-compact.mjs
+      - name: Stage isolated playable branch (main remains untouched)
+        shell: bash
+        run: |
+          mkdir -p /tmp/saq-compact-artifact
+          cp -R dist/. /tmp/saq-compact-artifact/
+          git checkout --orphan saq-production-candidate
+          git rm -rf --cached . 2>/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -R /tmp/saq-compact-artifact/. .
+          git add -A
+          git -c user.name='SAQ World Build' -c user.email='actions@users.noreply.github.com' commit -m 'Stage compact playable SAQ World production package'
+          git push --force origin HEAD:refs/heads/saq-production-candidate
