@@ -1,6 +1,6 @@
 import {bytesToHex,frameUtf8,hashBytes} from './hashing.js';
 import {closedRecord,copyWire,freezeWire,requireContract as check,safeInteger} from './wire.js';
-import {BRIMSTONE_ID,BRIMSTONE as C,BRIMSTONE_PROFILE,brimstoneFortFloor,brimstoneVentArms} from '../content/brimstone_colossus_v1.js';
+import {BRIMSTONE_ID,BRIMSTONE as C,BRIMSTONE_PROFILE,brimstoneFortFloor,brimstoneVentArms,brimstoneVolcanicRuinFloorV4,brimstoneRuinArenaProofV4} from '../content/brimstone_colossus_v1.js';
 import {collidesWithTiles} from '../rules/world_geometry.js';
 
 const point=p=>p&&Object.keys(p).length===2&&Number.isFinite(p.x)&&Number.isFinite(p.y);
@@ -36,6 +36,25 @@ export function validateBrimstoneColossus(state,key,b){
 }
 export function validateBrimstoneFortBinding(state,site,floor,index,a,b){
  check(brimstoneFortFloor(site,floor.index)&&index===0&&b.entityId===a.entityId&&b.siteId===site.siteId&&b.floorId===floor.floorId&&b.groupId===floor.groupId&&b.roomId===floor.encounter.members[0].roomId&&a.residency.spaceInstanceId===floor.spaceInstanceId&&a.contentDefinitionId===BRIMSTONE_PROFILE.contentDefinitionId&&a.hullRadius===34&&!state.eliteCombat?.elitesByEntityId?.[a.entityId]&&!collidesWithTiles(floor.collision,b.homePosition.x,b.homePosition.y,34),'Invalid Fort Brimstone binding');
+}
+export function validateBrimstoneVolcanicRuinBindingV4(state,site,floor,index,a,b){
+ const leader=floor.encounter.members[0];
+ const homes=state.groupsById?.[floor.groupId]?.containment?.memberHomesById;
+ const proof=brimstoneRuinArenaProofV4(floor.collision,b.homePosition);
+ check(brimstoneVolcanicRuinFloorV4(site,floor.index,state)&&index===0&&
+  b.bossDefinitionId===BRIMSTONE_ID&&b.entityId===a.entityId&&
+  b.siteId===site.siteId&&b.floorId===floor.floorId&&
+  b.groupId===floor.groupId&&b.roomId===leader.roomId&&
+  b.spaceInstanceId===floor.spaceInstanceId&&
+  a.residency.spaceInstanceId===floor.spaceInstanceId&&
+  a.contentDefinitionId===BRIMSTONE_PROFILE.contentDefinitionId&&a.hullRadius===34&&
+  !state.eliteCombat?.elitesByEntityId?.[a.entityId]&&
+  homes?.[a.entityId]?.x===b.homePosition.x&&
+  homes?.[a.entityId]?.y===b.homePosition.y&&
+  Math.hypot(b.homePosition.x-leader.position.x,b.homePosition.y-leader.position.y)<=416&&
+  proof&&proof.horizontal>=112&&proof.vertical>=112,
+ 'Invalid Volcanic Ruin Brimstone arena/binding');
+ return b;
 }
 export function projectBrimstoneColossus(b){
  return freezeWire({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,label:C.label,phase:1,actionState:b.actionState,facingAngle:b.facingAngle,lastAction:copyWire(b.lastAction),pendingAction:b.actionState==='telegraphing'?{ability:b.activeAbility,targetEntityId:b.targetEntityId,targetPosition:copyWire(b.targetPosition),ventTargets:copyWire(b.ventTargets),startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick}:null});
