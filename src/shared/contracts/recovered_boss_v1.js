@@ -62,8 +62,8 @@ export function validateRecoveredBossV1(state,id,b){
  check(Array.isArray(b.coinShots??[])&&b.coinShots.length<=16&&(!b.coinShots.length||b.bossDefinitionId==='marcus'),'Coin volley budget invalid');
  for(const shot of b.coinShots??[]){
   closedRecord(shot,['id','position','velocity','firedTick','expiresTick','sequence','ordinal','bounces']);
-  check(typeof shot.id==='string'&&shot.id===b.bossId+':coin:'+shot.sequence+':'+shot.ordinal&&point(shot.position)&&point(shot.velocity)&&Math.hypot(shot.velocity.x,shot.velocity.y)<13&&shot.bounces<=2,'Invalid flying Marcus coin');
-  safeInteger(shot.firedTick,b.activatedTick,state.tick);safeInteger(shot.expiresTick,shot.firedTick+120,shot.firedTick+120);safeInteger(shot.sequence,1,b.abilitySequence);safeInteger(shot.ordinal,0,7);safeInteger(shot.bounces,0,2);check(state.tick<shot.expiresTick,'Expired coin shot');
+  check(typeof shot.id==='string'&&shot.id===b.bossId+':coin:'+shot.sequence+':'+shot.ordinal&&point(shot.position)&&point(shot.velocity)&&Math.hypot(shot.velocity.x,shot.velocity.y)<6&&shot.bounces<=2,'Invalid flying Marcus coin');
+  safeInteger(shot.firedTick,b.activatedTick,state.tick);safeInteger(shot.expiresTick,shot.firedTick+240,shot.firedTick+240);safeInteger(shot.sequence,1,b.abilitySequence);safeInteger(shot.ordinal,0,7);safeInteger(shot.bounces,0,2);check(state.tick<shot.expiresTick,'Expired coin shot');
  }
  if(b.archive!==undefined){
   const archive=b.archive;
