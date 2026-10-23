@@ -3,7 +3,7 @@ import {prepareNavigationPagesD9,readNavigationWindowD9} from './world_navigatio
 import {generateChunkD9} from '../shared/generation/endless_world_d9.js';
 import {validateWire,closedRecord,requireContract as check} from '../shared/contracts/wire.js';
 import {D9_PROFILE} from '../shared/content/world_profile_d9.js';
-import {createWorldSaveTaskD9} from './world_save_task_d9.js?v=wilderness-v3-5-ecology-20261022';
+import {createWorldSaveTaskD9} from './world_save_task_d9.js?v=v3-6-aegis-deep-20261022';
 import {prepareWorldResidencyD9} from './world_residency_task_d9.js';
 import {prepareWorldEncountersD9} from './world_encounter_task_d9.js?v=wilderness-v3-5-ecology-20261022';
 import {prepareColdDeadlinePatchD9} from './world_cold_deadlines_d9.js';

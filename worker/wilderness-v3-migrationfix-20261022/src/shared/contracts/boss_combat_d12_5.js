@@ -1,8 +1,8 @@
 import {BRIMSTONE_ID} from '../content/brimstone_colossus_v1.js';
 import {validateBrimstoneColossus,projectBrimstoneColossus,projectBrimstoneHazards} from './brimstone_colossus_v1.js';
 import {aegisMimicTargetable} from '../content/aegis_mimics_v2.js';
-import {AEGIS_GOLIATH_ID} from '../content/aegis_goliath_v1.js';
-import {validateAegisGoliath,projectAegisGoliath,projectAegisHazards} from './aegis_goliath_v1.js';
+import {AEGIS_GOLIATH_ID} from '../content/aegis_goliath_v1.js?v=v3-6-aegis-deep-20261022';
+import {validateAegisGoliath,projectAegisGoliath,projectAegisHazards} from './aegis_goliath_v1.js?v=v3-6-aegis-deep-20261022';
 import {bytesToHex,frameUtf8,hashBytes} from './hashing.js';
 import {closedRecord,copyWire,freezeWire,requireContract as check,safeInteger} from './wire.js';
 import {ARACHNID_TREANT_BOSS_ID,ARACHNID_TREANT_D12_5A} from '../content/bosses_d12_5.js';

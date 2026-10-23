@@ -16,7 +16,7 @@ import {closedRecord,canonicalStringify,copyWire,requireContract as check,safeIn
 import {validateSiteSocketD9,packageEligibleD9,D9_SITE_CONTENT_CATALOG} from './site_content_d9.js';
 import {WOODLAND_RUIN_PACKAGE,WOODLAND_RUIN_TEMPLATE,WOODLAND_RUIN_PACKAGE_ID,WOODLAND_RUIN_VERSION,WOODLAND_RUIN_CONTENT_HASH} from '../content/woodland_ruin_d9.js';
 import {WOODLAND_FORT_PACKAGE,WOODLAND_FORT_TEMPLATE,WOODLAND_FORT_PACKAGE_ID,WOODLAND_FORT_VERSION,WOODLAND_FORT_CONTENT_HASH} from '../content/woodland_fort_d10.js';
-import {functionalSiteDefinitionD10} from '../content/functional_site_registry_d10.js';
+import {functionalSiteDefinitionD10} from '../content/functional_site_registry_d10.js?v=v3-6-aegis-deep-20261022';
 import {projectToLocalFrameD9} from './local_world_frames_d9.js';
 import {floorDiv,normalizeWorldPosition} from './world_address.js';
 import {collidesWithTiles} from '../rules/world_geometry.js';
@@ -25,7 +25,7 @@ import {FUNCTIONAL_SITE_FAMILY_D12_1} from '../content/site_family_runtime_d12_1
 import {FUNCTIONAL_SITE_FAMILY_D12_2} from '../content/site_family_runtime_d12_2.js';
 import {WOODLAND_CAVE_FAMILY_ID} from '../content/site_families_d12.js';
 import {installEliteRecordsD12_4} from './elite_combat_d12_4.js';
-import {installBossRecordsD12_5A} from './boss_combat_d12_5.js';
+import {installBossRecordsD12_5A} from './boss_combat_d12_5.js?v=v3-6-aegis-deep-20261022';
 import {projectArachnidTreantExtractionD12_5C} from './boss_extraction_d12_5c.js';
 import {projectLargeCaveFinaleExtractionD13D_G,projectSmallCaveFinaleExtractionD13D_C,projectStandardCaveBossExtractionD13D_E} from './site_finale_completion_d13d.js';
 import {installSiteRunEpisodesD13B,resolveSiteRunEpisodeD13B,siteSupportsResetD13C} from './site_run_episode_d13b.js';

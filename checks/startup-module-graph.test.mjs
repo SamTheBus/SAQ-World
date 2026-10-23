@@ -26,13 +26,13 @@ assert(html.includes('startup_loading_v1.js?v=startup-art-v1'));
 assert(html.includes('id="saq-startup-progress"'));
 assert(html.includes('id="saq-startup-scene"'));
 assert(html.includes('world.css?v=stage1-combat-v3'));
-assert(html.includes('data-runtime-manifest="runtime-manifest.json?v=v3-5-biome-ecology-20261022"'),'runtime manifest URL should not serve a stale hash');
+assert(html.includes('data-runtime-manifest="runtime-manifest.json?v=v3-6-aegis-deep-20261022"'),'runtime manifest URL should not serve a stale hash');
 assert(html.includes('saq-load-stage1-art'));
 assert(html.includes('id="saq-startup-duel"'));
 assert(html.includes('startup_combat_preview_v1.js?v=stage1-combat-v3'));
 assert(!html.includes('class="saq-load-heading">The Wilderness')); // no unnecessary giant title
 
-assert(html.includes('save-worker.wilderness-v3-migrationfix-20261022-ecology-v3-5.js'));
+assert(html.includes('save-worker.wilderness-v3-migrationfix-20261022-aegis-v3-6.js'));
 assert(html.includes('data-world-release="wilderness-v3-starter-20261022"')); // saved campaigns retain their original namespace
 for (const file of ['activity_save_bridge.js','world_worker_bridge_d9.js'])assert(Object.values(map.imports).some(url => url.includes(file+'?v=v3-migrationfix-20261022')), `Missing stable ${file}`);
 assert(map.imports['./src/entrypoints/playable_browser.js'].includes('v=startup-art-v1'));
@@ -64,3 +64,6 @@ assert.equal(map.imports['./src/simulation/encounter_containment_d11_2.js'],'./s
 assert.equal(map.imports['./src/shared/content/wilderness_pack_pacing_v3_4.js'],'./src/shared/content/wilderness_pack_pacing_v3_4.js?v=v3-4-2-global-pacing-20261022');
 
 for(const file of ['ordinary_roster_v1.js','ordinary_roster_v2.js','wilderness_ecology_runtime_v3_5.js'])assert(Object.values(map.imports).some(u=>u.includes(file+'?v=v3-5-biome-ecology-20261022')),'Missing ecology cache bust for '+file);
+
+// V3.6 boss admission/validation must not be served from stale module URLs.
+for(const name of ["./src/shared/content/aegis_goliath_v1.js","./src/shared/content/fort_family_runtime_v1.js","./src/shared/contracts/aegis_goliath_v1.js","./src/shared/contracts/boss_combat_d12_5.js","./src/shared/contracts/functional_site_d9.js","./src/shared/contracts/activity_state.js","./src/shared/content/functional_site_registry_d10.js"])assert.equal(map.imports[name],name+'?v=v3-6-aegis-deep-20261022');

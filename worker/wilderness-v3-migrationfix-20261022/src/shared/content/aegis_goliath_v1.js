@@ -1,4 +1,5 @@
 import {freezeWire} from '../contracts/wire.js';
+import {usesWildernessFairnessV3_2} from './wilderness_fairness_v3_2.js';
 import {ARACHNID_TREANT_PROFILE} from './bosses_d12_5.js';
 
 export const AEGIS_GOLIATH_ID='aegis_goliath';
@@ -12,4 +13,12 @@ export const AEGIS_GOLIATH=freezeWire({
  shield_bash:{telegraphTicks:75,radius:64,halfAngle:.5,damageNumerator:17,dazeTicks:210},
  blockHalfAngle:.6,
 });
-export const aegisFortFloor=(site,index)=>site.familyId==='site-family:fort'&&site.sizeTier==='standard'&&index===site.floorCount-1;
+export const AEGIS_DEEP_UPLAND_FORT_SITE_V3_6='repeatable-slot:fort:upland:deep:01';
+// Keep existing Standard Fort Aegis encounters. Only this exact Deep Upland
+// reservation gains a live Aegis in a committed Wilderness World Combat run.
+export const aegisFortFloor=(site,index,state=null)=>site?.familyId==='site-family:fort'&&index===site.floorCount-1&&(
+  site.sizeTier==='standard'||
+  site.sizeTier==='deep'&&usesWildernessFairnessV3_2(state)&&
+  site.socket?.provenance?.reservationId===AEGIS_DEEP_UPLAND_FORT_SITE_V3_6&&
+  site.socket?.region?.biome==='upland'
+);

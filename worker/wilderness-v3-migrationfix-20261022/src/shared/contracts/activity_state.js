@@ -11,7 +11,7 @@ import {withinRetainedSiteBudgetsD9} from '../content/alpha_population_retention
 import {installMasteryCombat} from './mastery_combat.js';
 import {validateD9Root} from './world_root_contract_d9.js';
 import {historicalSiteContentD9,validateSiteSocketD9} from './site_content_d9.js';
-import {validateFunctionalSiteStateD9,functionalSiteTransitionTargetD9,functionalSitesD10,migrateLegacyFunctionalSitesD10,functionalSiteGroupsD12,functionalSiteSpaceIdsD12,functionalSiteForSpaceD12} from './functional_site_d9.js?v=wilderness-v3-5-ecology-20261022';
+import {validateFunctionalSiteStateD9,functionalSiteTransitionTargetD9,functionalSitesD10,migrateLegacyFunctionalSitesD10,functionalSiteGroupsD12,functionalSiteSpaceIdsD12,functionalSiteForSpaceD12} from './functional_site_d9.js?v=v3-6-aegis-deep-20261022';
 import {applyOriginEgress} from './origin_egress_d9.js';
 import {D9_COLLISION_VERSION} from './paged_collision_d9.js';
 import {localFramePositionD9} from './local_world_frames_d9.js';
@@ -62,7 +62,7 @@ import { collidesWithTiles } from '../rules/world_geometry.js';
 import {assertActorGeometryD9} from './actor_geometry_d9.js';
 import {CAVE_INTERIOR_NAVIGATION_D12_3A,interiorPursuitMemoryTicks} from '../content/interior_navigation_d12_3a.js';
 import {validateEliteCombatD12_4} from './elite_combat_d12_4.js';
-import {validateBossCombatD12_5A} from './boss_combat_d12_5.js';
+import {validateBossCombatD12_5A} from './boss_combat_d12_5.js?v=v3-6-aegis-deep-20261022';
 import {validateAuthoritativeSiteDefinitionsD13A} from './site_definition_d13a.js';
 import {installSiteRunEpisodesD13B,validateSiteRunEpisodesD13B} from './site_run_episode_d13b.js';
 import {installSiteFinaleReservationsD13D_A,validateSiteFinaleReservationsD13D_A} from './site_finale_d13d.js';

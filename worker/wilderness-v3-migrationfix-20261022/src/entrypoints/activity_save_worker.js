@@ -1,9 +1,9 @@
 import {createPlannedWorldAssetStore} from '../storage/planned_world_assets_v1.js';
 import {ACTIVITY_SAVE_NAMESPACE} from '../shared/content/forge_review.js';
-import {createActivitySaveTask} from '../storage/activity_save_task.js?v=wilderness-v3-5-ecology-20261022';
+import {createActivitySaveTask} from '../storage/activity_save_task.js?v=v3-6-aegis-deep-20261022';
 import {createLocalIndexedDbCampaignStore} from '../storage/local_indexeddb_campaign_store.js';
-import {activityCampaignCodec} from '../storage/activity_campaign_store.js?v=wilderness-v3-5-ecology-20261022';
-import {createWorldWorkerTaskD9} from '../storage/world_worker_task_d9.js?v=wilderness-v3-5-ecology-20261022';
+import {activityCampaignCodec} from '../storage/activity_campaign_store.js?v=v3-6-aegis-deep-20261022';
+import {createWorldWorkerTaskD9} from '../storage/world_worker_task_d9.js?v=v3-6-aegis-deep-20261022';
 
 
 // The client and Worker must own the SAME IndexedDB database for the initial

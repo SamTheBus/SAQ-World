@@ -2,7 +2,7 @@ import {CRYPT_DEFINITION_V2,CRYPT_DEFINITION_V3} from './crypt_family_runtime_v2
 import {CRYPT_FAMILY_DEFINITION} from './crypt_family_runtime_v1.js';
 import {RUIN_PACKAGE_V2} from './planned_ruin_policy_v2.js';
 import {RUIN_FAMILY_DEFINITION} from './ruin_family_runtime_v1.js';
-import {FORT_FAMILY_DEFINITION,FORT_FAMILY_DEFINITION_V2} from './fort_family_runtime_v1.js';
+import {FORT_FAMILY_DEFINITION,FORT_FAMILY_DEFINITION_V2} from './fort_family_runtime_v1.js?v=v3-6-aegis-deep-20261022';
 import {WOODLAND_RUIN_PACKAGE,WOODLAND_RUIN_TEMPLATE,buildWoodlandRuinD9} from './woodland_ruin_d9.js';
 import {WOODLAND_FORT_DEFINITION,buildWoodlandFortD10} from './woodland_fort_d10.js';
 import {WOODLAND_CAVE_DEFINITION,buildWoodlandCaveD10} from './woodland_cave_d10.js';
