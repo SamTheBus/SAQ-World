@@ -12,6 +12,8 @@ export function createWorldInput({ canvas, environment, renderer, profile, adapt
     catch(error){reportError(error.message);}return false;
   }
   function send(x, y, model) {
+    // Nexus Control Glitch inverts keyboard, joystick and click-to-move alike.
+    if(selectedActor(model??readModel()).timedStatuses?.control_glitch?.reversed){x=-x;y=-y;}
     const length = Math.hypot(x, y); if (length > 1) { x /= length; y /= length; }
     const signature = `${x},${y}`;
     if (isBlocked() || signature === lastIntent || !selectedActor(model??readModel()).alive) return;
