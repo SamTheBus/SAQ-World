@@ -113,6 +113,32 @@ export function createWorldMapD9({document:doc,environment,port,releaseInput}){
   ctx.clearRect(0,0,width,height);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';if(open){miniMarks=[];ctx.drawImage(staticLayer,0,0);}else{const drift=worldScreenDeltaD9(displayCenter,miniBackingCenter,scale),sourceX=cachePadding+drift.x,sourceY=cachePadding+drift.y;miniMarks=marks.map(mark=>({...mark,x:mark.x-sourceX,y:mark.y-sourceY})).filter(mark=>mark.x>=0&&mark.y>=0&&mark.x<=width&&mark.y<=height);ctx.drawImage(staticLayer,sourceX,sourceY,width,height,0,0,width,height);}
   reviewMarks=[];if(planned)for(const r of environment.__SAQ_PLANNED_REVIEW__?.mapReservations?.()??[]){const delta=worldScreenDeltaD9({chunkX:String(1024+Math.floor(r.tile.x/32)),chunkY:String(1024+Math.floor(r.tile.y/26)),localX:(r.tile.x%32+.5)*32,localY:(r.tile.y%26+.5)*32},displayCenter,scale),x=width/2+delta.x,y=height/2+delta.y;if(x<5||y<5||x>width-5||y>height-5)continue;ctx.strokeStyle='#deb8ed';ctx.lineWidth=1.5;ctx.setLineDash([2,2]);ctx.strokeRect(x-5,y-5,10,10);ctx.setLineDash([]);ctx.fillStyle='#deb8ed';ctx.font='bold 8px system-ui';ctx.fillText('R',x-2,y+3);if(open)reviewMarks.push({x,y,label:'UNBUILT REVIEW RESERVATION · '+r.id});}
   if(!open)for(const pip of n.pips??[]){const delta=worldScreenDeltaD9(pip.position,displayCenter,scale),x=width/2+delta.x,y=height/2+delta.y;if(x<3||y<3||x>width-3||y>height-3)continue;ctx.fillStyle=pip.kind==='ally'?'#76d6ef':'#f36a73';ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();}
+  // Nearby wilderness discoveries appear on an explored-area map, not as
+  // permanent worldwide quest markers. A distant clearing remains hidden.
+  for(const clue of model.woodlandPilotClues??[]){
+    if(clue.stage!=='sighted'||!clue.position)continue;
+    const pos=clue.position;
+    let x,y;
+    if(open){
+      const size=1n<<BigInt(lod),cx=floorDiv(BigInt(pos.chunkX),size),cy=floorDiv(BigInt(pos.chunkY),size);
+      const dx=cx-BigInt(v.x),dy=cy-BigInt(v.y);
+      if(dx<0n||dy<0n||dx>=BigInt(v.width)||dy>=BigInt(v.height))continue;
+      x=v.screenX+Number(dx)*v.cellW+(Number(BigInt(pos.chunkX)-cx*size)*1024+pos.localX)*scale;
+      y=v.screenY+Number(dy)*v.cellH+(Number(BigInt(pos.chunkY)-cy*size)*832+pos.localY)*scale;
+    }else{
+      const delta=worldScreenDeltaD9(pos,displayCenter,scale);
+      x=width/2+delta.x;y=height/2+delta.y;
+    }
+    if(x<8||y<8||x>width-8||y>height-8)continue;
+    const completed=clue.state==='completed',label=clue.text;
+    ctx.save();ctx.translate(x,y);
+    ctx.fillStyle=completed?'#657267':'#cba970';ctx.strokeStyle='#16211e';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(0,0,open?7:5,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle=completed?'#d6e1cd':'#1c1a15';ctx.font='bold '+(open?10:8)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(completed?'✓':'?',0,.5);ctx.restore();
+    if(open)reviewMarks.push({x,y,label:label+' · woodland discovery'});
+    else miniMarks.push({x,y,label:label+' · woodland discovery'});
+  }
   const actual=n.position,local=model.playersById[model.localPlayerId],facing=model.primary?.actorsById?.[local.entityId]?.facing;if(!open)drawPlayer(ctx,width/2,height/2,facing,planned?16:8);else{const size=1n<<BigInt(lod),cx=floorDiv(BigInt(actual.chunkX),size),cy=floorDiv(BigInt(actual.chunkY),size),dx=cx-BigInt(v.x),dy=cy-BigInt(v.y);if(dx>=0n&&dy>=0n&&dx<BigInt(v.width)&&dy<BigInt(v.height)){const x=v.screenX+Number(dx)*v.cellW+(Number(BigInt(actual.chunkX)-cx*size)*1024+actual.localX)*scale,y=v.screenY+Number(dy)*v.cellH+(Number(BigInt(actual.chunkY)-cy*size)*832+actual.localY)*scale;drawPlayer(ctx,x,y,facing,planned?10:8);}}
  }
  syncVisibility();
