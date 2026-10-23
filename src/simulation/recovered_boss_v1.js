@@ -16,11 +16,11 @@ const collisionFree=(c,p,r=15)=>!collidesWithTiles(c,p.x,p.y,r);
 const lineFree=(c,p,q)=>{const d=dist(p,q),n=Math.max(1,Math.ceil(d/7));for(let i=0;i<=n;i++){const t=i/n;if(!collisionFree(c,{x:p.x+(q.x-p.x)*t,y:p.y+(q.y-p.y)*t},2))return false;}return true;};
 const centerDamage=(ability)=>({eye_lance:16,singularity:20,corrosive_slam:18,spore_storm:11,acid_spill:10,
  chronos_slam:18,prism_collapse:17,control_glitch:9,prism_slam:18,vault_crush:20,gold_fall:14,
- coin_barrage:14,gold_rush:16,gilded_lasso:12,scarlet_fire:17,hooked_tail:20,arena_collapse:16,
+ coin_barrage:14,gold_rush:16,gilded_lasso:12,inversion:0,scarlet_fire:17,hooked_tail:20,arena_collapse:16,
  fire_charge:19,landing_fire:16})[ability]??12;
 const attackRadius=(ability)=>({eye_lance:24,singularity:95,corrosive_slam:72,spore_storm:105,acid_spill:65,
  chronos_slam:65,prism_collapse:120,control_glitch:180,prism_slam:68,vault_crush:70,gold_fall:75,
- coin_barrage:220,gold_rush:130,gilded_lasso:75,scarlet_fire:115,hooked_tail:75,arena_collapse:200,
+ coin_barrage:220,gold_rush:130,gilded_lasso:75,inversion:185,scarlet_fire:115,hooked_tail:75,arena_collapse:200,
  fire_charge:110,landing_fire:90})[ability]??75;
 
 export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()=>true,lineClear=()=>true}={}){
@@ -151,7 +151,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    if(struck){
     const damage=combatInteger(multiplyCombat(a.attackDamage,14,10),'round');
     const result=applyDirectDamage(a,struck,damage,'marcus_ricochet_coin',{sourceActionSequence:p.sequence,
-     directEnemyAttack:'ranged',projectileImpact:true,projectileDirection:copyWire(p.velocity)});
+     directEnemyAttack:'ranged',projectileImpact:true,projectileDirection:{x:p.velocity.x/7,y:p.velocity.y/7}});
     if(result!==undefined&&result!==false)stats.coinHits++;
     p.expired=true;continue;
    }
@@ -196,6 +196,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
     if(ability==='gold_fall')inside=[0,1,2].some(i=>{const v=i*Math.PI*2/3;return dist(t.position,{x:pos.x+Math.cos(v)*62,y:pos.y+Math.sin(v)*62})<=26;});
     if(ability==='arena_collapse')inside=Math.abs(dist(t.position,b.homePosition)-(205-b.collapseStep*26))<=23;
     if(!inside||!lineFree(collision,a.position,t.position)||!lineClear(a,t))continue;
+    if(ability==='inversion'){if(t.alive){effect(b,t,'control_glitch',180,.94);hits.push(t.entityId);}continue;}
     if(hit(a,t,b,ability,dmg))hits.push(t.entityId);
     if(['control_glitch','inversion'].includes(ability)&&t.alive)effect(b,t,'control_glitch',180,.94);
     if(ability==='gilded_lasso'&&t.alive)effect(b,t,'lasso',90,.5);
