@@ -97,7 +97,7 @@ export function projectRecoveredBossV1(b,state){
 
 export function projectRecoveredHazardsV1(state,spaceId){
  const bosses=Object.values(state.bossCombat?.bossesByEntityId??{}).filter(b=>recoveredBossRecord(b)&&b.spaceInstanceId===spaceId&&state.entitiesById[b.entityId]?.alive);
- return {recoveredTelegraphs:bosses.filter(b=>b.actionState==='telegraphing').map(b=>({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,ability:b.activeAbility,position:copyWire(b.targetPosition),startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick})),
+ return {recoveredTelegraphs:bosses.filter(b=>b.actionState==='telegraphing').map(b=>({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,ability:b.activeAbility,position:copyWire(b.targetPosition),originPosition:copyWire(state.entitiesById[b.entityId].position),sequence:b.abilitySequence,selectionSeed:b.selectionSeed,startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick})),
   recoveredPools:bosses.flatMap(b=>b.pools.map(p=>({...copyWire(p),bossDefinitionId:b.bossDefinitionId})))};
 }
 export function recoveredStatusForActor(state,entityId){
