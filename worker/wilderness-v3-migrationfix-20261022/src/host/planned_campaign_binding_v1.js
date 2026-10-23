@@ -12,7 +12,7 @@ import {planLocalFramesD9,projectToLocalFrameD9} from '../shared/contracts/local
 import {rebaseWorldRuntimeD9,captureWorldPositionsD9} from '../shared/contracts/world_runtime_d9.js';
 import {attachChunkRuntimeD9} from '../shared/contracts/world_paging_d9.js';
 import {tileAddress,validatePlannedBinding} from '../shared/generation/planned_world_foundation_v1.js';
-import {validateActivityState} from '../shared/contracts/activity_state.js';
+import {validateActivityState} from '../shared/contracts/activity_state.js?v=wilderness-v3-3-20261022';
 import {hasAlphaPopulation} from '../shared/content/alpha_site_population_v1.js';
 import {ALPHA_POPULATION_RETENTION} from '../shared/content/alpha_population_retention_v1.js';
 // A one-time genesis binding in the normal campaign. This is never a save

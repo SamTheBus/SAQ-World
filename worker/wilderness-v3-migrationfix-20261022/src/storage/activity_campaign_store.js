@@ -4,7 +4,7 @@ import {encounterAdvanced,validateEncounterEconomyProgress} from '../shared/cont
 import { LEGACY_D4_ACTIVITY_FORMAT, D4_ACTIVITY_FORMAT, validateInventoryProgress } from '../shared/contracts/player_inventory.js';
 import { validatePlayerRespawnProgress } from '../shared/contracts/player_respawn.js';
 import { createCampaignStoreTransactions } from './campaign_store_core.js';
-import { createActivityState, upgradeActivityState } from '../shared/contracts/activity_state.js';
+import { createActivityState, upgradeActivityState } from '../shared/contracts/activity_state.js?v=wilderness-v3-3-20261022';
 import { D3_ACTIVITY_FORMAT } from '../shared/contracts/player_progression.js';
 import { freezeWire, copyWire, canonicalStringify, closedRecord, requireContract, safeInteger, validateWire } from '../shared/contracts/wire.js';
 import { validateId } from '../shared/contracts/identities.js';

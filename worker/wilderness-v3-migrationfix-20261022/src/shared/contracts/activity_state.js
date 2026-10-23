@@ -1,4 +1,5 @@
 import {hasWorldCombat} from '../content/world_combat_v1.js';
+import {hasWilderness} from '../content/wilderness_v2.js';
 import {equipmentLevelAllowed,equipmentRequiredLevel} from '../content/equipment.js';
 import {serviceActionProblem} from './settlement_services_v1.js';
 import {ferryTravelTarget} from './ferry_travel_v1.js';
@@ -91,7 +92,7 @@ export function validateActivityCommandForState(c,s){validateActivityCommand(c);
   if(c.kind==='site.transition'){const actor=s.entitiesById[s.playersById[c.playerId].entityId],target=/^site:/.test(c.payload.siteId)?functionalSiteTransitionTargetD9(s,actor,c.payload):siteTransitionTarget(s,manifestForState(s),actor,c.payload);requireContract(target,'Site entrance unavailable: approach it and finish the current swing');}return c;}
 const same=(a,b)=>canonicalStringify(a)===canonicalStringify(b);
 export function validateActivityState(s){
-  validateWire(s);closedRecord(s,['format','protocolVersion','ticksPerSecond','tick','content','campaign','session','playersById','spacesByInstanceId','entitiesById','groupsById','primary','eventEmission','appliedCommandsById','appliedClientSequences','lastAppliedAuthorityOrder','identitySequence','overworldInstanceId','proofCase','residencyHistoryByEntityId','primaryContextsById'],['siteExitProtectionByEntityId','playerRespawnsById','encounterEconomy','subweaponCombat','d9World','eliteCombat','bossCombat','hostileCombat']);
+  validateWire(s);closedRecord(s,['format','protocolVersion','ticksPerSecond','tick','content','campaign','session','playersById','spacesByInstanceId','entitiesById','groupsById','primary','eventEmission','appliedCommandsById','appliedClientSequences','lastAppliedAuthorityOrder','identitySequence','overworldInstanceId','proofCase','residencyHistoryByEntityId','primaryContextsById'],['siteExitProtectionByEntityId','playerRespawnsById','encounterEconomy','subweaponCombat','d9World','eliteCombat','bossCombat','hostileCombat','wildernessCrowdGraceByEntityId']);
   validateCampaignTavern(s);
   const d9=Boolean(s.d9World);if(d9)validateD9Root(s.d9World);
   const d6=s.format===D6_ACTIVITY_FORMAT,legacyD4=s.format===LEGACY_D4_ACTIVITY_FORMAT,d4=d6||s.format===D4_ACTIVITY_FORMAT||legacyD4,d3=d4||s.format===D3_ACTIVITY_FORMAT;
@@ -157,6 +158,15 @@ export function validateActivityState(s){
       const a=s.entitiesById[id],residence=s.residencyHistoryByEntityId[id][a.residency.residencyRevision];
       safeInteger(untilTick,s.tick+1,s.tick+SITE_EXIT_PROTECTION_TICKS);
       requireContract((manifest.siteInteriors||functionalSitesD10(s).length)&&a.residency.spaceInstanceId===s.overworldInstanceId&&a.residency.residencyRevision>1&&untilTick===residence.tick+SITE_EXIT_PROTECTION_TICKS,'Invalid site exit protection');
+    }
+  }
+  // Optional authoritative state: existing campaigns without it still open.
+  if(s.wildernessCrowdGraceByEntityId!==undefined){
+    requireContract(hasWorldCombat(s)&&hasWilderness(s.d9World?.plannedWorld),'Crowd grace only in committed Wilderness');
+    closedRecord(s.wildernessCrowdGraceByEntityId,[],[...owned]);
+    for(const [id,untilTick] of Object.entries(s.wildernessCrowdGraceByEntityId)){
+      safeInteger(untilTick,s.tick+1,s.tick+15);
+      requireContract(s.entitiesById[id]?.alive,'Crowd grace cannot survive player death');
     }
   }
   const primary=s.primary;closedRecord(primary,['contractVersion','actorsById','completedById','actionIdHighWatermark','eventIdHighWatermark']);requireContract(primary.contractVersion===1&&same(Object.keys(primary.actorsById).sort(),[...owned].sort())&&Object.keys(primary.completedById).length<=16,'Primary inventory');

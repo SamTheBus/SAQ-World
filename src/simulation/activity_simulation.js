@@ -4,6 +4,7 @@ import {installHostileProjectiles,cancelHostileProjectiles} from '../shared/cont
 import {installWorldHostileMelee,worldHostileMeleeTiming,resolvedHostileMeleeTimer} from '../shared/content/world_hostile_melee.js';
 import {hasWorldCombat,worldLevelGapMultiplier} from '../shared/content/world_combat_v1.js';
 import {usesWildernessFairnessV3_2,wildernessFairLevelGap} from '../shared/content/wilderness_fairness_v3_2.js';
+import {wildernessCleaveTuning,wildernessCrowdHitBlocked,rememberWildernessCrowdHit,expireWildernessCrowdGrace,clearWildernessCrowdGrace} from '../shared/content/wilderness_combat_tuning_v3_3.js';
 import {selectForwardActors} from './primary_rules.js';
 import {serviceActionProblem,applyServiceAction} from '../shared/contracts/settlement_services_v1.js';
 import {ferryTravelTarget} from '../shared/contracts/ferry_travel_v1.js';
@@ -89,6 +90,15 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
   const hostileProjectiles=createHostileProjectileSimulation(state,{damage,identity,lineClear:meleeLineClear,getSourceLevel:progression.combatLevel,canAct:a=>frostMovement(state,a)>0&&!bossCombat.frozen(a.entityId),eligible:(a,b)=>canActivityApplyDamage(state,manifest,a,b),canLaunch:(a,b)=>canActivityApplyDamage(state,manifest,a,b)&&(!containment.groupForActor(a.entityId)||containment.targetStillValid(a,b,(source,target)=>canActivityApplyDamage(state,manifest,source,target)))});
   function damage(source,target,requested=null,mechanic='main',causationCommandId=null,attribution=null){const periodic=attribution?.periodic===true,resolvedComponent=attribution?.bossComponentImpact===true&&attribution?.aegisResolvedDamage===true;if(!periodic&&!canActivityApplyDamage(state,manifest,source,target,attribution))return;
     if(!source||!target||!target.alive||!periodic&&(!source.alive||source.residency.spaceInstanceId!==target.residency.spaceInstanceId)||periodic&&(source.team!=='hostile'||target.team!=='party'||!Object.values(state.playersById).some(player=>player.entityId===target.entityId)))return;
+    // Ordinary/elite crowd hits share a durable grace window. Even when a
+    // hit is suppressed, its attack cadence is spent. No phantom events,
+    // status procs, defense RNG rolls, or extra barrier costs.
+    if(wildernessCrowdHitBlocked(state,source,target,attribution)){
+      if(!attribution?.projectileImpact&&(mechanic==='main'||mechanic==='hostile')){
+        source.attackTimer=0;source.nextAttackActionSequence++;
+      }
+      return;
+    }
     if(!resolvedComponent&&mechanic==='bash'&&!attribution?.masteryArea&&family.effects.bash(source,target,requested,attribution?.trigger??'pressure'))return;
     if(!periodic&&!attribution?.bossComponentImpact){
       const component=bossCombat.towerTarget(source,target,attribution);
@@ -126,6 +136,7 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
     if(pendingPlayerRng)state.subweaponCombat.actors[source.entityId].rng=pendingPlayerRng;if(pendingForcedTransient)pendingForcedTransient.retaliatoryReady=false;
     if(!periodic&&!attribution?.projectileImpact){if(mechanic==='main'||mechanic==='hostile')source.attackTimer=0;source.nextAttackActionSequence++;}
     target.hp=copyWire(result.resultingHp);target.alive=result.targetAlive;
+    if(target.alive&&compareCombat(result.damage,0)>0)rememberWildernessCrowdHit(state,source,target,attribution);
     if(attribution?.contactMelee&&target.alive)eliteCombat.queueContactMelee(source,target);
     if(source.team==='party'&&target.team==='hostile'&&compareCombat(result.damage,0)>0){const navigated=navigation.alert(target,source);if(navigated||hasWorldCombat(state))containment.alert(target);}
     if(defense&&!defense.suppressed)mastery.incoming(target,source,defense,attribution?.sourceActionSequence??source.nextAttackActionSequence-1);
@@ -137,7 +148,7 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
       if(target.team==='hostile'){eliteCombat.clearGuard(target.entityId);eliteCombat.clearAttackAura(target.entityId);}
       progression.awardDefeat(target,scheduler.config.prepareRadius,defeatPlan);
       if(source.team==='party'&&mechanic!=='main'){mastery.defeat(source,target,sourceItem?.subType);family.effects.defeated(source,target,sourceItem?.subType);}
-      if(target.team==='party')measure('playerDeath',()=>{target.movementIntent={x:0,y:0};target.movedLastTick=false;target.attackTimer=0;if(!periodic)eliteCombat.clearHostilePoison(target.entityId);eliteCombat.clearNullification(target.entityId);eliteCombat.clearSlagBurn(target.entityId);bossCombat.clearStatus(target.entityId);if(state.siteExitProtectionByEntityId)delete state.siteExitProtectionByEntityId[target.entityId];});
+      if(target.team==='party')measure('playerDeath',()=>{clearWildernessCrowdGrace(state,target.entityId);target.movementIntent={x:0,y:0};target.movedLastTick=false;target.attackTimer=0;if(!periodic)eliteCombat.clearHostilePoison(target.entityId);eliteCombat.clearNullification(target.entityId);eliteCombat.clearSlagBurn(target.entityId);bossCombat.clearStatus(target.entityId);if(state.siteExitProtectionByEntityId)delete state.siteExitProtectionByEntityId[target.entityId];});
     }
     const context=actorContext(state,periodic?target.entityId:source.entityId),player=Object.values(state.playersById).find(p=>p.entityId===source.entityId),attackActionId=identity('act');
     const common={protocolVersion:state.protocolVersion,campaignId:state.campaign.campaignId,sessionId:state.session.sessionId,tick:state.tick,
@@ -180,7 +191,7 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
       const anchor=startingSettlementRespawn(state,manifest,actor),count=safeInteger((state.playerRespawnsById?.[command.playerId]?.count??0)+1,1);
       safeInteger(actor.residency.residencyRevision+1,1);
       cancelDefeatedPrimaries(state,actor.entityId);
-       eliteCombat.clearHostilePoison(actor.entityId);eliteCombat.clearNullification(actor.entityId);eliteCombat.clearSlagBurn(actor.entityId);bossCombat.clearStatus(actor.entityId);actor.hp=structuredClone(combatInteger(resolvePlayerStats(state.playersById[command.playerId]).maxHp));actor.alive=true;actor.attackTimer=0;
+       clearWildernessCrowdGrace(state,actor.entityId);eliteCombat.clearHostilePoison(actor.entityId);eliteCombat.clearNullification(actor.entityId);eliteCombat.clearSlagBurn(actor.entityId);bossCombat.clearStatus(actor.entityId);actor.hp=structuredClone(combatInteger(resolvePlayerStats(state.playersById[command.playerId]).maxHp));actor.alive=true;actor.attackTimer=0;
       relocate(actor.entityId,anchor.spaceInstanceId,anchor.position,authorityOrder);
       (state.playerRespawnsById??={})[command.playerId]={version:PLAYER_RESPAWN_VERSION,count,command:copyWire(command),authorityOrder,tick:state.tick,toResidencyRevision:actor.residency.residencyRevision,settlementId:anchor.settlementId};
     });else if(command.kind==='loot.pickup'){
@@ -209,6 +220,7 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
     startReady();pruneCommands();captureWorldPositionsD9(state);version++;return freezeWire(state.appliedCommandsById[command.commandId]);}
   function advanceOneTick(){return measure('simulation',()=>{
     state.tick=safeInteger(state.tick+1,1);
+    expireWildernessCrowdGrace(state);
     for(const [id,until] of Object.entries(state.siteExitProtectionByEntityId??{}))if(state.tick>=until)delete state.siteExitProtectionByEntityId[id];
     eliteCombat.beginTick();bossCombat.beginTick();family.enforceSuppression();
     evade.beginTick();schedule();navigation.startTick();containment.beginTick(activeIds);hostileProjectiles.beginTick(activeIds);refreshSpatial();lastUpdated=[];const ready=[],phaseImpacts=[],frostRates=frostMovementRates(state);
@@ -233,8 +245,10 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
     for(const p of Object.values(state.playersById))settleGuard(state.subweaponCombat.actors[p.entityId].guard,state.primary.actorsById[p.entityId]);
     for(const id of pendingPrimaryHits(state)){const a=state.entitiesById[id],action=state.primary.actorsById[id].current;
       const tome=progression.resolvedStats(id).subType==='tome';
-      const targets=measure('targetQuery',()=>selectForwardActors(a,query(a,400),action.aim,primaryProfile(state,id).forwardDotMinimum,(source,target)=>canActivityTargetActor(state,manifest,source,target)&&clearHullGap(source,target)<=(hasWorldCombat(state)?a.attackReach:20)&&meleeLineClear(state.spacesByInstanceId[source.residency.spaceInstanceId].collision,source,target),hasWorldCombat(state)?[4,6,8][action.comboStep-1]:1));
-      action.hitResolved=true;if(targets.length){for(const targetId of targets)family.main(a,state.entitiesById[targetId]);}else {const r=economicResources(state,manifest).filter(r=>r.kind==='breakable'&&!r.used&&r.spaceInstanceId===a.residency.spaceInstanceId).find(r=>{const dx=r.position.x-a.position.x,dy=r.position.y-a.position.y,d=Math.hypot(dx,dy);return d<=a.attackReach+a.combatRadius+10&&(!d||(dx*action.aim.x+dy*action.aim.y)/d>=primaryProfile(state,id).forwardDotMinimum)&&meleeLineClear(state.spacesByInstanceId[a.residency.spaceInstanceId].collision,a,{position:r.position});});if(r){const p=Object.values(state.playersById).find(p=>p.entityId===id);useEconomicResource(state,manifest,p,{groupId:r.groupId,episode:r.episode,ordinal:r.ordinal},progression.prepareResource);}}if(tome){const target=selectTomeTarget(a,query(a,400),state.spacesByInstanceId[a.residency.spaceInstanceId].collision,(source,target)=>canActivityTargetActor(state,manifest,source,target));if(target)family.proc(a,target);}}
+      const cleave=wildernessCleaveTuning(state,action.comboStep),forwardMinimum=cleave?.forwardDotMinimum??primaryProfile(state,id).forwardDotMinimum;
+      const targetLimit=cleave?.maxTargets??(hasWorldCombat(state)?[4,6,8][action.comboStep-1]:1);
+      const targets=measure('targetQuery',()=>selectForwardActors(a,query(a,400),action.aim,forwardMinimum,(source,target)=>canActivityTargetActor(state,manifest,source,target)&&clearHullGap(source,target)<=(hasWorldCombat(state)?a.attackReach:20)&&meleeLineClear(state.spacesByInstanceId[source.residency.spaceInstanceId].collision,source,target),targetLimit));
+      action.hitResolved=true;if(targets.length){for(const targetId of targets)family.main(a,state.entitiesById[targetId]);}else {const r=economicResources(state,manifest).filter(r=>r.kind==='breakable'&&!r.used&&r.spaceInstanceId===a.residency.spaceInstanceId).find(r=>{const dx=r.position.x-a.position.x,dy=r.position.y-a.position.y,d=Math.hypot(dx,dy);return d<=a.attackReach+a.combatRadius+10&&(!d||(dx*action.aim.x+dy*action.aim.y)/d>=forwardMinimum)&&meleeLineClear(state.spacesByInstanceId[a.residency.spaceInstanceId].collision,a,{position:r.position});});if(r){const p=Object.values(state.playersById).find(p=>p.entityId===id);useEconomicResource(state,manifest,p,{groupId:r.groupId,episode:r.episode,ordinal:r.ordinal},progression.prepareResource);}}if(tome){const target=selectTomeTarget(a,query(a,400),state.spacesByInstanceId[a.residency.spaceInstanceId].collision,(source,target)=>canActivityTargetActor(state,manifest,source,target));if(target)family.proc(a,target);}}
     for(const [id,targetId] of phaseImpacts){const a=state.entitiesById[id],target=state.entitiesById[targetId],eligible=(source,candidate)=>canActivityTargetActor(state,manifest,source,candidate)&&meleeLineClear(state.spacesByInstanceId[source.residency.spaceInstanceId].collision,source,candidate);if(a?.alive&&target?.alive&&frostMovement(state,a)>0&&(containment.groupForActor(id)?containment.targetStillValid(a,target,eligible):eligible(a,target))&&canActorAttack(a,target)){const sequence=a.nextAttackActionSequence;damage(a,target,null,'main',null,{contactMelee:true});if(a.nextAttackActionSequence===sequence)a.nextAttackActionSequence++;a.attackTimer=resolvedHostileMeleeTimer(state,a);}else if(a?.alive){a.attackTimer=resolvedHostileMeleeTimer(state,a);a.nextAttackActionSequence++;}}
     for(const [id,targetId] of ready){const a=state.entitiesById[id],target=state.entitiesById[targetId];if(a.alive&&target.alive&&frostMovement(state,a)>0&&canActorAttack(a,target)&&canActivityTargetActor(state,manifest,a,target)&&meleeLineClear(state.spacesByInstanceId[a.residency.spaceInstanceId].collision,a,target)){if(!startHostileMelee(a,target))damage(a,target,null,'main',null,{contactMelee:true});}}
     measure('hostileProjectiles',()=>hostileProjectiles.advance());
@@ -255,6 +269,7 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
     requireContract(a?.team==='party'&&space&&!collidesWithTiles(space.collision,position.x,position.y,a.hullRadius),'Invalid participant relocation');
     requireContract(!state.primary.actorsById[entityId].current,'Finish primary work before relocation');
     if(state.siteExitProtectionByEntityId)delete state.siteExitProtectionByEntityId[entityId];
+    clearWildernessCrowdGrace(state,entityId);
     cancelSubweaponResidency(state,entityId);cancelHostileProjectiles(state,entityId);eliteCombat.clearWebbed(entityId);eliteCombat.clearSlagBurn(entityId);bossCombat.clearStatus(entityId);
     const old=state.residencyHistoryByEntityId[entityId][a.residency.residencyRevision];Object.assign(old,{endTick:state.tick,endEventSequence:state.eventEmission.lastEventSequence,endAuthorityOrder:boundaryOrder});
     a.position=copyWire(position);a.movementIntent={x:0,y:0};a.movedLastTick=false;a.residency={spaceInstanceId,residencyRevision:safeInteger(a.residency.residencyRevision+1,1)};
