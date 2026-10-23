@@ -36,6 +36,8 @@ jobs:
         run: node --test checks/woodland-event-pilot-v3-7.test.mjs
       - name: Verify actual generated Woodland event terrain and discovery clues
         run: node --test checks/wilderness-v3-8-native-discovery.test.mjs
+      - name: Verify Woodland cache rewards and cold-page persistence
+        run: node --test checks/wilderness-v3-9-event-rewards-paging.test.mjs
       - name: Build playable-only directory
         run: npm run build:playable
       - name: Verify compact inventory and hashes
