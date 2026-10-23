@@ -31,6 +31,8 @@ jobs:
           node-version: '22'
       - name: Install bundler
         run: npm install --no-audit --no-fund
+      - name: Verify Woodland V3.7 native encounter placement
+        run: node --test checks/woodland-event-pilot-v3-7.test.mjs
       - name: Build playable-only directory
         run: npm run build:playable
       - name: Verify compact inventory and hashes
