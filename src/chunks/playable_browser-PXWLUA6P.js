@@ -609,7 +609,7 @@ import {
   worldLevelGapMultiplier,
   worldOrdinaryMeleeProfile,
   worldPointForArea
-} from "./chunk-O334KQ6V.js";
+} from "./chunk-QGZMJP4J.js";
 
 // src/client/browser_loop_health.js
 var BROWSER_LOOP_HEALTH_VERSION = "browser-loop-health-ruin-freeze-v1";

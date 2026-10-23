@@ -10083,6 +10083,183 @@ function validatePopulationReservation(root, r) {
   return r;
 }
 
+// src/shared/content/bosses_d12_5.js
+var ARACHNID_TREANT_BOSS_ID = "arachnid_treant";
+var ARACHNID_TREANT_PROFILE = freezeWire({
+  contentDefinitionId: "def:d4500000000000000000000000000001",
+  kind: "actorProfile",
+  profileKey: "boss-arachnid-treant",
+  team: "hostile",
+  maxHp: combatIntegerWire(960),
+  attackDamage: combatIntegerWire(18),
+  moveSpeed: 1.3,
+  hullRadius: 34,
+  combatRadius: 36,
+  attackReach: 32,
+  attackReachMode: "center",
+  attackDelayTicks: 50,
+  aiKind: "simpleMelee",
+  isBoss: true
+});
+var ARACHNID_TREANT_D12_5A = freezeWire({
+  bossId: ARACHNID_TREANT_BOSS_ID,
+  label: "ARACHNID TREANT",
+  phaseTwoHealth: { numerator: 1, denominator: 2 },
+  pursuitRange: 220,
+  closeStrikeRange: 32,
+  closeStrikeCooldownTicks: 50,
+  abilityRecoveryTicks: 120,
+  telegraphTicks: 75,
+  slam: { radius: 64, damage: { numerator: 18, denominator: 10 } },
+  rootSnare: { impactRadius: 75, damage: { numerator: 13, denominator: 10 }, durationTicks: 132, movementMultiplier: { numerator: 2, denominator: 5 }, hazardDurationTicks: 300, hazardRadiusX: 75, hazardRadiusY: 33.75, statusId: "treant_root_snare" },
+  barkShield: { damageMultiplier: { numerator: 1, denominator: 10 }, summonCount: 3, cocoonRadius: 54, hatchTicks: 240, breakRecoveryTicks: 60 }
+});
+
+// src/shared/content/brimstone_colossus_v1.js
+var BRIMSTONE_ID = "overlord_iron_vault";
+var BRIMSTONE_PROFILE = ARACHNID_TREANT_PROFILE;
+var BRIMSTONE = freezeWire({
+  label: "BRIMSTONE COLOSSUS",
+  range: 220,
+  recoveryTicks: 120,
+  strike: { telegraphTicks: 24, recoveryTicks: 50, radius: 52, halfAngle: 0.95, damageNumerator: 10 },
+  slam: { telegraphTicks: 75, radius: 64, damageNumerator: 18 },
+  magma_vents: { telegraphTicks: 75, count: 2, boilTicks: 270, flashTicks: 18, reach: 96, halfWidth: 12, damageNumerator: 13, maxActive: 6 }
+});
+var brimstoneFortFloor = (site, index) => site.familyId === "site-family:fort" && site.sizeTier === "large" && index === site.floorCount - 1;
+var BRIMSTONE_VOLCANIC_LARGE_RUIN_V4 = "repeatable-slot:ruin:volcanic:large:01";
+function brimstoneVolcanicRuinFloorV4(site, index, state) {
+  return site?.familyId === "site-family:ruin" && site.sizeTier === "large" && index === site.floorCount - 1 && site.socket?.provenance?.reservationId === BRIMSTONE_VOLCANIC_LARGE_RUIN_V4 && site.socket?.region?.biome === "volcanic" && usesWildernessFairnessV3_2(state);
+}
+function brimstoneRuinArenaProofV4(c, position) {
+  if (collidesWithTiles(c, position.x, position.y, 34)) return null;
+  const arms = brimstoneVentArms(c, position);
+  const horizontal = arms.east + arms.west, vertical = arms.north + arms.south;
+  if (Math.min(...Object.values(arms)) < 24 || horizontal < 112 || vertical < 112) return null;
+  return { arms, horizontal, vertical, shortest: Math.min(...Object.values(arms)) };
+}
+function chooseBrimstoneRuinAnchorV4(recipe) {
+  const c = recipe?.collision, leader = recipe?.encounter?.members?.[0];
+  if (!c || !leader) return null;
+  const others = recipe.encounter.members.slice(1).map((m) => m.position);
+  const room2 = recipe.graph?.rooms?.find((r) => r.roomId === leader.roomId);
+  const boxes = [...room2?.bounds ? [room2.bounds] : room2 && Number.isInteger(room2.cx) ? [
+    { x: room2.cx - room2.rx, y: room2.cy - room2.ry, width: room2.rx * 2 + 1, height: room2.ry * 2 + 1 }
+  ] : [], { x: 2, y: 2, width: c.width - 4, height: c.height - 4 }];
+  const options = [];
+  for (const [scope, b] of boxes.entries()) for (let y = b.y; y < b.y + b.height; y++) for (let x = b.x; x < b.x + b.width; x++) {
+    if (x <= 1 || y <= 1 || x >= c.width - 2 || y >= c.height - 2 || c.tiles[y]?.[x] !== "1") continue;
+    const p = { x: (x + 0.5) * c.tileSize, y: (y + 0.5) * c.tileSize }, distance5 = Math.hypot(p.x - leader.position.x, p.y - leader.position.y);
+    if (distance5 > 416 || Math.hypot(p.x - recipe.entrance.x, p.y - recipe.entrance.y) < 160 || others.some((m) => Math.hypot(m.x - p.x, m.y - p.y) < 62)) continue;
+    const proof2 = brimstoneRuinArenaProofV4(c, p);
+    if (!proof2) continue;
+    options.push({ position: p, scope, proof: proof2, score: Math.min(proof2.horizontal, proof2.vertical) * 2 + proof2.shortest * 3 - distance5 * 0.3 });
+  }
+  options.sort((a, b) => a.scope - b.scope || b.score - a.score || a.position.y - b.position.y || a.position.x - b.position.x);
+  return options[0] ? { position: options[0].position, ...options[0].proof } : null;
+}
+function brimstoneVentArms(c, p) {
+  const arms = {};
+  for (const [key8, dx, dy] of [["east", 1, 0], ["west", -1, 0], ["north", 0, -1], ["south", 0, 1]]) {
+    let length = 0;
+    for (let d = 2; d <= 96; d += 2) {
+      if (collidesWithTiles(c, p.x + dx * d, p.y + dy * d, 12)) break;
+      length = d;
+    }
+    arms[key8] = length;
+  }
+  return arms;
+}
+
+// src/shared/contracts/brimstone_colossus_v1.js
+var point3 = (p) => p && Object.keys(p).length === 2 && Number.isFinite(p.x) && Number.isFinite(p.y);
+var abilities = ["strike", "slam", "magma_vents"];
+async function createBrimstoneColossus({ campaignSeed, siteId, floorId, groupId, roomId, entityId: entityId2, homePosition, activatedTick, spaceInstanceId, sourceResidencyRevision }, { sha256 }) {
+  const digest11 = bytesToHex((await hashBytes(frameUtf8(["brimstone-colossus-v1", campaignSeed, siteId, floorId, groupId, entityId2]), sha256)).slice(0, 16));
+  return freezeWire({ boss: {
+    version: "brimstone-colossus-v1",
+    bossId: "boss:" + digest11,
+    bossDefinitionId: BRIMSTONE_ID,
+    entityId: entityId2,
+    siteId,
+    floorId,
+    groupId,
+    roomId,
+    homePosition: copyWire(homePosition),
+    activatedTick,
+    spaceInstanceId,
+    sourceResidencyRevision,
+    phase: 1,
+    phase2Triggered: false,
+    actionState: "idle",
+    activeAbility: null,
+    targetEntityId: null,
+    targetPosition: null,
+    telegraphStartedTick: null,
+    resolvesTick: null,
+    nextActionTick: activatedTick + 60,
+    abilitySequence: 0,
+    selectionSeed: parseInt(digest11.slice(0, 8), 16) >>> 0,
+    facingAngle: Math.PI / 2,
+    summonEntityIds: [],
+    ventTargets: [],
+    ventsById: {},
+    lastAction: null
+  }, summons: [] });
+}
+function validateBrimstoneColossus(state, key8, b) {
+  closedRecord(b, ["version", "bossId", "bossDefinitionId", "entityId", "siteId", "floorId", "groupId", "roomId", "homePosition", "activatedTick", "spaceInstanceId", "sourceResidencyRevision", "phase", "phase2Triggered", "actionState", "activeAbility", "targetEntityId", "targetPosition", "telegraphStartedTick", "resolvesTick", "nextActionTick", "abilitySequence", "selectionSeed", "facingAngle", "summonEntityIds", "ventTargets", "ventsById", "lastAction"]);
+  const a = state.entitiesById[key8], g = state.groupsById[b.groupId], c = state.spacesByInstanceId[b.spaceInstanceId]?.collision;
+  requireContract(b.version === "brimstone-colossus-v1" && b.bossDefinitionId === BRIMSTONE_ID && /^boss:[a-f0-9]{32}$/.test(b.bossId) && key8 === b.entityId && a?.team === "hostile" && a.contentDefinitionId === BRIMSTONE_PROFILE.contentDefinitionId && g?.entityIds.includes(key8) && g.siteId === b.siteId && a.residency.spaceInstanceId === b.spaceInstanceId && a.residency.residencyRevision === b.sourceResidencyRevision && c && point3(b.homePosition) && !collidesWithTiles(c, b.homePosition.x, b.homePosition.y, 34), "Invalid Brimstone identity");
+  requireContract(b.phase === 1 && b.phase2Triggered === false && Number.isFinite(b.facingAngle) && Math.abs(b.facingAngle) <= Math.PI && Array.isArray(b.summonEntityIds) && b.summonEntityIds.length === 0 && ["idle", "telegraphing", "defeated"].includes(b.actionState), "Invalid Brimstone action");
+  safeInteger(b.activatedTick, 0, state.tick);
+  safeInteger(b.nextActionTick, 0, state.tick + 120);
+  safeInteger(b.abilitySequence, 0);
+  safeInteger(b.selectionSeed, 0, 4294967295);
+  if (b.actionState === "telegraphing") {
+    requireContract(a.alive && abilities.includes(b.activeAbility) && point3(b.targetPosition) && state.entitiesById[b.targetEntityId]?.team === "party", "Invalid Brimstone telegraph");
+    safeInteger(b.telegraphStartedTick, b.activatedTick, state.tick);
+    safeInteger(b.resolvesTick, b.telegraphStartedTick + BRIMSTONE[b.activeAbility].telegraphTicks, b.telegraphStartedTick + BRIMSTONE[b.activeAbility].telegraphTicks);
+    requireContract(state.tick < b.resolvesTick, "Expired Brimstone warning");
+  } else requireContract(b.activeAbility === null && b.targetEntityId === null && b.targetPosition === null && b.telegraphStartedTick === null && b.resolvesTick === null, "Stale Brimstone telegraph");
+  requireContract(Array.isArray(b.ventTargets) && b.ventTargets.length === (b.activeAbility === "magma_vents" ? 2 : 0) && b.ventTargets.every((p) => point3(p) && !collidesWithTiles(c, p.x, p.y, 12)), "Invalid Brimstone vent targets");
+  requireContract(Object.keys(b.ventsById).length <= BRIMSTONE.magma_vents.maxActive, "Brimstone vent budget exceeded");
+  for (const [id, v] of Object.entries(b.ventsById)) {
+    closedRecord(v, ["id", "position", "createdTick", "detonatesTick", "expiresTick", "sequence", "ordinal", "arms", "stage", "hitEntityIds"]);
+    requireContract(id === v.id && id === b.bossId + ":vent:" + v.sequence + ":" + v.ordinal && point3(v.position) && !collidesWithTiles(c, v.position.x, v.position.y, 12) && ["boiling", "erupting"].includes(v.stage), "Invalid Brimstone vent");
+    safeInteger(v.sequence, 1, b.abilitySequence);
+    safeInteger(v.ordinal, 0, 1);
+    safeInteger(v.createdTick, b.activatedTick, state.tick);
+    safeInteger(v.detonatesTick, v.createdTick + 270, v.createdTick + 270);
+    safeInteger(v.expiresTick, v.detonatesTick + 18, v.detonatesTick + 18);
+    closedRecord(v.arms, ["east", "west", "north", "south"]);
+    const expected = brimstoneVentArms(c, v.position);
+    for (const k of Object.keys(expected)) requireContract(v.arms[k] === expected[k], "Brimstone vent geometry drift");
+    requireContract(state.tick < v.expiresTick && v.stage === "boiling" === state.tick < v.detonatesTick && Array.isArray(v.hitEntityIds) && new Set(v.hitEntityIds).size === v.hitEntityIds.length && v.hitEntityIds.every((id2) => state.entitiesById[id2]?.team === "party") && (v.stage !== "boiling" || !v.hitEntityIds.length), "Invalid Brimstone vent schedule");
+  }
+  if (!a.alive) requireContract(b.actionState === "defeated" && !Object.keys(b.ventsById).length, "Active defeated Brimstone");
+  if (b.actionState === "defeated") requireContract(!a.alive, "Living defeated Brimstone");
+  if (b.lastAction !== null) {
+    closedRecord(b.lastAction, ["ability", "resolvedTick", "targetPosition", "hitEntityIds"]);
+    requireContract(abilities.includes(b.lastAction.ability) && point3(b.lastAction.targetPosition) && Array.isArray(b.lastAction.hitEntityIds) && new Set(b.lastAction.hitEntityIds).size === b.lastAction.hitEntityIds.length && b.lastAction.hitEntityIds.every((id) => state.entitiesById[id]?.team === "party"), "Invalid Brimstone action history");
+    safeInteger(b.lastAction.resolvedTick, b.activatedTick, state.tick);
+  }
+  return b;
+}
+function validateBrimstoneFortBinding(state, site, floor, index, a, b) {
+  requireContract(brimstoneFortFloor(site, floor.index) && index === 0 && b.entityId === a.entityId && b.siteId === site.siteId && b.floorId === floor.floorId && b.groupId === floor.groupId && b.roomId === floor.encounter.members[0].roomId && a.residency.spaceInstanceId === floor.spaceInstanceId && a.contentDefinitionId === BRIMSTONE_PROFILE.contentDefinitionId && a.hullRadius === 34 && !state.eliteCombat?.elitesByEntityId?.[a.entityId] && !collidesWithTiles(floor.collision, b.homePosition.x, b.homePosition.y, 34), "Invalid Fort Brimstone binding");
+}
+function validateBrimstoneVolcanicRuinBindingV4(state, site, floor, index, a, b) {
+  const leader = floor.encounter.members[0];
+  const homes = state.groupsById?.[floor.groupId]?.containment?.memberHomesById;
+  const proof2 = brimstoneRuinArenaProofV4(floor.collision, b.homePosition);
+  requireContract(
+    brimstoneVolcanicRuinFloorV4(site, floor.index, state) && index === 0 && b.bossDefinitionId === BRIMSTONE_ID && b.entityId === a.entityId && b.siteId === site.siteId && b.floorId === floor.floorId && b.groupId === floor.groupId && b.roomId === leader.roomId && b.spaceInstanceId === floor.spaceInstanceId && a.residency.spaceInstanceId === floor.spaceInstanceId && a.contentDefinitionId === BRIMSTONE_PROFILE.contentDefinitionId && a.hullRadius === 34 && !state.eliteCombat?.elitesByEntityId?.[a.entityId] && homes?.[a.entityId]?.x === b.homePosition.x && homes?.[a.entityId]?.y === b.homePosition.y && Math.hypot(b.homePosition.x - leader.position.x, b.homePosition.y - leader.position.y) <= 416 && proof2 && proof2.horizontal >= 112 && proof2.vertical >= 112,
+    "Invalid Volcanic Ruin Brimstone arena/binding"
+  );
+  return b;
+}
+
 // src/shared/generation/ruin_family_v1.js
 var hash8 = (text) => {
   let n = 2166136261;
@@ -10209,7 +10386,7 @@ async function buildRuinFamilyV1(state, socket, binding, { sha256, runEpisode = 
   requireContract(binding.packageId === packageId && binding.packageVersion === version && binding.contentHash === pkg.contentHash && Number.isSafeInteger(runEpisode) && runEpisode >= 1, "Invalid Ruin family binding/episode");
   const reservation = state.d9World.siteReservationsById[socket.siteId], tier2 = reservation?.parcel.tier, policy = multi ? multiroomPolicy(tier2) : (familyDefinition?.policy ?? ruinTierPolicyForVersion(version))[tier2];
   requireContract(policy, "Missing Ruin reservation");
-  const floorIds = [], floors = [], spaces = [], actors = [], groups = [], economies = [], episodes = [], resources = [], elites = [], recipes = policy.floors.map((_, i) => recipeFor(socket.siteSeed, tier2, i)), links2 = multi ? multiroomLinks(tier2) : (familyDefinition?.links ?? (version === PLANNED_RUIN_V2 ? ruinFloorLinksV2 : ruinFloorLinks))(tier2);
+  const floorIds = [], floors = [], spaces = [], actors = [], groups = [], economies = [], episodes = [], resources = [], elites = [], bosses = [], recipes = policy.floors.map((_, i) => recipeFor(socket.siteSeed, tier2, i)), links2 = multi ? multiroomLinks(tier2) : (familyDefinition?.links ?? (version === PLANNED_RUIN_V2 ? ruinFloorLinksV2 : ruinFloorLinks))(tier2);
   const token6 = async (key8) => bytesToHex((await hashBytes(frameUtf8([version, socket.siteId, key8]), sha256)).slice(0, 16));
   for (let i = 0; i < recipes.length; i++) floorIds.push("floor:" + await token6("floor-" + i));
   for (let i = 0; i < recipes.length; i++) {
@@ -10230,6 +10407,14 @@ async function buildRuinFamilyV1(state, socket, binding, { sha256, runEpisode = 
     p.episode.snapshot.activatedTick = state.tick;
     p.economy.episode = runEpisode - 1;
     for (const a of p.actors) a.ai.interiorNavigation = initialCaveInteriorNavigationD12_3A(state.tick);
+    if (!familyDefinition && multi && hasWorldCombat(state) && brimstoneVolcanicRuinFloorV4({ familyId: "site-family:ruin", sizeTier: tier2, floorCount: recipes.length, socket }, i, state)) {
+      const arena = chooseBrimstoneRuinAnchorV4(recipe);
+      requireContract(arena, "Committed Volcanic Ruin final floor lacks a safe cross-fissure boss arena");
+      const a = p.actors[0], profile2 = BRIMSTONE_PROFILE, stats = worldBossStats(p.episode.snapshot.effectiveLevel), leader = recipe.encounter.members[0];
+      Object.assign(a, { contentDefinitionId: profile2.contentDefinitionId, position: copyWire(arena.position), hp: combatInteger(stats.maxHp), maxHp: combatInteger(stats.maxHp), attackDamage: combatInteger(stats.attackDamage), hullRadius: profile2.hullRadius, combatRadius: profile2.combatRadius, moveSpeed: profile2.moveSpeed, attackReach: profile2.attackReach, attackReachMode: profile2.attackReachMode, attackDelayTicks: profile2.attackDelayTicks, attackTimer: profile2.attackDelayTicks, ai: { kind: "simpleMelee", acquireRange: 290, updatesApplied: 0, interiorNavigation: initialCaveInteriorNavigationD12_3A(state.tick) } });
+      p.group.containment.memberHomesById[a.entityId] = copyWire(a.position);
+      bosses.push(await createBrimstoneColossus({ campaignSeed: state.campaign.seed.seedHex, siteId: socket.siteId, floorId: floorIds[i], groupId: p.group.groupId, roomId: leader.roomId, entityId: a.entityId, homePosition: a.position, activatedTick: state.tick, spaceInstanceId: a.residency.spaceInstanceId, sourceResidencyRevision: a.residency.residencyRevision }, { sha256 }));
+    }
     floors.push({ ...copyWire(recipe), floorId: floorIds[i], index: i, floorSeed: await token6("floor-seed-" + i), logicalSpaceId: p.space.spaceId, spaceInstanceId: p.space.spaceInstanceId, groupId: p.group.groupId, enemyIds: copyWire(p.group.entityIds), rewardId: "reward:" + await token6("reward-" + i), transitions: { up: null, down: null } });
     spaces.push(p.space);
     actors.push(...p.actors);
@@ -10245,8 +10430,8 @@ async function buildRuinFamilyV1(state, socket, binding, { sha256, runEpisode = 
     f2.transitions[direction2] = { transitionId: "transition:" + await token6(f2.index + "/" + direction2), floorId: dest.floorId, spaceInstanceId: dest.spaceInstanceId, anchor: copyWire(f2.stairAnchors[direction2]), targetAnchor: copyWire(dest.stairAnchors[reverse]), label: direction2 === "up" ? "Ascend to " + dest.role.replaceAll("-", " ") : "Descend to " + dest.role.replaceAll("-", " ") };
   }
   const layoutHash = bytesToHex(await hashBytes(utf8(canonicalStringify({ version, siteSeed: socket.siteSeed, tier: tier2, recipes, links: links2, floorIds })), sha256)), first = floors[0], interior = { recipeVersion: version, siteId: socket.siteId, logicalSpaceId: first.logicalSpaceId, contentHash: binding.contentHash, collision: copyWire(first.collision), entrance: copyWire(first.entrance), rooms: copyWire(first.graph.rooms), decorations: copyWire(first.visual.decorations), groupId: first.groupId, visual: copyWire(first.visual) }, functionalSite = { version: familyDefinition?.functionalVersion ?? FUNCTIONAL_RUIN_FAMILY, siteId: socket.siteId, packageId, packageVersion: version, contentHash: binding.contentHash, label: reservation.parcel.label, siteKind, familyId: familyDefinition?.familyId ?? "site-family:ruin", siteSeed: socket.siteSeed, layoutSeed: reservation.parcel.layoutSeed, sizeTier: tier2, floorCount: floors.length, floorIds, layoutHash, socket: copyWire(socket), spaceInstanceId: first.spaceInstanceId, interior, floors, encounterProvenance: { version, floorMemberKeys: Object.fromEntries(floors.map((f2) => [f2.floorId, f2.encounter.members.map((m) => m.memberKey)])) }, conqueredTick: null, discoveredByPlayerIds: [], instanceHash: "" };
-  functionalSite.instanceHash = bytesToHex(await hashBytes(utf8(canonicalStringify({ functionalSite: copyWire(functionalSite), groups: copyWire(groups), economies: copyWire(economies), episodes: copyWire(episodes), actors: copyWire(actors), resources: copyWire(resources), elites: copyWire(elites) })), sha256));
-  return freezeWire({ functionalSite, spaces, groups, economies, episodes, actors, resources, elites, bosses: [] });
+  functionalSite.instanceHash = bytesToHex(await hashBytes(utf8(canonicalStringify({ functionalSite: copyWire(functionalSite), groups: copyWire(groups), economies: copyWire(economies), episodes: copyWire(episodes), actors: copyWire(actors), resources: copyWire(resources), elites: copyWire(elites), ...bosses.length ? { bosses: copyWire(bosses) } : {} })), sha256));
+  return freezeWire({ functionalSite, spaces, groups, economies, episodes, actors, resources, elites, bosses });
 }
 var RUIN_FAMILY_DEFINITION = Object.freeze({ package: RUIN_FAMILY_PACKAGE, family: { label: "Ruin" }, placement: "generated-interior-family", build: buildRuinFamilyV1 });
 
@@ -10400,7 +10585,12 @@ function validateRuinFamily(site, { familyDefinition = null } = {}) {
 function validateRuinRuntimeV1(state, site) {
   for (const floor of site.floors) {
     for (const [i, m] of floor.encounter.members.entries()) {
-      const id = floor.enemyIds[i], a = state.entitiesById[id], enemy = ORDINARY_ENEMIES.find((e) => e.family === m.family), profile2 = ordinaryRosterV2Profile(state, floor.groupId, id, ordinaryRosterProfile(state, floor.groupId, id, resolveOrdinaryProfile(enemy, floor.encounter.rank))), elite = state.eliteCombat?.elitesByEntityId?.[id];
+      const id = floor.enemyIds[i], a = state.entitiesById[id], enemy = ORDINARY_ENEMIES.find((e) => e.family === m.family), profile2 = ordinaryRosterV2Profile(state, floor.groupId, id, ordinaryRosterProfile(state, floor.groupId, id, resolveOrdinaryProfile(enemy, floor.encounter.rank))), elite = state.eliteCombat?.elitesByEntityId?.[id], boss = state.bossCombat?.bossesByEntityId?.[id];
+      if (boss?.bossDefinitionId === BRIMSTONE_ID) {
+        validateBrimstoneVolcanicRuinBindingV4(state, site, floor, i, a, boss);
+        continue;
+      }
+      requireContract(!boss, "Unexpected Ruin boss binding");
       requireContract(a?.contentDefinitionId === profile2.contentDefinitionId && a.residency.spaceInstanceId === floor.spaceInstanceId && a.hullRadius === profile2.hullRadius, "Ruin actor binding drift");
       requireContract(Boolean(elite) === Boolean(m.eliteAffixId), "Ruin elite roster drift");
       if (elite) requireContract(elite.siteId === site.siteId && elite.floorId === floor.floorId && elite.groupId === floor.groupId && elite.roomId === m.roomId && same8(elite.affixIds, [m.eliteAffixId]), "Ruin elite binding drift");
@@ -10436,142 +10626,6 @@ function validatePlannedCryptReservation(root, r) {
 }
 var validateCryptFamily = (site) => validateRuinFamily(site, { familyDefinition: { ...site.packageVersion === CRYPT_POPULATION_VERSION ? CRYPT_CONFIGURATION_V3 : site.packageVersion === PLANNED_CRYPT_V2 ? CRYPT_CONFIGURATION_V2 : CRYPT_FAMILY_CONFIGURATION, validateSocket: validatePlannedCryptSocket } });
 var validateCryptRuntime = (s, site) => validateRuinRuntimeV1(s, site);
-
-// src/shared/content/bosses_d12_5.js
-var ARACHNID_TREANT_BOSS_ID = "arachnid_treant";
-var ARACHNID_TREANT_PROFILE = freezeWire({
-  contentDefinitionId: "def:d4500000000000000000000000000001",
-  kind: "actorProfile",
-  profileKey: "boss-arachnid-treant",
-  team: "hostile",
-  maxHp: combatIntegerWire(960),
-  attackDamage: combatIntegerWire(18),
-  moveSpeed: 1.3,
-  hullRadius: 34,
-  combatRadius: 36,
-  attackReach: 32,
-  attackReachMode: "center",
-  attackDelayTicks: 50,
-  aiKind: "simpleMelee",
-  isBoss: true
-});
-var ARACHNID_TREANT_D12_5A = freezeWire({
-  bossId: ARACHNID_TREANT_BOSS_ID,
-  label: "ARACHNID TREANT",
-  phaseTwoHealth: { numerator: 1, denominator: 2 },
-  pursuitRange: 220,
-  closeStrikeRange: 32,
-  closeStrikeCooldownTicks: 50,
-  abilityRecoveryTicks: 120,
-  telegraphTicks: 75,
-  slam: { radius: 64, damage: { numerator: 18, denominator: 10 } },
-  rootSnare: { impactRadius: 75, damage: { numerator: 13, denominator: 10 }, durationTicks: 132, movementMultiplier: { numerator: 2, denominator: 5 }, hazardDurationTicks: 300, hazardRadiusX: 75, hazardRadiusY: 33.75, statusId: "treant_root_snare" },
-  barkShield: { damageMultiplier: { numerator: 1, denominator: 10 }, summonCount: 3, cocoonRadius: 54, hatchTicks: 240, breakRecoveryTicks: 60 }
-});
-
-// src/shared/content/brimstone_colossus_v1.js
-var BRIMSTONE_ID = "overlord_iron_vault";
-var BRIMSTONE_PROFILE = ARACHNID_TREANT_PROFILE;
-var BRIMSTONE = freezeWire({
-  label: "BRIMSTONE COLOSSUS",
-  range: 220,
-  recoveryTicks: 120,
-  strike: { telegraphTicks: 24, recoveryTicks: 50, radius: 52, halfAngle: 0.95, damageNumerator: 10 },
-  slam: { telegraphTicks: 75, radius: 64, damageNumerator: 18 },
-  magma_vents: { telegraphTicks: 75, count: 2, boilTicks: 270, flashTicks: 18, reach: 96, halfWidth: 12, damageNumerator: 13, maxActive: 6 }
-});
-var brimstoneFortFloor = (site, index) => site.familyId === "site-family:fort" && site.sizeTier === "large" && index === site.floorCount - 1;
-function brimstoneVentArms(c, p) {
-  const arms = {};
-  for (const [key8, dx, dy] of [["east", 1, 0], ["west", -1, 0], ["north", 0, -1], ["south", 0, 1]]) {
-    let length = 0;
-    for (let d = 2; d <= 96; d += 2) {
-      if (collidesWithTiles(c, p.x + dx * d, p.y + dy * d, 12)) break;
-      length = d;
-    }
-    arms[key8] = length;
-  }
-  return arms;
-}
-
-// src/shared/contracts/brimstone_colossus_v1.js
-var point3 = (p) => p && Object.keys(p).length === 2 && Number.isFinite(p.x) && Number.isFinite(p.y);
-var abilities = ["strike", "slam", "magma_vents"];
-async function createBrimstoneColossus({ campaignSeed, siteId, floorId, groupId, roomId, entityId: entityId2, homePosition, activatedTick, spaceInstanceId, sourceResidencyRevision }, { sha256 }) {
-  const digest11 = bytesToHex((await hashBytes(frameUtf8(["brimstone-colossus-v1", campaignSeed, siteId, floorId, groupId, entityId2]), sha256)).slice(0, 16));
-  return freezeWire({ boss: {
-    version: "brimstone-colossus-v1",
-    bossId: "boss:" + digest11,
-    bossDefinitionId: BRIMSTONE_ID,
-    entityId: entityId2,
-    siteId,
-    floorId,
-    groupId,
-    roomId,
-    homePosition: copyWire(homePosition),
-    activatedTick,
-    spaceInstanceId,
-    sourceResidencyRevision,
-    phase: 1,
-    phase2Triggered: false,
-    actionState: "idle",
-    activeAbility: null,
-    targetEntityId: null,
-    targetPosition: null,
-    telegraphStartedTick: null,
-    resolvesTick: null,
-    nextActionTick: activatedTick + 60,
-    abilitySequence: 0,
-    selectionSeed: parseInt(digest11.slice(0, 8), 16) >>> 0,
-    facingAngle: Math.PI / 2,
-    summonEntityIds: [],
-    ventTargets: [],
-    ventsById: {},
-    lastAction: null
-  }, summons: [] });
-}
-function validateBrimstoneColossus(state, key8, b) {
-  closedRecord(b, ["version", "bossId", "bossDefinitionId", "entityId", "siteId", "floorId", "groupId", "roomId", "homePosition", "activatedTick", "spaceInstanceId", "sourceResidencyRevision", "phase", "phase2Triggered", "actionState", "activeAbility", "targetEntityId", "targetPosition", "telegraphStartedTick", "resolvesTick", "nextActionTick", "abilitySequence", "selectionSeed", "facingAngle", "summonEntityIds", "ventTargets", "ventsById", "lastAction"]);
-  const a = state.entitiesById[key8], g = state.groupsById[b.groupId], c = state.spacesByInstanceId[b.spaceInstanceId]?.collision;
-  requireContract(b.version === "brimstone-colossus-v1" && b.bossDefinitionId === BRIMSTONE_ID && /^boss:[a-f0-9]{32}$/.test(b.bossId) && key8 === b.entityId && a?.team === "hostile" && a.contentDefinitionId === BRIMSTONE_PROFILE.contentDefinitionId && g?.entityIds.includes(key8) && g.siteId === b.siteId && a.residency.spaceInstanceId === b.spaceInstanceId && a.residency.residencyRevision === b.sourceResidencyRevision && c && point3(b.homePosition) && !collidesWithTiles(c, b.homePosition.x, b.homePosition.y, 34), "Invalid Brimstone identity");
-  requireContract(b.phase === 1 && b.phase2Triggered === false && Number.isFinite(b.facingAngle) && Math.abs(b.facingAngle) <= Math.PI && Array.isArray(b.summonEntityIds) && b.summonEntityIds.length === 0 && ["idle", "telegraphing", "defeated"].includes(b.actionState), "Invalid Brimstone action");
-  safeInteger(b.activatedTick, 0, state.tick);
-  safeInteger(b.nextActionTick, 0, state.tick + 120);
-  safeInteger(b.abilitySequence, 0);
-  safeInteger(b.selectionSeed, 0, 4294967295);
-  if (b.actionState === "telegraphing") {
-    requireContract(a.alive && abilities.includes(b.activeAbility) && point3(b.targetPosition) && state.entitiesById[b.targetEntityId]?.team === "party", "Invalid Brimstone telegraph");
-    safeInteger(b.telegraphStartedTick, b.activatedTick, state.tick);
-    safeInteger(b.resolvesTick, b.telegraphStartedTick + BRIMSTONE[b.activeAbility].telegraphTicks, b.telegraphStartedTick + BRIMSTONE[b.activeAbility].telegraphTicks);
-    requireContract(state.tick < b.resolvesTick, "Expired Brimstone warning");
-  } else requireContract(b.activeAbility === null && b.targetEntityId === null && b.targetPosition === null && b.telegraphStartedTick === null && b.resolvesTick === null, "Stale Brimstone telegraph");
-  requireContract(Array.isArray(b.ventTargets) && b.ventTargets.length === (b.activeAbility === "magma_vents" ? 2 : 0) && b.ventTargets.every((p) => point3(p) && !collidesWithTiles(c, p.x, p.y, 12)), "Invalid Brimstone vent targets");
-  requireContract(Object.keys(b.ventsById).length <= BRIMSTONE.magma_vents.maxActive, "Brimstone vent budget exceeded");
-  for (const [id, v] of Object.entries(b.ventsById)) {
-    closedRecord(v, ["id", "position", "createdTick", "detonatesTick", "expiresTick", "sequence", "ordinal", "arms", "stage", "hitEntityIds"]);
-    requireContract(id === v.id && id === b.bossId + ":vent:" + v.sequence + ":" + v.ordinal && point3(v.position) && !collidesWithTiles(c, v.position.x, v.position.y, 12) && ["boiling", "erupting"].includes(v.stage), "Invalid Brimstone vent");
-    safeInteger(v.sequence, 1, b.abilitySequence);
-    safeInteger(v.ordinal, 0, 1);
-    safeInteger(v.createdTick, b.activatedTick, state.tick);
-    safeInteger(v.detonatesTick, v.createdTick + 270, v.createdTick + 270);
-    safeInteger(v.expiresTick, v.detonatesTick + 18, v.detonatesTick + 18);
-    closedRecord(v.arms, ["east", "west", "north", "south"]);
-    const expected = brimstoneVentArms(c, v.position);
-    for (const k of Object.keys(expected)) requireContract(v.arms[k] === expected[k], "Brimstone vent geometry drift");
-    requireContract(state.tick < v.expiresTick && v.stage === "boiling" === state.tick < v.detonatesTick && Array.isArray(v.hitEntityIds) && new Set(v.hitEntityIds).size === v.hitEntityIds.length && v.hitEntityIds.every((id2) => state.entitiesById[id2]?.team === "party") && (v.stage !== "boiling" || !v.hitEntityIds.length), "Invalid Brimstone vent schedule");
-  }
-  if (!a.alive) requireContract(b.actionState === "defeated" && !Object.keys(b.ventsById).length, "Active defeated Brimstone");
-  if (b.actionState === "defeated") requireContract(!a.alive, "Living defeated Brimstone");
-  if (b.lastAction !== null) {
-    closedRecord(b.lastAction, ["ability", "resolvedTick", "targetPosition", "hitEntityIds"]);
-    requireContract(abilities.includes(b.lastAction.ability) && point3(b.lastAction.targetPosition) && Array.isArray(b.lastAction.hitEntityIds) && new Set(b.lastAction.hitEntityIds).size === b.lastAction.hitEntityIds.length && b.lastAction.hitEntityIds.every((id) => state.entitiesById[id]?.team === "party"), "Invalid Brimstone action history");
-    safeInteger(b.lastAction.resolvedTick, b.activatedTick, state.tick);
-  }
-  return b;
-}
-function validateBrimstoneFortBinding(state, site, floor, index, a, b) {
-  requireContract(brimstoneFortFloor(site, floor.index) && index === 0 && b.entityId === a.entityId && b.siteId === site.siteId && b.floorId === floor.floorId && b.groupId === floor.groupId && b.roomId === floor.encounter.members[0].roomId && a.residency.spaceInstanceId === floor.spaceInstanceId && a.contentDefinitionId === BRIMSTONE_PROFILE.contentDefinitionId && a.hullRadius === 34 && !state.eliteCombat?.elitesByEntityId?.[a.entityId] && !collidesWithTiles(floor.collision, b.homePosition.x, b.homePosition.y, 34), "Invalid Fort Brimstone binding");
-}
 
 // src/shared/contracts/aegis_mimics_v2.js
 var profile = resolveOrdinaryProfile(ORDINARY_ENEMIES.find((e) => e.family === "mimic_shield"), "C");
