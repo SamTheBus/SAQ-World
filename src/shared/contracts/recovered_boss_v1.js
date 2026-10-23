@@ -138,7 +138,7 @@ export function validateRecoveredBossBindingV1(state,site,floor,index,actor,b) {
 
 export function projectRecoveredBossV1(b,state){
  const spec=recoveredBossForId(b.bossDefinitionId);
- return freezeWire({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,label:spec.label,phase:b.phase,actionState:b.actionState,
+ return freezeWire({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,label:spec.label,phase:b.phase,actionState:b.actionState,selectionSeed:b.selectionSeed,abilitySequence:b.abilitySequence,
   shieldActive:BigInt(b.shieldHp)>0n,shieldHp:b.shieldHp,shieldMaxHp:b.shieldMaxHp,shieldBrokenTick:b.shieldBrokenTick,
   dazedUntilTick:b.dazedUntilTick,collapseStep:b.collapseStep,chunkStep:b.chunkStep,stolenGold:b.stolenGold,
   coinShots:copyWire(b.coinShots??[]),archive:b.archive?{charge:copyWire(b.archive.charge),sporesById:copyWire(b.archive.sporesById),poisonByEntityId:copyWire(b.archive.poisonByEntityId),collapsedRings:copyWire(b.archive.collapsedRings),nexusShotsById:copyWire(b.archive.nexusShotsById??{})}:null,
