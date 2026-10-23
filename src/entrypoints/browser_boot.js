@@ -28,9 +28,9 @@ function reportStartupFailure(error) {
 }
 var inspection = document.getElementById("world-boundary-status");
 if (inspection) {
-  import("../chunks/world_browser-XA35FMMZ.js").then(({ mountWorldBoundary }) => mountWorldBoundary(inspection)).catch(reportStartupFailure);
+  import("../chunks/world_browser-O3ZZWSVF.js").then(({ mountWorldBoundary }) => mountWorldBoundary(inspection)).catch(reportStartupFailure);
 } else {
-  import("../chunks/playable_browser-PXWLUA6P.js").then(({ startWorldClient }) => {
+  import("../chunks/playable_browser-KYQBKZVI.js").then(({ startWorldClient }) => {
     window.__SAQ_STARTUP_LOADING_V1__?.stage(1, "Reading the world map\u2026");
     return startWorldClient(window);
   }).catch(reportStartupFailure);
