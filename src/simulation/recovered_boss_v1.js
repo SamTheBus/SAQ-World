@@ -89,6 +89,15 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   if(b.bossDefinitionId==='cinderhart')awaken(b,2);
   if(b.bossDefinitionId==='chronos_arbitrator'){
    b.nextActionTick=state.tick;
+   if(b.archive){
+    // Original Chronos rewinds on phase threshold rather than waiting for a
+    // random follow-up choice. Move to the chamber's collision-safe center.
+    const c=state.spacesByInstanceId[b.spaceInstanceId]?.collision;
+    if(c){const center={x:Math.floor(c.width/2)*c.tileSize,y:Math.floor(c.height/2)*c.tileSize};
+     if(!collidesWithTiles(c,center.x,center.y,a.hullRadius))a.position=center;}
+    const t=players(a)[0];
+    if(t)beginAbility(b,a,t,'chronos_rewind');
+   }
   }
  }
  function choose(b,a,target){
