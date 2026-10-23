@@ -1,18 +1,20 @@
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 
+const baseUrl = process.env.SAQ_SMOKE_URL || 'http://127.0.0.1:8989/';
+const baseOrigin = new URL(baseUrl).origin;
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1170, height: 780 } });
 const exceptions = [], missing = [], consoleErrors = [];
 page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 page.on('pageerror', err => exceptions.push(err.message));
 page.on('response', response => {
-  if (response.status() >= 400 && new URL(response.url()).origin === 'http://127.0.0.1:8989') {
+  if (response.status() >= 400 && new URL(response.url()).origin === baseOrigin) {
     missing.push(response.status() + ' ' + response.url());
   }
 });
 try {
-  await page.goto('http://127.0.0.1:8989/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
   assert(await page.locator('#world-view').count() === 1, 'Game canvas missing');
   const workerReady = await page.evaluate(() => new Promise(resolve => {
     const task = new Worker('./save-worker.js?v=smoke');
