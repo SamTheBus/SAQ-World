@@ -2,6 +2,7 @@
 // Rendering follows authoritative phase/tick records; it never decides damage or targeting.
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
 import {hasArchivedBossPainter,drawArchivedBossActor,drawArchivedBossSummon,drawArchivedBossGround,drawArchivedBossHud} from './boss_archive_world_adapter_v1.js';
+import {hasTreasuryBossPainter,drawTreasuryBossV2,drawTreasuryBossGroundV2} from './boss_presentation_treasury_v2.js';
 const TAU=Math.PI*2;
 const circle=(c,x,y,r,fill,stroke=null,width=1)=>{c.beginPath();c.arc(x,y,r,0,TAU);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}};
 const poly=(c,pts,fill,stroke='#101925',w=2)=>{c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=w;c.stroke();}};
@@ -99,6 +100,7 @@ function drawCorrosive(c,a,t){
  for(let i=0;i<4;i++){const x=-25+i*16;poly(c,[[x,16],[x+6,36+Math.sin(t*.06+i)*5],[x+12,19]],'#77ae69a8',null);}
 }
 export function drawRecoveredBossV1(c,a,t,flash=false){
+ if(hasTreasuryBossPainter(a.boss?.bossDefinitionId))return drawTreasuryBossV2(c,a,t,flash);
  if(hasArchivedBossPainter(a.boss?.bossDefinitionId))return drawArchivedBossActor(c,a,t,flash);
  const spec=recoveredBossForId(a.boss?.bossDefinitionId);if(!spec)return false;
  c.save();c.translate(a.position.x,a.position.y);
@@ -136,8 +138,9 @@ const color=(kind)=>({acid:'#90dc63',slag:'#f3ab3e',fire:'#f17131',molten:'#da68
 export function drawRecoveredBossGroundV1(c,model,t){
  const h=model.bossHazards??{};
  drawArchivedBossGround(c,model,t);
+ drawTreasuryBossGroundV2(c,model,t);
  for(const p of h.recoveredPools??[]){
-  if(hasArchivedBossPainter(p.bossDefinitionId)&&!(p.bossDefinitionId==='hooktail'&&p.kind==='collapse'))continue;
+  if(hasTreasuryBossPainter(p.bossDefinitionId)||hasArchivedBossPainter(p.bossDefinitionId)&&!(p.bossDefinitionId==='hooktail'&&p.kind==='collapse'))continue;
   const life=Math.min(1,(p.expiresTick-t)/40,(t-p.createdTick)/15);if(life<=0)continue;
   const col=color(p.kind);c.save();c.translate(p.position.x,p.position.y);c.globalAlpha=.38*life;
   c.fillStyle=col;c.strokeStyle=col;c.lineWidth=3;
@@ -158,7 +161,7 @@ export function drawRecoveredBossGroundV1(c,model,t){
   }
  }
  for(const q of h.recoveredTelegraphs??[]){
-  const spec=recoveredBossForId(q.bossDefinitionId);if(!spec||q.ability==='eye_lance'||hasArchivedBossPainter(q.bossDefinitionId)&&!(q.bossDefinitionId==='hooktail'&&q.ability==='arena_collapse')&&!(q.bossDefinitionId==='nexus_overseer'&&q.ability==='prism_slam'))continue;
+  const spec=recoveredBossForId(q.bossDefinitionId);if(!spec||q.ability==='eye_lance'||hasTreasuryBossPainter(q.bossDefinitionId)||hasArchivedBossPainter(q.bossDefinitionId)&&!(q.bossDefinitionId==='hooktail'&&q.ability==='arena_collapse')&&!(q.bossDefinitionId==='nexus_overseer'&&q.ability==='prism_slam'))continue;
   const span=Math.max(1,q.resolvesTick-q.startedTick),progress=ease((t-q.startedTick)/span);
   c.save();c.translate(q.position.x,q.position.y);c.globalAlpha=.35+progress*.55;
   c.strokeStyle=spec.color;c.lineWidth=1.5+progress*2;

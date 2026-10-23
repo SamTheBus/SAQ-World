@@ -26,7 +26,7 @@ export async function createRecoveredBossV1({kind,campaignSeed,siteId,floorId,gr
   telegraphStartedTick:null,resolvesTick:null,nextActionTick:activatedTick+60,abilitySequence:0,
   selectionSeed:parseInt(digest.slice(0,8),16)>>>0,
   shieldHp:'0',shieldMaxHp:'0',dazedUntilTick:null,shieldBrokenTick:null,
-  summonEntityIds:summons.map(s=>s.entityId),chunkStep:0,collapseStep:0,stolenGold:'0',
+  summonEntityIds:summons.map(s=>s.entityId),chunkStep:0,collapseStep:0,stolenGold:'0',coinShots:[],
   pools:[],statusesByEntityId:{},lastTrailPosition:copyWire(homePosition),lastAction:null
  };
  return freezeWire({boss,summons});
@@ -36,7 +36,7 @@ export function validateRecoveredBossV1(state,id,b){
  closedRecord(b,['version','bossId','bossDefinitionId','entityId','siteId','floorId','groupId','roomId','homePosition','activatedTick',
   'spaceInstanceId','sourceResidencyRevision','phase','phase2Triggered','actionState','activeAbility','targetEntityId','targetPosition',
   'telegraphStartedTick','resolvesTick','nextActionTick','abilitySequence','selectionSeed','shieldHp','shieldMaxHp','dazedUntilTick',
-  'shieldBrokenTick','summonEntityIds','chunkStep','collapseStep','stolenGold','pools','statusesByEntityId','lastTrailPosition','lastAction']);
+  'shieldBrokenTick','summonEntityIds','chunkStep','collapseStep','stolenGold','pools','statusesByEntityId','lastTrailPosition','lastAction'],['coinShots']);
  const spec=recoveredBossForId(b.bossDefinitionId),actor=state.entitiesById[id],group=state.groupsById[b.groupId],c=state.spacesByInstanceId[b.spaceInstanceId]?.collision;
  check(spec&&b.version===RECOVERED_BOSS_VERSION&&b.entityId===id&&/^boss:[a-f0-9]{32}$/.test(b.bossId)&&actor?.team==='hostile'&&
   actor.contentDefinitionId===ARACHNID_TREANT_PROFILE.contentDefinitionId&&group?.entityIds.includes(id)&&group.siteId===b.siteId&&
@@ -56,6 +56,12 @@ export function validateRecoveredBossV1(state,id,b){
  else check(b.dazedUntilTick===null,'Recovered boss stale daze');
  if(b.shieldBrokenTick!==null)safeInteger(b.shieldBrokenTick,b.activatedTick,state.tick);
  if(!actor.alive)check(b.actionState==='defeated','Recovered boss not retired'); else check(b.actionState!=='defeated','Recovered boss defeated while alive');
+ check(Array.isArray(b.coinShots??[])&&b.coinShots.length<=16&&(!b.coinShots.length||b.bossDefinitionId==='marcus'),'Coin volley budget invalid');
+ for(const shot of b.coinShots??[]){
+  closedRecord(shot,['id','position','velocity','firedTick','expiresTick','sequence','ordinal','bounces']);
+  check(typeof shot.id==='string'&&shot.id===b.bossId+':coin:'+shot.sequence+':'+shot.ordinal&&point(shot.position)&&point(shot.velocity)&&Math.hypot(shot.velocity.x,shot.velocity.y)<13&&shot.bounces<=2,'Invalid flying Marcus coin');
+  safeInteger(shot.firedTick,b.activatedTick,state.tick);safeInteger(shot.expiresTick,shot.firedTick+120,shot.firedTick+120);safeInteger(shot.sequence,1,b.abilitySequence);safeInteger(shot.ordinal,0,7);safeInteger(shot.bounces,0,2);check(state.tick<shot.expiresTick,'Expired coin shot');
+ }
  check(Array.isArray(b.pools)&&b.pools.length<=(b.bossDefinitionId==='cinderhart'?64:20)&&point(b.lastTrailPosition),'Recovered boss hazard budget invalid');
  for(const p of b.pools){closedRecord(p,['id','kind','position','radius','createdTick','expiresTick','nextDamageTick']);check(typeof p.id==='string'&&p.id.startsWith(b.bossId+':pool:')&&['acid','slag','fire','void','time','collapse','molten','gold','prism'].includes(p.kind)&&point(p.position)&&Number.isFinite(p.radius)&&p.radius>=8&&p.radius<=300,'Recovered boss pool invalid');safeInteger(p.createdTick,b.activatedTick,state.tick);safeInteger(p.expiresTick,state.tick+1,p.createdTick+600);safeInteger(p.nextDamageTick,p.createdTick,p.expiresTick);}
  for(const [key,s] of Object.entries(b.statusesByEntityId)){closedRecord(s,['kind','startedTick','expiresTick','movementMultiplier']);check(state.entitiesById[key]?.team==='party'&&['time_slow','control_glitch','lasso'].includes(s.kind)&&s.movementMultiplier>0&&s.movementMultiplier<=1,'Recovered boss status invalid');safeInteger(s.startedTick,b.activatedTick,state.tick);safeInteger(s.expiresTick,state.tick+1,s.startedTick+600);}
@@ -90,7 +96,7 @@ export function projectRecoveredBossV1(b,state){
  return freezeWire({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,label:spec.label,phase:b.phase,actionState:b.actionState,
   shieldActive:BigInt(b.shieldHp)>0n,shieldHp:b.shieldHp,shieldMaxHp:b.shieldMaxHp,shieldBrokenTick:b.shieldBrokenTick,
   dazedUntilTick:b.dazedUntilTick,collapseStep:b.collapseStep,chunkStep:b.chunkStep,stolenGold:b.stolenGold,
-  minions:b.summonEntityIds.map(id=>{const m=state.bossCombat.summonsByEntityId[id];return {entityId:id,kind:m.kind,stage:m.stage,position:copyWire(state.entitiesById[id].position)};}),
+  coinShots:copyWire(b.coinShots??[]),minions:b.summonEntityIds.map(id=>{const m=state.bossCombat.summonsByEntityId[id];return {entityId:id,kind:m.kind,stage:m.stage,position:copyWire(state.entitiesById[id].position)};}),
   lastAction:copyWire(b.lastAction),pendingAction:b.actionState==='telegraphing'?
   {ability:b.activeAbility,targetEntityId:b.targetEntityId,targetPosition:copyWire(b.targetPosition),startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick}:null});
 }

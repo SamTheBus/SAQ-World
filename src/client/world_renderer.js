@@ -1,6 +1,7 @@
 import {createBossPolishPresentation,drawBossPolishGround,bossPolishDepthItems,drawAegisProjectileTrails} from './boss_attack_polish_v3.js';
 import {drawRecoveredBossV1,drawRecoveredSummonV1,drawRecoveredBossGroundV1,drawRecoveredBossHudV1} from './recovered_boss_presentation_v1.js';
 import {archivedBossDepthItems} from './boss_archive_world_adapter_v1.js';
+import {treasuryBossDepthItems,drawTreasuryBossHudV2} from './boss_presentation_treasury_v2.js';
 import {woodlandPilotEventDepthItems} from './wilderness_event_pilot_presentation_v3_7.js';
 import {createBrimstoneEruptionPresentation} from './brimstone_attack_effects_v2.js';
 import {drawBrimstoneColossus,drawBrimstoneGround,drawBrimstoneBossHud,brimstoneEffectDepthItems} from './boss_presentation_brimstone_v1.js';
@@ -134,7 +135,7 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
       const area=model.encounter.activation;ctx.strokeStyle="#d2d99588";ctx.lineWidth=2;ctx.beginPath();ctx.arc(area.x,area.y,area.radius,0,Math.PI*2);ctx.stroke();
       ctx.fillStyle="#dce2ba";ctx.font="12px system-ui";ctx.fillText("Slime clearing",area.x-40,area.y-area.radius-10);
     }
-    drawWebWeaverHazardsD12_4J(ctx,model,model.tick);drawSlagShaperHazardsD12_4K(ctx,model,model.tick);const {bossPolishView,brimstoneView}=observeBossEffects(model);drawBossPolishGround(ctx,bossPolishView,model.tick);depthItems.push(...bossPolishDepthItems(bossPolishView,model.tick,viewport));drawBrimstoneGround(ctx,brimstoneView,model.tick);drawRecoveredBossGroundV1(ctx,model,model.tick);depthItems.push(...archivedBossDepthItems(model,model.tick,viewport));depthItems.push(...brimstoneEffectDepthItems(brimstoneView,model.tick,viewport));drawAegisMimicTethers(ctx,model,model.tick);groundItems.draw(ctx,model,time,viewport,equipmentArt);
+    drawWebWeaverHazardsD12_4J(ctx,model,model.tick);drawSlagShaperHazardsD12_4K(ctx,model,model.tick);const {bossPolishView,brimstoneView}=observeBossEffects(model);drawBossPolishGround(ctx,bossPolishView,model.tick);depthItems.push(...bossPolishDepthItems(bossPolishView,model.tick,viewport));drawBrimstoneGround(ctx,brimstoneView,model.tick);drawRecoveredBossGroundV1(ctx,model,model.tick);depthItems.push(...archivedBossDepthItems(model,model.tick,viewport));depthItems.push(...treasuryBossDepthItems(model,model.tick,viewport));depthItems.push(...brimstoneEffectDepthItems(brimstoneView,model.tick,viewport));drawAegisMimicTethers(ctx,model,model.tick);groundItems.draw(ctx,model,time,viewport,equipmentArt);
     for(const shot of model.hostileProjectiles??[])depthItems.push(depthItem({id:'hostile-shot/'+shot.id,anchorX:shot.position.x,anchorY:shot.position.y+4.5,draw:ctx=>drawOrdinaryHostileProjectile(ctx,shot,model.tick)}));
     const liveBolts=new Set((model.bolts??[]).map(b=>b.id));for(const id of boltOrigins.keys())if(!liveBolts.has(id))boltOrigins.delete(id);
     for(const bolt of model.bolts??[]){const source=model.entitiesById[bolt.sourceId],pose=heroPoses[bolt.sourceId];
@@ -146,7 +147,7 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
     drawBerserkerTransfersD12_4H_A(ctx,model,model.tick);
     lastRenderedEntities=0;
     for (const [id,drawn] of Object.entries(model.entitiesById)) {
-      const margin=['aegis_goliath','overlord_iron_vault','corrosive_abomination','void_overseer'].includes(drawn.boss?.bossDefinitionId)?152:64;
+      const margin=['aegis_goliath','overlord_iron_vault','corrosive_abomination','void_overseer','marcus','gilded_vault_keeper'].includes(drawn.boss?.bossDefinitionId)?152:64;
       if(seamless&&(drawn.position.x<viewport.x-margin||drawn.position.y<viewport.y-margin||
         drawn.position.x>viewport.x+viewport.width+margin||drawn.position.y>viewport.y+viewport.height+margin))continue;
       lastRenderedEntities++;const reaction=drawn.alive?feedback.reaction(id,time):null;
@@ -167,7 +168,7 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
     combatVfx.draw(ctx,model,time,viewport);if(performanceProbe)performanceProbe.measure("combatFeedback",()=>feedback.draw(ctx,time,equipmentArt,viewport));else feedback.draw(ctx,time,equipmentArt,viewport);
     drawAegisProjectileTrails(ctx,model,model.tick);drawAegisProjectiles(ctx,model,model.tick);
     ctx.restore();
-    if(!drawRecoveredBossHudV1(ctx,canvas,model)&&!drawBrimstoneBossHud(ctx,canvas,model)&&!drawAegisBossHud(ctx,canvas,model))drawArachnidTreantBossHudD12_5A(ctx,canvas,model);
+    if(!drawRecoveredBossHudV1(ctx,canvas,model)&&!drawBrimstoneBossHud(ctx,canvas,model)&&!drawAegisBossHud(ctx,canvas,model))drawArachnidTreantBossHudD12_5A(ctx,canvas,model);drawTreasuryBossHudV2(ctx,canvas,model);
     const aliveBoss=Object.entries(model.entitiesById).find(([,entity])=>entity.alive&&entity.boss);
     if(aliveBoss){
       const [bossId,boss]=aliveBoss,visual=healthTrails.sample('boss/'+bossId,actorHealthRatio(boss),time);
