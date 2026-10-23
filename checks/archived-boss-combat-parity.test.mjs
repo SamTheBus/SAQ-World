@@ -165,3 +165,25 @@ test('Chronos phase-two rewind starts immediately at the original health thresho
  assert.ok(BigInt(env.b.shieldHp)>0n,'Rewind has independently breakable channel shield');
  assert.equal(env.b.resolvesTick,241);
 });
+
+
+test('Cinderhart fire uses archived 12-tick ignition and 30-tick hit cooldown',async()=>{
+ const env=await setup('cinderhart');
+ env.b.nextActionTick=500;
+ env.b.pools.push({id:env.b.bossId+':pool:0:0:0',kind:'fire',position:{...env.hero.position},radius:18,
+  createdTick:0,expiresTick:180,nextDamageTick:45});
+ for(let t=1;t<=43;t++)step(env,t);
+ const burns=env.hits.filter(h=>h.mechanic==='cinderhart_fire').map(h=>h.tick);
+ assert.deepEqual(burns,[12,42],'Only ignited fire burns, no overlapping hit spam');
+});
+test('Corrosive original acid unions apply one percentage-based burn per cadence',async()=>{
+ const env=await setup('corrosive_abomination');
+ env.b.nextActionTick=500;
+ for(let i=0;i<2;i++)env.b.pools.push({id:env.b.bossId+':pool:0:'+i+':0',kind:'acid',
+  position:{...env.hero.position},radius:12,createdTick:0,expiresTick:480,nextDamageTick:45});
+ for(let t=1;t<=46;t++)step(env,t);
+ const burns=env.hits.filter(h=>h.mechanic==='corrosive_acid');
+ assert.equal(burns.length,1,'Overlapping acid does not double-damage within a 45-tick cadence');
+ assert.equal(burns[0].value.m,2.7,'1.5% of 1800 HP = 27 damage');
+ assert.equal(burns[0].value.e,1);
+});
