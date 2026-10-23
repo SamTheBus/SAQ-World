@@ -6,6 +6,7 @@ import {integerBigInt} from '../shared/contracts/integer_domain.js';
 import {copyWire} from '../shared/contracts/wire.js';
 import {archivedCombatProfile} from '../shared/content/archived_boss_fight_profiles_v1.js';
 import {range,segmentDistance,sweptPathClear,originalCinderRushEndpoint,originalArenaRing,onOriginalRing,originalFireCone} from './archived_boss_attack_geometry_v1.js';
+import {moveAegisAffectedActor} from './aegis_goliath_v1.js';
 
 const rounded=(hp,n,d)=>combatInteger(multiplyCombat(hp,n,d),'round');
 const within=(a,b,r)=>range(a,b)<=r;
@@ -200,10 +201,53 @@ export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awak
   clear(b);b.actionState='idle';b.nextActionTick=state.tick+110;
   return true;
  }
+ function advanceNexusDecoys(b,a,all,c){
+  if(b.bossDefinitionId!=='nexus_overseer'||!b.archive)return;
+  const cfgN=cfg(b).decoy,shots=b.archive.nexusShotsById??=( {});
+  for(const id of b.summonEntityIds){
+   const s=state.bossCombat?.summonsByEntityId?.[id],decoy=state.entitiesById[id];
+   if(s?.kind!=='hologram'||s.stage!=='hatched'||!decoy?.alive)continue;
+   const targets=targetsIn(b,all),t=[...targets].sort((x,y)=>range(decoy.position,x.position)-range(decoy.position,y.position)||x.entityId.localeCompare(y.entityId))[0];
+   if(!t)continue;
+   const d=range(decoy.position,t.position),u=d>0?{x:(t.position.x-decoy.position.x)/d,y:(t.position.y-decoy.position.y)/d}:{x:1,y:0};
+   if(d>100)moveAegisAffectedActor(c,decoy,{x:u.x*cfgN.speed,y:u.y*cfgN.speed});
+   else if(d<60)moveAegisAffectedActor(c,decoy,{x:-u.x*cfgN.speed*.8,y:-u.y*cfgN.speed*.8});
+   const age=state.tick-s.activatedTick-60-s.ordinal*17;
+   if(age<0||age%90!==0||d>cfgN.range||!sweptPathClear(c,decoy.position,t.position,3))continue;
+   const direction=range(decoy.position,t.position)||1,seq=Math.floor(age/90)+1;
+   const key=b.bossId+':bolt:'+decoy.entityId+':'+seq;
+   shots[key]={id:key,sourceEntityId:decoy.entityId,position:point(decoy.position),
+    previousPosition:point(decoy.position),
+    velocity:{x:(t.position.x-decoy.position.x)/direction*cfgN.projectileSpeed,
+     y:(t.position.y-decoy.position.y)/direction*cfgN.projectileSpeed},
+    createdTick:state.tick,expiresTick:state.tick+cfgN.projectileLifeTicks,sequence:seq,ordinal:s.ordinal};
+   if(Object.keys(shots).length>12)delete shots[Object.keys(shots).sort((x,y)=>shots[x].createdTick-shots[y].createdTick||x.localeCompare(y))[0]];
+  }
+  for(const [key,p] of Object.entries(shots).sort(([x],[y])=>x.localeCompare(y))){
+   const actor=state.entitiesById[p.sourceEntityId];
+   if(!actor?.alive||state.tick>=p.expiresTick){delete shots[key];continue;}
+   if(state.tick<=p.createdTick)continue;
+   const prev=point(p.position),next={x:prev.x+p.velocity.x,y:prev.y+p.velocity.y};
+   if(!sweptPathClear(c,prev,next,cfgN.projectileRadius)){delete shots[key];continue;}
+   let best=null,bestT=2;
+   for(const t of targetsIn(b,all)){
+    const dx=next.x-prev.x,dy=next.y-prev.y,den=dx*dx+dy*dy||1;
+    const u=Math.min(1,Math.max(0,((t.position.x-prev.x)*dx+(t.position.y-prev.y)*dy)/den));
+    if(segmentDistance(t.position,prev,next)<=cfgN.projectileRadius+(t.hullRadius??9)&&u<bestT){best=t;bestT=u;}
+   }
+   if(best){
+    damagePacket(actor,best,actor.attackDamage,'nexus_decoy_bolt',{sourceActionSequence:p.sequence,
+     projectileImpact:true,projectileDirection:{x:p.velocity.x/cfgN.projectileSpeed,y:p.velocity.y/cfgN.projectileSpeed}});
+    delete shots[key];continue;
+   }
+   p.previousPosition=prev;p.position=next;
+  }
+ }
  function tick(b,a,all,c){
   if(!b.archive||!cfg(b))return false;
   if(b.bossDefinitionId==='corrosive_abomination'){spillCorrosive(b,a,c);tickAcid(b,a,all,c);tickSpores(b,a,all,c);tickPoison(b,a,all);}
   if(b.bossDefinitionId==='hooktail')tickCollapsedRings(b,a,all);
+  if(b.bossDefinitionId==='nexus_overseer')advanceNexusDecoys(b,a,all,c);
   if(['corrosive_abomination','void_overseer'].includes(b.bossDefinitionId))tickContact(b,a,all);
   return b.bossDefinitionId==='cinderhart'&&advanceRush(b,a,all,c);
  }
