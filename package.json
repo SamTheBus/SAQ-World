@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "name": "saq-world-source",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build:playable": "node tools/build-playable.mjs",
+    "verify:playable": "node tools/verify-playable.mjs",
+    "smoke:playable": "node tools/smoke-playable.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
