@@ -33,7 +33,8 @@ const result=await esbuild.build({
         const count=original.split(needle).length-1;
         workerConstructorCount+=count;
         if(count!==2)throw Error('Expected two save/world worker constructors, found '+count);
-        return {contents:original.replaceAll(needle,'new environment.Worker(workerUrl,{type:"module"})'),loader:'js'};
+        const patched=original.replaceAll(needle,'new environment.Worker(workerUrl,{type:"module"})').replace('const failure=classifyLocalLaunchError(error);','console.error("SAQ initial game startup stack:",error?.stack??error); const failure=classifyLocalLaunchError(error);');
+        return {contents:patched,loader:'js'};
       });
     }
   }]
