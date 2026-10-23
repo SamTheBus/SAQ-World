@@ -201,6 +201,18 @@ export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awak
   clear(b);b.actionState='idle';b.nextActionTick=state.tick+110;
   return true;
  }
+ function tickCinderFires(b,a,all){
+  if(b.bossDefinitionId!=='cinderhart'||!b.archive)return;
+  for(const t of targetsIn(b,all)){
+   const old=b.archive.contactByEntityId[t.entityId]??-1000;
+   if(state.tick-old<30)continue;
+   const standing=b.pools.some(p=>p.kind==='fire'&&p.expiresTick>state.tick&&
+    state.tick>=p.createdTick+12&&within(t.position,p.position,p.radius+(t.hullRadius??9)));
+   if(!standing)continue;
+   if(damagePacket(a,t,combatInteger(24),'cinderhart_fire',{sourceActionSequence:b.abilitySequence,periodic:true}))
+    b.archive.contactByEntityId[t.entityId]=state.tick;
+  }
+ }
  function advanceNexusDecoys(b,a,all,c){
   if(b.bossDefinitionId!=='nexus_overseer'||!b.archive)return;
   const cfgN=cfg(b).decoy,shots=b.archive.nexusShotsById??=( {});
@@ -247,6 +259,7 @@ export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awak
   if(!b.archive||!cfg(b))return false;
   if(b.bossDefinitionId==='corrosive_abomination'){spillCorrosive(b,a,c);tickAcid(b,a,all,c);tickSpores(b,a,all,c);tickPoison(b,a,all);}
   if(b.bossDefinitionId==='hooktail')tickCollapsedRings(b,a,all);
+  if(b.bossDefinitionId==='cinderhart')tickCinderFires(b,a,all);
   if(b.bossDefinitionId==='nexus_overseer')advanceNexusDecoys(b,a,all,c);
   if(['corrosive_abomination','void_overseer'].includes(b.bossDefinitionId))tickContact(b,a,all);
   return b.bossDefinitionId==='cinderhart'&&advanceRush(b,a,all,c);
