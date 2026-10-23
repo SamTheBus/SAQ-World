@@ -1,4 +1,0 @@
-import {buildRuinFamilyV1} from './ruin_family_runtime_v1.js';import {CRYPT_PACKAGE,PLANNED_CRYPT_VERSION,FUNCTIONAL_CRYPT_FAMILY} from './planned_crypt_policy_v1.js';import {cryptFloorRecipe,cryptFloorLinks} from '../generation/crypt_family_v1.js';
-export const CRYPT_FAMILY_CONFIGURATION=Object.freeze({version:PLANNED_CRYPT_VERSION,package:CRYPT_PACKAGE,functionalVersion:FUNCTIONAL_CRYPT_FAMILY,familyId:'site-family:crypt',siteKind:'procedural-crypt',groupPrefix:'crypt',policy:{small:{floors:[{role:'burial-chamber',tiles:[26,28]}]}},recipe:cryptFloorRecipe,links:cryptFloorLinks});
-export const buildCryptFamilyV1=(state,socket,binding,options)=>buildRuinFamilyV1(state,socket,binding,{...options,familyDefinition:CRYPT_FAMILY_CONFIGURATION});
-export const CRYPT_FAMILY_DEFINITION=Object.freeze({package:CRYPT_PACKAGE,family:{label:'Crypt'},placement:'generated-interior-family',build:buildCryptFamilyV1});

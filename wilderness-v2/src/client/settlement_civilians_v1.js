@@ -1,7 +1,0 @@
-import {depthItem} from './world_depth_presentation.js';
-// Temporary Canvas civilians at the existing character scale. Stationary,
-// noncombat population: their occupied tile is also authoritative collision.
-export function civilianDepthItems(model,viewport){return (model.serviceNpcs??[]).filter(n=>n.position.x>viewport.x-80&&n.position.x<viewport.x+viewport.width+80&&n.position.y>viewport.y-80&&n.position.y<viewport.y+viewport.height+80).map(n=>depthItem({id:n.id,anchorX:n.position.x,anchorY:n.position.y+12,draw:c=>{
- const {x,y}=n.position;c.save();c.translate(x,y);c.strokeStyle='#27242b';c.lineWidth=1.5;c.fillStyle='#302e35';c.fillRect(-9,4,7,9);c.fillRect(3,4,7,9);c.fillStyle=n.color;c.beginPath();c.moveTo(-10,4);c.lineTo(-8,-16);c.lineTo(8,-16);c.lineTo(11,4);c.closePath();c.fill();c.stroke();c.fillStyle='#cfab84';c.fillRect(-6,-29,12,12);c.strokeRect(-6,-29,12,12);c.fillStyle='#594838';c.fillRect(-7,-30,14,5);c.fillStyle='#b7b0a0';c.fillRect(-5,-14,10,16);c.fillStyle='#302a27';c.fillRect(-3,-24,2,2);c.fillRect(3,-24,2,2);
- c.textAlign='center';c.font='bold 12px system-ui';c.lineWidth=3;c.strokeStyle='#191523';c.strokeText(n.name,0,-43);c.fillStyle='#f4dfad';c.fillText(n.name,0,-43);c.font='10px system-ui';c.strokeText(n.role==='general'?'Merchant':n.role==='smith'?'Smith':'Innkeeper',0,-32);c.fillStyle='#d7d9ce';c.fillText(n.role==='general'?'Merchant':n.role==='smith'?'Smith':'Innkeeper',0,-32);c.restore();
- }}));}

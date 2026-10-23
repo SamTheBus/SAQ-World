@@ -26,7 +26,7 @@ assert(html.includes('startup_loading_v1.js?v=startup-art-v1'));
 assert(html.includes('id="saq-startup-progress"'));
 assert(html.includes('id="saq-startup-scene"'));
 assert(html.includes('world.css?v=stage1-combat-v3'));
-assert(html.includes('data-runtime-manifest="runtime-manifest.json?v=v3-6-aegis-deep-20261022"'),'runtime manifest URL should not serve a stale hash');
+assert(html.includes('data-runtime-manifest="runtime-manifest.json?v=lean-publish-20261022"'),'runtime manifest URL should not serve a stale hash');
 assert(html.includes('saq-load-stage1-art'));
 assert(html.includes('id="saq-startup-duel"'));
 assert(html.includes('startup_combat_preview_v1.js?v=stage1-combat-v3'));
