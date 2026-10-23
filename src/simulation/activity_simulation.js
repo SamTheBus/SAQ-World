@@ -71,6 +71,7 @@ export function createActivitySimulation(initialState,{measure=(_name,fn)=>fn(),
   const assist={starts:0,candidates:0,maxCandidates:0,assisted:0};
   const movementBlocks={attempts:0,blockedTicks:0,genuineBlocker:0,missingResidentPage:0,outsideLocalFrame:0,oldFiniteBound:0,unexplained:0,seamDisagreement:0,last:null};
   function startReady(){for(const p of Object.values(state.playersById)){const c=state.subweaponCombat.actors[p.entityId],a=state.entitiesById[p.entityId];reconcileGuard(c.guard,a,progression.resolvedStats(p.entityId),p.connectionStatus==='connected');settleGuard(c.guard,state.primary.actorsById[p.entityId]);}for(const id of readyPrimarySources(state)){
+    if(!bossCombat.primaryReady(id))continue;
     const actor=state.entitiesById[id],collision=state.spacesByInstanceId[actor.residency.spaceInstanceId].collision;
     // Exit grace ends at actual offensive action start, including the first held swing.
     if(state.siteExitProtectionByEntityId)delete state.siteExitProtectionByEntityId[id];
