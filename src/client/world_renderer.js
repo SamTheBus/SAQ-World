@@ -1,4 +1,5 @@
 import {createBossPolishPresentation,drawBossPolishGround,bossPolishDepthItems,drawAegisProjectileTrails} from './boss_attack_polish_v3.js';
+import {woodlandPilotEventDepthItems} from './wilderness_event_pilot_presentation_v3_7.js';
 import {createBrimstoneEruptionPresentation} from './brimstone_attack_effects_v2.js';
 import {drawBrimstoneColossus,drawBrimstoneGround,drawBrimstoneBossHud,brimstoneEffectDepthItems} from './boss_presentation_brimstone_v1.js';
 import {drawOrdinaryHostileProjectile} from './ordinary_hostile_projectile_presentation.js';
@@ -109,7 +110,8 @@ export function createWorldRenderer(canvas,{performanceProbe=null,developmentSce
     if(model.space.plannedVillage){drawPlannedVillageGround(ctx,model,viewport);depthItems.push(...plannedVillageDepthItems(model,viewport));}
     depthItems.push(...civilianDepthItems(model,viewport));
     if(model.space.plannedTown){drawPlannedTownGround(ctx,model,viewport);depthItems.push(...plannedTownDepthItems(model,viewport));}
-    if(seamless&&!model.space.site){drawEnvironmentMarkers(ctx,model.space);depthItems.push(...environmentCache.depthItems(model.space,viewport,time));}
+    if(seamless&&!model.space.site){drawEnvironmentMarkers(ctx,model.space);depthItems.push(...environmentCache.depthItems(model.space,viewport,time));
+    if(seamless&&!model.space.site)depthItems.push(...woodlandPilotEventDepthItems(model,viewport,time));}
     else if(model.space.visual&&(model.space.site||model.space.functionalSite))depthItems.push(...siteEnvironment.depthItems(model.space,viewport,time));
     animatedFlowers=seamless&&!model.space.site?environmentCache.drawFlowers(ctx,{x:cam.x,y:cam.y,width:canvas.width/cam.zoom,height:canvas.height/cam.zoom},time):0;
     ambientMarks=drawEnvironmentAmbient(ctx,model.space,{x:cam.x,y:cam.y,width:canvas.width/cam.zoom,height:canvas.height/cam.zoom},time);
