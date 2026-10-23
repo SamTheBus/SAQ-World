@@ -3,6 +3,7 @@
 // collision, player wallets, timers and encounter decisions.
 import {drawMarcusTheOutlaw,drawMarcusGround,marcusDepthItems} from './boss_presentation_marcus_the_outlaw_v1.js';
 import {drawGildedVaultKeeper,drawGildedGround,gildedDepthItems} from './boss_presentation_gilded_vault_keeper_v1.js';
+import {gildedGoldFallTargets} from '../shared/content/original_gilded_gold_fall_v1.js';
 
 const marcus=id=>id==='marcus';
 const gilded=id=>id==='gilded_vault_keeper';
@@ -73,7 +74,7 @@ function project(model,tick){
     startedTick:row.startedTick,resolvesTick:row.resolvesTick,
     originPosition:point(row.originPosition??actor.position),sequence:row.sequence};
    if(gilded(id)&&original.ability==='gold_fall'){
-    base.targets=[0,1,2].map(i=>{const angle=i*2*Math.PI/3;return{x:target.x+Math.cos(angle)*62,y:target.y+Math.sin(angle)*62};});
+    base.targets=gildedGoldFallTargets(row.selectionSeed??b.selectionSeed??0,row.sequence,target);
    }
    if(marcus(id))hazards.marcusTelegraphs.push(base);else hazards.gildedTelegraphs.push(base);
   }
@@ -81,7 +82,7 @@ function project(model,tick){
    const base={...last,bossId:b.bossId,sourceEntityId:actor.entityId,position:last.position??last.targetPosition,
     sequence:b.abilitySequence??0,resolvedTick:last.resolvedTick,originPosition:point(actor.position)};
    if(gilded(id)&&last.ability==='gold_fall'){
-    const t=last.targetPosition;base.targets=[0,1,2].map(i=>{const q=i*2*Math.PI/3;return{x:t.x+Math.cos(q)*62,y:t.y+Math.sin(q)*62};});
+    const t=last.targetPosition;base.targets=gildedGoldFallTargets(b.selectionSeed??0,b.abilitySequence??0,t);
    }
    if(marcus(id))hazards.marcusImpacts.push(base);else hazards.gildedImpacts.push(base);
   }
