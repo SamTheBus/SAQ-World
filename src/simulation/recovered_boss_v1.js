@@ -32,7 +32,9 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  const bossesForPlayer=id=>records().filter(b=>b.statusesByEntityId[id]?.expiresTick>state.tick);
  function pool(b,position,kind,radius,lifetime){
   if(b.pools.length>=(b.bossDefinitionId==='cinderhart'?64:20))b.pools.shift();
-  const id=b.bossId+':pool:'+state.tick+':'+b.pools.length+':'+b.abilitySequence;
+  let sequence=b.pools.filter(p=>p.createdTick===state.tick).length;
+  let id=b.bossId+':pool:'+state.tick+':'+sequence+':'+b.abilitySequence;
+  while(b.pools.some(p=>p.id===id)){sequence++;id=b.bossId+':pool:'+state.tick+':'+sequence+':'+b.abilitySequence;}
   b.pools.push({id,kind,position:copyWire(position),radius,createdTick:state.tick,expiresTick:state.tick+lifetime,nextDamageTick:state.tick+45});
  }
  function effect(b,target,kind,duration,multiplier=1){
@@ -76,7 +78,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  function enterPhaseTwo(b,a){
   const cutoff=b.bossDefinitionId==='chronos_arbitrator'?4:5;
   if(b.phase!==1||compareCombat(a.hp,multiplyCombat(a.maxHp,cutoff,10))>0)return;
-  b.phase=2;b.phaseTwoTriggered=true;stats.phaseTwos++;
+  b.phase=2;b.phase2Triggered=true;stats.phaseTwos++;
   if(b.bossDefinitionId==='nexus_overseer')awaken(b,2);
   if(b.bossDefinitionId==='cinderhart')awaken(b,2);
   if(b.bossDefinitionId==='chronos_arbitrator'){
