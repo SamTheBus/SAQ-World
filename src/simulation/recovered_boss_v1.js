@@ -23,7 +23,7 @@ const attackRadius=(ability)=>({eye_lance:24,singularity:95,corrosive_slam:72,sp
  fire_charge:110,landing_fire:90})[ability]??75;
 
 export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()=>true,lineClear=()=>true}={}){
- const observed=new Map(),stats={casts:0,hits:0,summons:0,phaseTwos:0,interrupts:0,poolHits:0};
+ const observed=new Map(),stats={casts:0,hits:0,summons:0,phaseTwos:0,interrupts:0,poolHits:0,coinsSpawned:0,coinHits:0,coinRicochets:0};
  const root=()=>state.bossCombat;
  const records=()=>Object.values(root()?.bossesByEntityId??{}).filter(recoveredBossRecord).sort((a,b)=>a.bossId.localeCompare(b.bossId));
  const record=id=>{const b=root()?.bossesByEntityId?.[id];return recoveredBossRecord(b)?b:null;};
@@ -64,7 +64,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  function sync(b,a){
   if(!a?.alive||a.residency.spaceInstanceId!==b.spaceInstanceId||a.residency.residencyRevision!==b.sourceResidencyRevision){
    if(b.actionState!=='defeated'){clear(b);b.actionState='defeated';}
-   b.pools=[];b.statusesByEntityId={};
+   b.pools=[];b.coinShots=[];b.statusesByEntityId={};
    for(const id of b.summonEntityIds){
     const s=summon(id),m=state.entitiesById[id];if(!s||!m)continue;
     if(s.stage==='dormant'&&m.alive){m.alive=false;m.hp=combatInteger(0);s.stage='defeated';s.activatedTick=state.tick;s.hatchTick=state.tick;s.defeatedTick=state.tick;}
@@ -92,7 +92,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   if(id==='chronos_arbitrator')return b.phase===2&&b.chunkStep===0?'chronos_rewind':r<.5?'chronos_slam':'time_field';
   if(id==='nexus_overseer')return r<.35?'control_glitch':r<.74?'prism_collapse':'prism_slam';
   if(id==='gilded_vault_keeper')return b.phase===2&&r<.32?'taxation':r<.64?'vault_crush':'gold_fall';
-  if(id==='marcus')return b.phase===2&&r<.23?'molten_shield':r<.49?'coin_barrage':r<.76?'gold_rush':'gilded_lasso';
+  if(id==='marcus')return b.phase===2&&r<.23?'molten_shield':r<.48?'coin_barrage':r<.71?'gold_rush':r<.86?'inversion':'gilded_lasso';
   if(id==='hooktail')return b.phase===2&&r<.4?'arena_collapse':r<.75?'scarlet_fire':'hooked_tail';
   if(id==='cinderhart')return b.summonEntityIds.some(id=>summon(id)?.stage==='dormant')?'warren_call':'fire_charge';
   return null;
@@ -104,8 +104,59 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   a.movementIntent={x:0,y:0};stats.casts++;
   if(ability==='chronos_rewind'){b.chunkStep=1;b.shieldMaxHp=String((integerBigInt(a.maxHp)*15n+99n)/100n);b.shieldHp=b.shieldMaxHp;}
   if(['taxation','molten_shield'].includes(ability)){
-   b.shieldMaxHp=String((integerBigInt(a.maxHp)*12n+99n)/100n);b.shieldHp=b.shieldMaxHp;
+   b.shieldMaxHp=String((integerBigInt(a.maxHp)*BigInt(ability==='taxation'?15:20)+99n)/100n);b.shieldHp=b.shieldMaxHp;
   }
+ }
+ function fireCoinVolley(b,a){
+  b.coinShots??=[];
+  // One authoritative projectile per orbiting coin. The volley is radial,
+  // so kiting or using walls is an actual defense rather than instant AoE.
+  const angle=Math.atan2(b.targetPosition.y-a.position.y,b.targetPosition.x-a.position.x);
+  for(let i=0;i<8;i++){
+   const theta=angle+(i-3.5)*Math.PI/4;
+   const shot={id:b.bossId+':coin:'+b.abilitySequence+':'+i,sequence:b.abilitySequence,ordinal:i,
+    position:{x:a.position.x+Math.cos(theta)*20,y:a.position.y+Math.sin(theta)*20},
+    velocity:{x:Math.cos(theta)*7,y:Math.sin(theta)*7},firedTick:state.tick,expiresTick:state.tick+120,bounces:0};
+   b.coinShots.push(shot);
+   stats.coinsSpawned++;
+  }
+  if(b.coinShots.length>16)b.coinShots=b.coinShots.slice(-16);
+ }
+ function advanceCoinShots(b,a,targets,c){
+  if(b.bossDefinitionId!=='marcus'||!b.coinShots?.length)return;
+  for(const p of b.coinShots){
+   if(state.tick<=p.firedTick)continue;
+   if(state.tick>=p.expiresTick){p.expired=true;continue;}
+   let next={x:p.position.x+p.velocity.x,y:p.position.y+p.velocity.y};
+   if(!collisionFree(c,next,7)){
+    const collideX=!collisionFree(c,{x:p.position.x+p.velocity.x,y:p.position.y},7);
+    const collideY=!collisionFree(c,{x:p.position.x,y:p.position.y+p.velocity.y},7);
+    if(collideX||!collideY)p.velocity.x*=-1;
+    if(collideY||!collideX)p.velocity.y*=-1;
+    p.bounces++;stats.coinRicochets++;
+    if(p.bounces>1){p.expired=true;continue;}
+    next={x:p.position.x+p.velocity.x,y:p.position.y+p.velocity.y};
+    if(!collisionFree(c,next,7)){p.expired=true;continue;}
+   }
+   // A real swept segment contact prevents a coin teleporting past a hero.
+   let struck=null,best=2;
+   const vx=next.x-p.position.x,vy=next.y-p.position.y,vv=vx*vx+vy*vy||1;
+   for(const t of targets){
+    if(!t?.alive)continue;
+    const u=clamp(((t.position.x-p.position.x)*vx+(t.position.y-p.position.y)*vy)/vv);
+    const x=p.position.x+u*vx,y=p.position.y+u*vy,r=7+(t.combatRadius??t.hullRadius??10);
+    if((t.position.x-x)**2+(t.position.y-y)**2<=r*r&&u<best){struck=t;best=u;}
+   }
+   if(struck){
+    const damage=combatInteger(multiplyCombat(a.attackDamage,14,10),'round');
+    const result=applyDirectDamage(a,struck,damage,'marcus_ricochet_coin',{sourceActionSequence:p.sequence,
+     directEnemyAttack:'ranged',projectileImpact:true,projectileDirection:copyWire(p.velocity)});
+    if(result!==undefined&&result!==false)stats.coinHits++;
+    p.expired=true;continue;
+   }
+   p.position=next;
+  }
+  b.coinShots=b.coinShots.filter(p=>!p.expired&&state.tick<p.expiresTick);
  }
  function daze(b,ticks=210){
   clear(b);b.shieldHp='0';b.actionState='dazed';b.dazedUntilTick=state.tick+ticks;
@@ -119,23 +170,33 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   }else if(ability==='chronos_rewind'){
    const restore=combatInteger(multiplyCombat(a.maxHp,2,10),'round');
    a.hp=combatInteger(minCombat(a.maxHp,addCombat(a.hp,restore)),'round');
+  } else if(ability==='coin_barrage'){
+   fireCoinVolley(b,a);
   } else if(ability==='taxation'){
    a.hp=combatInteger(minCombat(a.maxHp,addCombat(a.hp,multiplyCombat(a.maxHp,8,100))),'round');
    b.stolenGold=String(BigInt(b.stolenGold)+8n);
   } else if(ability==='molten_shield'){
    pool(b,a.position,'molten',55,240);
+  } else if(ability==='gold_rush'){
+   const directionTo=direction(a.position,pos);
+   for(let i=0;i<3;i++){
+    moveAegisAffectedActor(collision,a,{x:directionTo.x*56,y:directionTo.y*56});
+    pool(b,a.position,'molten',43,180);
+    for(const t of targets)if(dist(a.position,t.position)<44&&lineFree(collision,a.position,t.position)&&hit(a,t,b,ability,14))hits.push(t.entityId);
+   }
   } else {
    for(const t of targets){
-    const d=dist(t.position,ability==='corrosive_slam'||ability==='chronos_slam'||ability==='prism_slam'||ability==='vault_crush'||ability==='hooked_tail'?a.position:pos);
+    const d=dist(t.position,ability==='corrosive_slam'||ability==='chronos_slam'||ability==='prism_slam'||ability==='hooked_tail'||ability==='inversion'?a.position:pos);
     let inside=d<=radius;
     if(ability==='eye_lance') {
      const v=direction(a.position,pos),p={x:t.position.x-a.position.x,y:t.position.y-a.position.y};
      const along=p.x*v.x+p.y*v.y,lateral=Math.abs(p.x*v.y-p.y*v.x);inside=along>=0&&along<=260&&lateral<22;
     }
+    if(ability==='gold_fall')inside=[0,1,2].some(i=>{const v=i*Math.PI*2/3;return dist(t.position,{x:pos.x+Math.cos(v)*62,y:pos.y+Math.sin(v)*62})<=26;});
     if(ability==='arena_collapse')inside=Math.abs(dist(t.position,b.homePosition)-(205-b.collapseStep*26))<=23;
     if(!inside||!lineFree(collision,a.position,t.position)||!lineClear(a,t))continue;
     if(hit(a,t,b,ability,dmg))hits.push(t.entityId);
-    if(ability==='control_glitch'&&t.alive)effect(b,t,'control_glitch',180,.94);
+    if(['control_glitch','inversion'].includes(ability)&&t.alive)effect(b,t,'control_glitch',180,.94);
     if(ability==='gilded_lasso'&&t.alive)effect(b,t,'lasso',90,.5);
    }
   }
@@ -148,7 +209,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   if(ability==='singularity')pool(b,pos,'void',93,90);
   if(ability==='gold_fall')for(let i=0;i<3;i++)pool(b,{x:pos.x+Math.cos(i*2*Math.PI/3)*62,y:pos.y+Math.sin(i*2*Math.PI/3)*62},'gold',22,180);
   if(ability==='prism_collapse')pool(b,pos,'prism',120,180);
-  if(ability==='gold_rush')pool(b,a.position,'molten',45,180);
+  
   if(ability==='scarlet_fire')for(let i=0;i<3;i++){const v=direction(a.position,pos);pool(b,{x:a.position.x+v.x*(40+i*32),y:a.position.y+v.y*(40+i*32)},'fire',28,180);}
   if(ability==='arena_collapse'){b.collapseStep=Math.min(7,b.collapseStep+1);pool(b,b.homePosition,'collapse',205-b.collapseStep*26,600);}
   if(ability==='fire_charge'){
@@ -162,7 +223,9 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    }
   }
   b.lastAction={ability,resolvedTick:state.tick,targetPosition:pos,hitEntityIds:hits};clear(b);
-  b.shieldHp='0';b.shieldMaxHp='0';b.actionState='idle';b.nextActionTick=state.tick+(b.phase===2?90:120);
+  // Keep Treasury shields active until broken; their defenses are not merely a telegraph.
+  if(!['marcus','gilded_vault_keeper'].includes(b.bossDefinitionId)){b.shieldHp='0';b.shieldMaxHp='0';}
+  b.actionState='idle';b.nextActionTick=state.tick+(b.phase===2?90:120);
  }
  function updatePools(b,a,targets,c){
   b.pools=b.pools.filter(p=>p.expiresTick>state.tick);
@@ -173,7 +236,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    }
    if(state.tick<p.nextDamageTick)continue;
    p.nextDamageTick=Math.min(p.expiresTick,state.tick+45);
-   if(p.kind==='time')continue;
+   if(p.kind==='time'||p.kind==='gold_spill')continue;
    const effectiveRadius=p.kind==='prism'?p.radius*(1-.64*Math.min(1,(state.tick-p.createdTick)/(p.expiresTick-p.createdTick))):p.radius;
    for(const t of targets){
     const d=dist(t.position,p.position);
@@ -206,7 +269,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   for(const b of records()){
    const a=state.entitiesById[b.entityId];if(!sync(b,a))continue;
    const c=state.spacesByInstanceId[b.spaceInstanceId]?.collision;if(!c)continue;
-   const targets=players(a);updatePools(b,a,targets,c);
+   const targets=players(a);updatePools(b,a,targets,c);advanceCoinShots(b,a,targets,c);
    for(const[id,s]of Object.entries(b.statusesByEntityId))if(state.tick>=s.expiresTick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
    enterPhaseTwo(b,a);
    if(b.bossDefinitionId==='cinderhart')advanceBunnies(b,c);
@@ -239,6 +302,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  }
  function beginTick(){for(const b of records()){
   b.pools=b.pools.filter(p=>p.expiresTick>state.tick);
+  b.coinShots=(b.coinShots??[]).filter(p=>p.expiresTick>state.tick);
   for(const[id,s] of Object.entries(b.statusesByEntityId))if(s.expiresTick<=state.tick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
  }}
  function reconcile(){for(const b of records())sync(b,state.entitiesById[b.entityId]);beginTick();}
