@@ -9,7 +9,7 @@ function painter(){
  const counter={save:0,fill:0,stroke:0,arc:0,ellipse:0},gradient={addColorStop(){}};
  const c=new Proxy({globalAlpha:1},{get(o,k){if(k in o)return o[k];if(k==='measureText')return()=>({width:10});if(k==='createRadialGradient'||k==='createLinearGradient')return()=>gradient;
   return(...args)=>{for(const n of args)if(typeof n==='number'&&!Number.isFinite(n))throw Error('Invalid Canvas number '+String(k)+' '+n);
-   if(k==='save')counter.save++;if(k==='restore')counter.save--;
+   if(k==='save'){counter.save++;return;}if(k==='restore'){counter.save--;return;}
    if(k in counter)counter[k]++;
   };},set(o,k,v){o[k]=v;return true;}});
  return{c,counter};
