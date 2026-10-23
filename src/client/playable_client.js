@@ -1,6 +1,7 @@
 import {createSettlementServicesMenu} from './settlement_services_menu_v1.js';
 import {createFerryMenu} from './ferry_menu_v1.js';
 import {createPlayerHealthHudV3} from './health_feedback_v3.js';
+import {createWoodlandClueHudV3_8} from './wilderness_event_clue_hud_v3_8.js';
 import {createCivilianContextInput} from './civilian_context_input.js';
 import {createWorldMapD9} from './world_map_d9.js';
 import {formatLarge,integerRatio} from '../shared/contracts/large_number.js';
@@ -23,6 +24,7 @@ import {createSpacePreparationGate} from './space_preparation_gate.js';
 export function mountPlayableClient({ port, environment, nextCommandToken, capabilities, performanceProbe = null, environmentArt=null, readRuntimeDiagnostics=()=>null, readSaveStatus=()=>null, evidenceMode = false,evidenceIntervalMs=0, developerMode = false }) {
   const doc = environment.document, canvas = doc.getElementById("world-view"), status = doc.getElementById("world-status");
   const playerHealthHudV3=createPlayerHealthHudV3(doc);
+  const woodlandClueHud=createWoodlandClueHudV3_8(doc);
   doc.documentElement.dataset.gameplayHudVisible='false';
   for(const id of ['world-hud','world-level-up','primary-attack','world-bag','world-pickup','world-loot-notice'])doc.getElementById(id)?.setAttribute('data-gameplay-hud','');
   const label = doc.getElementById("space-label"), mode = doc.getElementById("control-mode"), provenance = doc.getElementById("control-provenance");
@@ -105,7 +107,7 @@ export function mountPlayableClient({ port, environment, nextCommandToken, capab
     inventory.refresh(model,time);serviceMenu.refresh(model);
     if(performanceProbe)performanceProbe.measure('deathPresentation',()=>death.refresh(model));else death.refresh(model);
     const presentation=applyGameplayPresentationState(doc,gameplayPresentationState(model,{foregroundModalOpen:inventory.isOpen()||serviceMenu.isOpen()||!doc.getElementById('world-death').hidden||!doc.getElementById('startup-recovery').hidden,fullScreenPanelOpen:navigation.isOpen()}));
-    navigation.refresh(model,time,presentation);if(disclosure.open&&time>=nextSiteNavAt){siteNavigator.refresh(model);nextSiteNavAt=time+250;}subweaponHud.refresh(model);primary?.refresh(model);
+    navigation.refresh(model,time,presentation);woodlandClueHud.refresh(model,presentation.gameplayHudVisible);if(disclosure.open&&time>=nextSiteNavAt){siteNavigator.refresh(model);nextSiteNavAt=time+250;}subweaponHud.refresh(model);primary?.refresh(model);
     const participant=model.playersById[model.localPlayerId],progress=participant.progression;
     const levelNotice=doc.getElementById('world-level-up');
     const painted = performanceProbe?performanceProbe.measure("rendererTotal",()=>renderer.render(model,time,input)):
@@ -173,5 +175,5 @@ export function mountPlayableClient({ port, environment, nextCommandToken, capab
   }
   resize();
   return Object.freeze({ render, invalidateArt:()=>renderer.invalidate('review-art-mode-change'), prepare:()=>renderer.prepare(port.getReadModel(),environment.performance.now(),input),pollInput:()=>{const model=port.getReadModel();renderer.observeBossEffects(model);const ready=preparation.observe(presentationSpace(model),Boolean(model.siteActivationPending));if(!ready){input.clear(false);primary?.clear(false);loadingFeedback(true);return false;}input.refresh(model);primary?.refresh(model);return true;}, releaseInput:()=>{subweaponHud?.clear();input.clear();primary?.clear();}, resize,resources:()=>Object.freeze({...renderer.resources(),...(navigation?.resources?.()??{}),spacePreparation:preparation.inspect()}),
-    destroy:()=>{playerHealthHudV3.destroy();serviceMenu?.destroy();ferryMenu?.destroy();loading.remove();civilianInput.destroy();navigation.destroy();siteNavigator.destroy();subweaponHud.destroy();diagnostics.destroy();inventory.destroy();death.destroy();input.destroy();primary?.destroy();gestureListeners.forEach(remove=>remove());if(disclosure){compact.removeEventListener?.('change',layoutDisclosure);disclosure.removeEventListener('toggle',resize);}} });
+    destroy:()=>{woodlandClueHud.destroy();playerHealthHudV3.destroy();serviceMenu?.destroy();ferryMenu?.destroy();loading.remove();civilianInput.destroy();navigation.destroy();siteNavigator.destroy();subweaponHud.destroy();diagnostics.destroy();inventory.destroy();death.destroy();input.destroy();primary?.destroy();gestureListeners.forEach(remove=>remove());if(disclosure){compact.removeEventListener?.('change',layoutDisclosure);disclosure.removeEventListener('toggle',resize);}} });
 }
