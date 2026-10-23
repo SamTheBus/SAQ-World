@@ -25,7 +25,7 @@ export async function prepareWorldEncountersD9(before,{sha256}){
  for(const c of candidates){if(placements.length>=2)break;const retained=retainedSiteCountsD9(state);if(!c.renewal&&(state.d9World.runtime.groups.length>=B.proceduralGroups||Object.keys(state.entitiesById).length-retained.actors+c.anchor.members.length>worldRetentionBudgets(state).actors||Object.keys(state.groupsById).length-retained.groups>=worldRetentionBudgets(state).groups))continue;
   const options={sha256,participants},plan=await (c.renewal?prepareProceduralRenewalD9(state,c.chunk,c.anchor,options):prepareProceduralEncounterD9(state,c.chunk,c.anchor,options));if(!plan)continue;
   // The rare cache guarantees a *native* interactable reward chest, not a visual prop.
-  if(isWoodlandPilotTreasureAnchor(c.anchor)&&plan.resources.length){plan.resources[0].kind='chest';plan.resources[0].art='chest';}
+  if(isWoodlandPilotTreasureAnchor(c.anchor)&&plan.resources.length){plan.resources[0].kind='chest';plan.resources[0].art='chest';plan.resources[0].completion=true;}
   if(c.renewal)applyProceduralRenewalD9(state,plan);else admitProceduralEncounterD9(state,plan);
   placements.push({groupId:c.id,anchor:copyWire(c.world),positions:copyWire(plan.record.placement),renewal:c.renewal});
  }
