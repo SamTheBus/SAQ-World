@@ -22,14 +22,18 @@ try {
   browser=await chromium.launch({headless:true,args:['--no-sandbox']});
   const page=await browser.newPage({viewport:{width:1200,height:780}});
   page.on('pageerror',error=>errors.push('Page: '+error.message));
+  page.on('console',msg=>{if(msg.type()==='error')errors.push('Console: '+msg.text());});
   page.on('response',response=>{if(response.status()>=400)errors.push('HTTP '+response.status()+' '+response.url())});
   await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
-  await page.waitForFunction(()=>{
+  await Promise.race([page.waitForFunction(()=>{
     const loading=document.getElementById('saq-startup-scene');
     const recovery=document.getElementById('startup-recovery');
     const attack=document.getElementById('primary-attack');
     return loading?.hidden && recovery?.hidden && attack && !attack.hidden && document.getElementById('world-view');
-  },null,{timeout:180000});
+  },null,{timeout:180000}),page.waitForFunction(()=>{
+    const recovery=document.getElementById('startup-recovery');
+    return recovery&&!recovery.hidden&&document.getElementById('startup-recovery-title')?.textContent==='World could not start';
+  },null,{timeout:180000}).then(()=>{throw Error('Game opened recovery screen instead of running');})]);
   await page.waitForTimeout(1000);
   if(errors.length)throw Error('Browser errors: '+errors.join(' | ').slice(0,3000));
   console.log('Playable browser smoke passed: game loaded and combat control is visible');
@@ -46,6 +50,7 @@ try {
       console.error('Startup state:',state);
     }
   }
+  console.error('Captured browser errors:',errors.slice(0,25));
   throw error;
 } finally {
   await browser?.close();
