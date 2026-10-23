@@ -1,4 +1,8 @@
 import {hasWorldCombat,worldBossStats} from './world_combat_v1.js';
+import {ARACHNID_TREANT_PROFILE} from './bosses_d12_5.js';
+import {recoveredBossForReservation} from './recovered_boss_catalog_v1.js';
+import {createRecoveredBossV1} from '../contracts/recovered_boss_v1.js';
+import {collidesWithTiles} from '../rules/world_geometry.js';
 import {BRIMSTONE_PROFILE,brimstoneVolcanicRuinFloorV4,chooseBrimstoneRuinAnchorV4} from './brimstone_colossus_v1.js';
 import {createBrimstoneColossus} from '../contracts/brimstone_colossus_v1.js';
 import {combatInteger} from '../contracts/combat_amount.js';
@@ -30,6 +34,21 @@ export async function buildRuinFamilyV1(state,socket,binding,{sha256,runEpisode=
    Object.assign(a,{contentDefinitionId:profile.contentDefinitionId,position:copyWire(arena.position),hp:combatInteger(stats.maxHp),maxHp:combatInteger(stats.maxHp),attackDamage:combatInteger(stats.attackDamage),hullRadius:profile.hullRadius,combatRadius:profile.combatRadius,moveSpeed:profile.moveSpeed,attackReach:profile.attackReach,attackReachMode:profile.attackReachMode,attackDelayTicks:profile.attackDelayTicks,attackTimer:profile.attackDelayTicks,ai:{kind:'simpleMelee',acquireRange:290,updatesApplied:0,interiorNavigation:initialCaveInteriorNavigationD12_3A(state.tick)}});
    p.group.containment.memberHomesById[a.entityId]=copyWire(a.position);
    bosses.push(await createBrimstoneColossus({campaignSeed:state.campaign.seed.seedHex,siteId:socket.siteId,floorId:floorIds[i],groupId:p.group.groupId,roomId:leader.roomId,entityId:a.entityId,homePosition:a.position,activatedTick:state.tick,spaceInstanceId:a.residency.spaceInstanceId,sourceResidencyRevision:a.residency.residencyRevision},{sha256}));
+  }
+
+
+  // Post-Dungeon bosses inhabit existing seeded final floors; no site rerolls.
+  const restored=multi&&hasWorldCombat(state)&&recoveredBossForReservation(socket.provenance.reservationId,family,i,recipes.length,true);
+  if(restored&&p.actors.length){
+   const a=p.actors[0],profile=ARACHNID_TREANT_PROFILE,leader=recipe.encounter.members[0];
+   const candidates=(recipe.graph?.rooms??[]).flatMap(r=>(r.openCells??[]).map(cell=>{const [x,y]=cell.split(',').map(Number);return{x:(x+.5)*recipe.collision.tileSize,y:(y+.5)*recipe.collision.tileSize};}));
+   const safe=[a.position,...candidates].filter(q=>!collidesWithTiles(recipe.collision,q.x,q.y,profile.hullRadius)).sort((x,y)=>Math.hypot(x.x-a.position.x,x.y-a.position.y)-Math.hypot(y.x-a.position.x,y.y-a.position.y)||x.y-y.y||x.x-y.x)[0];
+   if(safe){
+    const stats=worldBossStats(p.episode.snapshot.effectiveLevel);
+    Object.assign(a,{contentDefinitionId:profile.contentDefinitionId,position:copyWire(safe),hp:combatInteger(stats.maxHp),maxHp:combatInteger(stats.maxHp),attackDamage:combatInteger(stats.attackDamage),hullRadius:profile.hullRadius,combatRadius:profile.combatRadius,moveSpeed:profile.moveSpeed,attackReach:profile.attackReach,attackReachMode:profile.attackReachMode,attackDelayTicks:profile.attackDelayTicks,attackTimer:profile.attackDelayTicks,ai:{kind:'simpleMelee',acquireRange:290,updatesApplied:0,interiorNavigation:initialCaveInteriorNavigationD12_3A(state.tick)}});
+    p.group.containment.memberHomesById[a.entityId]=copyWire(a.position);
+    bosses.push(await createRecoveredBossV1({kind:restored.id,campaignSeed:state.campaign.seed.seedHex,siteId:socket.siteId,floorId:floorIds[i],groupId:p.group.groupId,roomId:leader.roomId,entityId:a.entityId,homePosition:a.position,activatedTick:state.tick,spaceInstanceId:a.residency.spaceInstanceId,sourceResidencyRevision:a.residency.residencyRevision,addMembers:p.actors.slice(1,restored.adds+1).map(a=>({entityId:a.entityId,position:a.position}))},{sha256}));
+   }
   }
 
   floors.push({...copyWire(recipe),floorId:floorIds[i],index:i,floorSeed:await token('floor-seed-'+i),logicalSpaceId:p.space.spaceId,spaceInstanceId:p.space.spaceInstanceId,groupId:p.group.groupId,enemyIds:copyWire(p.group.entityIds),rewardId:'reward:'+await token('reward-'+i),transitions:{up:null,down:null}});spaces.push(p.space);actors.push(...p.actors);groups.push(p.group);economies.push(p.economy);episodes.push(p.episode);resources.push(p.resource);
