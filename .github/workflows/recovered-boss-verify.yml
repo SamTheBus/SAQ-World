@@ -1,7 +1,7 @@
 name: Verify recovered bosses (isolated)
 on:
   push:
-    branches: [boss-restoration-20261023, boss-original-visuals-20261023, boss-marcus-gilded-polish-20261023]
+    branches: [boss-restoration-20261023, boss-original-visuals-20261023, boss-marcus-gilded-polish-20261023, boss-archived-combat-fidelity-20261023]
   workflow_dispatch:
 
 permissions:
@@ -43,6 +43,12 @@ jobs:
         run: |
           node --check src/client/boss_presentation_treasury_v2.js
           node --test checks/treasury-boss-polish.test.mjs
+      - name: Verify source-authentic boss behaviors, attack geometry and save records
+        run: |
+          node --check src/shared/content/archived_boss_fight_profiles_v1.js
+          node --check src/simulation/archived_boss_attack_geometry_v1.js
+          node --check src/simulation/archived_boss_runtime_v1.js
+          node --test checks/archived-boss-combat-parity.test.mjs
       - name: Verify all eight real seeded boss site bindings and save contracts
         run: node --test checks/recovered-boss-v1.test.mjs
       - name: Replay eight boss fights for 1050 ticks with persisted state validation
