@@ -3,6 +3,9 @@ import {copyWire} from '../shared/contracts/wire.js';
 import {integerBigInt} from '../shared/contracts/integer_domain.js';
 import {recoveredBossRecord} from '../shared/contracts/recovered_boss_v1.js';
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
+import {archivedCombatProfile} from '../shared/content/archived_boss_fight_profiles_v1.js';
+import {createArchivedBossFightRuntime} from './archived_boss_runtime_v1.js';
+import {originalFireCone,onOriginalRing} from './archived_boss_attack_geometry_v1.js';
 import {collidesWithTiles} from '../shared/rules/world_geometry.js';
 import {moveAegisAffectedActor} from './aegis_goliath_v1.js';
 
@@ -32,7 +35,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  const players=a=>Object.values(state.playersById).filter(p=>p.connectionStatus==='connected').map(p=>state.entitiesById[p.entityId]).filter(t=>t?.alive&&t.residency.spaceInstanceId===a.residency.spaceInstanceId&&eligible(a,t)).sort((x,y)=>x.entityId.localeCompare(y.entityId));
  const bossesForPlayer=id=>records().filter(b=>b.statusesByEntityId[id]?.expiresTick>state.tick);
  function pool(b,position,kind,radius,lifetime){
-  if(b.pools.length>=(b.bossDefinitionId==='cinderhart'?64:20))b.pools.shift();
+  if(b.pools.length>=(b.bossDefinitionId==='cinderhart'?64:b.archive&&b.bossDefinitionId==='corrosive_abomination'?96:20))b.pools.shift();
   let sequence=b.pools.filter(p=>p.createdTick===state.tick).length;
   let id=b.bossId+':pool:'+state.tick+':'+sequence+':'+b.abilitySequence;
   while(b.pools.some(p=>p.id===id)){sequence++;id=b.bossId+':pool:'+state.tick+':'+sequence+':'+b.abilitySequence;}
@@ -62,10 +65,11 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   }
   return awakened;
  }
+ const archived=createArchivedBossFightRuntime(state,{pool,damage:applyDirectDamage,hit,clear,awaken});
  function sync(b,a){
   if(!a?.alive||a.residency.spaceInstanceId!==b.spaceInstanceId||a.residency.residencyRevision!==b.sourceResidencyRevision){
    if(b.actionState!=='defeated'){clear(b);b.actionState='defeated';}
-   b.pools=[];b.coinShots=[];b.statusesByEntityId={};
+   b.pools=[];b.coinShots=[];b.statusesByEntityId={};if(b.archive){b.archive.charge=null;b.archive.sporesById={};b.archive.poisonByEntityId={};}
    for(const id of b.summonEntityIds){
     const s=summon(id),m=state.entitiesById[id];if(!s||!m)continue;
     if(s.stage==='dormant'&&m.alive){m.alive=false;m.hp=combatInteger(0);s.stage='defeated';s.activatedTick=state.tick;s.hatchTick=state.tick;s.defeatedTick=state.tick;}
@@ -77,6 +81,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   return true;
  }
  function enterPhaseTwo(b,a){
+  if(b.archive&&b.bossDefinitionId==='void_overseer')return;
   const cutoff=b.bossDefinitionId==='chronos_arbitrator'?4:5;
   if(b.phase!==1||compareCombat(a.hp,multiplyCombat(a.maxHp,cutoff,10))>0)return;
   b.phase=2;b.phase2Triggered=true;stats.phaseTwos++;
@@ -88,18 +93,24 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  }
  function choose(b,a,target){
   const id=b.bossDefinitionId,n=b.abilitySequence+1,r=roll(b.selectionSeed,n,0x51ed270b);
-  if(id==='corrosive_abomination')return b.phase===2&&r<.5?'spore_storm':r<.82?'corrosive_slam':'acid_spill';
+  if(id==='corrosive_abomination'){
+   if(b.archive){const seq=b.abilitySequence,choice=b.phase===2&&roll(b.selectionSeed,seq,0xa24baed5)>=.5?'spore_storm':'corrosive_slam';return dist(a.position,target.position)<64&&roll(b.selectionSeed,seq,0x51ed270b)<.8?'corrosive_slam':choice;}
+   return b.phase===2&&r<.5?'spore_storm':r<.82?'corrosive_slam':'acid_spill';
+  }
   if(id==='void_overseer')return r<.48?'eye_lance':'singularity';
   if(id==='chronos_arbitrator')return b.phase===2&&b.chunkStep===0?'chronos_rewind':r<.5?'chronos_slam':'time_field';
   if(id==='nexus_overseer')return r<.35?'control_glitch':r<.74?'prism_collapse':'prism_slam';
   if(id==='gilded_vault_keeper')return b.phase===2&&r<.32?'taxation':r<.64?'vault_crush':'gold_fall';
   if(id==='marcus')return b.phase===2&&r<.23?'molten_shield':r<.48?'coin_barrage':r<.71?'gold_rush':r<.86?'inversion':'gilded_lasso';
-  if(id==='hooktail')return b.phase===2&&r<.4?'arena_collapse':r<.75?'scarlet_fire':'hooked_tail';
-  if(id==='cinderhart')return b.summonEntityIds.some(id=>summon(id)?.stage==='dormant')?'warren_call':'fire_charge';
+  if(id==='hooktail'){
+   if(b.archive){const pool=b.phase===2?['hooked_tail','scarlet_fire','arena_collapse']:['hooked_tail','scarlet_fire'];const chosen=pool[Math.floor(roll(b.selectionSeed,b.abilitySequence,568840981)*pool.length)];return dist(a.position,target.position)<64&&roll(b.selectionSeed,b.abilitySequence,3366196011)<.8?'hooked_tail':chosen;}
+   return b.phase===2&&r<.4?'arena_collapse':r<.75?'scarlet_fire':'hooked_tail';
+  }
+  if(id==='cinderhart')return b.summonEntityIds.some(id=>summon(id)?.stage==='dormant')&&(!b.archive||state.tick>=b.archive.nextWarrenTick)?'warren_call':'fire_charge';
   return null;
  }
  function beginAbility(b,a,target,ability){
-  const cfg=recoveredBossForId(b.bossDefinitionId).attacks;
+  const cfg=b.archive?archivedCombatProfile(b.bossDefinitionId).attack:recoveredBossForId(b.bossDefinitionId).attacks;
   b.actionState='telegraphing';b.abilitySequence++;b.activeAbility=ability;b.targetEntityId=target.entityId;
   b.targetPosition=copyWire(target.position);b.telegraphStartedTick=state.tick;b.resolvesTick=state.tick+cfg[ability];
   a.movementIntent={x:0,y:0};stats.casts++;
@@ -168,6 +179,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   const hits=[],dmg=centerDamage(ability),radius=attackRadius(ability);
   if(ability==='warren_call'){
    awaken(b,b.phase===2?5:3);
+   if(b.archive)b.archive.nextWarrenTick=state.tick+480;
   }else if(ability==='chronos_rewind'){
    const restore=combatInteger(multiplyCombat(a.maxHp,2,10),'round');
    a.hp=combatInteger(minCombat(a.maxHp,addCombat(a.hp,restore)),'round');
