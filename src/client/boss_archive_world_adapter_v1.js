@@ -3,8 +3,9 @@
 // only projects already simulated attacks, hits, summons and hazard lifetimes.
 import {drawCorrosiveAbomination,drawCorrosiveGround,corrosiveDepthItems,drawCorrosiveBossHud} from './boss_presentation_corrosive_v1.js';
 import {drawVoidOverseer,drawVoidGround,voidDepthItems,drawVoidBossHud} from './boss_presentation_void_overseer_v1.js';
+import {hasExtendedBossPainter,drawExtendedBossActor,drawExtendedSummonActor,drawExtendedBossGround,extendedBossDepthItems} from './boss_archive_world_extended_v1.js';
 
-export const hasArchivedBossPainter=id=>id==='corrosive_abomination'||id==='void_overseer';
+export const hasArchivedBossPainter=id=>id==='corrosive_abomination'||id==='void_overseer'||hasExtendedBossPainter(id);
 const corrosive=id=>id==='corrosive_abomination';
 const isVoid=id=>id==='void_overseer';
 const TAU=Math.PI*2;
@@ -24,6 +25,7 @@ function archivalActor(actor){
  }};
 }
 export function drawArchivedBossActor(c,actor,tick,flash=false){
+ if(hasExtendedBossPainter(actor.boss?.bossDefinitionId))return drawExtendedBossActor(c,actor,tick,flash);
  if(corrosive(actor.boss?.bossDefinitionId))return drawCorrosiveAbomination(c,archivalActor(actor),tick,flash);
  if(isVoid(actor.boss?.bossDefinitionId))return drawVoidOverseer(c,archivalActor(actor),tick,flash);
  return false;
@@ -86,13 +88,15 @@ export function archivedBossArtModel(model,tick){
 }
 export function drawArchivedBossGround(c,model,tick){
  const v=archivedBossArtModel(model,tick);if(!v)return;
- drawCorrosiveGround(c,v,tick);drawVoidGround(c,v,tick);
+ drawCorrosiveGround(c,v,tick);drawVoidGround(c,v,tick);drawExtendedBossGround(c,model,tick);
 }
 export function archivedBossDepthItems(model,tick,viewport=null){
  const v=archivedBossArtModel(model,tick);if(!v)return [];
- return [...corrosiveDepthItems(v,tick,viewport),...voidDepthItems(v,tick,viewport)];
+ return [...corrosiveDepthItems(v,tick,viewport),...voidDepthItems(v,tick,viewport),...extendedBossDepthItems(model,tick,viewport)];
 }
 export function drawArchivedBossHud(c,canvas,model){
  const v=archivedBossArtModel(model,model.tick);if(!v)return false;
  return drawCorrosiveBossHud(c,canvas,v)||drawVoidBossHud(c,canvas,v);
 }
+
+export const drawArchivedBossSummon=drawExtendedSummonActor;
