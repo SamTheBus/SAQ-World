@@ -19,7 +19,7 @@ const url='http://127.0.0.1:'+server.address().port+'/';
 let browser;
 const errors=[];
 try {
-  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  browser=await chromium.launch({headless:true,args:['--no-sandbox'],...(process.env.CI?{channel:'chrome'}:{})});
   const page=await browser.newPage({viewport:{width:1200,height:780}});
   page.on('pageerror',error=>errors.push('Page: '+error.message));
   page.on('console',msg=>{if(msg.type()==='error')errors.push('Console: '+msg.text());});
