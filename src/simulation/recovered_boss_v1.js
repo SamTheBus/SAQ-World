@@ -3,6 +3,7 @@ import {copyWire} from '../shared/contracts/wire.js';
 import {integerBigInt} from '../shared/contracts/integer_domain.js';
 import {recoveredBossRecord} from '../shared/contracts/recovered_boss_v1.js';
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
+import {gildedGoldFallTargets} from '../shared/content/original_gilded_gold_fall_v1.js';
 import {archivedCombatProfile} from '../shared/content/archived_boss_fight_profiles_v1.js';
 import {createArchivedBossFightRuntime} from './archived_boss_runtime_v1.js';
 import {originalFireCone,onOriginalRing} from './archived_boss_attack_geometry_v1.js';
@@ -22,8 +23,8 @@ const centerDamage=(ability)=>({eye_lance:16,singularity:20,corrosive_slam:18,sp
  coin_barrage:14,gold_rush:16,gilded_lasso:12,inversion:0,scarlet_fire:17,hooked_tail:20,arena_collapse:16,
  fire_charge:19,landing_fire:16})[ability]??12;
 const attackRadius=(ability)=>({eye_lance:24,singularity:95,corrosive_slam:72,spore_storm:105,acid_spill:65,
- chronos_slam:65,prism_collapse:120,control_glitch:180,prism_slam:68,vault_crush:70,gold_fall:75,
- coin_barrage:220,gold_rush:130,gilded_lasso:75,inversion:185,scarlet_fire:115,hooked_tail:75,arena_collapse:200,
+ chronos_slam:65,prism_collapse:120,control_glitch:180,prism_slam:68,vault_crush:64,gold_fall:24,
+ coin_barrage:220,gold_rush:130,gilded_lasso:48,inversion:120,scarlet_fire:115,hooked_tail:75,arena_collapse:200,
  fire_charge:110,landing_fire:90})[ability]??75;
 
 export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()=>true,lineClear=()=>true}={}){
@@ -215,7 +216,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
      const v=direction(a.position,pos),p={x:t.position.x-a.position.x,y:t.position.y-a.position.y};
      const along=p.x*v.x+p.y*v.y,lateral=Math.abs(p.x*v.y-p.y*v.x);inside=along>=0&&along<=260&&lateral<22;
     }
-    if(ability==='gold_fall')inside=[0,1,2].some(i=>{const v=i*Math.PI*2/3;return dist(t.position,{x:pos.x+Math.cos(v)*62,y:pos.y+Math.sin(v)*62})<=26;});
+    if(ability==='gold_fall')inside=gildedGoldFallTargets(b.selectionSeed,b.abilitySequence,pos).some(p=>dist(t.position,p)<=24+(t.hullRadius??9));
     if(ability==='arena_collapse')inside=Math.abs(dist(t.position,b.homePosition)-(205-b.collapseStep*26))<=23;
     if(!inside||!lineFree(collision,a.position,t.position)||!lineClear(a,t))continue;
     if(ability==='inversion'){if(t.alive){effect(b,t,'control_glitch',180,1);hits.push(t.entityId);}continue;}
@@ -231,7 +232,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   if(ability==='acid_spill')pool(b,pos,'acid',54,480);
   if(ability==='time_field')pool(b,pos,'time',105,420);
   if(ability==='singularity')pool(b,pos,'void',93,90);
-  if(ability==='gold_fall')for(let i=0;i<3;i++)pool(b,{x:pos.x+Math.cos(i*2*Math.PI/3)*62,y:pos.y+Math.sin(i*2*Math.PI/3)*62},'gold',22,180);
+  // Gold Fall drops three seeded ingots on impact; it does not leave fake lingering pools.
   if(ability==='prism_collapse')pool(b,pos,'prism',120,180);
   
   if(ability==='scarlet_fire')for(let i=0;i<3;i++){const v=direction(a.position,pos);pool(b,{x:a.position.x+v.x*(40+i*32),y:a.position.y+v.y*(40+i*32)},'fire',28,180);}
