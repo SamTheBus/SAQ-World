@@ -52,17 +52,20 @@ test('V3.7 anchors are stable, real, nonoverlapping native groups with 6 walkabl
     assert.equal(anchor.ordinal,e.ordinal);
     assert.equal(anchor.combatVersion,WORLD_COMBAT_VERSION);
     assert.equal(anchor.members.length,6);
-    const cellSet=new Set(slot.cells.map(c=>c.x+','+c.y));
+    // Reservation centers can straddle chunk boundaries. Native actors need
+    // nearby legal positions inside one resident page.
     for(const m of anchor.members){
+      assert.ok(m.position.x>=64&&m.position.x<1024-32&&m.position.y>=64&&m.position.y<832-32,'Safe same-chunk actor');
       const cellX=Math.floor(e.x/32)*32+Math.floor(m.position.x/32);
       const cellY=Math.floor(e.y/26)*26+Math.floor(m.position.y/32);
-      assert.ok(cellSet.has(cellX+','+cellY),'Actor originates on reserved clearing');
+      assert.equal(field(slot)(cellX,cellY).collision,'1','Nearby actor stands on land');
     }
+    assert.ok(anchor.members.some(m=>m.position.x===anchor.position.x&&m.position.y===anchor.position.y),'Encounter anchor is safely walkable');
     const p=anchor.members.map(x=>x.position);
     for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++)
       assert.ok(Math.hypot(p[i].x-p[j].x,p[i].y-p[j].y)>=40,'Actor separation');
     assert.deepEqual(await createWoodlandPilotEventAnchors({...args,binding:{...binding,wildernessHash:'not-committed'}}),[]);
-    assert.equal((await createWoodlandPilotEventAnchors({...args,tile:field(slot,{x:e.x-2,y:e.y-1})})).length,0,'Unsafe anchors never appear');
+    assert.equal((await createWoodlandPilotEventAnchors({...args,tile:()=>({collision:'2',landmassId:slot.landmassId})})).length,0,'Unsafe terrain never receives actors');
   }
   assert.equal(JSON.stringify(wilderness),original,'No mutation of immutable site/trail/event capacities');
 });
