@@ -44,10 +44,10 @@ jobs:
         run: npm run build:playable
       - name: Verify compact inventory and hashes
         run: npm run verify:playable
-      - name: Install headless browser
+      - name: Use runner-provided Google Chrome
         run: |
           npm install --no-save --no-audit --no-fund playwright
-          npx playwright install --with-deps chromium
+          google-chrome --version
       - name: Load the actual game in a browser
         run: npm run smoke:playable
       - name: Prepare production candidate without publishing to main yet
