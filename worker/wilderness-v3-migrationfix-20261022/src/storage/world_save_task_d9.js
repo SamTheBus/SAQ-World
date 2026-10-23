@@ -1,7 +1,7 @@
 import {copyWire,canonicalStringify,closedRecord,requireContract as check} from '../shared/contracts/wire.js';
 import {prepareWorldSnapshotD9,openWorldSnapshotD9} from './world_snapshot_d9.js';
 import {pageDigest} from './paged_world_store.js';
-import {parseActivityEnvelope,verifyActivityEnvelope,activityGeneration} from './activity_campaign_store.js';
+import {parseActivityEnvelope,verifyActivityEnvelope,activityGeneration} from './activity_campaign_store.js?v=wilderness-v3-5-ecology-20261022';
 import {prepareD9OriginMigration} from '../shared/contracts/world_root_d9.js';
 import {validateWorldAdvanceD9} from './world_transition_d9.js';
 import {verifyRemoteGearKnowledgeD9} from './world_gear_knowledge_d9.js';

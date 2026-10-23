@@ -5,7 +5,7 @@ import {copyWire} from '../shared/contracts/wire.js';
 import {D9_PROFILE as P} from '../shared/content/world_profile_d9.js';
 import {localFramePositionD9,projectToLocalFrameD9} from '../shared/contracts/local_world_frames_d9.js';
 import {normalizeWorldPosition} from '../shared/contracts/world_address.js';
-import {prepareProceduralEncounterD9,admitProceduralEncounterD9,prepareProceduralRenewalD9,applyProceduralRenewalD9} from '../shared/contracts/procedural_encounter_d9.js';
+import {prepareProceduralEncounterD9,admitProceduralEncounterD9,prepareProceduralRenewalD9,applyProceduralRenewalD9} from '../shared/contracts/procedural_encounter_d9.js?v=wilderness-v3-5-ecology-20261022';
 import {worldTransferPatchD9} from '../shared/contracts/world_patch_d9.js';
 import {captureWorldPositionsD9} from '../shared/contracts/world_runtime_d9.js';
 import {asWorldStreamCaptureD9,validateWorldStreamCaptureD9} from '../shared/contracts/world_stream_capture_d9.js';

@@ -1,11 +1,11 @@
-import {preparePlannedCampaignBindingV1} from '../host/planned_campaign_binding_v1.js';
+import {preparePlannedCampaignBindingV1} from '../host/planned_campaign_binding_v1.js?v=wilderness-v3-5-ecology-20261022';
 import {prepareNavigationPagesD9,readNavigationWindowD9} from './world_navigation_pages_d9.js';
 import {generateChunkD9} from '../shared/generation/endless_world_d9.js';
 import {validateWire,closedRecord,requireContract as check} from '../shared/contracts/wire.js';
 import {D9_PROFILE} from '../shared/content/world_profile_d9.js';
-import {createWorldSaveTaskD9} from './world_save_task_d9.js';
+import {createWorldSaveTaskD9} from './world_save_task_d9.js?v=wilderness-v3-5-ecology-20261022';
 import {prepareWorldResidencyD9} from './world_residency_task_d9.js';
-import {prepareWorldEncountersD9} from './world_encounter_task_d9.js';
+import {prepareWorldEncountersD9} from './world_encounter_task_d9.js?v=wilderness-v3-5-ecology-20261022';
 import {prepareColdDeadlinePatchD9} from './world_cold_deadlines_d9.js';
 import {prepareGroundWindowD9} from './world_ground_window_d9.js';
 import {findWoodlandSiteCluesD9,planFunctionalSiteBootstrapD9} from '../shared/generation/site_discovery_d9.js';

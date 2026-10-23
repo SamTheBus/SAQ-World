@@ -1,7 +1,7 @@
 import {hasWorldCombat,COMBAT_RUNTIME_VERSION} from '../shared/content/world_combat_v1.js';
 import {upgradeOriginHordes} from '../shared/contracts/origin_hordes_v1.js';
-import {adoptOrdinaryRosters} from '../shared/contracts/ordinary_roster_v1.js';
-import {adoptOrdinaryRostersV2} from '../shared/contracts/ordinary_roster_v2.js';
+import {adoptOrdinaryRosters} from '../shared/contracts/ordinary_roster_v1.js?v=wilderness-v3-5-ecology-20261022';
+import {adoptOrdinaryRostersV2} from '../shared/contracts/ordinary_roster_v2.js?v=wilderness-v3-5-ecology-20261022';
 import {worldOrdinaryMeleeProfile} from '../shared/content/world_melee_geometry.js';
 import {installSettlementServices} from '../shared/contracts/settlement_services_v1.js';
 import {PLANNED_TOWN_START_VERSION,TOWN_START_TILES} from '../shared/generation/planned_town_v1.js';
@@ -12,7 +12,7 @@ import {planLocalFramesD9,projectToLocalFrameD9} from '../shared/contracts/local
 import {rebaseWorldRuntimeD9,captureWorldPositionsD9} from '../shared/contracts/world_runtime_d9.js';
 import {attachChunkRuntimeD9} from '../shared/contracts/world_paging_d9.js';
 import {tileAddress,validatePlannedBinding} from '../shared/generation/planned_world_foundation_v1.js';
-import {validateActivityState} from '../shared/contracts/activity_state.js?v=wilderness-v3-3-20261022';
+import {validateActivityState} from '../shared/contracts/activity_state.js?v=wilderness-v3-5-ecology-20261022';
 import {hasAlphaPopulation} from '../shared/content/alpha_site_population_v1.js';
 import {ALPHA_POPULATION_RETENTION} from '../shared/content/alpha_population_retention_v1.js';
 // A one-time genesis binding in the normal campaign. This is never a save

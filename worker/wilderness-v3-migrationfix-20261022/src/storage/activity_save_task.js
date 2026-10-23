@@ -1,4 +1,4 @@
-import { activityGeneration, createActivityEnvelope, verifyActivityEnvelope, parseActivityEnvelope, validateActivityProgress, activityCampaignTransactions } from './activity_campaign_store.js?v=wilderness-v3-3-20261022';
+import { activityGeneration, createActivityEnvelope, verifyActivityEnvelope, parseActivityEnvelope, validateActivityProgress, activityCampaignTransactions } from './activity_campaign_store.js?v=wilderness-v3-5-ecology-20261022';
 import { freezeWire, requireContract, canonicalStringify, closedRecord } from '../shared/contracts/wire.js';
 import { TransactionPayloadConflictError, DurableIdentityConflictError } from './campaign_store_core.js';
 

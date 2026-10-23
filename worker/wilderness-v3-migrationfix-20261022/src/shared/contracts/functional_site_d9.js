@@ -1,6 +1,6 @@
 import {hasWorldCombat,WORLD_COMBAT_VERSION} from '../content/world_combat_v1.js';
-import {adoptOrdinaryRosters} from './ordinary_roster_v1.js';
-import {adoptOrdinaryRostersV2} from './ordinary_roster_v2.js';
+import {adoptOrdinaryRosters} from './ordinary_roster_v1.js?v=wilderness-v3-5-ecology-20261022';
+import {adoptOrdinaryRostersV2} from './ordinary_roster_v2.js?v=wilderness-v3-5-ecology-20261022';
 import {MULTIROOM_VERSION,MULTIROOM_POLICY,usesMultiroom} from '../content/multiroom_policy_v1.js';import {validateMultiroomFloor} from './multiroom_v1.js';
 import {CRYPT_POPULATION_VERSION,CRYPT_POPULATION_PACKAGE} from '../content/crypt_population_v3.js';
 import {cryptPackageForVersion} from '../content/planned_crypt_policy_v2.js';

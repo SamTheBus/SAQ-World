@@ -44,7 +44,7 @@ test('authoritative delivery, unchanged reach, signed saves and equal Worker sch
  const sim=await fs.readFile(new URL('../src/simulation/activity_simulation.js',import.meta.url),'utf8');
  const a=await fs.readFile(new URL('../src/shared/contracts/activity_state.js',import.meta.url),'utf8');
  const b=await fs.readFile(new URL('../worker/wilderness-v3-migrationfix-20261022/src/shared/contracts/activity_state.js',import.meta.url),'utf8');
- assert.equal(a,b);
+ assert.equal(a,b.replaceAll('?v=wilderness-v3-5-ecology-20261022',''));
  assert.match(a,/safeInteger\(untilTick,s\.tick\+1,s\.tick\+15\)/);
  assert.match(sim,/wildernessCrowdHitBlocked\(state,source,target,attribution\)/);
  assert.ok(sim.indexOf('wildernessCrowdHitBlocked(state,source,target,attribution)')<sim.indexOf('incomingSubweaponHit({combat:'));

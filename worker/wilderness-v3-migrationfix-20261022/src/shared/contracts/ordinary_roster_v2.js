@@ -1,5 +1,7 @@
 import {aegisMimicFor} from '../content/aegis_mimics_v2.js';
 import {isWildernessStarterSiteV3} from '../content/wilderness_ecology_v3.js';
+import {usesWildernessFairnessV3_2} from '../content/wilderness_fairness_v3_2.js';
+import {wildernessSiteEcologyV3_5,wildernessSurfaceEcologyV3_5,isWildernessEcologyRosterV3_5} from '../content/wilderness_ecology_runtime_v3_5.js';
 import {ORDINARY_ENEMIES,DUNGEON_MOBS_V2_ENEMIES,DUNGEON_MOBS_V2_PROFILES,ordinaryEnemyForProfile,resolveOrdinaryProfile} from '../content/ordinary_enemies.js';
 import {hasWorldCombat,worldEnemyStats} from '../content/world_combat_v1.js';
 import {worldOrdinaryMeleeProfile} from '../content/world_melee_geometry.js';
@@ -23,8 +25,23 @@ const cyber=['neon_spider','wireframe_orb','cyber_wraith'];
 
 function contextFor(s,g){
  const site=Object.values(s.d9World.functionalSitesById).find(site=>site.floors?.some(f=>f.groupId===g.groupId)),floor=site?.floors.find(f=>f.groupId===g.groupId);
- if(!floor)return null; // Roads and the retained historical pair stay thematic.
- if(isWildernessStarterSiteV3(site))return null; // Retain V3 Woodland starter habitat; no Clockwork/Cyber substitution.
+ if(site&&isWildernessStarterSiteV3(site))return null; // V3 starter site unchanged.
+ const prior=recordFor(s,g),newRecipe=!prior||isWildernessEcologyRosterV3_5(prior.poolKey);
+ if(newRecipe&&usesWildernessFairnessV3_2(s)){
+  let ecology=null,members=null;
+  if(floor){
+   ecology=wildernessSiteEcologyV3_5(site,site.floors.indexOf(floor));
+   members=floor.encounter.members.map((member,n)=>({entityId:floor.enemyIds[n],profileId:member.role==='arachnid-treant'?s.entitiesById[floor.enemyIds[n]].contentDefinitionId:resolveOrdinaryProfile(ORDINARY_ENEMIES.find(e=>e.family===member.family),floor.encounter.rank).contentDefinitionId,roomId:member.roomId}));
+  }else{
+   const definition=s.d9World.runtime.groups.find(row=>row.groupId===g.groupId);
+   if(definition){
+    const e=s.d9World.episodes[g.groupId],chunk=s.d9World.runtime.chunks.find(c=>c.chunkX===e?.geography.chunkX&&c.chunkY===e?.geography.chunkY);
+    ecology=wildernessSurfaceEcologyV3_5(chunk?.region.biome);members=definition.members;
+   }
+  }
+  if(ecology)return ecology.v2.families.length?{...ecology.v2,members,ecology:true}:null;
+ }
+ if(!floor)return null; // Keep old stored recipes and historical origin unchanged.
  const rawFamily=site.familyId?.split(':').at(-1)??site.siteKind?.replace('procedural-',''),family=rawFamily?.includes('cave')?'cave':rawFamily,biome=site.socket.region.biome,ordinal=site.floors.indexOf(floor),lower=ordinal>0;
  let key,families;
  if(['upland','rocky-uplands','frostland'].includes(biome)&&['cave','fort'].includes(family)){key='mountain:'+family;families=mountain;}
@@ -53,7 +70,7 @@ function selection(s,g,context){
  const seed=s.campaign.seed.seedHex+'/'+g.groupId+'/'+ORDINARY_ROSTER_V2,v1=s.d9World.episodes[g.groupId].ordinaryRoster?.substitutionsById??{},exempt=id=>v1[id]||s.eliteCombat?.elitesByEntityId[id]||s.bossCombat?.bossesByEntityId[id]||s.bossCombat?.summonsByEntityId[id];
  const candidates=context.members.filter(m=>!exempt(m.entityId)&&ordinaryEnemyForProfile(m.profileId)).map(m=>({...m,n:hashReward(seed+'/'+m.entityId)})).sort((a,b)=>a.n-b.n||a.entityId.localeCompare(b.entityId));
  // The new batch remains a minority; V1 casters and V1 melee keep exact slots.
- const count=Math.min(candidates.length,Math.max(2,Math.min(6,Math.floor(g.entityIds.length/4)))),offset=hashReward(seed+'/families'),result={};
+ const count=context.ecology?Math.min(candidates.length,context.rareAnomaly?1:Math.max(1,Math.ceil(g.entityIds.length*.58))):Math.min(candidates.length,Math.max(2,Math.min(6,Math.floor(g.entityIds.length/4)))),offset=hashReward(seed+'/families'),result={};
  for(const [n,m]of candidates.slice(0,count).entries()){
   const enemy=ORDINARY_ENEMIES.find(e=>e.family===context.families[(offset+n)%context.families.length]),profile=resolveOrdinaryProfile(enemy,rankFor(m.profileId));
   result[m.entityId]={fromProfileId:m.profileId,toProfileId:profile.contentDefinitionId};

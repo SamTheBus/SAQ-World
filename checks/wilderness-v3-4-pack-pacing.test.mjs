@@ -54,5 +54,5 @@ test('pacing only gates overworld auto-target selection, not damage/save/world g
  assert.match(sim,/wildernessCleaveTuning\(state,action.comboStep\)/);
  const html=await fs.readFile(new URL('../index.html',import.meta.url),'utf8');
  assert.match(html,/data-world-release="wilderness-v3-starter-20261022"/);
- assert.match(html,/save-worker\.wilderness-v3-migrationfix-20261022-crowd-v3-3\.js/);
+ assert.match(html,/save-worker\.wilderness-v3-migrationfix-20261022-ecology-v3-5\.js/);
 });
