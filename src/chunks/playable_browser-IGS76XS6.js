@@ -611,14 +611,14 @@ import {
   worldLevelGapMultiplier,
   worldOrdinaryMeleeProfile,
   worldPointForArea
-} from "./chunk-AIGFWG26.js";
+} from "./chunk-MIETGWB4.js";
 
 // src/client/browser_loop_health.js
 var BROWSER_LOOP_HEALTH_VERSION = "browser-loop-health-ruin-freeze-v1";
 function createBrowserLoopHealth({ now: now2, visibility, runtimeId }) {
   const counters = { paintAttempts: 0, paintCompleted: 0, authorityCallbacks: 0, authorityTicksAdvanced: 0 }, events = [];
   let fatal = null, lastPaintAt = null, lastAuthorityAt = null, lastGate = null;
-  function record(kind, detail = {}) {
+  function record2(kind, detail = {}) {
     events.push({ kind, at: now2(), ...visibility(), ...detail });
     if (events.length > 64) events.shift();
   }
@@ -640,14 +640,14 @@ function createBrowserLoopHealth({ now: now2, visibility, runtimeId }) {
     gate(value) {
       if (value !== lastGate) {
         lastGate = value;
-        record("gate", { value });
+        record2("gate", { value });
       }
     },
-    record,
+    record: record2,
     fail(phase, error, context) {
       if (fatal) return false;
       fatal = Object.freeze({ version: BROWSER_LOOP_HEALTH_VERSION, runtimeId, phase, at: now2(), ...visibility(), message: error?.message ?? String(error), stack: error?.stack ?? null, counters: { ...counters }, context });
-      record("fatal", { phase, message: fatal.message });
+      record2("fatal", { phase, message: fatal.message });
       return true;
     },
     failed: () => fatal !== null,
@@ -739,13 +739,13 @@ function drawFlower(ctx, x, y, n) {
   ctx.ellipse(-2, -6, 5, 2, Math.PI / 4, 0, TAU);
   ctx.ellipse(2, -10, 4.5, 1.8, -Math.PI / 4, 0, TAU);
   ctx.fill();
-  for (let ring = 0; ring < 2; ring++) {
-    ctx.fillStyle = ring ? FLOWERS[n % 6] : "#7e1b1b";
+  for (let ring2 = 0; ring2 < 2; ring2++) {
+    ctx.fillStyle = ring2 ? FLOWERS[n % 6] : "#7e1b1b";
     ctx.beginPath();
     for (let i = 0; i < 6; i++) {
-      const a = i * Math.PI / 3, cx = Math.cos(a) * (ring ? 5 : 6), cy = -16 + Math.sin(a) * (ring ? 5 : 6);
-      ctx.moveTo(cx + (ring ? 4.2 : 5), cy);
-      ctx.arc(cx, cy, ring ? 4.2 : 5, 0, TAU);
+      const a = i * Math.PI / 3, cx = Math.cos(a) * (ring2 ? 5 : 6), cy = -16 + Math.sin(a) * (ring2 ? 5 : 6);
+      ctx.moveTo(cx + (ring2 ? 4.2 : 5), cy);
+      ctx.arc(cx, cy, ring2 ? 4.2 : 5, 0, TAU);
     }
     ctx.fill();
   }
@@ -1507,7 +1507,7 @@ function roadMask(at2, x, y) {
 }
 function drawRoadCell(ctx, at2, x, y, t, seed2, offset2 = { x: 0, y: 0 }, texture = null) {
   if (at2(x, y) === "H" || at2(x, y) === "V") return roadMask(at2, x, y);
-  const mask = roadMask(at2, x, y), n = terrainHash(x + offset2.x / t, y + offset2.y / t, seed2), north = mask & 1, east = mask & 2, south = mask & 4, west = mask & 8;
+  const mask2 = roadMask(at2, x, y), n = terrainHash(x + offset2.x / t, y + offset2.y / t, seed2), north = mask2 & 1, east = mask2 & 2, south = mask2 & 4, west = mask2 & 8;
   const trail2 = at2(x, y) === "p", inset = trail2 ? 6 : 2, body4 = trail2 ? trailDirt : dirt;
   const px = x * t, py = y * t;
   const nwRoad = !trail2 && at2(x - 1, y - 1) === "r", neRoad = !trail2 && at2(x + 1, y - 1) === "r", swRoad = !trail2 && at2(x - 1, y + 1) === "r", seRoad = !trail2 && at2(x + 1, y + 1) === "r";
@@ -1590,7 +1590,7 @@ function drawRoadCell(ctx, at2, x, y, t, seed2, offset2 = { x: 0, y: 0 }, textur
     ctx.fillRect(10 + n % 10, 18 + (n >>> 6) % 5, 2, 1);
   }
   ctx.restore();
-  return mask;
+  return mask2;
 }
 function drawRoadFillets(ctx, at2, x, y, t) {
   const px = x * t, py = y * t;
@@ -1740,7 +1740,7 @@ async function createHybridArtV2(environment, review, initialMode = "candidate")
       for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
         if (at2(x, y) !== type || !prior.eligible(space, x * t, y * t)) continue;
         count++;
-        const mask = roadMask(at2, x, y), n = terrainHash(x + o.x / t, y + o.y / t, seed2), north = mask & 1, east = mask & 2, south = mask & 4, west = mask & 8, trail2 = type === "p", inset = trail2 ? 6 : 2;
+        const mask2 = roadMask(at2, x, y), n = terrainHash(x + o.x / t, y + o.y / t, seed2), north = mask2 & 1, east = mask2 & 2, south = mask2 & 4, west = mask2 & 8, trail2 = type === "p", inset = trail2 ? 6 : 2;
         const nwRoad = !trail2 && at2(x - 1, y - 1) === "r", neRoad = !trail2 && at2(x + 1, y - 1) === "r", swRoad = !trail2 && at2(x - 1, y + 1) === "r", seRoad = !trail2 && at2(x + 1, y + 1) === "r", px = x * t, py = y * t;
         const l = px + (west || nwRoad || swRoad ? -1 : inset + n % 2), r = px + (east || neRoad || seRoad ? t + 1 : t - inset - (n >>> 4) % 2), top = py + (north || nwRoad || neRoad ? -1 : inset + (n >>> 8) % 2), bottom = py + (south || swRoad || seRoad ? t + 1 : t - inset - (n >>> 12) % 2), nw = !north && !west ? 9 : 0, ne = !north && !east ? 9 : 0, se = !south && !east ? 9 : 0, sw = !south && !west ? 9 : 0;
         c.moveTo(l + nw, top);
@@ -1877,20 +1877,20 @@ var LIGHT = "#718096";
 var DARK = "#303d50";
 var BLUE = "#38bdf8";
 var color = (flash, hex2) => flash ? "#fff" : hex2;
-function polygon(c, points, fill) {
+function polygon(c, points, fill3) {
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
   c.closePath();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.fill();
 }
 function blockPath(c, x, y, w, h, r) {
   c.beginPath();
   c.roundRect(x, y, w, h, [r]);
 }
-function drawGolemStoneBlockV4(c, x, y, w, h, r, flash = false, line3 = 1.8, head11 = false) {
-  const bevel = Math.min(w, h) * 0.22, base = head11 ? LIGHT : STONE, light = head11 ? "#9aaab8" : "#788a9e", dark = head11 ? "#4a5b70" : DARK;
+function drawGolemStoneBlockV4(c, x, y, w, h, r, flash = false, line5 = 1.8, head12 = false) {
+  const bevel = Math.min(w, h) * 0.22, base = head12 ? LIGHT : STONE, light = head12 ? "#9aaab8" : "#788a9e", dark = head12 ? "#4a5b70" : DARK;
   c.save();
   blockPath(c, x, y, w, h, r);
   c.fillStyle = color(flash, base);
@@ -1913,7 +1913,7 @@ function drawGolemStoneBlockV4(c, x, y, w, h, r, flash = false, line3 = 1.8, hea
   }
   blockPath(c, x, y, w, h, r);
   c.strokeStyle = INK;
-  c.lineWidth = line3;
+  c.lineWidth = line5;
   c.stroke();
   c.restore();
 }
@@ -2130,10 +2130,10 @@ function cursedBladeMeleePoseV4(actor, tick) {
   };
 }
 function cursedBladeMotionV4(m, time, seed2) {
-  const action = m.familyAttack, weight2 = action?.artWeight ?? 0, strike = action?.strikeBlend ?? 0, walk = m.motionBlend ?? 0, step = m.stepPhase ?? 0;
+  const action2 = m.familyAttack, weight2 = action2?.artWeight ?? 0, strike = action2?.strikeBlend ?? 0, walk = m.motionBlend ?? 0, step = m.stepPhase ?? 0;
   const x = m.x + m.w / 2 + Math.sin(step) * walk * 1.5 * (1 - weight2), y = m.y + m.h / 2 + (Math.sin(time / 130 + seed2 % 13) * 2.7 - Math.abs(Math.sin(step)) * walk) * (1 - weight2);
   const idleAngle = -0.42 + Math.sin(time / 420 + seed2 % 17) * 0.1;
-  const goal = action ? Math.atan2(action.direction.y, action.direction.x * action.idleFacingX) + Math.PI / 2 : idleAngle;
+  const goal = action2 ? Math.atan2(action2.direction.y, action2.direction.x * action2.idleFacingX) + Math.PI / 2 : idleAngle;
   const angle3 = mix2(idleAngle, mix2(idleAngle - 0.6, goal, strike), weight2);
   const wisps = Array.from({ length: 3 }, (_, i) => {
     const phase = time / 330 + seed2 % 97 * 0.031 + i * TAU4 / 3, radius = 10 + i * 1.8;
@@ -2142,8 +2142,8 @@ function cursedBladeMotionV4(m, time, seed2) {
   const transform = (px, py) => ({ x: x + Math.cos(angle3) * px - Math.sin(angle3) * py, y: y + Math.sin(angle3) * px + Math.cos(angle3) * py });
   return { x, y, angle: angle3, weight: weight2, strike, wisps, tip: transform(0, -TIP), guard: transform(0, 14), pommel: transform(0, 28), transform };
 }
-function polygon2(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon2(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -2168,13 +2168,13 @@ function cursedBladeAuraV4(time, seed2) {
   return { color: "#b46be7", alpha: 0.42 * (0.94 + Math.sin(time / 340 + seed2 % 11) * 0.06), width: 6, blur: 10 };
 }
 function aura(c, time, seed2) {
-  const glow2 = cursedBladeAuraV4(time, seed2);
+  const glow4 = cursedBladeAuraV4(time, seed2);
   c.save();
-  c.globalAlpha *= glow2.alpha;
-  c.strokeStyle = glow2.color;
-  c.shadowColor = glow2.color;
-  c.shadowBlur = glow2.blur;
-  c.lineWidth = glow2.width;
+  c.globalAlpha *= glow4.alpha;
+  c.strokeStyle = glow4.color;
+  c.shadowColor = glow4.color;
+  c.shadowBlur = glow4.blur;
+  c.lineWidth = glow4.width;
   c.beginPath();
   c.moveTo(0, -23);
   c.lineTo(5, -14);
@@ -2303,13 +2303,13 @@ function animatedArmorMeleePoseV4(actor, tick) {
     disableFacingFlip: false
   };
 }
-function armorSwordGeometryV4(action = null, step = 0, death = 0, separate = 0) {
-  const weight2 = action?.artWeight ?? 0, strike = action?.strikeBlend ?? 0, facing = action?.idleFacingX ?? 1;
+function armorSwordGeometryV4(action2 = null, step = 0, death = 0, separate = 0) {
+  const weight2 = action2?.artWeight ?? 0, strike = action2?.strikeBlend ?? 0, facing = action2?.idleFacingX ?? 1;
   const shoulder2 = { x: 14 + separate, y: -3 + death * 5 }, idleAngle = 0.3 - step * 0.035 + death * 0.8;
-  const arm4 = rotate(1, 12, idleAngle - 0.1), hilt = rotate(0, -4, idleAngle);
-  const idleGrip = { x: shoulder2.x + arm4.x + hilt.x, y: shoulder2.y + arm4.y + hilt.y };
-  const u = action ? localDirection(action.direction, action.body.rotation, facing) : { x: 1, y: 0 }, distance7 = swordRay(u);
-  const goal = Math.atan2(u.y * distance7 - STRIKE_GRIP.y, u.x * distance7 - STRIKE_GRIP.x) - Math.PI / 2;
+  const arm5 = rotate(1, 12, idleAngle - 0.1), hilt = rotate(0, -4, idleAngle);
+  const idleGrip = { x: shoulder2.x + arm5.x + hilt.x, y: shoulder2.y + arm5.y + hilt.y };
+  const u = action2 ? localDirection(action2.direction, action2.body.rotation, facing) : { x: 1, y: 0 }, distance8 = swordRay(u);
+  const goal = Math.atan2(u.y * distance8 - STRIKE_GRIP.y, u.x * distance8 - STRIKE_GRIP.x) - Math.PI / 2;
   const grip = { x: mix3(idleGrip.x, mix3(10, STRIKE_GRIP.x, strike), weight2), y: mix3(idleGrip.y, mix3(-8, STRIKE_GRIP.y, strike), weight2) };
   const angle3 = mix3(idleAngle, mix3(-2.8, goal, strike), weight2);
   const dx = grip.x - shoulder2.x, dy = grip.y - shoulder2.y, d = Math.hypot(dx, dy) || 1, height = Math.sqrt(Math.max(0, ARM ** 2 - d * d / 4));
@@ -2318,7 +2318,7 @@ function armorSwordGeometryV4(action = null, step = 0, death = 0, separate = 0) 
   return { shoulder: shoulder2, elbow: elbow3, grip, angle: angle3, tip: { x: grip.x + blade.x, y: grip.y + blade.y }, upperLength: ARM, lowerLength: ARM };
 }
 function animatedArmorMotionV4(m, time, seed2) {
-  const action = m.familyAttack, weight2 = action?.artWeight ?? 0, strike = action?.strikeBlend ?? 0, walk = (m.motionBlend ?? 0) * (1 - weight2), cycle = m.stepPhase ?? 0, death = m.deathProgress ?? 0;
+  const action2 = m.familyAttack, weight2 = action2?.artWeight ?? 0, strike = action2?.strikeBlend ?? 0, walk = (m.motionBlend ?? 0) * (1 - weight2), cycle = m.stepPhase ?? 0, death = m.deathProgress ?? 0;
   const step = Math.sin(cycle) * 3.2 * walk, shift = Math.sin(cycle) * 1.1 * walk;
   return {
     weight: weight2,
@@ -2334,8 +2334,8 @@ function animatedArmorMotionV4(m, time, seed2) {
     helmetFollow: -shift * 0.35 + Math.sin(time / 260 + seed2 % 9) * 0.35 * (1 - walk) * (1 - weight2)
   };
 }
-function polygon3(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon3(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -2414,7 +2414,7 @@ function drawAnimatedArmorV4(c, m, time, seed2) {
   c.lineCap = "round";
   c.strokeStyle = INK3;
   c.lineWidth = LINE2;
-  const leg2 = (side, x, lift) => {
+  const leg3 = (side, x, lift) => {
     c.save();
     c.translate(x + side * separate + side * death * 4, base - lift);
     c.rotate(side * step * 0.018 + side * death * 0.7);
@@ -2425,8 +2425,8 @@ function drawAnimatedArmorV4(c, m, time, seed2) {
     }
     c.restore();
   };
-  leg2(-1, cx - 6 - step, leftLift);
-  leg2(1, cx + 6 + step, rightLift);
+  leg3(-1, cx - 6 - step, leftLift);
+  leg3(1, cx + 6 + step, rightLift);
   if (!flash) {
     c.save();
     c.globalAlpha = 0.48 * (1 - death);
@@ -2548,10 +2548,10 @@ function swordRay2(u) {
 function gargoyleSwordFrontV4(direction3, rotation, facing = 1, size = 1) {
   return swordRay2(localDirection2(direction3, rotation, facing)) * SCALE3 * size;
 }
-function gargoyleSwordGeometryV4(action = null) {
-  const weight2 = action?.artWeight ?? 0, strike = action?.strikeBlend ?? 0, facing = action?.idleFacingX ?? 1;
-  const u = action ? localDirection2(action.direction, action.body.rotation, facing) : { x: 1, y: 0 }, distance7 = swordRay2(u);
-  const goal = Math.atan2(u.y * distance7 - STRIKE_GRIP2.y, u.x * distance7 - STRIKE_GRIP2.x) + Math.PI / 2 - IDLE_ANGLE;
+function gargoyleSwordGeometryV4(action2 = null) {
+  const weight2 = action2?.artWeight ?? 0, strike = action2?.strikeBlend ?? 0, facing = action2?.idleFacingX ?? 1;
+  const u = action2 ? localDirection2(action2.direction, action2.body.rotation, facing) : { x: 1, y: 0 }, distance8 = swordRay2(u);
+  const goal = Math.atan2(u.y * distance8 - STRIKE_GRIP2.y, u.x * distance8 - STRIKE_GRIP2.x) + Math.PI / 2 - IDLE_ANGLE;
   const braceAngle = -0.38 * (Math.sign(goal) || 1);
   const grip = { x: mix4(IDLE_GRIP.x, mix4(-8, STRIKE_GRIP2.x, strike), weight2), y: mix4(IDLE_GRIP.y, mix4(8, STRIKE_GRIP2.y, strike), weight2) };
   const angle3 = IDLE_ANGLE + mix4(braceAngle, goal, strike) * weight2;
@@ -2595,8 +2595,8 @@ function gargoyleMotionV4(m, time, seed2) {
     wings: [-1, 1].map((side) => (Math.sin(time / 180 + side) * 1.2 + Math.sin(step + side) * walk * 2) * (1 - weight2) + mix4(-4, 7, strike) * weight2)
   };
 }
-function polygon4(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon4(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -2660,8 +2660,8 @@ function weapon2(c, m, cx, cy, flash) {
   c.restore();
 }
 function drawGargoyleV4(c, m, presentationTime, seed2) {
-  const time = presentationTime, action = m.familyAttack, motion = gargoyleMotionV4(m, time, seed2), cx = m.x + m.w / 2 + motion.x, cy = m.y + m.h - 12 + motion.y;
-  const flash = m.flashTimer > 0, outline = INK4, stone2 = flash ? "#fff" : "#60717a", stoneLight = flash ? "#fff" : "#8b9aa0", stoneDark = flash ? "#fff" : "#39474f", moss3 = flash ? "#fff" : "#42633a", core4 = "#e3a84a";
+  const time = presentationTime, action2 = m.familyAttack, motion = gargoyleMotionV4(m, time, seed2), cx = m.x + m.w / 2 + motion.x, cy = m.y + m.h - 12 + motion.y;
+  const flash = m.flashTimer > 0, outline = INK4, stone2 = flash ? "#fff" : "#60717a", stoneLight = flash ? "#fff" : "#8b9aa0", stoneDark = flash ? "#fff" : "#39474f", moss3 = flash ? "#fff" : "#42633a", core5 = "#e3a84a";
   c.save();
   c.strokeStyle = outline;
   c.lineWidth = LINE3;
@@ -2776,7 +2776,7 @@ function drawGargoyleV4(c, m, presentationTime, seed2) {
   if (!flash) {
     c.fillStyle = "#fff4c8";
     c.shadowBlur = 5;
-    c.shadowColor = core4;
+    c.shadowColor = core5;
     c.beginPath();
     c.arc(cx - 3, headY, 1.4, 0, Math.PI * 2);
     c.arc(cx + 3, headY, 1.4, 0, Math.PI * 2);
@@ -2785,8 +2785,8 @@ function drawGargoyleV4(c, m, presentationTime, seed2) {
     const pulse = 0.85 + Math.sin(time / 180) * 0.15;
     c.save();
     c.shadowBlur = 7 * pulse;
-    c.shadowColor = core4;
-    c.fillStyle = core4;
+    c.shadowColor = core5;
+    c.fillStyle = core5;
     c.beginPath();
     c.moveTo(cx, cy - 5);
     c.lineTo(cx - 3, cy - 1);
@@ -2809,13 +2809,13 @@ function drawGargoyleV4(c, m, presentationTime, seed2) {
 var point = (p) => p && Number.isFinite(p.x) && Number.isFinite(p.y);
 function watcherLookTarget(actor, entitiesById) {
   if (!point(actor?.position)) return null;
-  const rangeSquared = 320 * 320, distance7 = (e) => (e.position.x - actor.position.x) ** 2 + (e.position.y - actor.position.y) ** 2;
-  const eligible2 = (e) => e?.alive && e.team === "party" && point(e.position) && distance7(e) <= rangeSquared;
+  const rangeSquared = 320 * 320, distance8 = (e) => (e.position.x - actor.position.x) ** 2 + (e.position.y - actor.position.y) ** 2;
+  const eligible2 = (e) => e?.alive && e.team === "party" && point(e.position) && distance8(e) <= rangeSquared;
   const engaged = entitiesById[actor.meleePhase?.targetEntityId];
   if (eligible2(engaged)) return { ...engaged.position };
   let nearest = null, nearestId = "", best = Infinity;
   for (const [id, e] of Object.entries(entitiesById)) if (eligible2(e)) {
-    const d = distance7(e);
+    const d = distance8(e);
     if (d < best || d === best && id < nearestId) {
       nearest = e;
       nearestId = id;
@@ -3232,9 +3232,9 @@ var turn3 = (x) => Math.atan2(Math.sin(x), Math.cos(x));
 var mix7 = (a, b, w) => a + (b - a) * w;
 var pointMix = (a, b, w) => ({ x: mix7(a.x, b.x, w), y: mix7(a.y, b.y, w) });
 var color7 = (flash, hex2) => flash ? "#fff" : hex2;
-function toLocal(a, point4) {
+function toLocal(a, point9) {
   const b = a.body, pivot2 = a.bodyPivot, size = a.voidSpectreScale ?? 1, facing = a.idleFacingX ?? 1;
-  const x = point4.x - b.x - pivot2.x, y = point4.y - b.y - pivot2.y, co = Math.cos(b.rotation), si = Math.sin(b.rotation);
+  const x = point9.x - b.x - pivot2.x, y = point9.y - b.y - pivot2.y, co = Math.cos(b.rotation), si = Math.sin(b.rotation);
   return {
     x: ((co * x + si * y) / b.scaleX + pivot2.x) / (SCALE6 * size) * facing,
     y: ((-si * x + co * y) / b.scaleY + pivot2.y) / (SCALE6 * size)
@@ -3450,8 +3450,8 @@ function voidCrawlerMotionV4(m, time, seed2 = 0) {
     turn7 = Math.atan2(-y, -x) * a.artWeight;
   }
   const u = { x: -Math.cos(turn7), y: -Math.sin(turn7) }, root = segments[0];
-  const head11 = { x: root.x + u.x * 5, y: root.y + u.y * 5, turn: turn7, open: a ? a.limb.open * (1 - a.strikeBlend) : 1.2 };
-  const tip = { x: head11.x + u.x * 15, y: head11.y + u.y * 15 };
+  const head12 = { x: root.x + u.x * 5, y: root.y + u.y * 5, turn: turn7, open: a ? a.limb.open * (1 - a.strikeBlend) : 1.2 };
+  const tip = { x: head12.x + u.x * 15, y: head12.y + u.y * 15 };
   const walk = Math.max(0, Math.min(1, m.motionBlend ?? 0)), legs2 = [];
   for (const near of [false, true]) for (let i = 0; i < 6; i++) {
     const s = segments[i], p = time / 110 - i * 0.8 + (near ? Math.PI : 0) + seed2 % 13 * 0.21;
@@ -3464,7 +3464,7 @@ function voidCrawlerMotionV4(m, time, seed2 = 0) {
       foot: { x: s.x + (near ? -3 : 3) + step, y: s.y + (near ? 11 : 6.5) - lift + settle }
     });
   }
-  return { segments, head: head11, tip, legs: legs2 };
+  return { segments, head: head12, tip, legs: legs2 };
 }
 function voidCrawlerPoseV4(actor, pose, tick) {
   const size = actor.elite?.scale ?? 1, idleFacingX = actor.presentationFacingX === -1 ? -1 : 1;
@@ -3483,12 +3483,12 @@ function voidCrawlerPoseV4(actor, pose, tick) {
   };
   return { ...a, body: body4, anchor: { x: body4.x, y: body4.y } };
 }
-function polygon5(c, points, fill, outline = true) {
+function polygon5(c, points, fill3, outline = true) {
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
   c.closePath();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.fill();
   if (outline) {
     c.strokeStyle = INK8;
@@ -3652,8 +3652,8 @@ function gildedScuttlerLegsV4(time, seed2, walk = 0) {
   }
   return legs2;
 }
-function path(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function path(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -3676,14 +3676,14 @@ function segment2(c, a, b, width, flash, near) {
   c.stroke();
 }
 function supports(c, m, time, seed2, near) {
-  for (const leg2 of gildedScuttlerLegsV4(time, seed2, m.motionBlend ?? 0).filter((leg3) => leg3.near === near)) {
-    segment2(c, leg2.joint, leg2.foot, 1, m.flashTimer, leg2.near);
-    segment2(c, leg2.root, leg2.joint, 1.3, m.flashTimer, leg2.near);
-    c.fillStyle = color9(m.flashTimer, leg2.near ? "#d5a13e" : "#a7833a");
+  for (const leg3 of gildedScuttlerLegsV4(time, seed2, m.motionBlend ?? 0).filter((leg4) => leg4.near === near)) {
+    segment2(c, leg3.joint, leg3.foot, 1, m.flashTimer, leg3.near);
+    segment2(c, leg3.root, leg3.joint, 1.3, m.flashTimer, leg3.near);
+    c.fillStyle = color9(m.flashTimer, leg3.near ? "#d5a13e" : "#a7833a");
     c.strokeStyle = INK9;
     c.lineWidth = LINE8;
     c.beginPath();
-    c.arc(leg2.joint.x, leg2.joint.y, 1.25, 0, TAU10);
+    c.arc(leg3.joint.x, leg3.joint.y, 1.25, 0, TAU10);
     c.fill();
     c.stroke();
   }
@@ -3746,14 +3746,14 @@ function front(c, tip, open, flash) {
   head2(c, flash);
 }
 function drawGildedScuttlerV4(c, m, time, seed2) {
-  const cx = m.x + m.w / 2, cy = m.y + m.h - 12 / SCALE8, flash = m.flashTimer, action = m.familyAttack;
+  const cx = m.x + m.w / 2, cy = m.y + m.h - 12 / SCALE8, flash = m.flashTimer, action2 = m.familyAttack;
   c.save();
   c.translate(cx, cy);
   c.lineJoin = "round";
   c.lineCap = "round";
   supports(c, m, time, seed2, false);
   c.save();
-  c.rotate(Math.PI / 12 + Math.sin(time / 370 + seed2 % 11 * 0.19) * 0.03 * (1 - (action?.artWeight ?? 0)) + (action?.limb.spin ?? 0));
+  c.rotate(Math.PI / 12 + Math.sin(time / 370 + seed2 % 11 * 0.19) * 0.03 * (1 - (action2?.artWeight ?? 0)) + (action2?.limb.spin ?? 0));
   c.fillStyle = color9(flash, "#a16b27");
   c.beginPath();
   c.arc(0, 0, 13.5, 0, TAU10);
@@ -3804,7 +3804,7 @@ function drawGildedScuttlerV4(c, m, time, seed2) {
   c.stroke();
   c.restore();
   supports(c, m, time, seed2, true);
-  if (!action) {
+  if (!action2) {
     c.save();
     c.scale(-1, 1);
     front(c, 16.5 / SCALE8, 0.75, flash);
@@ -3844,14 +3844,14 @@ function mimicShieldBashRadiusV4(direction3, rotation, facing = 1, size = 1) {
   const co = Math.cos(rotation), si = Math.sin(rotation), scale = SCALE9 * size;
   const vertices = HULL.map(([x, y]) => ({ x: (co * x * facing - si * y) * scale, y: (si * x * facing + co * y) * scale }));
   const cross = (a, b) => a.x * b.y - a.y * b.x;
-  let distance7 = Infinity;
+  let distance8 = Infinity;
   for (let i = 0; i < vertices.length; i++) {
     const a = vertices[i], b = vertices[(i + 1) % vertices.length], edge = { x: b.x - a.x, y: b.y - a.y }, den = cross(direction3, edge);
     if (Math.abs(den) < 1e-9) continue;
     const t = cross(a, edge) / den, u = cross(a, direction3) / den;
-    if (t >= 0 && u >= -1e-9 && u <= 1 + 1e-9) distance7 = Math.min(distance7, t);
+    if (t >= 0 && u >= -1e-9 && u <= 1 + 1e-9) distance8 = Math.min(distance8, t);
   }
-  return Number.isFinite(distance7) ? distance7 : 13.5 * size;
+  return Number.isFinite(distance8) ? distance8 : 13.5 * size;
 }
 function mimicShieldFaceV4(time, seed2, pose = null) {
   const weight2 = pose?.artWeight ?? 0, cycle = ((time + seed2 % 23 * 137) % 4200 + 4200) % 4200;
@@ -3869,8 +3869,8 @@ function mimicShieldFaceV4(time, seed2, pose = null) {
   }
   return { blink, opening, center: center2, angle: angle3, width, outline, teeth };
 }
-function polygon6(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon6(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -4105,10 +4105,10 @@ var uprightTuning = {
 function dungeonMobMeleePoseV2A(actor, tick) {
   const family = actor.enemyFamily, phase = actor.meleePhase, g = actor.meleeGeometry;
   if (!families.has(family) || !actor.alive || !g || !phase || phase.phase === "idle") return null;
-  const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance7 = Math.hypot(dx, dy);
-  const direction3 = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
+  const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance8 = Math.hypot(dx, dy);
+  const direction3 = distance8 > 1e-3 ? { x: dx / distance8, y: dy / distance8 } : { x: 1, y: 0 };
   const sourceRadius = g.sourceRadius, targetRadius = g.targetRadius, centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach;
-  const weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = clamp7(distance7 - targetRadius, sourceRadius, weaponReach);
+  const weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = clamp7(distance8 - targetRadius, sourceRadius, weaponReach);
   const p = clamp7((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick), 0, 1);
   const tuning = family === "mimic_shield" ? { ...uprightTuning[family], front: mimicShieldBashRadiusV4(direction3, uprightTuning[family].hitLean * direction3.x, actor.presentationFacingX === -1 ? -1 : 1, actor.elite?.scale ?? 1) } : uprightTuning[family];
   const frame = uprightAttackFrame(tuning, phase.phase, p, direction3, contactReach);
@@ -4459,8 +4459,8 @@ function drawWireframeOrbV4(c, m, time, seed2) {
 var TAU15 = Math.PI * 2;
 var ink = (m, color27) => m.flashTimer ? "#fff" : color27;
 var center = (m) => ({ x: m.x + m.w / 2, y: m.y + m.h / 2 });
-var disk = (c, x, y, r, fill) => {
-  c.fillStyle = fill;
+var disk = (c, x, y, r, fill3) => {
+  c.fillStyle = fill3;
   c.beginPath();
   c.arc(x, y, r, 0, TAU15);
   c.fill();
@@ -4706,7 +4706,7 @@ function drawTemporalWatcherV3(c, m, time, seed2) {
   gearCase(c, p.x, cy, m, motion.gearAngle);
   c.strokeStyle = WATCHER_INK;
   c.lineWidth = WATCHER_LINE;
-  const eyeY = cy - 3.9, eyeHeight = Math.max(2.8, 3.4 - q * 0.35), eye2 = watcherEyePose(time * 60 / 1e3, seed2, m.lookDirection, a?.phase ?? "idle", Boolean(m.flashTimer)), opening = eyeHeight * eye2.openness;
+  const eyeY = cy - 3.9, eyeHeight = Math.max(2.8, 3.4 - q * 0.35), eye5 = watcherEyePose(time * 60 / 1e3, seed2, m.lookDirection, a?.phase ?? "idle", Boolean(m.flashTimer)), opening = eyeHeight * eye5.openness;
   if (opening > 0.22) {
     c.fillStyle = ink(m, "#35b9a5");
     c.beginPath();
@@ -4725,11 +4725,11 @@ function drawTemporalWatcherV3(c, m, time, seed2) {
     c.fillRect(p.x - 7, eyeY - opening, 14, opening);
     c.fillStyle = ink(m, "#267c77");
     c.beginPath();
-    c.ellipse(p.x + eye2.gazeX, eyeY + eye2.gazeY, 2.55, Math.min(2.45, eyeHeight - 0.7), 0, 0, TAU15);
+    c.ellipse(p.x + eye5.gazeX, eyeY + eye5.gazeY, 2.55, Math.min(2.45, eyeHeight - 0.7), 0, 0, TAU15);
     c.fill();
     c.fillStyle = ink(m, "#11151a");
     c.beginPath();
-    c.ellipse(p.x + eye2.gazeX, eyeY + eye2.gazeY, 0.7, 2.1, 0, 0, TAU15);
+    c.ellipse(p.x + eye5.gazeX, eyeY + eye5.gazeY, 0.7, 2.1, 0, 0, TAU15);
     c.fill();
     if (!m.flashTimer) {
       c.fillStyle = "#d0fff1";
@@ -4988,8 +4988,8 @@ var INK13 = "#11151a";
 var LINE12 = 1.26 / 0.78;
 var color13 = (flash, hex2) => flash ? "#fff" : hex2;
 var clamp8 = (x) => Math.max(0, Math.min(1, x));
-function polygon7(c, points, fill, outline = false) {
-  c.fillStyle = fill;
+function polygon7(c, points, fill3, outline = false) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -5120,8 +5120,8 @@ var TAU17 = Math.PI * 2;
 var INK14 = "#11151a";
 var LINE13 = 1.26 / 0.9;
 var color14 = (flash, hex2) => flash ? "#fff" : hex2;
-function plate(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function plate(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -5408,15 +5408,15 @@ function sleeve2(c, a, flash) {
 function claw(c, a, flash) {
   const { wrist: w, aim: u, normal: n, tips: t } = a;
   const p = (f, s) => ({ x: w.x + u.x * f + n.x * s, y: w.y + u.y * f + n.y * s });
-  const line3 = (q2) => c.lineTo(q2.x, q2.y);
+  const line5 = (q2) => c.lineTo(q2.x, q2.y);
   let q = p(0, -1.5);
   c.beginPath();
   c.moveTo(q.x, q.y);
-  line3(p(2, -3));
+  line5(p(2, -3));
   q = p(5.5, -3);
   c.quadraticCurveTo(q.x, q.y, t[0].x, t[0].y);
-  line3(p(3.6, 0));
-  line3(t[1]);
+  line5(p(3.6, 0));
+  line5(t[1]);
   q = p(3, 3);
   c.quadraticCurveTo(q.x, q.y, w.x + n.x * 1.5, w.y + n.y * 1.5);
   c.closePath();
@@ -5430,9 +5430,9 @@ function claw(c, a, flash) {
     c.beginPath();
     q = p(0, -1.5);
     c.moveTo(q.x, q.y);
-    line3(p(3.6, 0));
-    line3(p(1, 1.8));
-    line3(p(0, 1.5));
+    line5(p(3.6, 0));
+    line5(p(1, 1.8));
+    line5(p(0, 1.5));
     c.closePath();
     c.fill();
   }
@@ -5565,9 +5565,9 @@ function voidOrbRangedPoseV4(actor, tick) {
   if (!actor.alive || !r || !["windup", "recovery"].includes(r.phase)) return null;
   const d = r.aim ?? (r.targetPosition ? { x: r.targetPosition.x - actor.position.x, y: r.targetPosition.y - actor.position.y } : { x: actor.presentationFacingX ?? 1, y: 0 });
   const length = Math.hypot(d.x, d.y), direction3 = length > 1e-3 ? { x: d.x / length, y: d.y / length } : { x: 1, y: 0 };
-  const progress = clamp9((tick - r.phaseStartedTick) / Math.max(1, r.phaseEndsTick - r.phaseStartedTick));
-  const hold = r.phase === "windup" ? smooth6(progress) : 1 - smooth6(progress);
-  const kick = r.phase === "recovery" ? Math.sin(Math.PI * clamp9(progress * 3)) : 0;
+  const progress5 = clamp9((tick - r.phaseStartedTick) / Math.max(1, r.phaseEndsTick - r.phaseStartedTick));
+  const hold = r.phase === "windup" ? smooth6(progress5) : 1 - smooth6(progress5);
+  const kick = r.phase === "recovery" ? Math.sin(Math.PI * clamp9(progress5 * 3)) : 0;
   const travel = -2.2 * hold - 2 * kick;
   return {
     family: "void_orb",
@@ -5576,10 +5576,10 @@ function voidOrbRangedPoseV4(actor, tick) {
     bodyPivot: { x: 0, y: -9 },
     drawFacingX: actor.presentationFacingX === -1 ? -1 : 1,
     phase: r.phase,
-    progress,
+    progress: progress5,
     charge: r.phase === "windup" ? hold : 0,
     release: r.phase === "recovery" ? Math.max(0, 1 - (tick - r.phaseStartedTick) / 3) : 0,
-    recovery: r.phase === "recovery" ? 1 - progress : 0,
+    recovery: r.phase === "recovery" ? 1 - progress5 : 0,
     hold,
     kick,
     direction: direction3,
@@ -5633,8 +5633,8 @@ function ringCurrent(c, q, time, seed2, offset2, span, width, color27) {
   const start = time / 1e3 + seed2 % 17 * 0.19 + offset2;
   c.beginPath();
   for (let side = 0; side < 2; side++) for (let i = 0; i <= 24; i++) {
-    const progress = (side ? 24 - i : i) / 24, a = start + span * progress, p = voidOrbRingSampleV4(q, time, seed2, a);
-    const w = Math.sin(Math.PI * progress) * width * (side ? -0.45 : 0.55), x = p.x + p.nx * w, y = p.y + p.ny * w;
+    const progress5 = (side ? 24 - i : i) / 24, a = start + span * progress5, p = voidOrbRingSampleV4(q, time, seed2, a);
+    const w = Math.sin(Math.PI * progress5) * width * (side ? -0.45 : 0.55), x = p.x + p.nx * w, y = p.y + p.ny * w;
     if (side === 0 && i === 0) c.moveTo(x, y);
     else c.lineTo(x, y);
   }
@@ -5833,13 +5833,13 @@ function thornWyrmMotionV4(m, time) {
   const segments = Array.from({ length: 5 }, (_, i) => ({ index: i, x: x + i * 5.5, y: y + wave(i), radius: 6.2 - i * 0.7 }));
   const root = { x, y: y + wave(0) }, target = a ? Math.atan2(a.direction.y, a.direction.x * a.drawFacingX) : Math.PI;
   const angle3 = Math.PI + turn5(target - Math.PI) * weight2, u = { x: Math.cos(angle3), y: Math.sin(angle3) };
-  const head11 = { x: root.x + u.x * NECK, y: root.y + u.y * NECK, radius: HEAD, aim: u, angle: angle3, gape: weight2 };
-  const muzzle = { x: head11.x + u.x * HEAD, y: head11.y + u.y * HEAD };
+  const head12 = { x: root.x + u.x * NECK, y: root.y + u.y * NECK, radius: HEAD, aim: u, angle: angle3, gape: weight2 };
+  const muzzle = { x: head12.x + u.x * HEAD, y: head12.y + u.y * HEAD };
   const legs2 = segments.map((s) => {
     const stride = Math.sin(t * 2 + s.index) * (1 + walk * 0.65) * (1 - weight2 * 0.65);
     return { root: { x: s.x, y: s.y + s.radius - 1 }, knee: { x: s.x - 2 + stride * 0.3, y: s.y + 6 }, foot: { x: s.x - 3 + stride, y: s.y + 8 + Math.cos(t * 2 + s.index) * 0.6 } };
   });
-  return { segments, root, head: head11, muzzle, legs: legs2, weight: weight2 };
+  return { segments, root, head: head12, muzzle, legs: legs2, weight: weight2 };
 }
 function thorn(c, s, flash) {
   const { x, y, radius: r } = s;
@@ -5948,14 +5948,14 @@ function head5(c, h, flash) {
   c.lineWidth = LINE15;
   c.stroke();
   if (flash) return;
-  const eye2 = { x: x + u.x * 2.2, y: y - 1.6 + u.y * 0.25 };
+  const eye5 = { x: x + u.x * 2.2, y: y - 1.6 + u.y * 0.25 };
   c.fillStyle = INK17;
   c.beginPath();
-  c.ellipse(eye2.x, eye2.y, 1.1, 1.4, 0, 0, TAU19);
+  c.ellipse(eye5.x, eye5.y, 1.1, 1.4, 0, 0, TAU19);
   c.fill();
   c.fillStyle = "#fff7df";
   c.beginPath();
-  c.arc(eye2.x - 0.25, eye2.y - 0.45, 0.34, 0, TAU19);
+  c.arc(eye5.x - 0.25, eye5.y - 0.45, 0.34, 0, TAU19);
   c.fill();
   c.save();
   c.translate(x + u.x * 5.65, y + u.y * 5.65);
@@ -5982,11 +5982,11 @@ function drawThornWyrmV4(c, m, time, seed2) {
   c.save();
   c.lineCap = "round";
   c.lineJoin = "round";
-  for (const leg2 of q.legs) {
+  for (const leg3 of q.legs) {
     c.beginPath();
-    c.moveTo(leg2.root.x, leg2.root.y);
-    c.lineTo(leg2.knee.x, leg2.knee.y);
-    c.lineTo(leg2.foot.x, leg2.foot.y);
+    c.moveTo(leg3.root.x, leg3.root.y);
+    c.lineTo(leg3.knee.x, leg3.knee.y);
+    c.lineTo(leg3.foot.x, leg3.foot.y);
     c.strokeStyle = INK17;
     c.lineWidth = LINE15 + 1;
     c.stroke();
@@ -6068,22 +6068,22 @@ function frostWyrmlingMotionV4(m, time) {
   const target = a ? { x: a.direction.x * a.drawFacingX, y: a.direction.y } : { x: 0, y: 1 };
   const angle3 = Math.PI / 2 + turn6(Math.atan2(target.y, target.x) - Math.PI / 2) * weight2;
   const u = { x: Math.cos(angle3), y: Math.sin(angle3) };
-  const head11 = { x: mix9(x, root.x + target.x * NECK_REACH, weight2), y: mix9(y - 14, root.y + target.y * NECK_REACH, weight2), aim: u, gape: weight2 };
+  const head12 = { x: mix9(x, root.x + target.x * NECK_REACH, weight2), y: mix9(y - 14, root.y + target.y * NECK_REACH, weight2), aim: u, gape: weight2 };
   const neckSegments = [{ t: 0.34, radius: 5.5 }, { t: 0.68, radius: 4.8 }].map((s) => ({
-    x: mix9(root.x, head11.x, s.t) - 1.2 * Math.sin(Math.PI * s.t) * (1 - weight2 * 0.5),
-    y: mix9(root.y, head11.y, s.t),
+    x: mix9(root.x, head12.x, s.t) - 1.2 * Math.sin(Math.PI * s.t) * (1 - weight2 * 0.5),
+    y: mix9(root.y, head12.y, s.t),
     radius: s.radius
   }));
-  const mouth3 = { x: head11.x + u.x * (4 + 2 * weight2), y: head11.y + u.y * (4 + 2 * weight2), angle: angle3 };
-  const muzzle = { x: mouth3.x + u.x, y: mouth3.y + u.y };
-  return { segments, neckSegments, root, head: head11, mouth: mouth3, muzzle, weight: weight2 };
+  const mouth4 = { x: head12.x + u.x * (4 + 2 * weight2), y: head12.y + u.y * (4 + 2 * weight2), angle: angle3 };
+  const muzzle = { x: mouth4.x + u.x, y: mouth4.y + u.y };
+  return { segments, neckSegments, root, head: head12, mouth: mouth4, muzzle, weight: weight2 };
 }
-function polygon8(c, points, fill, outline = true) {
+function polygon8(c, points, fill3, outline = true) {
   c.beginPath();
   c.moveTo(points[0].x, points[0].y);
   for (const p of points.slice(1)) c.lineTo(p.x, p.y);
   c.closePath();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.fill();
   if (outline) {
     c.strokeStyle = INK18;
@@ -6260,8 +6260,8 @@ function corrodedGolemMeleePoseV4(actor, tick) {
     corrodedScale: size
   };
 }
-function bodyLocalPoint(a, point4) {
-  const b = a.body, p = a.bodyPivot, co = Math.cos(b.rotation), si = Math.sin(b.rotation), dx = point4.x - b.x - p.x, dy = point4.y - b.y - p.y, size = a.corrodedScale;
+function bodyLocalPoint(a, point9) {
+  const b = a.body, p = a.bodyPivot, co = Math.cos(b.rotation), si = Math.sin(b.rotation), dx = point9.x - b.x - p.x, dy = point9.y - b.y - p.y, size = a.corrodedScale;
   return { x: ((co * dx + si * dy) / b.scaleX + p.x) * a.drawFacingX / (SCALE15 * size), y: ((-si * dx + co * dy) / b.scaleY + p.y) / (SCALE15 * size) };
 }
 function corrodedGolemMotionV4(m, time, seed2 = 0) {
@@ -6279,8 +6279,8 @@ function corrodedGolemMotionV4(m, time, seed2 = 0) {
   });
   return { x, y, hands, weight: weight2, strike, pulse: 0.85 + Math.sin(time / 220 + seed2 % 11) * 0.15 };
 }
-function polygon9(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon9(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -6422,8 +6422,8 @@ function marshGhostMotionV4(m, time, seed2 = 0) {
     }))
   };
 }
-function polygon10(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon10(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -6460,11 +6460,11 @@ function body2(c, q) {
   c.closePath();
 }
 function mist2(c, q, flash) {
-  const { x, y, sway: s } = q, glow2 = c.createLinearGradient(x, y, x, y + 27);
-  glow2.addColorStop(0, flash ? "rgba(255,255,255,.5)" : "rgba(76,218,165,.35)");
-  glow2.addColorStop(0.62, flash ? "rgba(255,255,255,.4)" : "rgba(166,106,211,.38)");
-  glow2.addColorStop(1, "rgba(153,99,197,0)");
-  c.fillStyle = glow2;
+  const { x, y, sway: s } = q, glow4 = c.createLinearGradient(x, y, x, y + 27);
+  glow4.addColorStop(0, flash ? "rgba(255,255,255,.5)" : "rgba(76,218,165,.35)");
+  glow4.addColorStop(0.62, flash ? "rgba(255,255,255,.4)" : "rgba(166,106,211,.38)");
+  glow4.addColorStop(1, "rgba(153,99,197,0)");
+  c.fillStyle = glow4;
   c.beginPath();
   c.moveTo(x - 7, y + 2);
   c.quadraticCurveTo(x - 16, y + 14, x - 17 + s, y + 24);
@@ -6729,8 +6729,8 @@ var smooth11 = (v) => {
   return p * p * (3 - 2 * p);
 };
 var color21 = (flash, hex2) => flash ? "#fff" : hex2;
-function polygon11(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon11(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -6854,8 +6854,8 @@ function bodyPath(c, { cx: x, cy: y, rx, ry }) {
   c.quadraticCurveTo(x - rx * 0.99, y + ry * 0.89, x - rx * 0.97, y + ry * 0.4);
   c.closePath();
 }
-function plate2(c, q, points, fill) {
-  c.fillStyle = fill;
+function plate2(c, q, points, fill3) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(q.cx + points[0][0] * q.rx, q.cy + points[0][1] * q.ry);
   for (const [x, y] of points.slice(1)) c.lineTo(q.cx + x * q.rx, q.cy + y * q.ry);
@@ -6942,8 +6942,8 @@ function magmaElementalMotionV4(m, time) {
   const cast = m.rangedPose, heat = cast ? cast.phase === "windup" ? cast.charge : 1 - smooth13(cast.progress) : 0;
   return { cx: m.x + m.w / 2, cy: m.y + m.h / 2, heat, flicker: Math.sin(time / 60) * 3 };
 }
-function polygon12(c, points, fill) {
-  c.fillStyle = fill;
+function polygon12(c, points, fill3) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -6976,8 +6976,8 @@ function blackOuterEdge(c) {
   c.lineWidth = 2 + LINE22;
   c.stroke();
 }
-function originalPaint(c, fill, flash) {
-  c.fillStyle = color22(flash, fill);
+function originalPaint(c, fill3, flash) {
+  c.fillStyle = color22(flash, fill3);
   c.fill();
   c.strokeStyle = flash ? INK24 : "#ff5500";
   c.lineWidth = flash ? LINE22 : 2;
@@ -7110,18 +7110,18 @@ function hellBatMeleePoseV4(actor, tick) {
   };
 }
 function hellBatMotionV4(m, time) {
-  const action = m.familyAttack, weight2 = action?.artWeight ?? 0, strike = action?.strikeBlend ?? 0;
+  const action2 = m.familyAttack, weight2 = action2?.artWeight ?? 0, strike = action2?.strikeBlend ?? 0;
   const cx = m.x + m.w / 2, cy = m.y + m.h / 2 + Math.sin(time / 140) * 2.5 * (1 - weight2);
-  const u = action ? localDirection3(action.direction, action.body.rotation, action.drawFacingX) : { x: 0.35, y: Math.sqrt(1 - 0.35 ** 2) };
+  const u = action2 ? localDirection3(action2.direction, action2.body.rotation, action2.drawFacingX) : { x: 0.35, y: Math.sqrt(1 - 0.35 ** 2) };
   const angle3 = Math.atan2(u.y, u.x), neckTurn = Math.atan2(Math.sin(angle3 + Math.PI / 2), Math.cos(angle3 + Math.PI / 2));
-  const neckAngle = -Math.PI / 2 + neckTurn * strike, head11 = { x: cx + Math.cos(neckAngle) * NECK2, y: cy + Math.sin(neckAngle) * NECK2 };
+  const neckAngle = -Math.PI / 2 + neckTurn * strike, head12 = { x: cx + Math.cos(neckAngle) * NECK2, y: cy + Math.sin(neckAngle) * NECK2 };
   const rest = Math.atan2(Math.sqrt(1 - 0.35 ** 2), 0.35), turn7 = Math.atan2(Math.sin(angle3 - rest), Math.cos(angle3 - rest));
-  const mouthAngle = rest + turn7 * strike, nose = { x: head11.x + Math.cos(mouthAngle) * NOSE, y: head11.y + Math.sin(mouthAngle) * NOSE };
+  const mouthAngle = rest + turn7 * strike, nose = { x: head12.x + Math.cos(mouthAngle) * NOSE, y: head12.y + Math.sin(mouthAngle) * NOSE };
   const flap = Math.sin(time / 85), attackFlap = mix11(0.95, -0.65, strike);
-  return { cx, cy, head: head11, nose, mouthAngle, weight: weight2, strike, flap: mix11(flap, attackFlap, weight2), gape: weight2 * (1 - strike) * 0.48 };
+  return { cx, cy, head: head12, nose, mouthAngle, weight: weight2, strike, flap: mix11(flap, attackFlap, weight2), gape: weight2 * (1 - strike) * 0.48 };
 }
-function polygon13(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon13(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -7312,17 +7312,17 @@ function lavaSerpentRangedPoseV4(actor, tick) {
   };
 }
 function lavaSerpentMotionV4(m, time, seed2) {
-  const action = m.familyAttack, weight2 = action?.artWeight ?? 0, strike = action?.strikeBlend ?? 0, walk = m.motionBlend ?? 0, step = m.stepPhase ?? 0, cx = m.x + m.w / 2, cy = m.y + m.h / 2 + 2, t = time / 140;
+  const action2 = m.familyAttack, weight2 = action2?.artWeight ?? 0, strike = action2?.strikeBlend ?? 0, walk = m.motionBlend ?? 0, step = m.stepPhase ?? 0, cx = m.x + m.w / 2, cy = m.y + m.h / 2 + 2, t = time / 140;
   const wave = (i) => Math.sin(t - i * 0.8) * (3.5 + walk * 0.8) * (1 - weight2 * (i === 0 ? 1 : 0.25)) + Math.sin(step - i * 0.7) * walk * 0.55 * (1 - weight2);
-  const root = { x: cx, y: cy + wave(0) }, u = action ? localDirection4(action.direction, action.body.rotation, action.drawFacingX) : { x: -1, y: 0 };
+  const root = { x: cx, y: cy + wave(0) }, u = action2 ? localDirection4(action2.direction, action2.body.rotation, action2.drawFacingX) : { x: -1, y: 0 };
   const aim2 = Math.atan2(-u.y, -u.x), neckAngle = mix12(0.12, aim2, strike) * weight2, angle3 = mix12(-0.22, aim2 + Math.atan2(1, 8), strike) * weight2;
-  const head11 = { x: root.x - Math.cos(neckAngle) * NECK3, y: root.y - Math.sin(neckAngle) * NECK3, angle: angle3, gape: action?.ranged ? weight2 * 0.28 : weight2 * (1 - strike) * 0.34 };
-  const nose = { x: head11.x - Math.cos(angle3) * 8 - Math.sin(angle3), y: head11.y - Math.sin(angle3) * 8 + Math.cos(angle3) };
+  const head12 = { x: root.x - Math.cos(neckAngle) * NECK3, y: root.y - Math.sin(neckAngle) * NECK3, angle: angle3, gape: action2?.ranged ? weight2 * 0.28 : weight2 * (1 - strike) * 0.34 };
+  const nose = { x: head12.x - Math.cos(angle3) * 8 - Math.sin(angle3), y: head12.y - Math.sin(angle3) * 8 + Math.cos(angle3) };
   const segments = Array.from({ length: 6 }, (_, i) => ({ x: cx + i * 5.5 - i * 0.6 * weight2 * (1 - strike), y: cy + wave(i), radius: 6.5 - i * 0.7 }));
-  return { root, head: head11, nose, segments, weight: weight2, strike, castHeat: action?.ranged ? weight2 : 0, heat: 0.92 + Math.sin(time / 220 + seed2 % 11) * 0.08 };
+  return { root, head: head12, nose, segments, weight: weight2, strike, castHeat: action2?.ranged ? weight2 : 0, heat: 0.92 + Math.sin(time / 220 + seed2 % 11) * 0.08 };
 }
-function polygon14(c, points, fill, outline = true) {
-  c.fillStyle = fill;
+function polygon14(c, points, fill3, outline = true) {
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -7607,9 +7607,9 @@ var uprightTuning2 = {
 function dungeonMobMeleePoseV2B(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry, family = actor.enemyFamily;
   if (!families2.has(family) || !actor.alive || !g || !phase || phase.phase === "idle") return null;
-  const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance7 = Math.hypot(dx, dy);
-  const direction3 = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
-  const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = clamp17(distance7 - targetRadius, sourceRadius, weaponReach);
+  const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1, dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance8 = Math.hypot(dx, dy);
+  const direction3 = distance8 > 1e-3 ? { x: dx / distance8, y: dy / distance8 } : { x: 1, y: 0 }, sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
+  const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach, weaponReach = Math.max(sourceRadius, centerLimit - targetRadius), contactReach = clamp17(distance8 - targetRadius, sourceRadius, weaponReach);
   const p = clamp17((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick), 0, 1);
   const frame = uprightAttackFrame(uprightTuning2[family], phase.phase, p, direction3, contactReach);
   const timing = DUNGEON_MOBS_V2_MELEE_MOTION.wireframe_orb, orbPhaseOffset = phase.phase === "impact" ? timing.windupTicks : phase.phase === "recovery" ? timing.windupTicks + timing.impactTicks : 0;
@@ -7800,12 +7800,12 @@ function hostileMeleePose(actor, tick) {
   const phase = actor.meleePhase, g = actor.meleeGeometry;
   if (!actor.alive || !g || !phase || phase.phase === "idle") return null;
   const dx = g.targetPosition ? g.targetPosition.x - actor.position.x : actor.presentationFacingX ?? 1;
-  const dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance7 = Math.hypot(dx, dy);
-  const direction3 = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
+  const dy = g.targetPosition ? g.targetPosition.y - actor.position.y : 0, distance8 = Math.hypot(dx, dy);
+  const direction3 = distance8 > 1e-3 ? { x: dx / distance8, y: dy / distance8 } : { x: 1, y: 0 };
   const sourceRadius = g.sourceRadius, targetRadius = g.targetRadius;
   const centerLimit = g.mode === "clearHullGap" ? g.reach + sourceRadius + targetRadius : g.reach;
   const weaponReach = Math.max(sourceRadius, centerLimit - targetRadius);
-  const contactReach = clamp18(distance7 - targetRadius, sourceRadius, weaponReach);
+  const contactReach = clamp18(distance8 - targetRadius, sourceRadius, weaponReach);
   const p = clamp18((tick - phase.phaseStartedTick) / Math.max(1, phase.phaseEndsTick - phase.phaseStartedTick), 0, 1);
   const windup = phase.phase === "windup", impact = phase.phase === "impact", w = windup ? smooth16(p) : 0, r = phase.phase === "recovery" ? (1 - p) ** 2 : 0;
   const family = actor.enemyFamily, body4 = { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1 }, limb = { extension: 0, sweep: 0, open: 0 };
@@ -7908,9 +7908,9 @@ function hostileContactPose(contact, age) {
   if (age < 0 || age >= HOSTILE_STRIKE_FEEDBACK_MS) return null;
   const source2 = contact.sourcePosition, target = contact.targetPosition;
   if (!source2 || !target) return null;
-  const dx = target.x - source2.x, dy = target.y - source2.y, distance7 = Math.hypot(dx, dy), direction3 = distance7 > 1e-3 ? { x: dx / distance7, y: dy / distance7 } : { x: 1, y: 0 };
+  const dx = target.x - source2.x, dy = target.y - source2.y, distance8 = Math.hypot(dx, dy), direction3 = distance8 > 1e-3 ? { x: dx / distance8, y: dy / distance8 } : { x: 1, y: 0 };
   const max = contact.mode === "clearHullGap" ? contact.reach + contact.sourceRadius : Math.max(0, contact.reach - contact.targetRadius);
-  const near = Math.min(max, Math.max(0, distance7 - contact.targetRadius));
+  const near = Math.min(max, Math.max(0, distance8 - contact.targetRadius));
   const contactPosition = { x: source2.x + direction3.x * near, y: source2.y + direction3.y * near };
   return { family: contact.family ?? null, progress: age / HOSTILE_STRIKE_FEEDBACK_MS, direction: direction3, contactPosition, radius: 11 };
 }
@@ -8227,7 +8227,7 @@ var EMERALD = "#3bd887";
 var PALE = "#bdf3a6";
 var GOLD = "#e2bd55";
 var PALE_GOLD = "#ffe08a";
-function energyNode(c, x, y, angle3, scale, fill = PALE) {
+function energyNode(c, x, y, angle3, scale, fill3 = PALE) {
   c.save();
   c.translate(x, y);
   c.rotate(angle3);
@@ -8240,7 +8240,7 @@ function energyNode(c, x, y, angle3, scale, fill = PALE) {
   c.lineTo(-4, 1);
   c.closePath();
   c.fill();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(0, -3);
   c.lineTo(2.2, -0.5);
@@ -8250,7 +8250,7 @@ function energyNode(c, x, y, angle3, scale, fill = PALE) {
   c.fill();
   c.restore();
 }
-function runeShard(c, x, y, angle3, scale, fill = EMERALD) {
+function runeShard(c, x, y, angle3, scale, fill3 = EMERALD) {
   c.save();
   c.translate(x, y);
   c.rotate(angle3);
@@ -8264,7 +8264,7 @@ function runeShard(c, x, y, angle3, scale, fill = EMERALD) {
   c.lineTo(-1, -5);
   c.lineTo(5, -1);
   c.stroke();
-  c.strokeStyle = fill;
+  c.strokeStyle = fill3;
   c.lineWidth = 2.2;
   c.beginPath();
   c.moveTo(-5, 3);
@@ -8273,13 +8273,13 @@ function runeShard(c, x, y, angle3, scale, fill = EMERALD) {
   c.stroke();
   c.restore();
 }
-function knotStroke(c, path4, color27, width) {
+function knotStroke(c, path7, color27, width) {
   c.strokeStyle = DARK2;
   c.lineWidth = width + 4;
-  c.stroke(path4);
+  c.stroke(path7);
   c.strokeStyle = color27;
   c.lineWidth = width;
-  c.stroke(path4);
+  c.stroke(path7);
 }
 function drawVitalityWeaverSigilD12_4(c, actor, tick) {
   const e = actor.elite;
@@ -8502,17 +8502,17 @@ function drawSwiftCommanderAuraD12_4D(c, actor, tick) {
     commandChevron(c, x, y, p + Math.PI / 2, 0.48 + i * 0.04, i === 1 ? COMMAND_GOLD : COMMAND_PALE);
   }
   for (const [index, target] of (e.supportLinks ?? []).entries()) {
-    const dx = target.position.x - actor.position.x, dy = target.position.y - actor.position.y, length = Math.hypot(dx, dy) || 1, nx = -dy / length, ny = dx / length, bend = (index % 2 ? 1 : -1) * (9 + index * 2), path4 = new Path2D();
-    path4.moveTo(0, -8);
-    path4.quadraticCurveTo(dx * 0.5 + nx * bend, dy * 0.5 + ny * bend - 8, dx, dy - 8);
+    const dx = target.position.x - actor.position.x, dy = target.position.y - actor.position.y, length = Math.hypot(dx, dy) || 1, nx = -dy / length, ny = dx / length, bend = (index % 2 ? 1 : -1) * (9 + index * 2), path7 = new Path2D();
+    path7.moveTo(0, -8);
+    path7.quadraticCurveTo(dx * 0.5 + nx * bend, dy * 0.5 + ny * bend - 8, dx, dy - 8);
     c.globalAlpha = 0.42;
     c.setLineDash([5, 7]);
     c.strokeStyle = COMMAND_DARK;
     c.lineWidth = 5;
-    c.stroke(path4);
+    c.stroke(path7);
     c.strokeStyle = index % 2 ? COMMAND_GOLD : COMMAND_CYAN;
     c.lineWidth = 2;
-    c.stroke(path4);
+    c.stroke(path7);
     c.setLineDash([]);
     c.globalAlpha = 0.92;
     for (let n = 0; n < target.stacks; n++) commandChevron(c, dx + (n - (target.stacks - 1) / 2) * 8, dy - 17 - n % 2 * 2, 0, 0.42, n === 2 ? COMMAND_GOLD : COMMAND_PALE);
@@ -8592,7 +8592,7 @@ var ICE_CYAN = "#38bdf8";
 var ICE_BLUE = "#79d7ff";
 var ICE_PALE = "#d9f7ff";
 var ICE_DARK = "#102d4a";
-function frostShard(c, x, y, angle3, scale, fill = ICE_PALE) {
+function frostShard(c, x, y, angle3, scale, fill3 = ICE_PALE) {
   c.save();
   c.translate(x, y);
   c.rotate(angle3);
@@ -8606,7 +8606,7 @@ function frostShard(c, x, y, angle3, scale, fill = ICE_PALE) {
   c.lineTo(-4, 2);
   c.closePath();
   c.fill();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(0, -5.5);
   c.lineTo(2.8, 0.7);
@@ -8774,7 +8774,7 @@ var TOXIC_LIME = "#c7ff9a";
 var TOXIC_DARK = "#241735";
 var TOXIC_VIOLET = "#70408f";
 var TOXIC_SLUDGE = "#31543f";
-function toxicDrop(c, x, y, angle3, scale, fill = TOXIC_MINT) {
+function toxicDrop(c, x, y, angle3, scale, fill3 = TOXIC_MINT) {
   c.save();
   c.translate(x, y);
   c.rotate(angle3);
@@ -8788,7 +8788,7 @@ function toxicDrop(c, x, y, angle3, scale, fill = TOXIC_MINT) {
   c.quadraticCurveTo(-6, -1, 0, -8);
   c.closePath();
   c.fill();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(0, -5);
   c.quadraticCurveTo(3, -1, 2.3, 3);
@@ -8939,7 +8939,7 @@ var CITADEL_PALE = "#d2e2eb";
 var CITADEL_DARK = "#182a38";
 var CITADEL_STEEL = "#45657d";
 var CITADEL_GOLD = "#d8b968";
-function citadelShield(c, x, y, scale, fill = CITADEL_BLUE) {
+function citadelShield(c, x, y, scale, fill3 = CITADEL_BLUE) {
   c.save();
   c.translate(x, y);
   c.scale(scale, scale);
@@ -8954,7 +8954,7 @@ function citadelShield(c, x, y, scale, fill = CITADEL_BLUE) {
   c.lineTo(-7, -6);
   c.closePath();
   c.fill();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(0, -6);
   c.lineTo(4.5, -4);
@@ -9025,18 +9025,18 @@ function drawIronCitadelPassD12_4G(c, actor, tick, front2) {
   }
   if (!front2) {
     for (const [index, target] of (actor.elite.supportLinks ?? []).entries()) {
-      const dx = target.position.x - actor.position.x, dy = target.position.y - actor.position.y, path4 = new Path2D();
-      path4.moveTo(0, 5);
-      path4.lineTo(dx * 0.38, dy * 0.38 + 5);
-      path4.lineTo(dx, dy + 5);
+      const dx = target.position.x - actor.position.x, dy = target.position.y - actor.position.y, path7 = new Path2D();
+      path7.moveTo(0, 5);
+      path7.lineTo(dx * 0.38, dy * 0.38 + 5);
+      path7.lineTo(dx, dy + 5);
       c.globalAlpha = 0.36;
       c.setLineDash([4, 6]);
       c.strokeStyle = CITADEL_DARK;
       c.lineWidth = 5;
-      c.stroke(path4);
+      c.stroke(path7);
       c.strokeStyle = CITADEL_BLUE;
       c.lineWidth = 2;
-      c.stroke(path4);
+      c.stroke(path7);
       c.setLineDash([]);
     }
   }
@@ -9112,7 +9112,7 @@ var BLOOD_RED = "#8f2639";
 var BLOOD_DARK = "#32121d";
 var BLOOD_GOLD = "#f2c36c";
 var BLOOD_PALE = "#ffe2a0";
-function bloodFang(c, x, y, angle3, scale, fill = BLOOD_CRIMSON) {
+function bloodFang(c, x, y, angle3, scale, fill3 = BLOOD_CRIMSON) {
   c.save();
   c.translate(x, y);
   c.rotate(angle3);
@@ -9127,7 +9127,7 @@ function bloodFang(c, x, y, angle3, scale, fill = BLOOD_CRIMSON) {
   c.lineTo(-6, 7);
   c.closePath();
   c.fill();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(-3, -3);
   c.lineTo(2, -1);
@@ -9258,9 +9258,9 @@ function drawBerserkerTransfersD12_4H_A(c, model, tick) {
     const age = tick - pulse.tick;
     if (age < 0 || age > 34) continue;
     for (let index = 0; index < pulse.recipients.length; index++) {
-      const projected = pulse.recipients[index];
-      if (projected.stacks <= projected.previousStacks) continue;
-      const target = model.entitiesById[projected.entityId];
+      const projected2 = pulse.recipients[index];
+      if (projected2.stacks <= projected2.previousStacks) continue;
+      const target = model.entitiesById[projected2.entityId];
       if (!target?.alive) continue;
       const sx = source2.position.x, sy = source2.position.y - 6, tx = target.position.x, ty = target.position.y - 6, dx = tx - sx, dy = ty - sy, length = Math.hypot(dx, dy) || 1, nx = -dy / length, ny = dx / length, seed2 = (source2.visualSeed >>> 0 ^ (target.visualSeed ?? 0) >>> 0 ^ index * 2654435761) >>> 0, bend = (seed2 & 1 ? 1 : -1) * (8 + seed2 % 9), cx = (sx + tx) / 2 + nx * bend, cy = (sy + ty) / 2 + ny * bend - 5;
       for (let packet = 0; packet < 4; packet++) {
@@ -9304,7 +9304,7 @@ var NULL_DARK = "#251339";
 var NULL_VIOLET = "#9b5de5";
 var NULL_PALE = "#e4c7ff";
 var NULL_FRACTURE = "#c98cff";
-function nullShard(c, x, y, angle3, scale, fill = NULL_VIOLET) {
+function nullShard(c, x, y, angle3, scale, fill3 = NULL_VIOLET) {
   c.save();
   c.translate(x, y);
   c.rotate(angle3);
@@ -9320,7 +9320,7 @@ function nullShard(c, x, y, angle3, scale, fill = NULL_VIOLET) {
   c.lineTo(-2, 8);
   c.closePath();
   c.fill();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.beginPath();
   c.moveTo(-4, -1);
   c.lineTo(-1, -4);
@@ -9495,7 +9495,7 @@ function drawWebWeaverPass(c, actor, tick, front2) {
   if (actor.elite?.affixId !== "web_weaver" || !actor.alive) return;
   const phase = (tick + actor.visualSeed % 53) * 0.052, gather = Math.max(0, Math.min(1, (18 - (actor.elite.nextPulseTick - tick)) / 18));
   c.save();
-  for (let ring = 1; ring <= 2; ring++) webArc(c, 32, 23, 0.48 + ring * 0.25, front2, 0.5 + gather * 0.28, 1.3 + ring * 0.2);
+  for (let ring2 = 1; ring2 <= 2; ring2++) webArc(c, 32, 23, 0.48 + ring2 * 0.25, front2, 0.5 + gather * 0.28, 1.3 + ring2 * 0.2);
   for (let i = 0; i < 8; i++) {
     const a = i * TAU28 / 8 + actor.visualSeed % 11 * 0.012, isFront = Math.sin(a) >= 0;
     if (isFront !== front2) continue;
@@ -9551,22 +9551,22 @@ function groundWeb(c, row2, tick, pending) {
   c.translate(x, y);
   let alpha = 0.72, contraction = 1;
   if (pending) {
-    const progress = Math.max(0, Math.min(1, (tick - row2.startedTick) / (row2.resolvesTick - row2.startedTick)));
-    alpha = 0.2 + 0.58 * progress;
-    contraction = 1.34 - progress * 0.34;
+    const progress5 = Math.max(0, Math.min(1, (tick - row2.startedTick) / (row2.resolvesTick - row2.startedTick)));
+    alpha = 0.2 + 0.58 * progress5;
+    contraction = 1.34 - progress5 * 0.34;
   } else {
     alpha = Math.min(0.78, row2.ageTicks / 10 * 0.78, row2.remainingTicks / 24 * 0.78);
     if (row2.ageTicks < 10) contraction = 1.12 - row2.ageTicks * 0.012;
   }
   c.globalAlpha = Math.max(0, alpha);
-  for (let ring = 1; ring <= 4; ring++) {
-    const r = ring / 4 * contraction, crooked = (seed2 >> ring & 3) - 1.5;
+  for (let ring2 = 1; ring2 <= 4; ring2++) {
+    const r = ring2 / 4 * contraction, crooked = (seed2 >> ring2 & 3) - 1.5;
     c.strokeStyle = WEB_INDIGO;
     c.lineWidth = 4;
     c.beginPath();
     c.ellipse(crooked, 0, rx * r, ry * r, 0, 0, TAU28);
     c.stroke();
-    c.strokeStyle = ring % 2 ? WEB_SILVER : WEB_CYAN;
+    c.strokeStyle = ring2 % 2 ? WEB_SILVER : WEB_CYAN;
     c.lineWidth = 1.6;
     c.stroke();
   }
@@ -9606,7 +9606,7 @@ function drawWebbedPass(c, actor, tick, front2) {
   c.save();
   c.translate(actor.position.x, actor.position.y);
   c.globalAlpha = 0.74;
-  for (let ring = 1; ring <= 2; ring++) webArc(c, 20, 14, 0.48 + ring * 0.28, front2, 0.66, 1.25);
+  for (let ring2 = 1; ring2 <= 2; ring2++) webArc(c, 20, 14, 0.48 + ring2 * 0.28, front2, 0.66, 1.25);
   for (let i = 0; i < 5; i++) {
     const a = phase + i * TAU28 / 5, isFront = Math.sin(a) >= 0;
     if (isFront !== front2) continue;
@@ -9712,9 +9712,9 @@ function groundSlag(c, row2, tick, pending) {
   c.translate(x, y);
   let alpha = 0.88, contraction = 1;
   if (pending) {
-    const progress = Math.max(0, Math.min(1, (tick - row2.startedTick) / (row2.resolvesTick - row2.startedTick)));
-    alpha = 0.25 + 0.62 * progress;
-    contraction = progress === 1 ? 1 : 1.16 - progress * 0.16;
+    const progress5 = Math.max(0, Math.min(1, (tick - row2.startedTick) / (row2.resolvesTick - row2.startedTick)));
+    alpha = 0.25 + 0.62 * progress5;
+    contraction = progress5 === 1 ? 1 : 1.16 - progress5 * 0.16;
   } else alpha = Math.min(0.9, row2.ageTicks / 8 * 0.9, row2.remainingTicks / 20 * 0.9);
   c.globalAlpha = Math.max(0, alpha);
   c.fillStyle = pending ? SLAG_SHADOW : SLAG_CRUST;
@@ -9894,11 +9894,11 @@ function webbedIcon(c, size) {
     c.moveTo(0, 0);
     c.lineTo(Math.cos(a) * r, Math.sin(a) * r);
   }
-  for (let ring = 1; ring <= 2; ring++) {
-    c.moveTo(r * ring / 2, 0);
+  for (let ring2 = 1; ring2 <= 2; ring2++) {
+    c.moveTo(r * ring2 / 2, 0);
     for (let i = 1; i <= 8; i++) {
       const a = i * TAU29 / 8;
-      c.lineTo(Math.cos(a) * r * ring / 2, Math.sin(a) * r * ring / 2);
+      c.lineTo(Math.cos(a) * r * ring2 / 2, Math.sin(a) * r * ring2 / 2);
     }
   }
   c.stroke();
@@ -10624,12 +10624,12 @@ function createRuinGrovePlan(ruin, seed2, nativeTile) {
     }
     clusters.push({ id, nativeCells: cells.length, cells: member, shrubs: chosen.length, trees: trees.length });
   }
-  const record = freezeWire({ version: RUIN_GROVE_VERSION, scene: { left: ruin.left, top: ruin.top, width: ruin.width, height: ruin.height }, originalCells: original.map((p) => ({ ...p })), occupiedCells: [...occupied.values()].sort(order).map((p) => ({ ...p })), removedCells: original.filter((p) => !occupied.has(key(p.x, p.y))).map((p) => ({ ...p })), clusters: clusters.map((c) => ({ ...c, cells: c.cells.map((p) => ({ ...p })) })), pieces });
-  return Object.freeze({ record, apply(x, y, b) {
+  const record2 = freezeWire({ version: RUIN_GROVE_VERSION, scene: { left: ruin.left, top: ruin.top, width: ruin.width, height: ruin.height }, originalCells: original.map((p) => ({ ...p })), occupiedCells: [...occupied.values()].sort(order).map((p) => ({ ...p })), removedCells: original.filter((p) => !occupied.has(key(p.x, p.y))).map((p) => ({ ...p })), clusters: clusters.map((c) => ({ ...c, cells: c.cells.map((p) => ({ ...p })) })), pieces });
+  return Object.freeze({ record: record2, apply(x, y, b) {
     if (!native.has(key(x, y))) return b;
     return { ...b, collision: occupied.has(key(x, y)) ? "2" : "1", grovePilot: true };
   }, presentation(cx, cy) {
-    return record.pieces.filter((p) => Math.floor(p.x / 32) === cx && Math.floor(p.y / 26) === cy).map(({ clusterId, ...p }) => ({ ...p, x: p.x - cx * 32, y: p.y - cy * 26, plannedRuinExterior: true }));
+    return record2.pieces.filter((p) => Math.floor(p.x / 32) === cx && Math.floor(p.y / 26) === cy).map(({ clusterId, ...p }) => ({ ...p, x: p.x - cx * 32, y: p.y - cy * 26, plannedRuinExterior: true }));
   } });
 }
 
@@ -10735,14 +10735,14 @@ async function createRuinStorybookArtV1(environment, review, initial = "storyboo
     }
   }
   const active = () => mode === "storybook";
-  const mask = environment.document.createElement("canvas");
-  mask.width = Math.ceil(scene.width * 32 / 16) + 1;
-  mask.height = Math.ceil(scene.height * 32 / 16) + 1;
-  const mc = mask.getContext("2d"), md = mc.createImageData(mask.width, mask.height);
-  for (let y = 0; y < mask.height; y++) for (let x = 0; x < mask.width; x++) {
-    const i = (y * mask.width + x) * 4;
+  const mask2 = environment.document.createElement("canvas");
+  mask2.width = Math.ceil(scene.width * 32 / 16) + 1;
+  mask2.height = Math.ceil(scene.height * 32 / 16) + 1;
+  const mc = mask2.getContext("2d"), md = mc.createImageData(mask2.width, mask2.height);
+  for (let y = 0; y < mask2.height; y++) for (let x = 0; x < mask2.width; x++) {
+    const i = (y * mask2.width + x) * 4;
     md.data[i] = md.data[i + 1] = md.data[i + 2] = 255;
-    md.data[i + 3] = Math.round(255 * ruinLandscapeBlendAt(scene, scene.left + x * scene.width / (mask.width - 1), scene.top + y * scene.height / (mask.height - 1)));
+    md.data[i + 3] = Math.round(255 * ruinLandscapeBlendAt(scene, scene.left + x * scene.width / (mask2.width - 1), scene.top + y * scene.height / (mask2.height - 1)));
   }
   mc.putImageData(md, 0, 0);
   const blended = materials2.map((_, i) => {
@@ -10752,11 +10752,11 @@ async function createRuinStorybookArtV1(environment, review, initial = "storyboo
     const c = a.getContext("2d");
     texture(c, i, 0, 0, a.width, a.height, scene.left * 32 + 1048576, scene.top * 32 + 851968);
     c.globalCompositeOperation = "destination-in";
-    c.drawImage(mask, 0, 0, a.width, a.height);
+    c.drawImage(mask2, 0, 0, a.width, a.height);
     decodedBytes += a.width * a.height * 4;
     return a;
   });
-  mask.width = mask.height = 1;
+  mask2.width = mask2.height = 1;
   function blendOrigin(space) {
     const o = environmentWorldOffset(space);
     return { x: scene.left * 32 + 1048576 - o.x, y: scene.top * 32 + 851968 - o.y };
@@ -11894,8 +11894,8 @@ function createPlannedCryptExterior(asset, id, terrain = createPlannedTerrain(as
   return Object.freeze({ reservation: r, destination: d, left, top, width, height, entrance, road: d.point, allowed, inside: inside3, ownsStructure: (x, y) => solids.has(key2(x, y)), trail: trail2, circulation, connector, apply, presentation, terrain, realizationVersion: PLANNED_CRYPT_VERSION });
 }
 async function derivePlannedCryptReservation(asset, binding, sha256, { reservationId, terrain } = {}) {
-  const g = createPlannedCryptExterior(asset, reservationId, terrain), r = g.reservation, biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_CRYPT_VERSION, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + "/" + binding.townPrototype + "/" + PLANNED_CRYPT_VERSION + "/" + PLANNED_RUIN_EXTERIOR_VERSION2, "chunk", [entrance.chunkX, entrance.chunkY], sha256);
-  const socket = { version: PLANNED_CRYPT_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_CRYPT_VERSION, identityDomain: "planned-reservation-crypt", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
+  const g = createPlannedCryptExterior(asset, reservationId, terrain), r = g.reservation, biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_CRYPT_VERSION, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), chunk2 = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + "/" + binding.townPrototype + "/" + PLANNED_CRYPT_VERSION + "/" + PLANNED_RUIN_EXTERIOR_VERSION2, "chunk", [entrance.chunkX, entrance.chunkY], sha256);
+  const socket = { version: PLANNED_CRYPT_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk2.id, placementVersion: PLANNED_CRYPT_VERSION, identityDomain: "planned-reservation-crypt", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
   const parcel = { version: PLANNED_CRYPT_VERSION, siteId, socket: copyWire(socket), familyId: "site-family:crypt", packageId: CRYPT_PACKAGE_ID, tier: r.tier, label: "Grassland Crypt", tileX: String(1024 * 32 + g.left), tileY: String(1024 * 26 + g.top), width: g.width, height: g.height, layoutSeed: identity2.digest, pages: r.footprint.map((c) => ({ chunkX: String(1024 + c.x), chunkY: String(1024 + c.y) })), roadAnchor: { tileX: String(1024 * 32 + g.road.x), tileY: String(1024 * 26 + g.road.y) } };
   return freezeWire({ version: PLANNED_CRYPT_RESERVATION, siteId, packageId: CRYPT_PACKAGE_ID, socket, parcel });
 }
@@ -11945,8 +11945,8 @@ function createPlannedCryptExteriorV2(asset, id, terrain = createPlannedTerrain(
   return Object.freeze({ reservation: r, destination: d, left, top, width, height, entrance, road: d.point, allowed, inside: inside3, ownsStructure: (x, y) => solids.has(key2(x, y)), trail: trail2, circulation, connector, apply, presentation, terrain, realizationVersion: PLANNED_CRYPT_V2 });
 }
 async function derivePlannedCryptReservationV2(asset, binding, sha256, { reservationId, terrain } = {}) {
-  const g = createPlannedCryptExteriorV2(asset, reservationId, terrain), r = g.reservation, biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_CRYPT_V2, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_CRYPT_V2 + "/" + PLANNED_RUIN_EXTERIOR_VERSION2, "chunk", [entrance.chunkX, entrance.chunkY], sha256);
-  const socket = { version: PLANNED_CRYPT_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_CRYPT_V2, identityDomain: "planned-reservation-crypt", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
+  const g = createPlannedCryptExteriorV2(asset, reservationId, terrain), r = g.reservation, biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_CRYPT_V2, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), chunk2 = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_CRYPT_V2 + "/" + PLANNED_RUIN_EXTERIOR_VERSION2, "chunk", [entrance.chunkX, entrance.chunkY], sha256);
+  const socket = { version: PLANNED_CRYPT_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk2.id, placementVersion: PLANNED_CRYPT_V2, identityDomain: "planned-reservation-crypt", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
   const parcel = { version: PLANNED_CRYPT_V2, siteId, socket: copyWire(socket), familyId: "site-family:crypt", packageId: CRYPT_PACKAGE_ID, tier: r.tier, label: biome[0].toUpperCase() + biome.slice(1) + " Crypt", tileX: String(1024 * 32 + g.left), tileY: String(1024 * 26 + g.top), width: g.width, height: g.height, layoutSeed: identity2.digest, pages: r.footprint.map((c) => ({ chunkX: String(1024 + c.x), chunkY: String(1024 + c.y) })), roadAnchor: { tileX: String(1024 * 32 + g.road.x), tileY: String(1024 * 26 + g.road.y) } };
   return freezeWire({ version: PLANNED_CRYPT_RESERVATION, siteId, packageId: CRYPT_PACKAGE_ID, socket, parcel });
 }
@@ -11979,8 +11979,8 @@ function createPlannedRuinExterior(asset, reservationId, terrain = createPlanned
   requireContract(r?.familyId === "site-family:ruin" && policy && d?.point, "Ruin requires an existing reservation");
   const xs = r.footprint.map((c) => c.x), ys = r.footprint.map((c) => c.y), minX = Math.min(...xs), minY = Math.min(...ys), maxX = Math.max(...xs), maxY = Math.max(...ys), [width, height] = realization?.tiles ?? (policy.exteriorTiles[0] <= (maxX - minX + 1) * 32 && policy.exteriorTiles[1] <= (maxY - minY + 1) * 26 ? policy.exteriorTiles : [policy.exteriorTiles[1], policy.exteriorTiles[0]]), left = realization?.left ?? minX * 32 + Math.floor(((maxX - minX + 1) * 32 - width) / 2), top = realization?.top ?? minY * 26;
   requireContract(r.footprint.length >= policy.minimumExteriorChunks && r.approach.length >= policy.minimumApproachChunks && (realization || r.footprint.length === (maxX - minX + 1) * (maxY - minY + 1)) && width <= (maxX - minX + 1) * 32 && height <= (maxY - minY + 1) * 26, "Ruin exterior capacity incompatible");
-  const footprint2 = new Set(r.footprint.map((c) => c.x + "," + c.y));
-  for (let y = top; y < top + height; y++) for (let x = left; x < left + width; x++) requireContract(footprint2.has(Math.floor(x / 32) + "," + Math.floor(y / 26)), "Ruin architecture escapes actual footprint shape");
+  const footprint3 = new Set(r.footprint.map((c) => c.x + "," + c.y));
+  for (let y = top; y < top + height; y++) for (let x = left; x < left + width; x++) requireContract(footprint3.has(Math.floor(x / 32) + "," + Math.floor(y / 26)), "Ruin architecture escapes actual footprint shape");
   const allowedSet = new Set([...r.footprint, ...r.approach].map((c) => c.x + "," + c.y)), allowed = (x, y) => allowedSet.has(Math.floor(x / 32) + "," + Math.floor(y / 26)), inside3 = (x, y) => x >= left && x < left + width && y >= top && y < top + height, walk = Array.from({ length: height }, () => Array(width).fill("1")), ground = Array.from({ length: height }, () => Array(width).fill("g")), blockers = [], decorations = [], moduleClear = /* @__PURE__ */ new Set();
   const block = (kind, detail, x, y, w, h) => {
     blockers.push({ kind, detail, x, y, width: w, height: h });
@@ -12074,8 +12074,8 @@ function createPlannedRuinExterior(asset, reservationId, terrain = createPlanned
     return true;
   }, start = d.point, key2 = (x, y) => x + "," + y, queue = [start], parents = /* @__PURE__ */ new Map([[key2(start.x, start.y), null]]);
   let found = null;
-  for (let head11 = 0; head11 < queue.length; head11++) {
-    const p = queue[head11];
+  for (let head12 = 0; head12 < queue.length; head12++) {
+    const p = queue[head12];
     if (p.x === entrance.x && p.y === entrance.y + 1) {
       found = p;
       break;
@@ -12136,7 +12136,7 @@ function createPlannedRuinExterior(asset, reservationId, terrain = createPlanned
 async function derivePlannedRuinReservation(asset, binding, sha256, { reservationId, terrain, realization = null } = {}) {
   const g = createPlannedRuinExterior(asset, reservationId, terrain, realization), r = g.reservation, biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_RUIN_VERSION, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY);
   requireContract(g.terrain.base(g.entrance.x, g.entrance.y).biome === BIOME_CODES[biome], "Ruin entrance biome incompatible");
-  const chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_RUIN_VERSION + "/" + PLANNED_RUIN_EXTERIOR_VERSION2 + (r.tier === "standard" ? "/" + STANDARD_RUIN_KIT_VERSION : "") + (isRuinGrovePilot(asset, r) ? "/" + RUIN_GROVE_VERSION : ""), "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: PLANNED_RUIN_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_RUIN_VERSION, identityDomain: "planned-reservation-ruin", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
+  const chunk2 = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_RUIN_VERSION + "/" + PLANNED_RUIN_EXTERIOR_VERSION2 + (r.tier === "standard" ? "/" + STANDARD_RUIN_KIT_VERSION : "") + (isRuinGrovePilot(asset, r) ? "/" + RUIN_GROVE_VERSION : ""), "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: PLANNED_RUIN_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk2.id, placementVersion: PLANNED_RUIN_VERSION, identityDomain: "planned-reservation-ruin", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
   const parcel = { version: PLANNED_RUIN_VERSION, siteId, socket: copyWire(socket), familyId: "site-family:ruin", packageId: RUIN_FAMILY_PACKAGE_ID, tier: r.tier, label: biome[0].toUpperCase() + biome.slice(1) + " Ruin", tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: g.width, height: g.height, layoutSeed: identity2.digest, pages: r.footprint.map((c) => ({ chunkX: String(1024 + c.x), chunkY: String(1024 + c.y) })), roadAnchor: { tileX: String(1024 * 32 + g.gate.x), tileY: String(1024 * 26 + g.gate.y) } };
   return freezeWire({ version: PLANNED_RUIN_RESERVATION, siteId, packageId: RUIN_FAMILY_PACKAGE_ID, socket, parcel });
 }
@@ -12167,8 +12167,8 @@ function createPlannedRuinExteriorV2(asset, id, terrain = createPlannedTerrain(a
 async function derivePlannedRuinReservationV2(asset, binding, sha256, { reservationId, terrain } = {}) {
   const r = asset.sites.find((s) => s.id === reservationId);
   if (["small", "standard"].includes(r?.tier)) return derivePlannedRuinReservation(asset, binding, sha256, { reservationId, terrain });
-  const g = createPlannedRuinExteriorV2(asset, reservationId, terrain), biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_RUIN_V2, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_RUIN_V2, "chunk", [entrance.chunkX, entrance.chunkY], sha256);
-  const socket = { version: PLANNED_RUIN_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_RUIN_V2, identityDomain: r.id === DEEP_RUIN_FIXTURE_ID ? "isolated-development-ruin" : "planned-reservation-ruin", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
+  const g = createPlannedRuinExteriorV2(asset, reservationId, terrain), biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_RUIN_V2, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), chunk2 = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_RUIN_V2, "chunk", [entrance.chunkX, entrance.chunkY], sha256);
+  const socket = { version: PLANNED_RUIN_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk2.id, placementVersion: PLANNED_RUIN_V2, identityDomain: r.id === DEEP_RUIN_FIXTURE_ID ? "isolated-development-ruin" : "planned-reservation-ruin", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
   const parcel = { version: PLANNED_RUIN_V2, siteId, socket: copyWire(socket), familyId: "site-family:ruin", packageId: RUIN_FAMILY_PACKAGE_ID, tier: r.tier, label: r.id === DEEP_RUIN_FIXTURE_ID ? "Deep Ruin fixture" : biome[0].toUpperCase() + biome.slice(1) + " Ruin", tileX: String(1024 * 32 + g.left), tileY: String(1024 * 26 + g.top), width: g.width, height: g.height, layoutSeed: identity2.digest, pages: r.footprint.map((c) => ({ chunkX: String(1024 + c.x), chunkY: String(1024 + c.y) })), roadAnchor: { tileX: String(1024 * 32 + g.gate.x), tileY: String(1024 * 26 + g.gate.y) } };
   return freezeWire({ version: PLANNED_RUIN_RESERVATION, siteId, packageId: RUIN_FAMILY_PACKAGE_ID, socket, parcel });
 }
@@ -12221,8 +12221,8 @@ function createPlannedFortExterior(asset, reservationId, terrain = createPlanned
   requireContract(r?.familyId === "site-family:fort" && policy && d?.point, "Fort requires an existing reservation");
   const xs = r.footprint.map((c) => c.x), ys = r.footprint.map((c) => c.y), minX = Math.min(...xs), minY = Math.min(...ys), maxX = Math.max(...xs), maxY = Math.max(...ys), [width, height] = realization?.tiles ?? policy.exteriorTiles, left = realization?.left ?? minX * 32 + Math.floor(((maxX - minX + 1) * 32 - width) / 2), top = realization?.top ?? minY * 26;
   requireContract(r.footprint.length >= policy.minimumExteriorChunks && r.approach.length >= policy.minimumApproachChunks && (realization || r.footprint.length === (maxX - minX + 1) * (maxY - minY + 1)) && width <= (maxX - minX + 1) * 32 && height <= (maxY - minY + 1) * 26, "Fort exterior capacity incompatible");
-  const footprint2 = new Set(r.footprint.map((c) => c.x + "," + c.y));
-  for (let y = top; y < top + height; y++) for (let x = left; x < left + width; x++) requireContract(footprint2.has(Math.floor(x / 32) + "," + Math.floor(y / 26)), "Fort architecture escapes actual footprint shape");
+  const footprint3 = new Set(r.footprint.map((c) => c.x + "," + c.y));
+  for (let y = top; y < top + height; y++) for (let x = left; x < left + width; x++) requireContract(footprint3.has(Math.floor(x / 32) + "," + Math.floor(y / 26)), "Fort architecture escapes actual footprint shape");
   const allowedSet = new Set([...r.footprint, ...r.approach].map((c) => c.x + "," + c.y)), allowed = (x, y) => allowedSet.has(Math.floor(x / 32) + "," + Math.floor(y / 26)), inside3 = (x, y) => x >= left && x < left + width && y >= top && y < top + height, walk = Array.from({ length: height }, () => Array(width).fill("1")), ground = Array.from({ length: height }, () => Array(width).fill("g")), blockers = [], decorations = [];
   const block = (kind, detail, x, y, w, h) => {
     blockers.push({ kind, detail, x, y, width: w, height: h });
@@ -12261,8 +12261,8 @@ function createPlannedFortExterior(asset, reservationId, terrain = createPlanned
     return true;
   }, start = d.point, key2 = (x, y) => x + "," + y, queue = [start], parents = /* @__PURE__ */ new Map([[key2(start.x, start.y), null]]);
   let found = null;
-  for (let head11 = 0; head11 < queue.length; head11++) {
-    const p = queue[head11];
+  for (let head12 = 0; head12 < queue.length; head12++) {
+    const p = queue[head12];
     if (p.x === entrance.x && p.y === entrance.y + 1) {
       found = p;
       break;
@@ -12302,7 +12302,7 @@ function createPlannedFortExterior(asset, reservationId, terrain = createPlanned
 async function derivePlannedFortReservation(asset, binding, sha256, { reservationId, terrain } = {}) {
   const g = createPlannedFortExterior(asset, reservationId, terrain), r = g.reservation, biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_FORT_VERSION, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY);
   requireContract(g.terrain.base(g.entrance.x, g.entrance.y).biome === BIOME_CODES[biome], "Fort entrance biome incompatible");
-  const chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_FORT_VERSION, "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: PLANNED_FORT_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_FORT_VERSION, identityDomain: "planned-reservation-fort", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
+  const chunk2 = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_FORT_VERSION, "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: PLANNED_FORT_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk2.id, placementVersion: PLANNED_FORT_VERSION, identityDomain: "planned-reservation-fort", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
   const parcel = { version: PLANNED_FORT_VERSION, siteId, socket: copyWire(socket), familyId: "site-family:fort", packageId: FORT_FAMILY_PACKAGE_ID, tier: r.tier, label: biome[0].toUpperCase() + biome.slice(1) + " Fort", tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: g.width, height: g.height, layoutSeed: identity2.digest, pages: r.footprint.map((c) => ({ chunkX: String(1024 + c.x), chunkY: String(1024 + c.y) })), roadAnchor: { tileX: String(1024 * 32 + g.gate.x), tileY: String(1024 * 26 + g.gate.y) } };
   return freezeWire({ version: PLANNED_FORT_RESERVATION, siteId, packageId: FORT_FAMILY_PACKAGE_ID, socket, parcel });
 }
@@ -12348,7 +12348,7 @@ async function derivePlannedFortReservationV2(asset, binding, sha256, { reservat
   if (g.realizationVersion === PLANNED_FORT_VERSION) return derivePlannedFortReservation(asset, binding, sha256, { reservationId, terrain });
   const r = g.reservation, fixture = r.id === DEEP_FORT_FIXTURE_ID, biome = r.id.split(":")[2], identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_FORT_V2, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY);
   requireContract(g.terrain.base(g.entrance.x, g.entrance.y).biome === BIOME_CODES[biome], "Fort V2 entrance biome incompatible");
-  const chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_FORT_V2, "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: "site-socket-planned-fort-v1", siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_FORT_V2, identityDomain: fixture ? "isolated-development-fort" : "planned-reservation-fort", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
+  const chunk2 = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + (binding.townPrototype ? "/" + binding.townPrototype : "") + "/" + PLANNED_FORT_V2, "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: "site-socket-planned-fort-v1", siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk2.id, placementVersion: PLANNED_FORT_V2, identityDomain: fixture ? "isolated-development-fort" : "planned-reservation-fort", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunks: copyWire(r.footprint), approachChunks: copyWire(r.approach) } };
   const parcel = { version: PLANNED_FORT_V2, siteId, socket: copyWire(socket), familyId: "site-family:fort", packageId: "procedural-fort-family", tier: r.tier, label: fixture ? "Deep Fort fixture" : biome[0].toUpperCase() + biome.slice(1) + " Fort", tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: g.width, height: g.height, layoutSeed: identity2.digest, pages: r.footprint.map((c) => ({ chunkX: String(1024 + c.x), chunkY: String(1024 + c.y) })), roadAnchor: { tileX: String(1024 * 32 + g.gate.x), tileY: String(1024 * 26 + g.gate.y) } };
   return freezeWire({ version: "site-reservation-planned-fort-v1", siteId, packageId: "procedural-fort-family", socket, parcel });
 }
@@ -12382,8 +12382,8 @@ function createPlannedCaveExterior(asset, reservationId = PLANNED_CAVE_ID, share
 async function derivePlannedCaveReservation(asset, binding, sha256, { reservationId = PLANNED_CAVE_ID, terrain = null } = {}) {
   const g = createPlannedCaveExterior(asset, reservationId, terrain), r = g.reservation, identity2 = await worldIdentity(asset.campaignSeedHex, PLANNED_CAVE_VERSION, [binding.assetHash, r.id, r.tier], sha256), siteId = "site:" + identity2.digest.slice(0, 32), entrance = tileAddress(g.entrance.x, g.entrance.y), region = regionAddress(entrance.chunkX, entrance.chunkY), biome = r.id.split(":")[2];
   requireContract(Object.hasOwn(BIOME_CODES, biome) && g.terrain.base(g.entrance.x, g.entrance.y).biome === BIOME_CODES[biome], "Cave entrance biome disagrees with reservation");
-  const chunk = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + "/" + binding.townPrototype + "/" + PLANNED_CAVE_VERSION, "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: PLANNED_CAVE_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk.id, placementVersion: PLANNED_CAVE_VERSION, identityDomain: "planned-reservation-cave", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunk: copyWire(g.footprint), approachChunk: copyWire(g.approach) } };
-  const regionName = biome[0].toUpperCase() + biome.slice(1), stable2 = await deriveWoodlandCaveIdentityD12_2({ campaignSeed: asset.campaignSeedHex, site: socket, label: regionName + " Cave", regionName, geographicQualifier: "" }, { sha256 }), parcel = { version: PLANNED_CAVE_PARCEL, siteId, socket: copyWire(socket), familyId: WOODLAND_CAVE_FAMILY_ID, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, spawnOrdinal: 0, regionKey: region.regionX + "," + region.regionY, regionName, geographicQualifier: "", label: stable2.label, tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: WOODLAND_CAVE_EXTERIOR.width, height: WOODLAND_CAVE_EXTERIOR.height, orientation: "south-facing", pages: [{ chunkX: entrance.chunkX, chunkY: entrance.chunkY, baseDigest: chunk.digest }], roadAnchor: { tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.entrance.x), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top + WOODLAND_CAVE_EXTERIOR.height - 1) }, tier: r.tier, siteSeed: stable2.siteSeed, layoutSeed: stable2.layoutSeed, placementProvenance: { version: PLANNED_CAVE_VERSION, kind: "existing-planned-reservation", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash } };
+  const chunk2 = await worldIdentity(PLANNED_WORLD_VERSION + "/" + NATURAL_CLUSTER_VERSION + "/" + asset.campaignSeedHex + "/" + binding.assetHash + "/" + binding.townPrototype + "/" + PLANNED_CAVE_VERSION, "chunk", [entrance.chunkX, entrance.chunkY], sha256), socket = { version: PLANNED_CAVE_SOCKET, siteId, siteSeed: identity2.digest, entrance, siteClass: "dungeon", capabilities: ["interior"], region: { regionX: region.regionX, regionY: region.regionY, biome }, minimumLevel: [0, 1, 6, 11, 21, 41][r.band], provenance: { geographyVersion: asset.version, chunkId: chunk2.id, placementVersion: PLANNED_CAVE_VERSION, identityDomain: "planned-reservation-cave", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash, sizeTier: r.tier, band: r.band, footprintChunk: copyWire(g.footprint), approachChunk: copyWire(g.approach) } };
+  const regionName = biome[0].toUpperCase() + biome.slice(1), stable2 = await deriveWoodlandCaveIdentityD12_2({ campaignSeed: asset.campaignSeedHex, site: socket, label: regionName + " Cave", regionName, geographicQualifier: "" }, { sha256 }), parcel = { version: PLANNED_CAVE_PARCEL, siteId, socket: copyWire(socket), familyId: WOODLAND_CAVE_FAMILY_ID, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, spawnOrdinal: 0, regionKey: region.regionX + "," + region.regionY, regionName, geographicQualifier: "", label: stable2.label, tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.left), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top), width: WOODLAND_CAVE_EXTERIOR.width, height: WOODLAND_CAVE_EXTERIOR.height, orientation: "south-facing", pages: [{ chunkX: entrance.chunkX, chunkY: entrance.chunkY, baseDigest: chunk2.digest }], roadAnchor: { tileX: String(PLANNED_ADDRESS_OFFSET.chunkX * 32 + g.entrance.x), tileY: String(PLANNED_ADDRESS_OFFSET.chunkY * 26 + g.top + WOODLAND_CAVE_EXTERIOR.height - 1) }, tier: r.tier, siteSeed: stable2.siteSeed, layoutSeed: stable2.layoutSeed, placementProvenance: { version: PLANNED_CAVE_VERSION, kind: "existing-planned-reservation", reservationId: r.id, assetHash: binding.assetHash, planHash: binding.planHash } };
   return freezeWire({ version: PLANNED_CAVE_RESERVATION, siteId, packageId: WOODLAND_CAVE_FAMILY_PACKAGE_ID, socket, parcel });
 }
 
@@ -12970,12 +12970,12 @@ var CW = 32n;
 var CH = 26n;
 var T = 32;
 var inside = (x, y, p) => x >= BigInt(p.tileX) && x < BigInt(p.tileX) + 48n && y >= BigInt(p.tileY) && y < BigInt(p.tileY) + 36n;
-function overlayWoodlandFortParcelD10(chunk, parcel) {
-  if (!parcel?.pages.some((p) => p.chunkX === chunk.chunkX && p.chunkY === chunk.chunkY)) return chunk;
-  requireContract(parcel.version === WOODLAND_FORT_VERSION && parcel.pages.some((p) => p.chunkX === chunk.chunkX && p.chunkY === chunk.chunkY && p.baseDigest === chunk.identity.digest), "Fort parcel/base mismatch");
-  const x0 = BigInt(parcel.tileX), y0 = BigInt(parcel.tileY), cx = BigInt(chunk.chunkX) * CW, cy = BigInt(chunk.chunkY) * CH;
-  const collision = chunk.collision.tiles.map((r) => [...r]), terrain = chunk.visual.terrain.map((r) => [...r]), biomes = chunk.visual.biomes.map((r) => [...r]);
-  const centerline = chunk.visual.route.centerline.map((r) => [...r]), clearance = chunk.visual.route.clearance.map((r) => [...r]);
+function overlayWoodlandFortParcelD10(chunk2, parcel) {
+  if (!parcel?.pages.some((p) => p.chunkX === chunk2.chunkX && p.chunkY === chunk2.chunkY)) return chunk2;
+  requireContract(parcel.version === WOODLAND_FORT_VERSION && parcel.pages.some((p) => p.chunkX === chunk2.chunkX && p.chunkY === chunk2.chunkY && p.baseDigest === chunk2.identity.digest), "Fort parcel/base mismatch");
+  const x0 = BigInt(parcel.tileX), y0 = BigInt(parcel.tileY), cx = BigInt(chunk2.chunkX) * CW, cy = BigInt(chunk2.chunkY) * CH;
+  const collision = chunk2.collision.tiles.map((r) => [...r]), terrain = chunk2.visual.terrain.map((r) => [...r]), biomes = chunk2.visual.biomes.map((r) => [...r]);
+  const centerline = chunk2.visual.route.centerline.map((r) => [...r]), clearance = chunk2.visual.route.clearance.map((r) => [...r]);
   const own = (x, y) => inside(cx + BigInt(x), cy + BigInt(y), parcel);
   for (let y = 0; y < 26; y++) for (let x = 0; x < 32; x++) if (own(x, y)) {
     const fx = Number(cx + BigInt(x) - x0), fy = Number(cy + BigInt(y) - y0);
@@ -12989,21 +12989,21 @@ function overlayWoodlandFortParcelD10(chunk, parcel) {
     const bx = cx + BigInt(b.x), by = cy + BigInt(b.y);
     return bx < x0 + 48n && bx + BigInt(b.width) > x0 && by < y0 + 36n && by + BigInt(b.height) > y0;
   };
-  const blockers = chunk.visual.blockers.filter((b) => !intersects5(b));
+  const blockers = chunk2.visual.blockers.filter((b) => !intersects5(b));
   for (const b of WOODLAND_FORT_TEMPLATE.visual.blockers) {
     const gx = x0 + BigInt(b.x), gy = y0 + BigInt(b.y), lx = Number(gx - cx), ly = Number(gy - cy), left = Math.max(0, lx), top = Math.max(0, ly), right = Math.min(32, lx + b.width), bottom = Math.min(26, ly + b.height);
-    if (right > left && bottom > top) blockers.push({ ...copyWire(b), id: `fort:${parcel.siteId}:${b.kind}:${b.x},${b.y}:${chunk.chunkX},${chunk.chunkY}`, x: left, y: top, width: right - left, height: bottom - top });
+    if (right > left && bottom > top) blockers.push({ ...copyWire(b), id: `fort:${parcel.siteId}:${b.kind}:${b.x},${b.y}:${chunk2.chunkX},${chunk2.chunkY}`, x: left, y: top, width: right - left, height: bottom - top });
   }
-  const decorations = (chunk.visual.decorations ?? []).filter((d) => !own(Math.floor(d.x), Math.floor(d.y)));
+  const decorations = (chunk2.visual.decorations ?? []).filter((d) => !own(Math.floor(d.x), Math.floor(d.y)));
   for (const d of WOODLAND_FORT_TEMPLATE.visual.decorations ?? []) {
     const gx = x0 + BigInt(Math.floor(d.x)), gy = y0 + BigInt(Math.floor(d.y));
     if (gx < cx || gx >= cx + CW || gy < cy || gy >= cy + CH) continue;
     decorations.push({ ...copyWire(d), id: `fort-decoration:${parcel.siteId}:${d.kind}:${d.x},${d.y}`, x: Number(gx - cx) + (d.x - Math.floor(d.x)), y: Number(gy - cy) + (d.y - Math.floor(d.y)) });
   }
-  const anchors = chunk.anchors.filter((a) => !own(Math.floor(a.position.x / T), Math.floor(a.position.y / T)));
-  const sites = chunk.sites.filter((s) => s.siteId === parcel.siteId || !own(Math.floor(s.entrance.localX / T), Math.floor(s.entrance.localY / T)));
-  if (parcel.socket.entrance.chunkX === chunk.chunkX && parcel.socket.entrance.chunkY === chunk.chunkY && !sites.some((s) => s.siteId === parcel.siteId)) sites.push(copyWire(parcel.socket));
-  return freezeWire({ ...copyWire(chunk), collision: { ...copyWire(chunk.collision), tiles: collision.map((r) => r.join("")) }, visual: { ...copyWire(chunk.visual), terrain: terrain.map((r) => r.join("")), biomes: biomes.map((r) => r.join("")), blockers, decorations, route: { centerline: centerline.map((r) => r.join("")), clearance: clearance.map((r) => r.join("")) } }, anchors, sites, compound: { siteId: parcel.siteId, version: parcel.version, pages: copyWire(parcel.pages) } });
+  const anchors = chunk2.anchors.filter((a) => !own(Math.floor(a.position.x / T), Math.floor(a.position.y / T)));
+  const sites = chunk2.sites.filter((s) => s.siteId === parcel.siteId || !own(Math.floor(s.entrance.localX / T), Math.floor(s.entrance.localY / T)));
+  if (parcel.socket.entrance.chunkX === chunk2.chunkX && parcel.socket.entrance.chunkY === chunk2.chunkY && !sites.some((s) => s.siteId === parcel.siteId)) sites.push(copyWire(parcel.socket));
+  return freezeWire({ ...copyWire(chunk2), collision: { ...copyWire(chunk2.collision), tiles: collision.map((r) => r.join("")) }, visual: { ...copyWire(chunk2.visual), terrain: terrain.map((r) => r.join("")), biomes: biomes.map((r) => r.join("")), blockers, decorations, route: { centerline: centerline.map((r) => r.join("")), clearance: clearance.map((r) => r.join("")) } }, anchors, sites, compound: { siteId: parcel.siteId, version: parcel.version, pages: copyWire(parcel.pages) } });
 }
 
 // src/shared/generation/woodland_cave_placement_d10.js
@@ -13013,11 +13013,11 @@ var T2 = 32;
 var W = BigInt(WOODLAND_CAVE_EXTERIOR.width);
 var H = BigInt(WOODLAND_CAVE_EXTERIOR.height);
 var inside2 = (x, y, p) => x >= BigInt(p.tileX) && x < BigInt(p.tileX) + W && y >= BigInt(p.tileY) && y < BigInt(p.tileY) + H;
-function overlayWoodlandCaveParcelD10(chunk, parcel) {
-  if (!parcel?.pages.some((p) => p.chunkX === chunk.chunkX && p.chunkY === chunk.chunkY)) return chunk;
-  const page = parcel.pages.find((p) => p.chunkX === chunk.chunkX && p.chunkY === chunk.chunkY);
-  requireContract(parcel.version === WOODLAND_CAVE_VERSION && page.baseDigest === chunk.identity.digest, "Cave parcel/base mismatch");
-  const x0 = BigInt(parcel.tileX), y0 = BigInt(parcel.tileY), cx = BigInt(chunk.chunkX) * CW2, cy = BigInt(chunk.chunkY) * CH2, own = (x, y) => inside2(cx + BigInt(x), cy + BigInt(y), parcel), collision = chunk.collision.tiles.map((r) => [...r]), terrain = chunk.visual.terrain.map((r) => [...r]), biomes = chunk.visual.biomes.map((r) => [...r]), centerline = chunk.visual.route.centerline.map((r) => [...r]), clearance = chunk.visual.route.clearance.map((r) => [...r]);
+function overlayWoodlandCaveParcelD10(chunk2, parcel) {
+  if (!parcel?.pages.some((p) => p.chunkX === chunk2.chunkX && p.chunkY === chunk2.chunkY)) return chunk2;
+  const page = parcel.pages.find((p) => p.chunkX === chunk2.chunkX && p.chunkY === chunk2.chunkY);
+  requireContract(parcel.version === WOODLAND_CAVE_VERSION && page.baseDigest === chunk2.identity.digest, "Cave parcel/base mismatch");
+  const x0 = BigInt(parcel.tileX), y0 = BigInt(parcel.tileY), cx = BigInt(chunk2.chunkX) * CW2, cy = BigInt(chunk2.chunkY) * CH2, own = (x, y) => inside2(cx + BigInt(x), cy + BigInt(y), parcel), collision = chunk2.collision.tiles.map((r) => [...r]), terrain = chunk2.visual.terrain.map((r) => [...r]), biomes = chunk2.visual.biomes.map((r) => [...r]), centerline = chunk2.visual.route.centerline.map((r) => [...r]), clearance = chunk2.visual.route.clearance.map((r) => [...r]);
   for (let y = 0; y < 26; y++) for (let x = 0; x < 32; x++) if (own(x, y)) {
     const fx = Number(cx + BigInt(x) - x0), fy = Number(cy + BigInt(y) - y0);
     collision[y][x] = WOODLAND_CAVE_EXTERIOR.collision[fy][fx];
@@ -13029,25 +13029,25 @@ function overlayWoodlandCaveParcelD10(chunk, parcel) {
   const intersects5 = (b) => {
     const bx = cx + BigInt(b.x), by = cy + BigInt(b.y);
     return bx < x0 + W && bx + BigInt(b.width) > x0 && by < y0 + H && by + BigInt(b.height) > y0;
-  }, blockers = chunk.visual.blockers.filter((b) => !intersects5(b));
+  }, blockers = chunk2.visual.blockers.filter((b) => !intersects5(b));
   for (const b of WOODLAND_CAVE_EXTERIOR.blockers) {
     const gx = x0 + BigInt(b.x), gy = y0 + BigInt(b.y);
     blockers.push({ ...copyWire(b), id: `cave:${parcel.siteId}:${b.detail}`, x: Number(gx - cx), y: Number(gy - cy) });
   }
-  const decorations = (chunk.visual.decorations ?? []).filter((d) => !own(Math.floor(d.x), Math.floor(d.y)));
+  const decorations = (chunk2.visual.decorations ?? []).filter((d) => !own(Math.floor(d.x), Math.floor(d.y)));
   for (const d of WOODLAND_CAVE_EXTERIOR.decorations) {
     const gx = x0 + BigInt(Math.floor(d.x)), gy = y0 + BigInt(Math.floor(d.y));
     decorations.push({ ...copyWire(d), id: `cave-decoration:${parcel.siteId}:${d.kind}:${d.x},${d.y}`, x: Number(gx - cx) + (d.x - Math.floor(d.x)), y: Number(gy - cy) + (d.y - Math.floor(d.y)) });
   }
-  const anchors = chunk.anchors.filter((a) => !own(Math.floor(a.position.x / T2), Math.floor(a.position.y / T2))), sites = chunk.sites.filter((s) => !own(Math.floor(s.entrance.localX / T2), Math.floor(s.entrance.localY / T2)));
-  if (parcel.socket.entrance.chunkX === chunk.chunkX && parcel.socket.entrance.chunkY === chunk.chunkY) sites.push(copyWire(parcel.socket));
-  return freezeWire({ ...copyWire(chunk), collision: { ...copyWire(chunk.collision), tiles: collision.map((r) => r.join("")) }, visual: { ...copyWire(chunk.visual), terrain: terrain.map((r) => r.join("")), biomes: biomes.map((r) => r.join("")), blockers, decorations, route: { centerline: centerline.map((r) => r.join("")), clearance: clearance.map((r) => r.join("")) } }, anchors, sites, cave: { siteId: parcel.siteId, version: parcel.version, pages: copyWire(parcel.pages) } });
+  const anchors = chunk2.anchors.filter((a) => !own(Math.floor(a.position.x / T2), Math.floor(a.position.y / T2))), sites = chunk2.sites.filter((s) => !own(Math.floor(s.entrance.localX / T2), Math.floor(s.entrance.localY / T2)));
+  if (parcel.socket.entrance.chunkX === chunk2.chunkX && parcel.socket.entrance.chunkY === chunk2.chunkY) sites.push(copyWire(parcel.socket));
+  return freezeWire({ ...copyWire(chunk2), collision: { ...copyWire(chunk2.collision), tiles: collision.map((r) => r.join("")) }, visual: { ...copyWire(chunk2.visual), terrain: terrain.map((r) => r.join("")), biomes: biomes.map((r) => r.join("")), blockers, decorations, route: { centerline: centerline.map((r) => r.join("")), clearance: clearance.map((r) => r.join("")) } }, anchors, sites, cave: { siteId: parcel.siteId, version: parcel.version, pages: copyWire(parcel.pages) } });
 }
 
 // src/shared/generation/woodland_cave_family_placement_d12.js
 var WOODLAND_CAVE_FAMILY_PARCEL_D12 = "woodland-cave-family-parcel-d12-v1";
-function overlayWoodlandCaveFamilyParcelsD12(chunk, parcels = []) {
-  let next = chunk;
+function overlayWoodlandCaveFamilyParcelsD12(chunk2, parcels = []) {
+  let next = chunk2;
   for (const parcel of parcels) {
     if (!parcel?.pages?.some((p) => p.chunkX === next.chunkX && p.chunkY === next.chunkY)) continue;
     requireContract(parcel.version === WOODLAND_CAVE_FAMILY_PARCEL_D12 && parcel.familyId === WOODLAND_CAVE_FAMILY_ID, "Invalid D12 cave parcel overlay");
@@ -13064,8 +13064,8 @@ var variantFor = (siteId, kind) => {
   for (const c of siteId + kind) n = Math.imul(n ^ c.charCodeAt(0), 16777619);
   return (n >>> 0) % 3;
 };
-function overlayWoodlandCaveFamilyParcelsD12_1(chunk, parcels = []) {
-  let next = chunk;
+function overlayWoodlandCaveFamilyParcelsD12_1(chunk2, parcels = []) {
+  let next = chunk2;
   for (const parcel of parcels) {
     if (!parcel?.pages?.some((page) => page.chunkX === next.chunkX && page.chunkY === next.chunkY)) continue;
     requireContract(parcel.version === WOODLAND_CAVE_FAMILY_PARCEL_D12_1 && parcel.familyId === WOODLAND_CAVE_FAMILY_ID, "Invalid D12.1 Cave parcel overlay");
@@ -13090,8 +13090,8 @@ var hash5 = (text) => {
   return (n ^ n >>> 13) >>> 0;
 };
 var variantFor2 = (siteId, kind) => hash5(siteId + "/" + kind) % 3;
-function overlayWoodlandCaveFamilyParcelsD12_2(chunk, parcels = []) {
-  let next = chunk;
+function overlayWoodlandCaveFamilyParcelsD12_2(chunk2, parcels = []) {
+  let next = chunk2;
   for (const parcel of parcels) {
     if (!parcel?.pages?.some((p) => p.chunkX === next.chunkX && p.chunkY === next.chunkY)) continue;
     requireContract(parcel.version === WOODLAND_CAVE_FAMILY_PARCEL_D12_2 && parcel.familyId === WOODLAND_CAVE_FAMILY_ID, "Invalid D12.2 Cave parcel overlay");
@@ -13625,9 +13625,9 @@ function advanceShadowDash(actor, combat, stats, collision, suppressed = false) 
     return false;
   }
   if (!dash.frames) return false;
-  const distance7 = Math.min(8, dash.remaining), x = actor.position.x, y = actor.position.y;
-  const blocked2 = (f) => collidesWithTiles(collision, x + dash.x * distance7 * f, y + dash.y * distance7 * f, actor.hullRadius);
-  let fraction2 = 1;
+  const distance8 = Math.min(8, dash.remaining), x = actor.position.x, y = actor.position.y;
+  const blocked2 = (f) => collidesWithTiles(collision, x + dash.x * distance8 * f, y + dash.y * distance8 * f, actor.hullRadius);
+  let fraction4 = 1;
   if (blocked2(1)) {
     let lo = 0, hi = 1;
     for (let i = 0; i < 10; i++) {
@@ -13635,13 +13635,13 @@ function advanceShadowDash(actor, combat, stats, collision, suppressed = false) 
       if (blocked2(mid)) hi = mid;
       else lo = mid;
     }
-    fraction2 = lo;
+    fraction4 = lo;
   }
-  actor.position = { x: x + dash.x * distance7 * fraction2, y: y + dash.y * distance7 * fraction2 };
-  actor.movedLastTick = fraction2 > 0;
-  dash.remaining = Math.max(0, dash.remaining - distance7 * fraction2);
+  actor.position = { x: x + dash.x * distance8 * fraction4, y: y + dash.y * distance8 * fraction4 };
+  actor.movedLastTick = fraction4 > 0;
+  dash.remaining = Math.max(0, dash.remaining - distance8 * fraction4);
   dash.frames--;
-  if (fraction2 < 0.999 || dash.remaining <= 1e-3 || !dash.frames) {
+  if (fraction4 < 0.999 || dash.remaining <= 1e-3 || !dash.frames) {
     dash.frames = 0;
     dash.remaining = 0;
   }
@@ -13802,12 +13802,12 @@ function birthSafe(s, definition) {
   }));
 }
 function originEpisode(s, g, definition) {
-  const site = siteFor(originFor(s), g.groupId), address2 = legacyWorldPosition(site?.returnAnchor ?? definition.anchor), rank = tier(definition.members[0].profileId), e = s.encounterEconomy.groups[g.groupId], record = { ...unfrozenEpisodeD9("origin:" + g.groupId, e.episode, { origin: true }), geography: { chunkX: address2.chunkX, chunkY: address2.chunkY, anchorOrdinal: 0, minimumLevel: 1, rank } };
+  const site = siteFor(originFor(s), g.groupId), address2 = legacyWorldPosition(site?.returnAnchor ?? definition.anchor), rank = tier(definition.members[0].profileId), e = s.encounterEconomy.groups[g.groupId], record2 = { ...unfrozenEpisodeD9("origin:" + g.groupId, e.episode, { origin: true }), geography: { chunkX: address2.chunkX, chunkY: address2.chunkY, anchorOrdinal: 0, minimumLevel: 1, rank } };
   if (g.threatSnapshot) {
     const level = copyWire(g.threatSnapshot.levelsByEntityId[g.entityIds.find((id) => s.entitiesById[id].alive) ?? g.entityIds[0]]);
-    record.snapshot = { version: "episode-progression-d9-v1", snapshotId: record.anchorId + "/episode/" + String(record.episode), activatedTick: g.threatSnapshot.activatedTick, trigger: "activation", minimumLevel: 1, effectiveLevel: level, sourceDepth: copyWire(level), mappingVersion: "effective-level-depth-d9-v1", rank, participants: [] };
+    record2.snapshot = { version: "episode-progression-d9-v1", snapshotId: record2.anchorId + "/episode/" + String(record2.episode), activatedTick: g.threatSnapshot.activatedTick, trigger: "activation", minimumLevel: 1, effectiveLevel: level, sourceDepth: copyWire(level), mappingVersion: "effective-level-depth-d9-v1", rank, participants: [] };
   }
-  return record;
+  return record2;
 }
 function makeActor(s, member, g) {
   const enemy = ORDINARY_ENEMIES.find((e) => e.enemyDefinitionId === member.enemyDefinitionId), base = worldOrdinaryMeleeProfile(s, resolveOrdinaryProfile(enemy, tier(member.profileId))), level = g.threatSnapshot?.levelsByEntityId[member.entityId], profile = level !== void 0 && g.threatSnapshot.version === "encounter-progression-d9-v1" ? { ...base, ...worldEnemyStats(level, tier(member.profileId), enemy.budget) } : base;
@@ -13828,8 +13828,8 @@ function upgradeOriginHordes(s) {
       s.d9World.episodes[g.groupId] = originEpisode(s, g, original);
       economy.contentDepth = copyWire(s.d9World.episodes[g.groupId].snapshot?.sourceDepth ?? 1);
     }
-    const record = { groupId: g.groupId, episode: economy.episode, appliedTick: s.tick, status: expand ? "expanded" : "retained", protectedEpisode: !untouched(s, g), definition: expand ? definition : copyWire(original) };
-    s.d9World.originHordes.groupsById[g.groupId] = record;
+    const record2 = { groupId: g.groupId, episode: economy.episode, appliedTick: s.tick, status: expand ? "expanded" : "retained", protectedEpisode: !untouched(s, g), definition: expand ? definition : copyWire(original) };
+    s.d9World.originHordes.groupsById[g.groupId] = record2;
     if (expand) {
       if (g.threatSnapshot) {
         const level = copyWire(s.d9World.episodes[g.groupId].snapshot.effectiveLevel);
@@ -13922,15 +13922,15 @@ function encounterResourceLayout(s, m) {
     const def = sources[index], g = s.groupsById[def.groupId], c = s.spacesByInstanceId[g.spaceInstanceId].collision, home = def.members[0].position, count = [1, 3, 2][index % 3], resources = [];
     for (let n = 0; n < count + (index % 3 === 2 ? 1 : 0); n++) {
       const kind = n === count ? "chest" : "breakable", h = hashReward(`${def.groupId}/resource/${n}`);
-      let point4 = null;
+      let point9 = null;
       for (let attempt = 0; attempt < 160; attempt++) {
         const a = (h % 360 + attempt * 137.508) * Math.PI / 180, r2 = 48 + attempt % 5 * 24, q = { x: Math.round(home.x + Math.cos(a) * r2), y: Math.round(home.y + Math.sin(a) * r2) };
         if (collidesWithTiles(c, q.x, q.y, 12) || g.spaceInstanceId === s.overworldInstanceId && m.safeRegions.some((z) => q.x > z.x - 24 && q.x < z.x + z.width + 24 && q.y > z.y - 24 && q.y < z.y + z.height + 24) || used.some((o) => o.spaceInstanceId === g.spaceInstanceId && Math.hypot(o.position.x - q.x, o.position.y - q.y) < 38) || def.members.some((a2) => Math.hypot(a2.position.x - q.x, a2.position.y - q.y) < 26) || !lineToPoint(s, { alive: true, position: home, residency: { spaceInstanceId: g.spaceInstanceId } }, g.spaceInstanceId, q, 180)) continue;
-        point4 = q;
+        point9 = q;
         break;
       }
-      requireContract(point4, "No legal environmental resource placement");
-      const r = { groupId: g.groupId, ordinal: n, kind, art: kind === "chest" ? "chest" : ["pot", "barrel", "urn"][h % 3], position: point4, spaceInstanceId: g.spaceInstanceId };
+      requireContract(point9, "No legal environmental resource placement");
+      const r = { groupId: g.groupId, ordinal: n, kind, art: kind === "chest" ? "chest" : ["pot", "barrel", "urn"][h % 3], position: point9, spaceInstanceId: g.spaceInstanceId };
       resources.push(r);
       used.push(r);
     }
@@ -13955,7 +13955,7 @@ function episodeSource(s, g, kind, ordinal, rewardClass = null) {
 function economicResources(s, m, playerId = null, spaceInstanceId = null) {
   const layout = encounterResourceLayout(s, m);
   return Object.values(layout).flat().filter((r) => spaceInstanceId === null || r.spaceInstanceId === spaceInstanceId).map((r) => {
-    const group = s.groupsById[r.groupId], economy = s.encounterEconomy.groups[group.groupId], episode = economy.episode, sourceEntityId = episodeRewardId(group.groupId, episode, r.kind, r.ordinal), rewardClass = rewardClassForCompletionResourceD13D_C(s, r), claim = playerId ? personalFinaleClaimD13D_G1(s, r.groupId, sourceEntityId, playerId) : null, record = economy.personalCompletionClaimsBySourceId?.[sourceEntityId], used = claim ? claim.claimed : record ? record.eligiblePlayerIds.every((id) => record.claimedByPlayerId[id]) : Boolean(economy.usedResources[sourceEntityId]);
+    const group = s.groupsById[r.groupId], economy = s.encounterEconomy.groups[group.groupId], episode = economy.episode, sourceEntityId = episodeRewardId(group.groupId, episode, r.kind, r.ordinal), rewardClass = rewardClassForCompletionResourceD13D_C(s, r), claim = playerId ? personalFinaleClaimD13D_G1(s, r.groupId, sourceEntityId, playerId) : null, record2 = economy.personalCompletionClaimsBySourceId?.[sourceEntityId], used = claim ? claim.claimed : record2 ? record2.eligiblePlayerIds.every((id) => record2.claimedByPlayerId[id]) : Boolean(economy.usedResources[sourceEntityId]);
     return { ...r, episode, sourceEntityId, ...rewardClass ? { rewardClass } : {}, ...claim ? { personalClaim: claim } : {}, used };
   });
 }
@@ -14266,10 +14266,10 @@ var HOSTILE_PROJECTILE_STYLES = Object.freeze(["thorn", "frost", "fireball", "ma
 var HOSTILE_PROJECTILE_LIMITS = Object.freeze({ global: 128, perSource: 4, lifeTicks: 80, travelRange: 336, radius: 6, speed: 4.2 });
 var same3 = (a, b) => a === b || a !== void 0 && b !== void 0 && canonicalStringify(a) === canonicalStringify(b);
 var ranged = ordinaryRangedProfile;
-var vector = (v, unit3 = false) => {
+var vector = (v, unit8 = false) => {
   closedRecord(v, ["x", "y"]);
   requireContract(Number.isFinite(v.x) && Number.isFinite(v.y), "Hostile projectile vector");
-  if (unit3) requireContract(Math.abs(Math.hypot(v.x, v.y) - 1) < 1e-9, "Hostile projectile direction");
+  if (unit8) requireContract(Math.abs(Math.hypot(v.x, v.y) - 1) < 1e-9, "Hostile projectile direction");
 };
 var idleHostileRangedAction = (tick) => ({ phase: "idle", phaseStartedTick: tick, phaseEndsTick: tick, targetEntityId: null, aim: null, actionSequence: 0 });
 function installHostileProjectiles(state) {
@@ -14283,8 +14283,8 @@ function cancelHostileProjectiles(state, entityId2) {
   const root = state.hostileCombat;
   if (!root) return;
   for (const [id, shot] of Object.entries(root.projectiles)) if (shot.sourceId === entityId2 || shot.intendedTargetId === entityId2) delete root.projectiles[id];
-  for (const [id, action] of Object.entries(root.actionsByEntityId)) if (id === entityId2 || action.targetEntityId === entityId2) {
-    root.actionsByEntityId[id] = { ...idleHostileRangedAction(state.tick), actionSequence: action.actionSequence, ...action.nextShotTick !== void 0 ? { nextShotTick: action.nextShotTick } : {} };
+  for (const [id, action2] of Object.entries(root.actionsByEntityId)) if (id === entityId2 || action2.targetEntityId === entityId2) {
+    root.actionsByEntityId[id] = { ...idleHostileRangedAction(state.tick), actionSequence: action2.actionSequence, ...action2.nextShotTick !== void 0 ? { nextShotTick: action2.nextShotTick } : {} };
   }
 }
 function validateHostileProjectiles(state) {
@@ -14537,11 +14537,11 @@ function resolveStonewatch(state, manifest, siteId) {
   });
 }
 function resolveAuthoritativeSiteDefinitionsD13A(state) {
-  const manifest = manifestForState(state), ids = /* @__PURE__ */ new Set();
-  for (const interior of manifest.siteInteriors ?? []) ids.add(interior.siteId);
-  for (const siteId of Object.keys(state.d9World?.siteReservationsById ?? {})) ids.add(siteId);
-  for (const siteId of Object.keys(state.d9World?.functionalSitesById ?? {})) ids.add(siteId);
-  return freezeWire([...ids].sort().map((siteId) => resolveStonewatch(state, manifest, siteId) ?? resolveFunctional(state, manifest, siteId)).filter(Boolean));
+  const manifest = manifestForState(state), ids2 = /* @__PURE__ */ new Set();
+  for (const interior of manifest.siteInteriors ?? []) ids2.add(interior.siteId);
+  for (const siteId of Object.keys(state.d9World?.siteReservationsById ?? {})) ids2.add(siteId);
+  for (const siteId of Object.keys(state.d9World?.functionalSitesById ?? {})) ids2.add(siteId);
+  return freezeWire([...ids2].sort().map((siteId) => resolveStonewatch(state, manifest, siteId) ?? resolveFunctional(state, manifest, siteId)).filter(Boolean));
 }
 function validateResolvedSiteDefinitionD13A(definition) {
   closedRecord(definition, ["version", "siteId", "familyId", "namedVariantId", "displayName", "biomeOrRegionBinding", "tier", "floorCount", "floorCountRule", "layoutIdentity", "minimumLevel", "placementClass", "layoutClass", "encounterProfileRef", "finaleProfileRef", "rewardProfileRef", "resetPolicyRef", "uniqueLootProfileRef", "artifactRef", "sigilModifierSlot"]);
@@ -14573,18 +14573,18 @@ function validateResolvedSiteDefinitionD13A(definition) {
   return definition;
 }
 function validateAuthoritativeSiteDefinitionsD13A(state) {
-  const definitions3 = resolveAuthoritativeSiteDefinitionsD13A(state), ids = /* @__PURE__ */ new Set();
+  const definitions3 = resolveAuthoritativeSiteDefinitionsD13A(state), ids2 = /* @__PURE__ */ new Set();
   for (const definition of definitions3) {
     validateResolvedSiteDefinitionD13A(definition);
-    requireContract(!ids.has(definition.siteId), "Duplicate universal site definition");
-    ids.add(definition.siteId);
+    requireContract(!ids2.has(definition.siteId), "Duplicate universal site definition");
+    ids2.add(definition.siteId);
   }
   const manifest = manifestForState(state);
   for (const interior of manifest.siteInteriors ?? []) {
     const site = manifest.sites.find((row2) => row2.locationId === interior.siteId);
-    if (site?.locationDefinitionId === STONEWATCH_LOCATION_DEFINITION_ID && site.properName === "Stonewatch") requireContract(ids.has(site.locationId), "Stonewatch Crypt definition missing");
+    if (site?.locationDefinitionId === STONEWATCH_LOCATION_DEFINITION_ID && site.properName === "Stonewatch") requireContract(ids2.has(site.locationId), "Stonewatch Crypt definition missing");
   }
-  for (const [siteId, reservation] of Object.entries(state.d9World?.siteReservationsById ?? {})) if (blueprintForPackage(reservation.packageId) && functionalSiteDefinitionD10(reservation.packageId, state.d9World.functionalSitesById?.[siteId]?.packageVersion ?? null)) requireContract(ids.has(siteId), "Functional site definition missing");
+  for (const [siteId, reservation] of Object.entries(state.d9World?.siteReservationsById ?? {})) if (blueprintForPackage(reservation.packageId) && functionalSiteDefinitionD10(reservation.packageId, state.d9World.functionalSitesById?.[siteId]?.packageVersion ?? null)) requireContract(ids2.has(siteId), "Functional site definition missing");
   return true;
 }
 
@@ -14661,7 +14661,7 @@ function validateActivityState(s) {
   validateOverworldCampaign(s.campaign.overworld, origin);
   if (d9) {
     requireContract(same6(s.d9World.content.historical, historicalSiteContentD9(origin, s.d9World.origin.manifestHash).historical), "Historical site content changed");
-    for (const chunk of s.d9World.runtime.chunks) for (const site of chunk.sites ?? []) validateSiteSocketD9(site);
+    for (const chunk2 of s.d9World.runtime.chunks) for (const site of chunk2.sites ?? []) validateSiteSocketD9(site);
   }
   const spaces = Object.values(s.spacesByInstanceId), functionalSpaceCount = functionalSitesD10(s).reduce((n, site) => n + functionalSiteSpaceIdsD12(site).length, 0);
   requireContract(spaces.length >= 1 && spaces.length <= 2 + (manifest.siteInteriors?.length ?? 0) + functionalSpaceCount + tavernSpaceIds(s).length, "Instance bound");
@@ -15235,10 +15235,10 @@ async function generateProceduralOverworld({ campaignSeed, sha256, populationEna
       seam.openingStartTiles = starts[seamRandom.take(starts.length)];
     }
   }
-  const regions = regionPair.map((record, index) => ({
+  const regions = regionPair.map((record2, index) => ({
     regionId: regionIds[index],
-    label: record.label,
-    landscapeKind: record.landscapeKind,
+    label: record2.label,
+    landscapeKind: record2.landscapeKind,
     discoveryId: `discovery:${regionIds[index].slice(7)}`,
     chunkIds: macroSlots.filter((m) => m.regionIndex === index).map((m) => chunkIdAt(m.slot)).sort()
   }));
@@ -15254,14 +15254,14 @@ async function generateProceduralOverworld({ campaignSeed, sha256, populationEna
   const wildernessMacros = random.shuffle(macroSlots.filter((m) => !m.settlement));
   const sites = [];
   for (let index = 0; index < LOCATION_SITE_PROOF_CATALOG.length; index++) {
-    const definition = LOCATION_SITE_PROOF_CATALOG[index], macro = wildernessMacros[index], chunk = chunkBySlot.get(keyFor(macro.slot));
+    const definition = LOCATION_SITE_PROOF_CATALOG[index], macro = wildernessMacros[index], chunk2 = chunkBySlot.get(keyFor(macro.slot));
     const local4 = SITE_ANCHORS[index], position2 = worldPoint(macro.slot, local4);
     sites.push({
       locationId: await derivedId("locationId", identity2, "location", definition.locationKey, sha256),
       locationDefinitionId: definition.contentDefinitionId,
       label: definition.label,
       siteKind: definition.siteKind,
-      chunkId: chunk.chunkId,
+      chunkId: chunk2.chunkId,
       regionId: regionIds[macro.regionIndex],
       position: position2,
       siteRole: index === 0 ? "primary-proof" : "proof-site",
@@ -15295,16 +15295,16 @@ async function generateProceduralOverworld({ campaignSeed, sha256, populationEna
   const manifestDefinitionId = await derivedId("contentDefinitionId", identity2, "manifest", "definition", sha256);
   const manifestId = `manifest:generated-${await derivedToken(identity2, "manifest", "identity", sha256)}`;
   const safeRegions = [];
-  for (const chunk of chunks.filter((chunk2) => settlements[0].chunkIds.includes(chunk2.chunkId))) {
-    const home = chunk.chunkId === startChunk.chunkId;
+  for (const chunk2 of chunks.filter((chunk3) => settlements[0].chunkIds.includes(chunk3.chunkId))) {
+    const home = chunk2.chunkId === startChunk.chunkId;
     safeRegions.push({
-      safeRegionId: `safe:${(await derivedToken(identity2, "safe-region", home ? "home" : "home-chunk:" + chunk.chunkId, sha256)).slice(0, 24)}`,
+      safeRegionId: `safe:${(await derivedToken(identity2, "safe-region", home ? "home" : "home-chunk:" + chunk2.chunkId, sha256)).slice(0, 24)}`,
       settlementId,
-      x: chunk.origin.x,
-      y: chunk.origin.y,
-      width: chunk.dimensions.width,
-      height: chunk.dimensions.height,
-      marker: { x: chunk.origin.x + 528, y: chunk.origin.y + 368, label: settlementLabel.toUpperCase() }
+      x: chunk2.origin.x,
+      y: chunk2.origin.y,
+      width: chunk2.dimensions.width,
+      height: chunk2.dimensions.height,
+      marker: { x: chunk2.origin.x + 528, y: chunk2.origin.y + 368, label: settlementLabel.toUpperCase() }
     });
   }
   const body4 = {
@@ -15332,7 +15332,7 @@ async function generateProceduralOverworld({ campaignSeed, sha256, populationEna
   if (populationEnabled) {
     const provisional = JSON.parse(JSON.stringify({ contentDefinitionId: manifestDefinitionId, kind: "overworldManifest", manifestHash: "0".repeat(64), ...body4 }));
     provisional.generation.generatorVersion = PROCEDURAL_GENERATOR_VERSION;
-    for (const record of [...provisional.sites, ...provisional.artifactAssignments]) record.provenance.generatorVersion = PROCEDURAL_GENERATOR_VERSION;
+    for (const record2 of [...provisional.sites, ...provisional.artifactAssignments]) record2.provenance.generatorVersion = PROCEDURAL_GENERATOR_VERSION;
     const terrain = compileOverworldManifest(provisional, oldwardAreaDefinition);
     body4.population = await generateOrdinaryPopulation(body4, terrain.collision, sha256);
   }
@@ -15450,12 +15450,12 @@ async function createClientFixture({ sha256, nextToken, playerCount = 1, scenari
 
 // src/shared/contracts/activity_fixture.js
 function freePoint(collision, desired, radius = 10, allowed = () => true) {
-  let best = null, distance7 = Infinity;
+  let best = null, distance8 = Infinity;
   for (let y = 0; y < collision.height; y++) for (let x = 0; x < collision.width; x++) {
     const p = { x: (x + 0.5) * collision.tileSize, y: (y + 0.5) * collision.tileSize }, d = Math.hypot(p.x - desired.x, p.y - desired.y);
-    if (d < distance7 && !collidesWithTiles(collision, p.x, p.y, radius) && allowed(p)) {
+    if (d < distance8 && !collidesWithTiles(collision, p.x, p.y, radius) && allowed(p)) {
       best = p;
-      distance7 = d;
+      distance8 = d;
     }
   }
   requireContract(best, "No valid fixture placement");
@@ -15515,12 +15515,12 @@ async function createActivityFixture({ sha256, nextToken, campaignSeed, proofCas
   }
   const groupPoints = standardWorld ? [m.sites.find((s) => s.artifactEligible !== false)?.position ?? m.sites[0].position] : anchors;
   for (let n = 0; n < (populationEnabled ? 0 : groupPoints.length); n++) {
-    const point4 = groupPoints[n], site = m.sites[n % m.sites.length], groupId = `ordinary:${site.locationId}:${n}`, entityIds = [];
+    const point9 = groupPoints[n], site = m.sites[n % m.sites.length], groupId = `ordinary:${site.locationId}:${n}`, entityIds = [];
     const p = WORLD1C_GREEN_SLIME_PROFILE;
     for (let j = 0; j < (standardWorld ? 1 : hostilesPerGroup); j++) {
       const entityId2 = createId("entityId", nextToken("entityId"));
       entityIds.push(entityId2);
-      const position2 = freePoint(collision, { x: point4.x + 180 + j % 3 * 28, y: point4.y + Math.floor(j / 3) * 28 }, p.hullRadius, (q) => !isWorldPointSafe(m, q) && areaAtWorldPosition(m, q) && (proofCase === "A" || Math.hypot(q.x - point4.x, q.y - point4.y) >= 180) && !entityIds.slice(0, -1).some((id) => Math.hypot(entitiesById[id].position.x - q.x, entitiesById[id].position.y - q.y) < 24));
+      const position2 = freePoint(collision, { x: point9.x + 180 + j % 3 * 28, y: point9.y + Math.floor(j / 3) * 28 }, p.hullRadius, (q) => !isWorldPointSafe(m, q) && areaAtWorldPosition(m, q) && (proofCase === "A" || Math.hypot(q.x - point9.x, q.y - point9.y) >= 180) && !entityIds.slice(0, -1).some((id) => Math.hypot(entitiesById[id].position.x - q.x, entitiesById[id].position.y - q.y) < 24));
       entitiesById[entityId2] = {
         entityId: entityId2,
         contentDefinitionId: p.contentDefinitionId,
@@ -15623,8 +15623,8 @@ async function createActivityFixture({ sha256, nextToken, campaignSeed, proofCas
     }
   }
   if (!standardWorld) {
-    const ids = Object.values(state.playersById).map((p) => p.entityId), second = Object.keys(state.spacesByInstanceId).find((id) => id !== spaceInstanceId);
-    ids.forEach((id, i) => {
+    const ids2 = Object.values(state.playersById).map((p) => p.entityId), second = Object.keys(state.spacesByInstanceId).find((id) => id !== spaceInstanceId);
+    ids2.forEach((id, i) => {
       const a = state.entitiesById[id], index = proofCase === "C" ? Math.floor(i / 2) : proofCase === "D" ? i : 0;
       a.position = freePoint(collision, { x: anchors[index].x + i % 2 * 24, y: anchors[index].y + Math.floor(i / 2) * 24 }, a.hullRadius);
       if (proofCase === "E" && i >= 2) {
@@ -15689,7 +15689,7 @@ function createHostileProjectileSimulation(state, { damage, eligible: eligible2,
   const profile = ordinaryRangedProfile;
   const root = () => state.hostileCombat;
   const connected = (a) => Object.values(state.playersById).some((p) => p.entityId === a?.entityId && p.connectionStatus === "connected");
-  const resetAction = (action) => ({ ...idle(state.tick), ...action?.nextShotTick !== void 0 ? { nextShotTick: action.nextShotTick } : {} });
+  const resetAction = (action2) => ({ ...idle(state.tick), ...action2?.nextShotTick !== void 0 ? { nextShotTick: action2.nextShotTick } : {} });
   function cancelSource(id) {
     const c = root();
     if (!c) return;
@@ -15706,20 +15706,20 @@ function createHostileProjectileSimulation(state, { damage, eligible: eligible2,
     const c = root();
     if (!c) return;
     const active = new Set(activeIds);
-    for (const [id, action] of Object.entries(c.actionsByEntityId)) {
+    for (const [id, action2] of Object.entries(c.actionsByEntityId)) {
       const source2 = state.entitiesById[id];
       if (!source2?.alive || !profile(source2)) {
         cancelSource(id);
         continue;
       }
       if (!active.has(id)) {
-        if (action.nextShotTick !== void 0) {
-          c.actionsByEntityId[id] = resetAction(action);
+        if (action2.nextShotTick !== void 0) {
+          c.actionsByEntityId[id] = resetAction(action2);
           for (const [key2, p] of Object.entries(c.projectiles)) if (p.sourceId === id) delete c.projectiles[key2];
         } else cancelSource(id);
         continue;
       }
-      if (action.phase === "recovery" && state.tick >= action.phaseEndsTick) c.actionsByEntityId[id] = resetAction(action);
+      if (action2.phase === "recovery" && state.tick >= action2.phaseEndsTick) c.actionsByEntityId[id] = resetAction(action2);
     }
     for (const [id, shot] of Object.entries(c.projectiles)) {
       const source2 = state.entitiesById[shot.sourceId], target = state.entitiesById[shot.intendedTargetId];
@@ -15729,15 +15729,15 @@ function createHostileProjectileSimulation(state, { damage, eligible: eligible2,
   function observeTarget(source2, target, intent) {
     const config = profile(source2), c = root();
     if (!config || !c) return intent;
-    const action = c.actionsByEntityId[source2.entityId] ??= idle(state.tick);
-    if (action.phase !== "idle") return { x: 0, y: 0 };
+    const action2 = c.actionsByEntityId[source2.entityId] ??= idle(state.tick);
+    if (action2.phase !== "idle") return { x: 0, y: 0 };
     if (config.meleeFallback && source2.ai?.melee && source2.ai.melee.phase !== "idle") return { x: 0, y: 0 };
     if (!target || !connected(target) || !canLaunch(source2, target) || !canAct(source2)) return intent;
     const dx = target.position.x - source2.position.x, dy = target.position.y - source2.position.y, d = Math.hypot(dx, dy);
     if (config.meleeFallback && d <= config.minimumRange) return intent;
     const collision = state.spacesByInstanceId[source2.residency.spaceInstanceId].collision, clear2 = lineClear(collision, source2, target);
-    if (d <= config.range && clear2 && source2.attackTimer >= source2.attackDelayTicks && state.tick >= (action.nextShotTick ?? 0)) {
-      Object.assign(action, { phase: "windup", phaseStartedTick: state.tick, phaseEndsTick: state.tick + config.windupTicks, targetEntityId: target.entityId, aim: d ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, actionSequence: source2.nextAttackActionSequence });
+    if (d <= config.range && clear2 && source2.attackTimer >= source2.attackDelayTicks && state.tick >= (action2.nextShotTick ?? 0)) {
+      Object.assign(action2, { phase: "windup", phaseStartedTick: state.tick, phaseEndsTick: state.tick + config.windupTicks, targetEntityId: target.entityId, aim: d ? { x: dx / d, y: dy / d } : { x: 1, y: 0 }, actionSequence: source2.nextAttackActionSequence });
       return { x: 0, y: 0 };
     }
     if (!clear2 || d > config.preferredRange) return intent;
@@ -15748,9 +15748,9 @@ function createHostileProjectileSimulation(state, { damage, eligible: eligible2,
   function advance() {
     const c = root();
     if (!c) return;
-    for (const [id, action] of Object.entries(c.actionsByEntityId).sort(([a], [b]) => a.localeCompare(b))) {
-      if (action.phase !== "windup" || state.tick < action.phaseEndsTick) continue;
-      const source2 = state.entitiesById[id], target = state.entitiesById[action.targetEntityId], config = profile(source2);
+    for (const [id, action2] of Object.entries(c.actionsByEntityId).sort(([a], [b]) => a.localeCompare(b))) {
+      if (action2.phase !== "windup" || state.tick < action2.phaseEndsTick) continue;
+      const source2 = state.entitiesById[id], target = state.entitiesById[action2.targetEntityId], config = profile(source2);
       if (!source2?.alive || !config || !target?.alive || !connected(target) || !canLaunch(source2, target)) {
         cancelSource(id);
         continue;
@@ -15758,7 +15758,7 @@ function createHostileProjectileSimulation(state, { damage, eligible: eligible2,
       if (!canAct(source2)) continue;
       const collision = state.spacesByInstanceId[source2.residency.spaceInstanceId].collision;
       const fullOffset = config.muzzleOffset ?? source2.hullRadius + config.radius + 1;
-      const fullDelta = { x: action.aim.x * fullOffset, y: action.aim.y * fullOffset };
+      const fullDelta = { x: action2.aim.x * fullOffset, y: action2.aim.y * fullOffset };
       let muzzleOffset = fullOffset;
       for (const p of Object.values(state.playersById)) {
         const actor = state.entitiesById[p.entityId];
@@ -15766,17 +15766,17 @@ function createHostileProjectileSimulation(state, { damage, eligible: eligible2,
         const t = segmentCircle(source2.position, fullDelta, actor.position, config.radius + actor.combatRadius);
         if (t !== null) muzzleOffset = Math.min(muzzleOffset, t * fullOffset);
       }
-      const muzzle = point2(source2.position, action.aim, muzzleOffset);
+      const muzzle = point2(source2.position, action2.aim, muzzleOffset);
       const launchDelta = { x: muzzle.x - source2.position.x, y: muzzle.y - source2.position.y };
       const blocked2 = wallContact(collision, source2.position, launchDelta, config.radius) !== null;
       if (!blocked2 && Object.keys(c.projectiles).length < GLOBAL_LIMIT && Object.values(c.projectiles).filter((p) => p.sourceId === id).length < SOURCE_LIMIT) {
         const shotId = identity2("act");
-        c.projectiles[shotId] = { id: shotId, actionSequence: source2.nextAttackActionSequence, sourceId: id, sourceResidencyRevision: source2.residency.residencyRevision, spaceInstanceId: source2.residency.spaceInstanceId, intendedTargetId: target.entityId, position: muzzle, direction: { ...action.aim }, remaining: config.travelRange, remainingTicks: config.lifeTicks, firedTick: state.tick, radius: config.radius, type: config.projectileType, attack: copyWire(source2.attackDamage), sourceLevel: copyWire(getSourceLevel(source2.entityId)) };
+        c.projectiles[shotId] = { id: shotId, actionSequence: source2.nextAttackActionSequence, sourceId: id, sourceResidencyRevision: source2.residency.residencyRevision, spaceInstanceId: source2.residency.spaceInstanceId, intendedTargetId: target.entityId, position: muzzle, direction: { ...action2.aim }, remaining: config.travelRange, remainingTicks: config.lifeTicks, firedTick: state.tick, radius: config.radius, type: config.projectileType, attack: copyWire(source2.attackDamage), sourceLevel: copyWire(getSourceLevel(source2.entityId)) };
       }
       source2.attackTimer = 0;
       source2.nextAttackActionSequence++;
-      if (config.cooldownTicks) action.nextShotTick = state.tick + config.cooldownTicks;
-      Object.assign(action, { phase: "recovery", phaseStartedTick: state.tick, phaseEndsTick: state.tick + config.recoveryTicks });
+      if (config.cooldownTicks) action2.nextShotTick = state.tick + config.cooldownTicks;
+      Object.assign(action2, { phase: "recovery", phaseStartedTick: state.tick, phaseEndsTick: state.tick + config.recoveryTicks });
     }
     for (const [id, shot] of Object.entries(c.projectiles).sort(([a], [b]) => a.localeCompare(b))) {
       if (c.projectiles[id] !== shot) continue;
@@ -15786,7 +15786,7 @@ function createHostileProjectileSimulation(state, { damage, eligible: eligible2,
         delete c.projectiles[id];
         continue;
       }
-      const distance7 = Math.min(config.speed, shot.remaining), delta3 = { x: shot.direction.x * distance7, y: shot.direction.y * distance7 };
+      const distance8 = Math.min(config.speed, shot.remaining), delta3 = { x: shot.direction.x * distance8, y: shot.direction.y * distance8 };
       const wall = wallContact(collision, shot.position, delta3, shot.radius);
       let hit = null, hitTime = null;
       for (const p of Object.values(state.playersById).sort((a, b) => a.entityId.localeCompare(b.entityId))) {
@@ -15809,7 +15809,7 @@ function createHostileProjectileSimulation(state, { damage, eligible: eligible2,
         continue;
       }
       shot.position = point2(shot.position, delta3, 1);
-      shot.remaining -= distance7;
+      shot.remaining -= distance8;
       shot.remainingTicks--;
       if (shot.remaining <= 1e-9 || shot.remainingTicks <= 0) delete c.projectiles[id];
     }
@@ -15970,10 +15970,10 @@ function createMasteryAwards(state) {
     return award(p, family, "defeat", target.entityId, state.encounterEconomy.groups[g.groupId].episode + 1, base * (mult > 1n ? mult : 1n), d);
   }
   function primary(source2, target, kind) {
-    const p = players.get(source2.entityId), d = depth(target), action = state.primary.actorsById[source2.entityId]?.current;
-    if (!p?.d8 || !action || !d) return;
+    const p = players.get(source2.entityId), d = depth(target), action2 = state.primary.actorsById[source2.entityId]?.current;
+    if (!p?.d8 || !action2 || !d) return;
     const r = (id) => finiteNodeRank(p.d8, id), base = kind === "proc" ? 3 + (r("tome_keystone_triad") ? 15 : 2 + r("tome_empowered_catalysts")) + (r("tome_arcane_syphon") ? 15 : 0) : 1;
-    return award(p, kind === "proc" ? "tome" : "dagger", kind, source2.entityId, action.sourceSequence, triggerScaledMasteryXp(String(base), d), d);
+    return award(p, kind === "proc" ? "tome" : "dagger", kind, source2.entityId, action2.sourceSequence, triggerScaledMasteryXp(String(base), d), d);
   }
   function activation(source2, target, family, kind, sequence, base, scaled = true) {
     const d = depth(target);
@@ -16044,7 +16044,7 @@ function canActivityApplyDamage(state, manifest, source2, target, packet = null)
 
 // src/simulation/activity_progression.js
 function createActivityProgression(state, manifest, measure) {
-  const wire = (v) => state.subweaponCombat ? combatInteger(v) : combatIntegerWire(v);
+  const wire2 = (v) => state.subweaponCombat ? combatInteger(v) : combatIntegerWire(v);
   const playersByEntity = new Map(Object.values(state.playersById).map((p) => [p.entityId, p]));
   const groupsByEntity = new Map(Object.values(state.groupsById).flatMap((g) => g.entityIds.map((id) => [id, g])));
   const homes = new Map((manifest.population?.groups ?? []).flatMap((g) => g.members.map((m) => [m.entityId, m.position])));
@@ -16130,9 +16130,9 @@ function createActivityProgression(state, manifest, measure) {
         counters.recipients++;
         if (resolved) {
           const actor = state.entitiesById[player.entityId];
-          actor.hp = wire(resolved.maxHp);
+          actor.hp = wire2(resolved.maxHp);
           actor.maxHp = copyWire(actor.hp);
-          actor.attackDamage = wire(resolved.attack);
+          actor.attackDamage = wire2(resolved.attack);
           actor.moveSpeed = resolved.moveSpeed;
           stats.set(actor.entityId, resolved);
           counters.statRefreshes++;
@@ -16167,9 +16167,9 @@ function createActivityProgression(state, manifest, measure) {
         if (progressionBigInt(next.level) === progressionBigInt(before.level)) continue;
         measure("playerStatResolution", () => {
           const actor = state.entitiesById[player.entityId], resolved = resolvePlayerStats(player);
-          actor.hp = structuredClone(wire(resolved.maxHp));
-          actor.maxHp = structuredClone(wire(resolved.maxHp));
-          actor.attackDamage = structuredClone(wire(resolved.attack));
+          actor.hp = structuredClone(wire2(resolved.maxHp));
+          actor.maxHp = structuredClone(wire2(resolved.maxHp));
+          actor.attackDamage = structuredClone(wire2(resolved.attack));
           actor.moveSpeed = resolved.moveSpeed;
           stats.set(actor.entityId, resolved);
           counters.statRefreshes++;
@@ -16181,8 +16181,8 @@ function createActivityProgression(state, manifest, measure) {
   function equipmentChanged(player) {
     const actor = state.entitiesById[player.entityId], resolved = resolvePlayerStats(player);
     actor.hp = state.subweaponCombat ? combatInteger(minCombat(actor.hp, resolved.maxHp)) : structuredClone(combatIntegerWire(Math.min(boundedCombatInteger(actor.hp), resolved.maxHp)));
-    actor.maxHp = structuredClone(wire(resolved.maxHp));
-    actor.attackDamage = structuredClone(wire(resolved.attack));
+    actor.maxHp = structuredClone(wire2(resolved.maxHp));
+    actor.attackDamage = structuredClone(wire2(resolved.attack));
     actor.moveSpeed = resolved.moveSpeed;
     stats.set(actor.entityId, resolved);
     counters.statRefreshes++;
@@ -16220,8 +16220,8 @@ function createActivityProgression(state, manifest, measure) {
       const group = groupsByEntity.get(actor.entityId);
       if (group) freezeGroup(group, radius, "combat");
     },
-    prepareResource(group, point4) {
-      freezeGroup(group, 768, "resource", [point4]);
+    prepareResource(group, point9) {
+      freezeGroup(group, 768, "resource", [point9]);
     },
     onHomeReset(actor) {
       const group = groupsByEntity.get(actor.entityId);
@@ -16327,11 +16327,11 @@ function captureMeleeAssistAim(source2, candidates, collision) {
   let best = null, bestDistance = Infinity;
   for (const target of candidates) {
     if (!canTargetActor(source2, target) || target.team !== "hostile" || source2.residency.spaceInstanceId !== target.residency.spaceInstanceId || !isActorInReach(source2, target)) continue;
-    const dx = target.position.x - source2.position.x, dy = target.position.y - source2.position.y, distance7 = Math.hypot(dx, dy);
-    if (distance7 > MELEE_ASSIST_RADIUS || !meleeLineClear(collision, source2, target)) continue;
-    if (distance7 < bestDistance || distance7 === bestDistance && target.entityId < best.entityId) {
+    const dx = target.position.x - source2.position.x, dy = target.position.y - source2.position.y, distance8 = Math.hypot(dx, dy);
+    if (distance8 > MELEE_ASSIST_RADIUS || !meleeLineClear(collision, source2, target)) continue;
+    if (distance8 < bestDistance || distance8 === bestDistance && target.entityId < best.entityId) {
       best = target;
-      bestDistance = distance7;
+      bestDistance = distance8;
     }
   }
   return best && bestDistance > 0 ? { x: (best.position.x - source2.position.x) / bestDistance, y: (best.position.y - source2.position.y) / bestDistance } : null;
@@ -16349,9 +16349,9 @@ function separationImpulse(a, b) {
     y = dy / d;
   } else {
     const first = a.entityId < b.entityId, key2 = first ? a.entityId + b.entityId : b.entityId + a.entityId;
-    let hash9 = 0;
-    for (let i = 0; i < key2.length; i++) hash9 = Math.imul(hash9, 31) + key2.charCodeAt(i) >>> 0;
-    const angle3 = hash9 % 8 * Math.PI / 4, sign = first ? 1 : -1;
+    let hash15 = 0;
+    for (let i = 0; i < key2.length; i++) hash15 = Math.imul(hash15, 31) + key2.charCodeAt(i) >>> 0;
+    const angle3 = hash15 % 8 * Math.PI / 4, sign = first ? 1 : -1;
     x = Math.cos(angle3) * sign;
     y = Math.sin(angle3) * sign;
   }
@@ -16363,12 +16363,12 @@ function separateLiveOrdinary(state, activeIds, spatial, manifest, measure) {
   for (const id of activeIds) {
     const a = state.entitiesById[id];
     if (!eligible(a, state)) continue;
-    const ids = measure("separationQuery", () => spatial.query(a.residency.spaceInstanceId, a.position, ORDINARY_SEPARATION.distance));
+    const ids2 = measure("separationQuery", () => spatial.query(a.residency.spaceInstanceId, a.position, ORDINARY_SEPARATION.distance));
     stats.queries++;
-    stats.candidates += ids.length;
-    stats.maxCandidates = Math.max(stats.maxCandidates, ids.length);
+    stats.candidates += ids2.length;
+    stats.maxCandidates = Math.max(stats.maxCandidates, ids2.length);
     let dx = 0, dy = 0;
-    for (const otherId of ids) {
+    for (const otherId of ids2) {
       const b = state.entitiesById[otherId];
       if (id === otherId || !eligible(b, state)) continue;
       const impulse = separationImpulse(a, b);
@@ -16583,17 +16583,17 @@ function createEncounterContainmentD11_2(state, { participantPolicy = () => null
     const group = groupsByActor.get(actor.entityId), c = group?.containment;
     if (!c) return toward(actor.position, target.position, actor.moveSpeed);
     const ordinal = group.entityIds.indexOf(actor.entityId), count = Math.max(1, group.entityIds.length), base = angleSeed(group.groupId + "/" + target.entityId) + ordinal * Math.PI * 2 / count, offsets = [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6];
-    let point4 = null;
+    let point9 = null;
     for (const offset2 of offsets) {
       const angle3 = base + offset2 * Math.PI / 12, p = { x: target.position.x + Math.cos(angle3) * c.approachRadius, y: target.position.y + Math.sin(angle3) * c.approachRadius };
       if (!collidesWithTiles(collision, p.x, p.y, actor.hullRadius)) {
-        point4 = p;
+        point9 = p;
         break;
       }
     }
-    if (!point4) return toward(actor.position, target.position, actor.moveSpeed);
-    if (distance3(actor.position, point4) <= Math.max(1.5, actor.moveSpeed * 1.25)) return { x: 0, y: 0 };
-    return toward(actor.position, point4, actor.moveSpeed);
+    if (!point9) return toward(actor.position, target.position, actor.moveSpeed);
+    if (distance3(actor.position, point9) <= Math.max(1.5, actor.moveSpeed * 1.25)) return { x: 0, y: 0 };
+    return toward(actor.position, point9, actor.moveSpeed);
   }
   function returnIntent(actor) {
     const group = groupsByActor.get(actor.entityId), c = group?.containment;
@@ -16746,8 +16746,8 @@ function findInteriorPathD12_3A(grid, startPosition, goalPosition) {
     if (id === startId) break;
   }
   cells.reverse();
-  const path4 = cells.map((cell) => ({ x: (cell.col + 0.5) * grid.tileSize, y: (cell.row + 0.5) * grid.tileSize, col: cell.col, row: cell.row }));
-  return { reachable: true, path: path4, cost: g[goalId], expandedNodes: expanded, start, goal };
+  const path7 = cells.map((cell) => ({ x: (cell.col + 0.5) * grid.tileSize, y: (cell.row + 0.5) * grid.tileSize, col: cell.col, row: cell.row }));
+  return { reachable: true, path: path7, cost: g[goalId], expandedNodes: expanded, start, goal };
 }
 function createInteriorNavigationD12_3A(state, { eligible: eligible2 = (source2, target) => source2.alive && target.alive && source2.team !== target.team, lineClear = meleeLineClear, inAttackGeometry = () => false } = {}) {
   const groupsByActor = /* @__PURE__ */ new Map(), managedGroups = /* @__PURE__ */ new Map(), grids = /* @__PURE__ */ new Map(), routes = /* @__PURE__ */ new Map(), pairCache = /* @__PURE__ */ new Map(), expandedSamples = [], tickMsSamples = [];
@@ -16804,8 +16804,8 @@ function createInteriorNavigationD12_3A(state, { eligible: eligible2 = (source2,
   const visible2 = (actor, target) => eligible2(actor, target) && lineClear(state.spacesByInstanceId[actor.residency.spaceInstanceId].collision, actor, target);
   function reachableVisible(actor, target, range) {
     if (distance4(actor.position, target.position) > range || !visible2(actor, target)) return null;
-    const path4 = pairPath(actor, target);
-    return path4.reachable ? path4 : null;
+    const path7 = pairPath(actor, target);
+    return path7.reachable ? path7 : null;
   }
   function canGroupAcquire(group, target) {
     if (!managedGroups.has(group.groupId)) return false;
@@ -16866,43 +16866,43 @@ function createInteriorNavigationD12_3A(state, { eligible: eligible2 = (source2,
   function routeIntent(actor, destination, { returning = false, directTarget = null, seedRoute = null, arrivalTolerance = D.arrivalTolerance } = {}) {
     const nav = actor.ai.interiorNavigation, grid = gridFor(actor), goal = nearestOpen(grid, destination);
     if (!goal) return { intent: { x: 0, y: 0 }, reached: false, unreachable: true };
-    let record = routes.get(actor.entityId);
-    if (record?.requested && (!actor.ai.melee || actor.ai.melee.phase === "idle") && !actor.movedLastTick) nav.blockedTicks++;
+    let record2 = routes.get(actor.entityId);
+    if (record2?.requested && (!actor.ai.melee || actor.ai.melee.phase === "idle") && !actor.movedLastTick) nav.blockedTicks++;
     else if (actor.movedLastTick) nav.blockedTicks = 0;
-    const goalKey = pointKey(goal), needs = !record || record.spaceInstanceId !== actor.residency.spaceInstanceId || record.goalKey !== goalKey && state.tick >= nav.replanAfterTick || nav.blockedTicks >= D.blockedReplanTicks || record.unreachable && state.tick >= nav.replanAfterTick;
+    const goalKey = pointKey(goal), needs = !record2 || record2.spaceInstanceId !== actor.residency.spaceInstanceId || record2.goalKey !== goalKey && state.tick >= nav.replanAfterTick || nav.blockedTicks >= D.blockedReplanTicks || record2.unreachable && state.tick >= nav.replanAfterTick;
     if (needs) {
       const result = seedRoute && pointKey(seedRoute.goal) === goalKey ? seedRoute : search(actor, actor.position, destination);
       metrics.replans++;
       nav.replanAfterTick = state.tick + (result.reachable ? D.replanIntervalTicks : D.unreachableRetryTicks);
       nav.blockedTicks = 0;
-      record = { spaceInstanceId: actor.residency.spaceInstanceId, goalKey, path: result.path, index: Math.min(1, Math.max(0, result.path.length - 1)), unreachable: !result.reachable, requested: false };
-      routes.set(actor.entityId, record);
+      record2 = { spaceInstanceId: actor.residency.spaceInstanceId, goalKey, path: result.path, index: Math.min(1, Math.max(0, result.path.length - 1)), unreachable: !result.reachable, requested: false };
+      routes.set(actor.entityId, record2);
     } else metrics.routeCacheHits++;
-    if (record.unreachable) {
-      record.requested = false;
+    if (record2.unreachable) {
+      record2.requested = false;
       if (!returning) nav.mode = "unreachable";
       return { intent: { x: 0, y: 0 }, reached: false, unreachable: true };
     }
     if (directTarget && inAttackGeometry(actor, directTarget) && visible2(actor, directTarget)) {
-      record.requested = false;
+      record2.requested = false;
       return { intent: { x: 0, y: 0 }, reached: true, unreachable: false };
     }
-    while (record.index < record.path.length - 1 && distance4(actor.position, record.path[record.index]) <= Math.max(8, actor.moveSpeed * 1.5)) record.index++;
+    while (record2.index < record2.path.length - 1 && distance4(actor.position, record2.path[record2.index]) <= Math.max(8, actor.moveSpeed * 1.5)) record2.index++;
     const remaining = distance4(actor.position, destination);
     if (!directTarget && remaining <= arrivalTolerance) {
-      record.requested = false;
+      record2.requested = false;
       return { intent: { x: 0, y: 0 }, reached: true, unreachable: false };
     }
-    let waypoint = record.path[record.index] ?? destination, d = distance4(actor.position, waypoint);
-    if (record.index >= record.path.length - 1 && pointKey(cellFor(grid, actor.position)) === record.goalKey) {
+    let waypoint = record2.path[record2.index] ?? destination, d = distance4(actor.position, waypoint);
+    if (record2.index >= record2.path.length - 1 && pointKey(cellFor(grid, actor.position)) === record2.goalKey) {
       waypoint = destination;
       d = remaining;
     }
     if (!d) {
-      record.requested = false;
+      record2.requested = false;
       return { intent: { x: 0, y: 0 }, reached: true, unreachable: false };
     }
-    record.requested = true;
+    record2.requested = true;
     return { intent: { x: (waypoint.x - actor.position.x) / d, y: (waypoint.y - actor.position.y) / d }, reached: false, unreachable: false };
   }
   function intentFor(actor) {
@@ -16923,8 +16923,8 @@ function createInteriorNavigationD12_3A(state, { eligible: eligible2 = (source2,
       return { target: null, intent: move.intent, returning: true };
     }
     if (actor.ai.melee && actor.ai.melee.phase !== "idle") {
-      const record = routes.get(actor.entityId);
-      if (record) record.requested = false;
+      const record2 = routes.get(actor.entityId);
+      if (record2) record2.requested = false;
       const target = state.entitiesById[actor.ai.melee.targetEntityId];
       if (target?.alive && withinPursuitEnvelope(group, actor, target, group.containment.pursuitRadius) && visible2(actor, target)) remember(actor, target);
       return { target: target?.alive ? target : null, intent: { x: 0, y: 0 }, returning: false };
@@ -16989,11 +16989,11 @@ function createSpatialIndex(cellSize = 256) {
     }
     keysById.set(id, keys);
   }
-  function query(instance, point4, radius) {
-    const ids = /* @__PURE__ */ new Set();
-    for (let y = Math.floor((point4.y - radius) / cellSize); y <= Math.floor((point4.y + radius) / cellSize); y++)
-      for (let x = Math.floor((point4.x - radius) / cellSize); x <= Math.floor((point4.x + radius) / cellSize); x++) for (const id of cells.get(key2(instance, x, y)) ?? []) ids.add(id);
-    return [...ids].sort();
+  function query(instance, point9, radius) {
+    const ids2 = /* @__PURE__ */ new Set();
+    for (let y = Math.floor((point9.y - radius) / cellSize); y <= Math.floor((point9.y + radius) / cellSize); y++)
+      for (let x = Math.floor((point9.x - radius) / cellSize); x <= Math.floor((point9.x + radius) / cellSize); x++) for (const id of cells.get(key2(instance, x, y)) ?? []) ids2.add(id);
+    return [...ids2].sort();
   }
   return { insert, remove, query, stats: () => ({ cells: cells.size, records: keysById.size }) };
 }
@@ -17277,9 +17277,9 @@ function createMasteryEffects(s, { damage, eligible: eligible2, identity: identi
           delete b.razors[id];
           continue;
         }
-        const start = { ...e.position }, distance7 = 8.5, c = s.spacesByInstanceId[e.spaceInstanceId].collision;
-        let wall = distance7 + 1;
-        for (let d = 0; d <= distance7; d += 0.5) if (collidesWithTiles(c, start.x + e.direction.x * d, start.y + e.direction.y * d, 3)) {
+        const start = { ...e.position }, distance8 = 8.5, c = s.spacesByInstanceId[e.spaceInstanceId].collision;
+        let wall = distance8 + 1;
+        for (let d = 0; d <= distance8; d += 0.5) if (collidesWithTiles(c, start.x + e.direction.x * d, start.y + e.direction.y * d, 3)) {
           wall = d;
           break;
         }
@@ -17289,15 +17289,15 @@ function createMasteryEffects(s, { damage, eligible: eligible2, identity: identi
           const x = start.x - t.position.x, y = start.y - t.position.y, B = x * e.direction.x + y * e.direction.y, D2 = B * B - (x * x + y * y - 18 * 18);
           if (D2 < 0) continue;
           const near = Math.max(0, -B - Math.sqrt(D2));
-          if (near <= distance7 && near < wall && -B + Math.sqrt(D2) >= 0) hits.push({ t, near });
+          if (near <= distance8 && near < wall && -B + Math.sqrt(D2) >= 0) hits.push({ t, near });
         }
         hits.sort((x, y) => x.near - y.near || x.t.entityId.localeCompare(y.t.entityId));
         for (const { t } of hits) {
           e.hitIds.push(t.entityId);
           damage(a, t, multiplyCombat(e.attack, 40 * (100 + 20 * e.rank), 1e4), "windrazor", null, { sourceItem: e.sourceItem, trigger: "mastery" });
         }
-        if (wall <= distance7) delete b.razors[id];
-        else e.position = { x: start.x + e.direction.x * distance7, y: start.y + e.direction.y * distance7 };
+        if (wall <= distance8) delete b.razors[id];
+        else e.position = { x: start.x + e.direction.x * distance8, y: start.y + e.direction.y * distance8 };
       }
     }
   }
@@ -18163,11 +18163,11 @@ var roll = (seed2, n, salt) => {
 };
 function createBrimstoneCombat(state, { applyDirectDamage, eligible: eligible2 = () => true, lineClear } = {}) {
   const observed = /* @__PURE__ */ new Map(), stats = { strikes: 0, slams: 0, ventCasts: 0, ventsErupted: 0, slamHits: 0, ventHits: 0 };
-  const record = (id) => {
+  const record2 = (id) => {
     const b = state.bossCombat?.bossesByEntityId?.[id];
     return b?.bossDefinitionId === BRIMSTONE_ID ? b : null;
   };
-  const records = () => Object.values(state.bossCombat?.bossesByEntityId ?? {}).filter((b) => record(b.entityId)).sort((a, z) => a.bossId.localeCompare(z.bossId));
+  const records = () => Object.values(state.bossCombat?.bossesByEntityId ?? {}).filter((b) => record2(b.entityId)).sort((a, z) => a.bossId.localeCompare(z.bossId));
   const players = (a) => Object.values(state.playersById).filter((p) => p.connectionStatus === "connected").map((p) => state.entitiesById[p.entityId]).filter((t) => t?.alive && t.residency.spaceInstanceId === a.residency.spaceInstanceId && eligible2(a, t)).sort((a2, z) => a2.entityId.localeCompare(z.entityId));
   const clear2 = (b) => {
     b.activeAbility = null;
@@ -18286,9 +18286,9 @@ function createBrimstoneCombat(state, { applyDirectDamage, eligible: eligible2 =
   }
   return Object.freeze({ advance, reconcile: () => {
     for (const b of records()) sync(b, state.entitiesById[b.entityId]);
-  }, owns: (id) => Boolean(record(id)), frozen: (id) => Boolean(record(id) && record(id).actionState !== "idle"), observeTarget: (a, t) => {
-    if (record(a.entityId)) observed.set(a.entityId, t?.entityId);
-  }, movementMultiplier: (id) => record(id) ? (state.tick - record(id).activatedTick) % 30 < 15 ? 1.35 / 1.3 : 0 : 1, inspect: () => ({ ...stats }) });
+  }, owns: (id) => Boolean(record2(id)), frozen: (id) => Boolean(record2(id) && record2(id).actionState !== "idle"), observeTarget: (a, t) => {
+    if (record2(a.entityId)) observed.set(a.entityId, t?.entityId);
+  }, movementMultiplier: (id) => record2(id) ? (state.tick - record2(id).activatedTick) % 30 < 15 ? 1.35 / 1.3 : 0 : 1, inspect: () => ({ ...stats }) });
 }
 
 // src/simulation/aegis_mimics_v2.js
@@ -18306,12 +18306,12 @@ function createAegisMimicSimulation(state) {
   function rows(b) {
     return Object.values(b.mimicEncounter?.mimicsByEntityId ?? {}).sort((x, y) => x.ordinal - y.ordinal);
   }
-  function cleanupHaste(ids) {
+  function cleanupHaste(ids2) {
     const root = state.eliteCombat;
     if (!root) return;
-    const elites = new Set(ids.map((id) => root.elitesByEntityId?.[id]?.eliteId));
+    const elites = new Set(ids2.map((id) => root.elitesByEntityId?.[id]?.eliteId));
     for (const [id, h] of Object.entries(root.hasteByEntityId ?? {})) {
-      if (ids.includes(id) || !state.entitiesById[id]?.alive) {
+      if (ids2.includes(id) || !state.entitiesById[id]?.alive) {
         delete root.hasteByEntityId[id];
         continue;
       }
@@ -18319,7 +18319,7 @@ function createAegisMimicSimulation(state) {
     }
   }
   function retire(b) {
-    const ids = [];
+    const ids2 = [];
     for (const m of rows(b)) {
       const a = state.entitiesById[m.entityId];
       if (a?.alive) {
@@ -18333,9 +18333,9 @@ function createAegisMimicSimulation(state) {
         m.stageStartedTick = state.tick;
         m.defeatedTick = state.tick;
       }
-      ids.push(m.entityId);
+      ids2.push(m.entityId);
     }
-    cleanupHaste(ids);
+    cleanupHaste(ids2);
   }
   function beginRecall(b, a) {
     const e = b.mimicEncounter;
@@ -18565,7 +18565,7 @@ function createAegisGoliathCombat(state, { applyDirectDamage, eligible: eligible
   const mimics = createAegisMimicSimulation(state);
   const observed = /* @__PURE__ */ new Map(), stats = { pullCasts: 0, shieldThrows: 0, bashCasts: 0, dodgedBashes: 0, projectileHits: 0, blockedHits: 0, phaseTwoTriggers: 0 };
   const records = () => Object.values(state.bossCombat?.bossesByEntityId ?? {}).filter((b) => b.bossDefinitionId === AEGIS_GOLIATH_ID).sort((a, b) => a.bossId.localeCompare(b.bossId));
-  const record = (id) => {
+  const record2 = (id) => {
     const b = state.bossCombat?.bossesByEntityId?.[id];
     return b?.bossDefinitionId === AEGIS_GOLIATH_ID ? b : null;
   };
@@ -18762,7 +18762,7 @@ function createAegisGoliathCombat(state, { applyDirectDamage, eligible: eligible
     }
   }
   function mitigateIncoming(target, damage, source2, attribution) {
-    const b = record(target.entityId);
+    const b = record2(target.entityId);
     if (!b) return null;
     const componentResult = mimics.mitigateIncoming(target, damage, source2, attribution);
     if (componentResult) return componentResult;
@@ -18774,14 +18774,14 @@ function createAegisGoliathCombat(state, { applyDirectDamage, eligible: eligible
     return { damage, shielded: false };
   }
   return Object.freeze({ advance, reconcile, observeTarget: (a, t) => {
-    if (record(a.entityId)) observed.set(a.entityId, t?.entityId);
-  }, owns: (id) => Boolean(record(id)) || mimics.ownsMimic(id), towerTarget: mimics.towerTarget, frozen: (id) => {
+    if (record2(a.entityId)) observed.set(a.entityId, t?.entityId);
+  }, owns: (id) => Boolean(record2(id)) || mimics.ownsMimic(id), towerTarget: mimics.towerTarget, frozen: (id) => {
     if (mimics.ownsMimic(id)) return mimics.frozen(id);
-    const b = record(id);
+    const b = record2(id);
     return b ? ["telegraphing", "dazed", "defeated", "recalling"].includes(b.actionState) : false;
   }, movementMultiplier: (id) => {
     if (mimics.ownsMimic(id)) return mimics.frozen(id) ? 0 : 1;
-    const b = record(id);
+    const b = record2(id);
     return b ? (state.tick - b.activatedTick) % 30 < 15 ? (b.mimicEncounter?.enragedTick !== null && b.mimicEncounter ? 2 : b.phase === 2 ? 1.4 : 1.7) / 1.3 : 0 : 1;
   }, mitigateIncoming, inspect: () => ({ ...stats, mimics: mimics.inspect() }) });
 }
@@ -18866,7 +18866,7 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
   const observed = /* @__PURE__ */ new Map(), stats = { casts: 0, hits: 0, summons: 0, phaseTwos: 0, interrupts: 0, poolHits: 0 };
   const root = () => state.bossCombat;
   const records = () => Object.values(root()?.bossesByEntityId ?? {}).filter(recoveredBossRecord).sort((a, b) => a.bossId.localeCompare(b.bossId));
-  const record = (id) => {
+  const record2 = (id) => {
     const b = root()?.bossesByEntityId?.[id];
     return recoveredBossRecord(b) ? b : null;
   };
@@ -19167,11 +19167,11 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
   function frozen(id) {
     const s = summon(id);
     if (s) return s.stage === "dormant" || s.kind === "bunny" || s.kind === "hologram";
-    const b = record(id);
+    const b = record2(id);
     return Boolean(b && ["telegraphing", "dazed", "defeated"].includes(b.actionState));
   }
   function movementMultiplier(id) {
-    const b = record(id);
+    const b = record2(id);
     if (b) return b.actionState === "dazed" ? 0 : b.phase === 2 ? 1.2 : 0.8;
     const s = summon(id);
     if (s && (s.stage === "dormant" || s.kind === "bunny" || s.kind === "hologram")) return 0;
@@ -19180,7 +19180,7 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
     return value;
   }
   function mitigateIncoming(target, damage, source2, attribution) {
-    const b = record(target.entityId);
+    const b = record2(target.entityId);
     if (!b) return null;
     if (b.bossDefinitionId === "nexus_overseer" && b.phase === 2 && b.summonEntityIds.some((id) => state.entitiesById[id]?.alive && summon(id)?.stage === "hatched")) return { damage: combatInteger(0), shielded: true };
     if (BigInt(b.shieldHp) > 0n) {
@@ -19198,10 +19198,10 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
     advance,
     beginTick,
     reconcile,
-    owns: (id) => Boolean(record(id) || summon(id)),
+    owns: (id) => Boolean(record2(id) || summon(id)),
     frozen,
     observeTarget: (a, t) => {
-      if (record(a.entityId)) observed.set(a.entityId, t?.entityId);
+      if (record2(a.entityId)) observed.set(a.entityId, t?.entityId);
     },
     movementMultiplier,
     mitigateIncoming,
@@ -19218,7 +19218,7 @@ var deterministicRoll = (seed2, sequence, salt) => {
   return ((value ^ value >>> 16) >>> 0) / 4294967296;
 };
 var pointLineClear = (collision, a, b, radius = 2) => {
-  const distance7 = Math.hypot(b.x - a.x, b.y - a.y), steps = Math.max(1, Math.ceil(distance7 / 6));
+  const distance8 = Math.hypot(b.x - a.x, b.y - a.y), steps = Math.max(1, Math.ceil(distance8 / 6));
   for (let i = 0; i <= steps; i++) {
     const q = i / steps, x = a.x + (b.x - a.x) * q, y = a.y + (b.y - a.y) * q;
     if (collidesWithTiles(collision, x, y, radius)) return false;
@@ -19358,9 +19358,9 @@ function createBossCombatD12_5A(state, { applyDirectDamage, eligible: eligible2,
     boss.resolvesTick = null;
     boss.nextActionTick = state.tick + ARACHNID_TREANT_D12_5A.abilityRecoveryTicks;
   }
-  function chooseAbility(boss, distance7) {
+  function chooseAbility(boss, distance8) {
     const sequence = boss.abilitySequence + 1, first = deterministicRoll(boss.selectionSeed, sequence, 1374496523), close = deterministicRoll(boss.selectionSeed, sequence, 2722868949);
-    return distance7 < 64 && close < 0.8 ? "slam" : first < 0.5 ? "slam" : "root_snare";
+    return distance8 < 64 && close < 0.8 ? "slam" : first < 0.5 ? "slam" : "root_snare";
   }
   function advance() {
     const r = root();
@@ -19388,16 +19388,16 @@ function createBossCombatD12_5A(state, { applyDirectDamage, eligible: eligible2,
       if (state.tick < boss.nextActionTick) continue;
       const targetId = observedTargets.get(actor.entityId), target = state.entitiesById[targetId];
       if (!target?.alive || target.residency.spaceInstanceId !== actor.residency.spaceInstanceId) continue;
-      const distance7 = Math.hypot(target.position.x - actor.position.x, target.position.y - actor.position.y);
-      if (distance7 > ARACHNID_TREANT_D12_5A.pursuitRange || !lineClear(actor, target)) continue;
-      if (distance7 <= ARACHNID_TREANT_D12_5A.closeStrikeRange) {
+      const distance8 = Math.hypot(target.position.x - actor.position.x, target.position.y - actor.position.y);
+      if (distance8 > ARACHNID_TREANT_D12_5A.pursuitRange || !lineClear(actor, target)) continue;
+      if (distance8 <= ARACHNID_TREANT_D12_5A.closeStrikeRange) {
         applyDirectDamage(actor, target, actor.attackDamage, "treant_strike");
         boss.nextActionTick = state.tick + ARACHNID_TREANT_D12_5A.closeStrikeCooldownTicks;
         boss.lastAction = { ability: "strike", resolvedTick: state.tick, targetPosition: copyWire(target.position), hitEntityIds: [target.entityId] };
         counters.closeStrikes++;
         continue;
       }
-      const ability = chooseAbility(boss, distance7);
+      const ability = chooseAbility(boss, distance8);
       boss.abilitySequence++;
       boss.actionState = "telegraphing";
       boss.activeAbility = ability;
@@ -19521,13 +19521,13 @@ function createActivitySimulation(initialState, { measure = (_name, fn) => fn(),
         return captureMeleeAssistAim(actor, candidates.filter((target) => canActivityTargetActor(state, manifest, actor, target)), collision);
       });
       const event = beginPrimary(state, id, { primaryActionId: identity2("pra"), startEventId: identity2("evt"), finishEventId: identity2("evt") });
-      const action = state.primary.actorsById[id].current;
+      const action2 = state.primary.actorsById[id].current;
       if (aim2) {
-        action.aim = aim2;
+        action2.aim = aim2;
         assist.assisted++;
       }
       emit(event);
-      state.primaryContextsById[action.primaryActionId] = actorContext(state, id);
+      state.primaryContextsById[action2.primaryActionId] = actorContext(state, id);
     }
   }
   function schedule() {
@@ -19925,7 +19925,7 @@ function createActivitySimulation(initialState, { measure = (_name, fn) => fn(),
         if (a.team === "party" && (intent.x || intent.y)) {
           movementBlocks.attempts++;
           if (!move.moved) {
-            const collision = state.spacesByInstanceId[a.residency.spaceInstanceId].collision, vx = intent.x * a.moveSpeed, vy = intent.y * a.moveSpeed, detail = (vx ? collisionBlockDetail(collision, a.position.x + vx, a.position.y, a.hullRadius) : null) ?? (vy ? collisionBlockDetail(collision, a.position.x, a.position.y + vy, a.hullRadius) : null), chunk = detail?.chunkKey && state.d9World?.runtime.chunks.find((c) => `${c.chunkX},${c.chunkY}` === detail.chunkKey), blocker = chunk && detail.localTileX !== void 0 ? chunk.visual.blockers.find((b) => detail.localTileX >= b.x && detail.localTileY >= b.y && detail.localTileX < b.x + b.width && detail.localTileY < b.y + b.height) : null, routeClearance = Boolean(chunk?.visual.route?.clearance?.[detail?.localTileY]?.[detail?.localTileX] === "1"), reason = detail?.reason ?? "unexplained";
+            const collision = state.spacesByInstanceId[a.residency.spaceInstanceId].collision, vx = intent.x * a.moveSpeed, vy = intent.y * a.moveSpeed, detail = (vx ? collisionBlockDetail(collision, a.position.x + vx, a.position.y, a.hullRadius) : null) ?? (vy ? collisionBlockDetail(collision, a.position.x, a.position.y + vy, a.hullRadius) : null), chunk2 = detail?.chunkKey && state.d9World?.runtime.chunks.find((c) => `${c.chunkX},${c.chunkY}` === detail.chunkKey), blocker = chunk2 && detail.localTileX !== void 0 ? chunk2.visual.blockers.find((b) => detail.localTileX >= b.x && detail.localTileY >= b.y && detail.localTileX < b.x + b.width && detail.localTileY < b.y + b.height) : null, routeClearance = Boolean(chunk2?.visual.route?.clearance?.[detail?.localTileY]?.[detail?.localTileX] === "1"), reason = detail?.reason ?? "unexplained";
             movementBlocks.blockedTicks++;
             movementBlocks[reason] = (movementBlocks[reason] ?? 0) + 1;
             movementBlocks.last = { tick: state.tick, entityId: id, ...detail, reason, routeClearance, obstacleId: blocker?.id ?? null, obstacleFootprint: blocker ? { x: blocker.x, y: blocker.y, width: blocker.width, height: blocker.height } : null };
@@ -19951,18 +19951,18 @@ function createActivitySimulation(initialState, { measure = (_name, fn) => fn(),
       for (const event of advancePrimaryPhases(state)) emit(event);
       for (const p of Object.values(state.playersById)) settleGuard(state.subweaponCombat.actors[p.entityId].guard, state.primary.actorsById[p.entityId]);
       for (const id of pendingPrimaryHits(state)) {
-        const a = state.entitiesById[id], action = state.primary.actorsById[id].current;
+        const a = state.entitiesById[id], action2 = state.primary.actorsById[id].current;
         const tome = progression.resolvedStats(id).subType === "tome";
-        const cleave = wildernessCleaveTuning(state, action.comboStep), forwardMinimum = cleave?.forwardDotMinimum ?? primaryProfile(state, id).forwardDotMinimum;
-        const targetLimit = cleave?.maxTargets ?? (hasWorldCombat(state) ? [4, 6, 8][action.comboStep - 1] : 1);
-        const targets = measure("targetQuery", () => selectForwardActors(a, query(a, 400), action.aim, forwardMinimum, (source2, target) => canActivityTargetActor(state, manifest, source2, target) && clearHullGap(source2, target) <= (hasWorldCombat(state) ? a.attackReach : 20) && meleeLineClear(state.spacesByInstanceId[source2.residency.spaceInstanceId].collision, source2, target), targetLimit));
-        action.hitResolved = true;
+        const cleave = wildernessCleaveTuning(state, action2.comboStep), forwardMinimum = cleave?.forwardDotMinimum ?? primaryProfile(state, id).forwardDotMinimum;
+        const targetLimit = cleave?.maxTargets ?? (hasWorldCombat(state) ? [4, 6, 8][action2.comboStep - 1] : 1);
+        const targets = measure("targetQuery", () => selectForwardActors(a, query(a, 400), action2.aim, forwardMinimum, (source2, target) => canActivityTargetActor(state, manifest, source2, target) && clearHullGap(source2, target) <= (hasWorldCombat(state) ? a.attackReach : 20) && meleeLineClear(state.spacesByInstanceId[source2.residency.spaceInstanceId].collision, source2, target), targetLimit));
+        action2.hitResolved = true;
         if (targets.length) {
           for (const targetId of targets) family.main(a, state.entitiesById[targetId]);
         } else {
           const r = economicResources(state, manifest).filter((r2) => r2.kind === "breakable" && !r2.used && r2.spaceInstanceId === a.residency.spaceInstanceId).find((r2) => {
             const dx = r2.position.x - a.position.x, dy = r2.position.y - a.position.y, d = Math.hypot(dx, dy);
-            return d <= a.attackReach + a.combatRadius + 10 && (!d || (dx * action.aim.x + dy * action.aim.y) / d >= forwardMinimum) && meleeLineClear(state.spacesByInstanceId[a.residency.spaceInstanceId].collision, a, { position: r2.position });
+            return d <= a.attackReach + a.combatRadius + 10 && (!d || (dx * action2.aim.x + dy * action2.aim.y) / d >= forwardMinimum) && meleeLineClear(state.spacesByInstanceId[a.residency.spaceInstanceId].collision, a, { position: r2.position });
           });
           if (r) {
             const p = Object.values(state.playersById).find((p2) => p2.entityId === id);
@@ -20310,13 +20310,13 @@ function createExactCutAuthority({
     }
     return unknown();
   }
-  async function backgroundCut(ids) {
+  async function backgroundCut(ids2) {
     const expectedSaveRevision = confirmed.saveRevision;
-    const cut = measure("saveCapture", () => Object.freeze({ ...metadata, snapshot: authority.captureForDurability({ saveRevision: expectedSaveRevision + 1, checkpointId: ids.checkpointId }) }));
-    pending = { background: true, ids, expectedSaveRevision, tick: cut.snapshot.state.tick };
+    const cut = measure("saveCapture", () => Object.freeze({ ...metadata, snapshot: authority.captureForDurability({ saveRevision: expectedSaveRevision + 1, checkpointId: ids2.checkpointId }) }));
+    pending = { background: true, ids: ids2, expectedSaveRevision, tick: cut.snapshot.state.tick };
     busy = true;
     try {
-      return settleBackground(await durabilityTask.commit({ cut, transactionId: ids.transactionId, expectedSaveRevision }));
+      return settleBackground(await durabilityTask.commit({ cut, transactionId: ids2.transactionId, expectedSaveRevision }));
     } catch {
       return unknown();
     } finally {
@@ -20331,8 +20331,8 @@ function createExactCutAuthority({
     validateId("transactionId", request.transactionId);
     validateId("checkpointId", request.checkpointId);
     if (durabilityTask && confirmed) return measure("saveBlocking", () => backgroundCut(freezeWire(request)));
-    const ids = freezeWire(request), expectedSaveRevision = confirmed?.saveRevision ?? null;
-    const cut = pluralCutAtRevision(readCut(), expectedSaveRevision === null ? 0 : expectedSaveRevision + 1, ids.checkpointId);
+    const ids2 = freezeWire(request), expectedSaveRevision = confirmed?.saveRevision ?? null;
+    const cut = pluralCutAtRevision(readCut(), expectedSaveRevision === null ? 0 : expectedSaveRevision + 1, ids2.checkpointId);
     const kind = expectedSaveRevision === null ? "campaignCreated" : "pluralCut";
     pending = { prepared: null };
     phase = "pending";
@@ -20342,7 +20342,7 @@ function createExactCutAuthority({
       const envelope = await createPluralEnvelope(cut, kind, options);
       const proposal = freezeWire({
         transactionVersion,
-        transactionId: ids.transactionId,
+        transactionId: ids2.transactionId,
         campaignId,
         expectedSaveRevision,
         kind,
@@ -20669,20 +20669,20 @@ function projectWorldTerrainD9(state, compiled, { x, y, width = 88, height = 88 
   paint(compiled.visual.terrain, 0, 0, originBlockers, "o");
   for (const route of originEgressGuidePaths(compiled, compiled.collision, state.d9World.origin.egress)) for (const p of route.cells) if (p.x >= x && p.y >= y && p.x < x + width && p.y < y + height) grid[p.y - y][p.x - x] = "r";
   for (const opening of state.d9World.origin.egress.openings) for (const p of opening.cells) if (p.x >= x && p.y >= y && p.x < x + width && p.y < y + height) grid[p.y - y][p.x - x] = "r";
-  for (const chunk of state.d9World.runtime.chunks) {
-    const position2 = projectToLocalFrameD9({ chunkX: chunk.chunkX, chunkY: chunk.chunkY, localX: 0, localY: 0 }, state.d9World.runtime.frames);
+  for (const chunk2 of state.d9World.runtime.chunks) {
+    const position2 = projectToLocalFrameD9({ chunkX: chunk2.chunkX, chunkY: chunk2.chunkY, localX: 0, localY: 0 }, state.d9World.runtime.frames);
     if (!position2) continue;
-    paint(chunk.visual.terrain, position2.x / D9_PROFILE.tileSize, position2.y / D9_PROFILE.tileSize, chunk.visual.blockers, chunk.visual.biomes ?? { woodland: "w", "rocky-uplands": "r", marsh: "m" }[chunk.region.biome], chunk.visual.decorations ?? []);
+    paint(chunk2.visual.terrain, position2.x / D9_PROFILE.tileSize, position2.y / D9_PROFILE.tileSize, chunk2.visual.blockers, chunk2.visual.biomes ?? { woodland: "w", "rocky-uplands": "r", marsh: "m" }[chunk2.region.biome], chunk2.visual.decorations ?? []);
   }
-  const point4 = localFramePositionD9({ x: x * D9_PROFILE.tileSize, y: y * D9_PROFILE.tileSize }, state.d9World.runtime.frames);
-  return { originTile: { x, y }, terrain: grid.map((r) => r.join("")), biomes: biomes.map((r) => r.join("")), blockers, decorations, worldAddress: point4 };
+  const point9 = localFramePositionD9({ x: x * D9_PROFILE.tileSize, y: y * D9_PROFILE.tileSize }, state.d9World.runtime.frames);
+  return { originTile: { x, y }, terrain: grid.map((r) => r.join("")), biomes: biomes.map((r) => r.join("")), blockers, decorations, worldAddress: point9 };
 }
 
 // src/host/combat_presentation_projection.js
 function projectCombatPresentation(state, visibleIds) {
-  const ids = new Set(visibleIds), lanes = /* @__PURE__ */ new Map();
+  const ids2 = new Set(visibleIds), lanes = /* @__PURE__ */ new Map();
   const mastery = Object.values(state.subweaponCombat.mastery ?? {});
-  return { masteryHazards: mastery.flatMap((b) => Object.values(b.hazards)).filter((e) => ids.has(e.sourceId)).map((e) => ({ position: { ...e.position }, radius: e.radius, expiresTick: e.expiresTick })), masteryRazors: mastery.flatMap((b) => Object.values(b.razors)).filter((e) => ids.has(e.sourceId)).map((e) => ({ position: { ...e.position }, direction: { ...e.direction } })), statuses: [...Object.values(state.subweaponCombat.effects), ...mastery.flatMap((b) => [...Object.values(b.poisons).map((e) => ({ ...e, id: e.sourceId + "/" + e.id, kind: "poison" })), ...Object.values(b.statuses).map((e) => ({ ...e, id: e.sourceId + "/" + e.id, stacks: e.rank, nextTick: e.expiresTick, appliedTick: e.expiresTick - (e.kind === "expose" ? 300 : e.kind === "slow" ? 240 : 90) }))]), ...Object.values(state.subweaponCombat.controls ?? {}).map((e) => ({ ...e, kind: e.phase, nextTick: e.expiresTick }))].filter((e) => ids.has(e.targetId) && e.expiresTick > state.tick).map((e) => ({ lane: (lanes.set(e.targetId, (lanes.get(e.targetId) ?? -1) + 1), lanes.get(e.targetId)), id: e.id, sourceId: e.sourceId, targetId: e.targetId, kind: e.kind, stacks: e.stacks, expiresTick: e.expiresTick, nextTick: e.nextTick, durationFrames: ["bleed", "poison"].includes(e.kind) ? 600 : e.kind === "burn" ? 240 : e.expiresTick - e.appliedTick })), families: Object.fromEntries(Object.entries(state.subweaponCombat.actors).filter(([id]) => ids.has(id)).map(([id, c]) => [id, { mastery: (() => {
+  return { masteryHazards: mastery.flatMap((b) => Object.values(b.hazards)).filter((e) => ids2.has(e.sourceId)).map((e) => ({ position: { ...e.position }, radius: e.radius, expiresTick: e.expiresTick })), masteryRazors: mastery.flatMap((b) => Object.values(b.razors)).filter((e) => ids2.has(e.sourceId)).map((e) => ({ position: { ...e.position }, direction: { ...e.direction } })), statuses: [...Object.values(state.subweaponCombat.effects), ...mastery.flatMap((b) => [...Object.values(b.poisons).map((e) => ({ ...e, id: e.sourceId + "/" + e.id, kind: "poison" })), ...Object.values(b.statuses).map((e) => ({ ...e, id: e.sourceId + "/" + e.id, stacks: e.rank, nextTick: e.expiresTick, appliedTick: e.expiresTick - (e.kind === "expose" ? 300 : e.kind === "slow" ? 240 : 90) }))]), ...Object.values(state.subweaponCombat.controls ?? {}).map((e) => ({ ...e, kind: e.phase, nextTick: e.expiresTick }))].filter((e) => ids2.has(e.targetId) && e.expiresTick > state.tick).map((e) => ({ lane: (lanes.set(e.targetId, (lanes.get(e.targetId) ?? -1) + 1), lanes.get(e.targetId)), id: e.id, sourceId: e.sourceId, targetId: e.targetId, kind: e.kind, stacks: e.stacks, expiresTick: e.expiresTick, nextTick: e.nextTick, durationFrames: ["bleed", "poison"].includes(e.kind) ? 600 : e.kind === "burn" ? 240 : e.expiresTick - e.appliedTick })), families: Object.fromEntries(Object.entries(state.subweaponCombat.actors).filter(([id]) => ids2.has(id)).map(([id, c]) => [id, { mastery: (() => {
     const p = Object.values(state.playersById).find((p2) => p2.entityId === id), d = p?.d8, t = d?.transient;
     return t ? { pulseBlocks: t.pulseBlocks, syphon: finiteNodeRank(d, "tome_arcane_syphon") > 0, earthBreaker: finiteNodeRank(d, "shield_earth_breaker_bash") > 0, singularity: finiteNodeRank(d, "tome_keystone_singularity") > 0, anchor: t.lastAnchor, fortitudeStacks: t.fortitudeStacks, retaliatoryReady: t.retaliatoryReady, colossus: t.colossusTicks > 0, shadowStep: t.shadowStepTicks > 0, syphonStacks: t.syphonStacks, weavingStacks: t.weavingStacks } : null;
   })(), element: Object.values(state.playersById).find((p) => p.entityId === id)?.inventory.itemsById[Object.values(state.playersById).find((p) => p.entityId === id)?.inventory.equipped.subweapon]?.generated?.definition.spellType ?? "fire", guard: c.guard ? { ...c.guard, integrity: presentCombat(c.guard.integrity), direction: { ...c.guard.direction } } : null, pressure: c.pressure, dash: { ...c.dash }, delivery: { ...c.delivery } }])) };
@@ -20769,13 +20769,13 @@ function woodlandEventCluesV3_8(position2, statuses = []) {
   const stateById = new Map(statuses.map((s) => [s.slotId, s.state]));
   const candidates = [];
   for (const event of WOODLAND_EVENT_PILOT_V3_7) {
-    const point4 = woodlandPilotWorldPosition(event);
-    const distance7 = woodlandEventDistanceV3_8(position2, point4), tiles = distance7 / 32;
+    const point9 = woodlandPilotWorldPosition(event);
+    const distance8 = woodlandEventDistanceV3_8(position2, point9), tiles = distance8 / 32;
     if (tiles > WOODLAND_RUMOR_RADIUS_TILES) continue;
     const state = stateById.get(event.slotId) ?? "undiscovered";
     if (state === "completed" && tiles > WOODLAND_SIGHT_RADIUS_TILES) continue;
-    const dx = Number(BigInt(point4.chunkX) - BigInt(position2.chunkX)) * 1024 + point4.localX - position2.localX;
-    const dy = Number(BigInt(point4.chunkY) - BigInt(position2.chunkY)) * 832 + point4.localY - position2.localY;
+    const dx = Number(BigInt(point9.chunkX) - BigInt(position2.chunkX)) * 1024 + point9.localX - position2.localX;
+    const dy = Number(BigInt(point9.chunkY) - BigInt(position2.chunkY)) * 832 + point9.localY - position2.localY;
     const bearing = direction2(dx, dy);
     const sighted = tiles <= WOODLAND_SIGHT_RADIUS_TILES;
     candidates.push(Object.freeze({
@@ -20788,7 +20788,7 @@ function woodlandEventCluesV3_8(position2, statuses = []) {
       direction: bearing,
       distanceTiles: Math.round(tiles),
       // The minimap receives exact coordinates only after the player is close.
-      ...sighted ? { position: point4 } : {}
+      ...sighted ? { position: point9 } : {}
     }));
   }
   candidates.sort((a, b) => a.distanceTiles - b.distanceTiles || a.slotId.localeCompare(b.slotId));
@@ -20821,14 +20821,14 @@ function resolveSiteTruthD12_4C(state, { includeRejected = false, includeFinaleD
     records.push({ version: SITE_TRUTH_D12_4C, siteId: settlement.settlementId, label: settlement.label, siteType: "settlement", packageId: "historical-settlement", familyId: "historical", bound: true, reserved: true, eligible: true, completed: false, navigable: true, historical: true, worldPosition: copyWire(worldPosition), entrance: copyWire(worldPosition), approachAnchor: copyWire(worldPosition), interactionAnchor: copyWire(worldPosition), tier: null, floorCount: null, requiredChunks: required, resident: true, rejectionReason: null });
   }
   for (const site of manifest.sites ?? []) {
-    const worldPosition = legacyWorldPosition(site.position), required = [{ chunkX: worldPosition.chunkX, chunkY: worldPosition.chunkY }], progress = state.campaign.sitesById?.[site.locationId], interior = manifest.siteInteriors?.find((row2) => row2.siteId === site.locationId) ?? null;
+    const worldPosition = legacyWorldPosition(site.position), required = [{ chunkX: worldPosition.chunkX, chunkY: worldPosition.chunkY }], progress5 = state.campaign.sitesById?.[site.locationId], interior = manifest.siteInteriors?.find((row2) => row2.siteId === site.locationId) ?? null;
     const implemented = Boolean(interior);
     const universal = siteDefinitions.get(site.locationId) ?? null;
-    records.push({ version: SITE_TRUTH_D12_4C, siteId: site.locationId, label: site.properName ?? site.label, siteType: site.siteKind ?? "historical-site", packageId: site.locationDefinitionId, familyId: universal?.familyId ?? "historical", namedVariantId: universal?.namedVariantId ?? null, bound: implemented, reserved: true, eligible: implemented, completed: implemented && progress?.conqueredTick !== null && progress?.conqueredTick !== void 0, navigable: implemented, historical: true, worldPosition: copyWire(worldPosition), entrance: implemented ? copyWire(worldPosition) : null, approachAnchor: implemented ? copyWire(worldPosition) : null, interactionAnchor: implemented ? copyWire(worldPosition) : null, tier: site.siteTier ?? null, floorCount: interior ? 1 : null, requiredChunks: required, resident: implemented, rejectionReason: implemented ? null : "legacy-unimplemented-placeholder" });
+    records.push({ version: SITE_TRUTH_D12_4C, siteId: site.locationId, label: site.properName ?? site.label, siteType: site.siteKind ?? "historical-site", packageId: site.locationDefinitionId, familyId: universal?.familyId ?? "historical", namedVariantId: universal?.namedVariantId ?? null, bound: implemented, reserved: true, eligible: implemented, completed: implemented && progress5?.conqueredTick !== null && progress5?.conqueredTick !== void 0, navigable: implemented, historical: true, worldPosition: copyWire(worldPosition), entrance: implemented ? copyWire(worldPosition) : null, approachAnchor: implemented ? copyWire(worldPosition) : null, interactionAnchor: implemented ? copyWire(worldPosition) : null, tier: site.siteTier ?? null, floorCount: interior ? 1 : null, requiredChunks: required, resident: implemented, rejectionReason: implemented ? null : "legacy-unimplemented-placeholder" });
   }
   if (world) {
-    const bound = world.functionalSitesById ?? {}, reservations = world.siteReservationsById ?? {}, ids = /* @__PURE__ */ new Set([...Object.keys(bound), ...Object.keys(reservations)]);
-    for (const siteId of [...ids].sort()) {
+    const bound = world.functionalSitesById ?? {}, reservations = world.siteReservationsById ?? {}, ids2 = /* @__PURE__ */ new Set([...Object.keys(bound), ...Object.keys(reservations)]);
+    for (const siteId of [...ids2].sort()) {
       const site = bound[siteId] ?? null, reservation = reservations[siteId] ?? null, socket = site?.socket ?? reservation?.socket, definition = functionalSiteDefinitionD10(site?.packageId ?? reservation?.packageId, site?.packageVersion ?? null), installed = Boolean(definition), reserved = Boolean(reservation), isBound = Boolean(site), eligible2 = Boolean(isBound || reserved && installed && eligibleFunctionalSocketD10(state, socket)), navigable = Boolean(isBound || reserved && installed && eligible2), rejectionReason = navigable ? null : !reserved ? "unreserved" : !installed ? "package-not-installed" : "activation-ineligible";
       const universal = siteDefinitions.get(siteId) ?? null;
       if (!socket) {
@@ -20840,8 +20840,8 @@ function resolveSiteTruthD12_4C(state, { includeRejected = false, includeFinaleD
       records.push({ version: SITE_TRUTH_D12_4C, siteId, label: functionalLabel(site, reservation, definition), siteType: functionalKind(site, reservation, definition), packageId: site?.packageId ?? reservation.packageId, familyId: universal?.familyId ?? site?.familyId ?? reservation?.parcel?.familyId ?? null, namedVariantId: universal?.namedVariantId ?? null, bound: isBound, reserved, eligible: eligible2, completed: Boolean(site?.conqueredTick !== null && site?.conqueredTick !== void 0), navigable, historical: false, worldPosition: copyWire(entrance), entrance: copyWire(entrance), approachAnchor: copyWire(approachAnchor), interactionAnchor: copyWire(interactionAnchor), tier: site?.sizeTier ?? reservation?.parcel?.tier ?? null, floorCount: site?.floorCount ?? (definition?.placement === "generated-interior-family" ? null : 1), ...finale ? { finale: copyWire(finale) } : {}, reviewEncounter, reviewFloor: reviewEncounter ? 1 : null, requiredChunks: required, resident: required.every((p) => resident.has(p.chunkX + "," + p.chunkY)), rejectionReason });
     }
     if (includeRejected) {
-      for (const socket of world.runtime.chunks.flatMap((chunk) => chunk.sites ?? []).sort((a, b) => a.siteId.localeCompare(b.siteId))) {
-        if (ids.has(socket.siteId)) continue;
+      for (const socket of world.runtime.chunks.flatMap((chunk2) => chunk2.sites ?? []).sort((a, b) => a.siteId.localeCompare(b.siteId))) {
+        if (ids2.has(socket.siteId)) continue;
         const entrance = copyWire(socket.entrance), required = [{ chunkX: entrance.chunkX, chunkY: entrance.chunkY }];
         records.push({ version: SITE_TRUTH_D12_4C, siteId: socket.siteId, label: "Raw candidate socket", siteType: "candidate", packageId: null, familyId: null, bound: false, reserved: false, eligible: false, completed: false, navigable: false, historical: false, worldPosition: copyWire(entrance), entrance: copyWire(entrance), approachAnchor: null, interactionAnchor: null, tier: null, floorCount: null, requiredChunks: required, resident: required.every((p) => resident.has(p.chunkX + "," + p.chunkY)), rejectionReason: "unreserved-candidate" });
       }
@@ -20924,9 +20924,9 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
         }
         const size = 8, px = Math.floor(local4.position.x / c.tileSize / size) * size, py = Math.floor(local4.position.y / c.tileSize / size) * size;
         const visualWindowKey = state.d9World && inOverworld ? (() => {
-          const left = px - 40, top = py - 40, right = left + 88, bottom = top + 88, frames = state.d9World.runtime.frames.map((f) => `${f.id}:${f.chunkX},${f.chunkY}:${f.offsetX},${f.offsetY}`).join("|"), chunks = state.d9World.runtime.chunks.flatMap((chunk) => {
-            const p = projectToLocalFrameD9({ chunkX: chunk.chunkX, chunkY: chunk.chunkY, localX: 0, localY: 0 }, state.d9World.runtime.frames);
-            return p && p.x / c.tileSize + 32 > left && p.y / c.tileSize + 26 > top && p.x / c.tileSize < right && p.y / c.tileSize < bottom ? [chunk.identity.id] : [];
+          const left = px - 40, top = py - 40, right = left + 88, bottom = top + 88, frames = state.d9World.runtime.frames.map((f) => `${f.id}:${f.chunkX},${f.chunkY}:${f.offsetX},${f.offsetY}`).join("|"), chunks = state.d9World.runtime.chunks.flatMap((chunk2) => {
+            const p = projectToLocalFrameD9({ chunkX: chunk2.chunkX, chunkY: chunk2.chunkY, localX: 0, localY: 0 }, state.d9World.runtime.frames);
+            return p && p.x / c.tileSize + 32 > left && p.y / c.tileSize + 26 > top && p.x / c.tileSize < right && p.y / c.tileSize < bottom ? [chunk2.identity.id] : [];
           }).sort().join("|");
           return `${frames}/${chunks}`;
         })() : state.d9World?.runtime.revision ?? 0;
@@ -21055,7 +21055,7 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
         const plannedPosition = state.d9World?.plannedWorld && inOverworld ? localFramePositionD9(local4.position, state.d9World.runtime.frames) : null, plannedRegion = plannedPosition ? state.d9World.runtime.chunks.find((c2) => c2.chunkX === plannedPosition.chunkX && c2.chunkY === plannedPosition.chunkY)?.region : null;
         for (const n of [...serviceNpcs].reverse()) exits.unshift({ exitId: n.id, serviceNpcId: n.id, x: n.position.x, y: n.position.y, radius: 72, available: n.available, label: "Talk to " + n.name + " \xB7 " + n.roleLabel });
         const woodlandPilotEvents = state.d9World?.plannedWorld && inOverworld ? WOODLAND_EVENT_PILOT_V3_7.map((event) => {
-          const anchor = state.d9World.runtime.chunks.flatMap((chunk) => chunk.anchors).find((a) => a.ordinal === event.ordinal && isWoodlandPilotEventAnchor(a)), groupId = anchor ? "ordinary:" + anchor.id.split(":").at(-1) : null, group = groupId ? state.groupsById[groupId] : null;
+          const anchor = state.d9World.runtime.chunks.flatMap((chunk2) => chunk2.anchors).find((a) => a.ordinal === event.ordinal && isWoodlandPilotEventAnchor(a)), groupId = anchor ? "ordinary:" + anchor.id.split(":").at(-1) : null, group = groupId ? state.groupsById[groupId] : null;
           return { slotId: event.slotId, state: group?.cleared ? "completed" : group ? "active" : "undiscovered" };
         }) : [];
         cachedModel = Object.freeze({
@@ -22028,7 +22028,7 @@ function createSettlementServicesMenu2(options) {
     if (cls) e.className = cls;
     return e;
   };
-  let npcId = null, mode = "gear", selected = null, line3 = 0, materialQuantity = 1, key2 = null, busy = false, notice = "", confirm = null;
+  let npcId = null, mode = "gear", selected = null, line5 = 0, materialQuantity = 1, key2 = null, busy = false, notice = "", confirm = null;
   const close = () => {
     if (busy) return;
     panel.close();
@@ -22056,7 +22056,7 @@ function createSettlementServicesMenu2(options) {
   function change(m, id) {
     mode = m;
     if (id !== void 0) selected = id;
-    line3 = 0;
+    line5 = 0;
     confirm = null;
     key2 = null;
     refresh(readModel());
@@ -22260,16 +22260,16 @@ function createSettlementServicesMenu2(options) {
           detail.append(el("p", "Select one affix. Executing locks the other lines."));
           r.affixes.forEach((a, index) => {
             const b2 = button((labels[a.key] ?? a.key) + " \xB7 " + a.value, () => {
-              line3 = index;
+              line5 = index;
               key2 = null;
               refresh(readModel());
             }, "line:" + index, "service-card");
             b2.disabled = busy || r.lockedLine !== null && r.lockedLine !== index;
-            b2.setAttribute("aria-pressed", String(line3 === index));
+            b2.setAttribute("aria-pressed", String(line5 === index));
             detail.append(b2);
           });
         }
-        const q = workshopQuote(p, i, mode, line3);
+        const q = workshopQuote(p, i, mode, line5);
         if (typeof q.preview === "string") detail.append(el("p", q.preview));
         if (mode === "resonance") {
           detail.append(el("p", "Current set: " + (r.set ?? "None") + " \xB7 two matching pieces activate the listed bonus; three add the second threshold bonus."));
@@ -22279,7 +22279,7 @@ function createSettlementServicesMenu2(options) {
         const afford = cost(detail, q.gold, q.materials, inv);
         if (q.problem) detail.append(el("p", q.problem, "service-error"));
         const b = button(confirm === i.itemId ? "Confirm " + mode : mode === "shatter" ? "Shatter ordinary gear" : { awaken: "Awaken Star", reforge: "Execute Reforge", enchant: "Infuse Celestial Enchantment", purge: "Purge Enchantments", resonance: "Re-Resonate Set" }[mode], () => {
-          if (confirm === i.itemId) issue("service.modify", { npcId, itemId: i.itemId, operation: mode, line: line3 });
+          if (confirm === i.itemId) issue("service.modify", { npcId, itemId: i.itemId, operation: mode, line: line5 });
           else {
             confirm = i.itemId;
             key2 = null;
@@ -22295,7 +22295,7 @@ function createSettlementServicesMenu2(options) {
     supplyButton.hidden = !m.inventory?.services;
     if (supplyButton.hidden) return;
     supplyButton.textContent = "Rations \xB7 " + supplyCount({ inventory: m.inventory });
-    const next = m.localPlayerId + "/" + m.inventory.revision + "/" + m.playersById[m.localPlayerId].progression.level + "/" + npcId + "/" + mode + "/" + selected + "/" + line3 + "/" + materialQuantity + "/" + busy + "/" + notice + "/" + confirm + "/" + (m.serviceNpcs?.find((n) => n.id === npcId)?.available ?? false);
+    const next = m.localPlayerId + "/" + m.inventory.revision + "/" + m.playersById[m.localPlayerId].progression.level + "/" + npcId + "/" + mode + "/" + selected + "/" + line5 + "/" + materialQuantity + "/" + busy + "/" + notice + "/" + confirm + "/" + (m.serviceNpcs?.find((n) => n.id === npcId)?.available ?? false);
     if (panel.open && key2 !== next) {
       const focus = doc.activeElement?.dataset.serviceAction;
       key2 = next;
@@ -22718,13 +22718,13 @@ function drawCartographyD9(ctx, { pages, pending = [], viewport, width, height, 
       const road = /* @__PURE__ */ new Set();
       for (let py = 0; py < rows; py++) for (let px = 0; px < cols; px++) if (page.tiles[py * cols + px] === "p") road.add(px + "," + py);
       if (road.size && !planned) {
-        const unit3 = Math.min(cw, ch);
+        const unit8 = Math.min(cw, ch);
         ctx.beginPath();
-        addRoadShape(ctx, road, x, y, cw, ch, Math.max(1.5, unit3 * 0.3));
+        addRoadShape(ctx, road, x, y, cw, ch, Math.max(1.5, unit8 * 0.3));
         ctx.fillStyle = "#4b3825";
         ctx.fill();
         ctx.beginPath();
-        addRoadShape(ctx, road, x, y, cw, ch, Math.max(1, unit3 * 0.19));
+        addRoadShape(ctx, road, x, y, cw, ch, Math.max(1, unit8 * 0.19));
         ctx.fillStyle = "#c6aa70";
         ctx.fill();
       }
@@ -22970,7 +22970,7 @@ function createWorldMapD9({ document: doc, environment, port, releaseInput }) {
       gesture.moved ||= Math.hypot(dx, dy) > 1;
       lastKey = null;
     } else if (after.length === 2) {
-      const distance7 = (p) => Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y), ratio = distance7(after) / Math.max(1, distance7(gesture.points));
+      const distance8 = (p) => Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y), ratio = distance8(after) / Math.max(1, distance8(gesture.points));
       if (ratio > 1.5 || ratio < 0.67) {
         const r = large.getBoundingClientRect();
         zoom(ratio > 1 ? -1 : 1, { x: (after[0].x + after[1].x - r.width) / 2, y: (after[0].y + after[1].y - r.height) / 2 });
@@ -23266,10 +23266,10 @@ var defensePaths = /* @__PURE__ */ new Map();
 function drawDungeonDefense(ctx, kind, x, y, size = 18) {
   const icon = DUNGEON_COMBAT_ICONS[kind];
   if (!icon) return;
-  let path4 = defensePaths.get(kind);
-  if (!path4) {
-    path4 = new Path2D(icon.path);
-    defensePaths.set(kind, path4);
+  let path7 = defensePaths.get(kind);
+  if (!path7) {
+    path7 = new Path2D(icon.path);
+    defensePaths.set(kind, path7);
   }
   ctx.save();
   ctx.translate(x - size / 2, y - size / 2);
@@ -23278,14 +23278,14 @@ function drawDungeonDefense(ctx, kind, x, y, size = 18) {
   ctx.lineCap = "round";
   ctx.strokeStyle = "#150e20";
   ctx.lineWidth = 5;
-  ctx.stroke(path4);
+  ctx.stroke(path7);
   ctx.strokeStyle = icon.color;
   ctx.lineWidth = 2.3;
-  ctx.stroke(path4);
+  ctx.stroke(path7);
   if (kind === "block") {
     ctx.fillStyle = "#25445a";
-    ctx.fill(path4);
-    ctx.stroke(path4);
+    ctx.fill(path7);
+    ctx.stroke(path7);
   }
   ctx.restore();
 }
@@ -23855,8 +23855,8 @@ function createProgressionPresentation({ document, readModel, issue }) {
     tabButtons[name] = b;
     tabs.append(b);
   }
-  const header = el("div", "", "mastery-header"), level = el("strong"), balance = el("strong"), xp = el("span"), bar = el("div", "", "mastery-track"), fill = el("div");
-  bar.append(fill);
+  const header = el("div", "", "mastery-header"), level = el("strong"), balance = el("strong"), xp = el("span"), bar = el("div", "", "mastery-track"), fill3 = el("div");
+  bar.append(fill3);
   header.append(level, balance, xp, bar);
   const stage2 = el("div", "", "constellation-stage"), plane = el("div", "", "constellation-plane"), svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"), nodes = el("div", "", "constellation-nodes");
   svg.setAttribute("viewBox", "0 0 1000 1000");
@@ -23934,10 +23934,10 @@ function createProgressionPresentation({ document, readModel, issue }) {
     viewKey = "";
     if (model) refresh(model, !host.hidden);
   }
-  function send(action, extra = {}) {
+  function send(action2, extra = {}) {
     const m = readModel(), d = m.playersById[m.localPlayerId].d8;
     if (!d) return;
-    issue("progression.change", { progressionRevision: d.revision, action, ...extra });
+    issue("progression.change", { progressionRevision: d.revision, action: action2, ...extra });
     confirm = null;
     redraw();
   }
@@ -24032,7 +24032,7 @@ function createProgressionPresentation({ document, readModel, issue }) {
     if (tree !== "utility") {
       const req = masteryRequirement(d[tree].level);
       xp.textContent = `${formatLarge(d[tree].xp)} / ${formatLarge(req)} XP`;
-      fill.style.width = `${integerRatio(d[tree].xp, req) * 100}%`;
+      fill3.style.width = `${integerRatio(d[tree].xp, req) * 100}%`;
     }
     svg.replaceChildren();
     nodes.replaceChildren();
@@ -24042,10 +24042,10 @@ function createProgressionPresentation({ document, readModel, issue }) {
       for (const parent of n.prereqs) {
         const p = ACTIVE_NODES[parent];
         if (!p) continue;
-        const line3 = document.createElementNS(svg.namespaceURI, "line");
-        for (const [k, v] of Object.entries({ x1: p.x * 10, y1: p.y * 10, x2: n.x * 10, y2: n.y * 10 })) line3.setAttribute(k, v);
-        line3.classList.toggle("lit", integerBigInt(nodeRank(d, parent)) > 0n && integerBigInt(nodeRank(d, n.id)) > 0n);
-        svg.append(line3);
+        const line5 = document.createElementNS(svg.namespaceURI, "line");
+        for (const [k, v] of Object.entries({ x1: p.x * 10, y1: p.y * 10, x2: n.x * 10, y2: n.y * 10 })) line5.setAttribute(k, v);
+        line5.classList.toggle("lit", integerBigInt(nodeRank(d, parent)) > 0n && integerBigInt(nodeRank(d, n.id)) > 0n);
+        svg.append(line5);
       }
       const rank2 = nodeRank(d, n.id), offer2 = purchaseAvailability(d, n.id), b = el("button", "", "constellation-node");
       b.type = "button";
@@ -24185,11 +24185,11 @@ function createForgePresentation({ document, issue, invalidate }) {
     }
     const level = e.slotLevels[selected], item = inv.itemsById[inv.equipped[selected]], d = itemDefinition(item);
     details.append(el("h4", label(selected).toUpperCase() + " SLOT ATTUNEMENT"), el("p", `Lv. ${level} / 100`));
-    const progress = document.createElement("progress");
-    progress.max = 100;
-    progress.value = level;
-    progress.setAttribute("aria-label", "Slot attunement");
-    details.append(progress, el("p", "This bonus remains with the slot when gear is replaced.", "tt-muted"));
+    const progress5 = document.createElement("progress");
+    progress5.max = 100;
+    progress5.value = level;
+    progress5.setAttribute("aria-label", "Slot attunement");
+    details.append(progress5, el("p", "This bonus remains with the slot when gear is replaced.", "tt-muted"));
     if (level === 100) details.append(el("p", "MAXIMUM ATTUNEMENT REACHED", "stat-gain"));
     else {
       const cost = attunementCost(level, { inventory: inv }), affordGold = compareAmount(inv.gold, cost.gold) >= 0, affordMaterials = Object.entries(cost.materials).every(([k, v]) => (e.materials[k] ?? 0) >= v), box = el("div", "", "forge-requirements");
@@ -24292,13 +24292,13 @@ function contextActionForModel(model) {
   if (resource) return { kind: "resource.interact", payload: { groupId: resource.groupId, episode: resource.episode, ordinal: resource.ordinal } };
   return null;
 }
-function contextActionLabelForModel(model, action = contextActionForModel(model)) {
-  if (!action) return null;
-  if (action.kind === "loot.pickup") {
-    const drop = model.loot?.find((entry) => entry.sourceEntityId === action.payload.sourceEntityId);
+function contextActionLabelForModel(model, action2 = contextActionForModel(model)) {
+  if (!action2) return null;
+  if (action2.kind === "loot.pickup") {
+    const drop = model.loot?.find((entry) => entry.sourceEntityId === action2.payload.sourceEntityId);
     return drop ? `Pick up: ${itemDefinition(drop).name}` : null;
   }
-  const resource = model.resources?.find((entry) => entry.groupId === action.payload.groupId && entry.episode === action.payload.episode && entry.ordinal === action.payload.ordinal);
+  const resource = model.resources?.find((entry) => entry.groupId === action2.payload.groupId && entry.episode === action2.payload.episode && entry.ordinal === action2.payload.ordinal);
   if (!resource) return null;
   return resource.kind === "chest" ? model.space?.site?.siteKind === "woodland-cave" ? "Open Chest" : "Open chest" : resource.art === "barrel" ? "Break barrel" : resource.art === "urn" ? "Break urn" : "Break pot";
 }
@@ -24355,11 +24355,11 @@ function createInventoryPresentation({ document, environment, readModel, adapter
     img.height = 48;
     return img;
   }
-  function button(caption, action, disabled = false) {
+  function button(caption, action2, disabled = false) {
     const b = element("button", caption);
     b.type = "button";
     b.disabled = disabled;
-    b.addEventListener("click", action);
+    b.addEventListener("click", action2);
     return b;
   }
   function attunementContribution(d, slot, level) {
@@ -24370,11 +24370,11 @@ function createInventoryPresentation({ document, environment, readModel, adapter
   function attunementPanel(d, slot, level, { destination = false } = {}) {
     const panel2 = element("section", "", destination ? "slot-attunement destination-attunement" : "slot-attunement");
     panel2.append(element("small", destination ? "DESTINATION SLOT" : `${label2(slot).toUpperCase()} SLOT ATTUNEMENT`, "slot-label"), element("strong", `Lv. ${level} / 100`));
-    const progress = document.createElement("progress");
-    progress.max = 100;
-    progress.value = level;
-    progress.setAttribute("aria-label", `${label2(slot)} slot attunement level ${level} of 100`);
-    panel2.append(progress, element("p", destination ? "This slot bonus applies while the item is equipped." : "This bonus remains with the slot when gear is replaced.", "tt-muted"));
+    const progress5 = document.createElement("progress");
+    progress5.max = 100;
+    progress5.value = level;
+    progress5.setAttribute("aria-label", `${label2(slot)} slot attunement level ${level} of 100`);
+    panel2.append(progress5, element("p", destination ? "This slot bonus applies while the item is equipped." : "This bonus remains with the slot when gear is replaced.", "tt-muted"));
     if (d) {
       const current = attunementContribution(d, slot, level), next = level < 100 ? attunementContribution(d, slot, level + 1) : current, rows = element("div", "", "attunement-contribution");
       for (const [k, name] of [["attack", "Attack"], ["defense", "Defense"], ["maxHp", "Max HP"]]) if (current[k] || next[k]) rows.append(element("span", `${name} ${current[k] >= 0 ? "+" : ""}${statText(current[k], true)}${level < 100 ? ` \u2192 ${next[k] >= 0 ? "+" : ""}${statText(next[k], true)}` : ""}`));
@@ -24431,9 +24431,9 @@ function createInventoryPresentation({ document, environment, readModel, adapter
   }
   function collect() {
     if (open) return;
-    const action = contextActionForModel(readModel());
-    if (action) {
-      issue(action.kind, action.payload);
+    const action2 = contextActionForModel(readModel());
+    if (action2) {
+      issue(action2.kind, action2.payload);
       restoreGameplayFocus();
     }
   }
@@ -24455,11 +24455,11 @@ function createInventoryPresentation({ document, environment, readModel, adapter
       error = "Inventory changed. Review the item again.";
     }
     const inv = m.inventory, local4 = m.playersById[m.localPlayerId], ready = m.persistence.phase === "encounter" && alive(m), primary = m.primary?.actorsById[local4.entityId], canEquip = ready && !primary?.current && !primary?.held && !primary?.queued;
-    const action = contextActionForModel(m), actionLabel = contextActionLabelForModel(m, action);
-    if (action && actionLabel && !open && ready) {
+    const action2 = contextActionForModel(m), actionLabel = contextActionLabelForModel(m, action2);
+    if (action2 && actionLabel && !open && ready) {
       pickup.hidden = false;
       pickup.textContent = actionLabel;
-      pickup.setAttribute("aria-label", action.kind === "loot.pickup" ? actionLabel.replace("Pick up:", "Pick up") : actionLabel);
+      pickup.setAttribute("aria-label", action2.kind === "loot.pickup" ? actionLabel.replace("Pick up:", "Pick up") : actionLabel);
     }
     const identity2 = `${m.context.campaignId}/${m.localPlayerId}`;
     if (observed?.identity === identity2) {
@@ -24543,15 +24543,15 @@ function createInventoryPresentation({ document, environment, readModel, adapter
         copy.append(element("strong", d2.name, "item-title"), element("small", `${label2(d2.slot).toUpperCase()} \xB7 ${rarity(d2)}`, "item-sub"), element("span", Object.entries(d2.bonuses).filter(([, v]) => v).map(([k, v]) => `${{ attack: "ATK", defense: "DEF", maxHp: "HP" }[k]} +${statText(v)}`).join(" | ") || "No stat bonus", "item-sub gear-bonuses"));
         inspectButton.append(icon(itemArtKey(item2)), copy);
         row2.append(inspectButton);
-        const target = d2.slot === "ring" ? "ring1" : d2.slot, preview = equipmentComparison(inv, item2.itemId, target, local4.progression.totalXp, local4.d8), allowed = equipmentLevelAllowed(owner, item2), required = equipmentRequiredLevel(owner, item2), action2 = button(!allowed ? `REQUIRES LV. ${required}` : d2.slot === "ring" ? "EQUIP \u2026" : preview.displaced.length ? "SWAP" : "EQUIP", () => {
+        const target = d2.slot === "ring" ? "ring1" : d2.slot, preview = equipmentComparison(inv, item2.itemId, target, local4.progression.totalXp, local4.d8), allowed = equipmentLevelAllowed(owner, item2), required = equipmentRequiredLevel(owner, item2), action3 = button(!allowed ? `REQUIRES LV. ${required}` : d2.slot === "ring" ? "EQUIP \u2026" : preview.displaced.length ? "SWAP" : "EQUIP", () => {
           if (d2.slot === "ring") select(item2.itemId, inspectButton);
           else issue("equipment.equip", { itemId: item2.itemId, slot: target });
         }, !allowed);
-        action2.className = "row-action action-equip";
-        action2.dataset.equipmentAction = "";
-        action2.dataset.equipItemId = item2.itemId;
-        action2.setAttribute("aria-label", !allowed ? `${d2.name} requires hero level ${required}` : `${d2.slot === "ring" ? "Choose ring slot for" : "Equip"} ${d2.name}`);
-        row2.append(action2);
+        action3.className = "row-action action-equip";
+        action3.dataset.equipmentAction = "";
+        action3.dataset.equipItemId = item2.itemId;
+        action3.setAttribute("aria-label", !allowed ? `${d2.name} requires hero level ${required}` : `${d2.slot === "ring" ? "Choose ring slot for" : "Equip"} ${d2.name}`);
+        row2.append(action3);
         list.append(row2);
       }
       if (inv.subweapons) {
@@ -24578,7 +24578,7 @@ function createInventoryPresentation({ document, environment, readModel, adapter
     document.getElementById("world-bag-title").textContent = section === "forge" ? "BLACKSMITH FORGE" : "INVENTORY";
     forge.render(m, section);
     status.textContent = error || (section === "forge" ? "Attunement is permanent. Each press applies one level." : !canEquip ? "Finish your swing before changing equipment." : combatPlayer(owner) ? "Higher-level enemies resist attacks. Large level gaps reduce XP. The world keeps moving." : "The world keeps moving while your Bag is open.");
-    for (const action2 of panel.querySelectorAll("[data-equipment-action]")) action2.disabled = !canEquip || Boolean(action2.dataset.equipItemId && !equipmentLevelAllowed(owner, inv.itemsById[action2.dataset.equipItemId]));
+    for (const action3 of panel.querySelectorAll("[data-equipment-action]")) action3.disabled = !canEquip || Boolean(action3.dataset.equipItemId && !equipmentLevelAllowed(owner, inv.itemsById[action3.dataset.equipItemId]));
     for (const card of panel.querySelectorAll("[data-item-id]")) card.setAttribute("aria-pressed", String(inspect && card.dataset.itemId === selected));
     panel.classList.toggle("is-inspecting", inspect);
     panel.dataset.section = section;
@@ -24649,10 +24649,10 @@ function createInventoryPresentation({ document, environment, readModel, adapter
       }
       if (delta3.childElementCount === 1) delta3.append(element("p", "No net difference.", "tt-muted"));
       candidate.append(delta3);
-      const allowed = equipmentLevelAllowed(owner, item), required = equipmentRequiredLevel(owner, item), action2 = button(!allowed ? `Requires hero level ${required}` : `${preview.displaced.length ? "Swap" : "Equip"}${d.slot === "ring" ? ` to ${label2(target)}` : ""}`, () => issue("equipment.equip", { itemId: item.itemId, slot: target }), !canEquip || !allowed);
-      action2.className = "equip-action";
-      action2.dataset.action = target;
-      candidate.append(action2);
+      const allowed = equipmentLevelAllowed(owner, item), required = equipmentRequiredLevel(owner, item), action3 = button(!allowed ? `Requires hero level ${required}` : `${preview.displaced.length ? "Swap" : "Equip"}${d.slot === "ring" ? ` to ${label2(target)}` : ""}`, () => issue("equipment.equip", { itemId: item.itemId, slot: target }), !canEquip || !allowed);
+      action3.className = "equip-action";
+      action3.dataset.action = target;
+      candidate.append(action3);
       if (item.sourceEntityId !== null) {
         const drop = button("Drop", () => {
           issue("gear.drop", { itemId: item.itemId });
@@ -25056,8 +25056,8 @@ function createCamera() {
     const snap = !Number.isFinite(Number(time)) || lastTime === null || elapsed <= 0 || elapsed >= SNAP_GAP_MS || current.spaceKey !== key2 || lastWidth !== width || lastHeight !== height || current.zoom !== zoom || actorJump >= SNAP_DISTANCE;
     if (snap) current = Object.freeze({ ...target, zoom, spaceKey: key2 });
     else {
-      const goal = (value, wanted, zone) => Math.abs(wanted - value) <= zone ? value : wanted - Math.sign(wanted - value) * zone, alpha = 1 - Math.exp(-elapsed / FOLLOW_TIME_MS), clamp25 = (value, map, view) => c.endless ? value : map <= view ? (map - view) / 2 : Math.max(0, Math.min(map - view, value));
-      current = Object.freeze({ x: clamp25(current.x + (goal(current.x, target.x, DEAD_ZONE_X) - current.x) * alpha, mapWidth, viewWidth), y: clamp25(current.y + (goal(current.y, target.y, DEAD_ZONE_Y) - current.y) * alpha, mapHeight, viewHeight), zoom, spaceKey: key2 });
+      const goal = (value, wanted, zone) => Math.abs(wanted - value) <= zone ? value : wanted - Math.sign(wanted - value) * zone, alpha = 1 - Math.exp(-elapsed / FOLLOW_TIME_MS), clamp32 = (value, map, view) => c.endless ? value : map <= view ? (map - view) / 2 : Math.max(0, Math.min(map - view, value));
+      current = Object.freeze({ x: clamp32(current.x + (goal(current.x, target.x, DEAD_ZONE_X) - current.x) * alpha, mapWidth, viewWidth), y: clamp32(current.y + (goal(current.y, target.y, DEAD_ZONE_Y) - current.y) * alpha, mapHeight, viewHeight), zoom, spaceKey: key2 });
     }
     lastTime = Number.isFinite(Number(time)) ? Number(time) : null;
     lastWidth = width;
@@ -25160,9 +25160,9 @@ function path2(c, points) {
   for (const p of points.slice(1)) c.lineTo(p.x, p.y);
   c.closePath();
 }
-function polygon15(c, points, fill, outline = true) {
+function polygon15(c, points, fill3, outline = true) {
   path2(c, points);
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.fill();
   if (outline) {
     c.strokeStyle = INK27;
@@ -25170,9 +25170,9 @@ function polygon15(c, points, fill, outline = true) {
     c.stroke();
   }
 }
-function finish(c, shape, fill, flash, planes) {
+function finish(c, shape, fill3, flash, planes) {
   shape(c);
-  c.fillStyle = color25(flash, fill);
+  c.fillStyle = color25(flash, fill3);
   c.fill();
   if (!flash && planes) {
     c.save();
@@ -25652,18 +25652,18 @@ function traceSlamCrack(c, crack, reveal) {
   }
   c.stroke();
 }
-function slamTelegraph(c, row2, tick, progress) {
-  const radius = row2.radius, flash = Math.max(0, (progress - 0.9) / 0.1), spread = progress * progress * (3 - 2 * progress);
+function slamTelegraph(c, row2, tick, progress5) {
+  const radius = row2.radius, flash = Math.max(0, (progress5 - 0.9) / 0.1), spread = progress5 * progress5 * (3 - 2 * progress5);
   c.save();
   c.translate(row2.position.x, row2.position.y);
-  c.globalAlpha = 0.055 + progress * 0.075 + flash * 0.08;
+  c.globalAlpha = 0.055 + progress5 * 0.075 + flash * 0.08;
   c.fillStyle = DANGER;
   c.beginPath();
   c.ellipse(0, 0, radius, radius, 0, 0, TAU31);
   c.fill();
-  c.globalAlpha = 0.48 + progress * 0.38;
+  c.globalAlpha = 0.48 + progress5 * 0.38;
   c.strokeStyle = flash > 0 ? "#ffd789" : DANGER;
-  c.lineWidth = 2 + progress * 1.5;
+  c.lineWidth = 2 + progress5 * 1.5;
   for (const segment7 of SLAM_RIM_SEGMENTS) {
     c.beginPath();
     c.ellipse(0, 0, radius, radius, 0, segment7[0], segment7[1]);
@@ -25674,12 +25674,12 @@ function slamTelegraph(c, row2, tick, progress) {
   for (const crack of SLAM_CRACKS) {
     const reveal = Math.max(0, (spread - crack.delay) / (1 - crack.delay));
     if (reveal <= 0) continue;
-    c.globalAlpha = 0.5 + progress * 0.35;
+    c.globalAlpha = 0.5 + progress5 * 0.35;
     c.strokeStyle = "#60301f";
     c.lineWidth = 3;
     traceSlamCrack(c, crack, reveal);
-    if (progress > 0.62) {
-      c.globalAlpha = (progress - 0.62) / 0.38 * (0.45 + flash * 0.35);
+    if (progress5 > 0.62) {
+      c.globalAlpha = (progress5 - 0.62) / 0.38 * (0.45 + flash * 0.35);
       c.strokeStyle = flash > 0 ? "#ffd37c" : "#e98738";
       c.lineWidth = 1.25 + flash;
       traceSlamCrack(c, crack, reveal);
@@ -25697,14 +25697,14 @@ function slamTelegraph(c, row2, tick, progress) {
   }
   c.restore();
 }
-function rootSnareTelegraph(c, row2, tick, progress) {
+function rootSnareTelegraph(c, row2, tick, progress5) {
   const rx = row2.radius, ry = row2.radius;
   c.save();
   c.translate(row2.position.x, row2.position.y);
-  c.globalAlpha = 0.25 + 0.6 * progress;
+  c.globalAlpha = 0.25 + 0.6 * progress5;
   c.fillStyle = "#386c3455";
   c.strokeStyle = ELDRITCH;
-  c.lineWidth = 2 + progress * 2;
+  c.lineWidth = 2 + progress5 * 2;
   c.beginPath();
   c.ellipse(0, 0, rx, ry, 0, 0, TAU31);
   c.fill();
@@ -25714,7 +25714,7 @@ function rootSnareTelegraph(c, row2, tick, progress) {
   c.strokeStyle = WEB;
   c.lineWidth = 1.5;
   c.beginPath();
-  c.ellipse(0, 0, rx * (0.45 + 0.55 * progress), ry * (0.45 + 0.55 * progress), 0, 0, TAU31);
+  c.ellipse(0, 0, rx * (0.45 + 0.55 * progress5), ry * (0.45 + 0.55 * progress5), 0, 0, TAU31);
   c.stroke();
   c.setLineDash([]);
   c.strokeStyle = WEB;
@@ -25729,9 +25729,9 @@ function rootSnareTelegraph(c, row2, tick, progress) {
   c.restore();
 }
 function telegraph(c, row2, tick) {
-  const progress = Math.max(0, Math.min(1, (tick - row2.startedTick) / (row2.resolvesTick - row2.startedTick)));
-  if (row2.ability === "slam") slamTelegraph(c, row2, tick, progress);
-  else rootSnareTelegraph(c, row2, tick, progress);
+  const progress5 = Math.max(0, Math.min(1, (tick - row2.startedTick) / (row2.resolvesTick - row2.startedTick)));
+  if (row2.ability === "slam") slamTelegraph(c, row2, tick, progress5);
+  else rootSnareTelegraph(c, row2, tick, progress5);
 }
 function rootWeb(c, row2, tick) {
   const fade = Math.max(0, Math.min(1, row2.ageTicks / 10, row2.remainingTicks / 20)), rx = row2.geometry.radiusX, ry = row2.geometry.radiusY, seed2 = parseInt(row2.hazardId.slice(-8), 16) >>> 0;
@@ -25748,11 +25748,11 @@ function rootWeb(c, row2, tick) {
   c.strokeStyle = WEB;
   c.lineWidth = 1.7;
   c.stroke();
-  for (let ring = 1; ring <= 3; ring++) {
-    c.strokeStyle = ring % 2 ? ELDRITCH : WEB;
+  for (let ring2 = 1; ring2 <= 3; ring2++) {
+    c.strokeStyle = ring2 % 2 ? ELDRITCH : WEB;
     c.lineWidth = 1.2;
     c.beginPath();
-    c.ellipse(0, 0, rx * ring / 4, ry * ring / 4, 0, 0, TAU31);
+    c.ellipse(0, 0, rx * ring2 / 4, ry * ring2 / 4, 0, 0, TAU31);
     c.stroke();
   }
   for (let i = 0; i < 10; i++) {
@@ -25851,8 +25851,8 @@ function createBossPolishPresentation() {
     for (const row2 of model.bossHazards?.aegisTelegraphs ?? []) if (live.has(row2.bossId)) warnings.set(row2.bossId, { ability: row2.ability, angle: row2.angle, resolvesTick: row2.resolvesTick });
     for (const row2 of currentImpacts(model, tick)) {
       if (retained.has(row2.id)) continue;
-      const warning = warnings.get(row2.bossId);
-      if (warning?.ability === row2.ability && warning.resolvesTick === row2.resolvedTick) row2.angle = warning.angle;
+      const warning2 = warnings.get(row2.bossId);
+      if (warning2?.ability === row2.ability && warning2.resolvesTick === row2.resolvedTick) row2.angle = warning2.angle;
       retained.set(row2.id, Object.freeze({ ...row2, position: Object.freeze(row2.position) }));
     }
     for (const [id, row2] of retained) if (!live.has(row2.bossId) || tick - row2.resolvedTick >= 42 || tick < row2.resolvedTick) retained.delete(id);
@@ -25870,12 +25870,12 @@ function createBossPolishPresentation() {
 function impacts(model, tick) {
   return model.bossHazards?.polishImpacts ?? currentImpacts(model, tick);
 }
-function poly(c, p, fill, edge = INK29, width = 1.26) {
+function poly(c, p, fill3, edge = INK29, width = 1.26) {
   c.beginPath();
   c.moveTo(...p[0]);
   for (const v of p.slice(1)) c.lineTo(...v);
   c.closePath();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.fill();
   if (edge) {
     c.strokeStyle = edge;
@@ -26240,9 +26240,9 @@ function drawAegisProjectileTrails(c, model, tick) {
     const speed = Math.hypot(p.velocity.x, p.velocity.y);
     if (!Number.isFinite(speed) || speed < 1e-3) continue;
     const dx = p.velocity.x / speed, dy = p.velocity.y / speed, nx = -dy, ny = dx, tip = { x: p.position.x, y: p.position.y - 18 }, length = 14 + Math.min(speed, 5.5) * 3;
-    const tail = { x: tip.x - dx * length, y: tip.y - dy * length };
-    poly(c, [[tip.x + nx * 5, tip.y + ny * 5], [tail.x + nx, tail.y + ny], [tail.x - dx * 5, tail.y - dy * 5], [tip.x - nx * 5, tip.y - ny * 5]], "#51cad34d", null);
-    stroke(c, [[tail.x, tail.y], [tip.x, tip.y]], "#62e4e7a3", 2);
+    const tail2 = { x: tip.x - dx * length, y: tip.y - dy * length };
+    poly(c, [[tip.x + nx * 5, tip.y + ny * 5], [tail2.x + nx, tail2.y + ny], [tail2.x - dx * 5, tail2.y - dy * 5], [tip.x - nx * 5, tip.y - ny * 5]], "#51cad34d", null);
+    stroke(c, [[tail2.x, tail2.y], [tip.x, tip.y]], "#62e4e7a3", 2);
     for (let i = 0; i < 2; i++) {
       const q = (tick - (p.firedTick ?? 0) + i * 7) % 16 / 16, x = tip.x - dx * length * q + nx * (i ? 4 : -4), y = tip.y - dy * length * q + ny * (i ? 4 : -4);
       c.save();
@@ -26254,13 +26254,4149 @@ function drawAegisProjectileTrails(c, model, tick) {
   c.restore();
 }
 
-// src/client/recovered_boss_presentation_v1.js
+// src/client/boss_presentation_corrosive_shedding_v2.js
 var TAU33 = Math.PI * 2;
-var circle2 = (c, x, y, r, fill, stroke2 = null, width = 1) => {
+var INK30 = "#11151a";
+var BASE = "#369a63";
+var LIGHT3 = "#75c988";
+var DEEP = "#143e30";
+var clamp20 = (v) => Math.max(0, Math.min(1, v));
+var ease2 = (v) => {
+  v = clamp20(v);
+  return v * v * (3 - 2 * v);
+};
+var mix14 = (a, b, p) => a + (b - a) * p;
+var point4 = (x, y) => ({ x, y });
+var unit3 = (x, y) => {
+  const d = Math.hypot(x, y) || 1;
+  return point4(x / d, y / d);
+};
+var distance6 = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+var hash6 = (s) => {
+  let h = 2166136261;
+  for (const ch of String(s)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  return h >>> 0;
+};
+function ellipse2(c, x, y, rx, ry, color27, outline = false) {
   c.beginPath();
-  c.arc(x, y, r, 0, TAU33);
-  if (fill) {
-    c.fillStyle = fill;
+  c.ellipse(x, y, Math.max(0.01, rx), Math.max(0.01, ry), 0, 0, TAU33);
+  c.fillStyle = color27;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK30;
+    c.lineWidth = 1.26;
+    c.stroke();
+  }
+}
+function fill(c, color27, outline = false) {
+  c.fillStyle = color27;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK30;
+    c.lineWidth = 1.26;
+    c.lineJoin = "round";
+    c.stroke();
+  }
+}
+function capsule(c, a, b, r) {
+  const angle3 = Math.atan2(b.y - a.y, b.x - a.x), nx = -Math.sin(angle3) * r, ny = Math.cos(angle3) * r;
+  c.moveTo(a.x + nx, a.y + ny);
+  c.lineTo(b.x + nx, b.y + ny);
+  c.arc(b.x, b.y, r, angle3 + Math.PI / 2, angle3 - Math.PI / 2, true);
+  c.lineTo(a.x - nx, a.y - ny);
+  c.arc(a.x, a.y, r, angle3 - Math.PI / 2, angle3 + Math.PI / 2, true);
+  c.closePath();
+}
+function footprint(c, rows) {
+  c.beginPath();
+  for (const r of rows) capsule(c, r.from, r.to, r.radius);
+}
+function sampleChain(rows) {
+  const points = [];
+  let length = 0;
+  for (const row2 of rows) {
+    const d = distance6(row2.from, row2.to), steps = Math.max(1, Math.ceil(d / 7));
+    if (!points.length) points.push({ ...row2.from, s: 0, r: row2.radius, expiresTick: row2.expiresTick });
+    for (let i = 1; i <= steps; i++) points.push({ x: mix14(row2.from.x, row2.to.x, i / steps), y: mix14(row2.from.y, row2.to.y, i / steps), s: length + d * i / steps, r: row2.radius, expiresTick: row2.expiresTick });
+    length += d;
+  }
+  for (let i = 0; i < points.length; i++) {
+    const a = points[Math.max(0, i - 1)], b = points[Math.min(points.length - 1, i + 1)], u = unit3(b.x - a.x, b.y - a.y);
+    points[i].nx = -u.y;
+    points[i].ny = u.x;
+  }
+  return points;
+}
+function bankPath(c, points, width, offset2, seed2) {
+  if (points.length < 2) return;
+  const edge = (p, side) => {
+    const irregular = 0.88 + 0.075 * Math.sin(p.x * 0.065 + p.y * 0.049 + seed2) + 0.045 * Math.sin(p.x * 0.14 - p.y * 0.08);
+    const w = p.r * width * irregular, shift = p.r * offset2;
+    return point4(p.x + p.nx * (shift + side * w), p.y + p.ny * (shift + side * w));
+  };
+  const left = points.map((p) => edge(p, 1)), right = points.map((p) => edge(p, -1));
+  c.beginPath();
+  c.moveTo(left[0].x, left[0].y);
+  for (let i = 1; i < left.length; i++) c.lineTo(left[i].x, left[i].y);
+  const end = points.at(-1), u = unit3(end.x - points.at(-2).x, end.y - points.at(-2).y), tip = point4(end.x + u.x * end.r * 0.7, end.y + u.y * end.r * 0.7);
+  c.quadraticCurveTo(tip.x, tip.y, right.at(-1).x, right.at(-1).y);
+  for (let i = right.length - 2; i >= 0; i--) c.lineTo(right[i].x, right[i].y);
+  const start = points[0], v = unit3(points[1].x - start.x, points[1].y - start.y);
+  c.quadraticCurveTo(start.x - v.x * start.r * 0.7, start.y - v.y * start.r * 0.7, left[0].x, left[0].y);
+  c.closePath();
+}
+function chains(rows) {
+  const result = [], previous = /* @__PURE__ */ new Map();
+  for (const row2 of [...rows].sort((a, b) => a.createdTick - b.createdTick || String(a.id).localeCompare(String(b.id)))) {
+    const key2 = String(row2.chainId ?? row2.sourceEntityId) + "/" + row2.kind;
+    const old2 = previous.get(key2);
+    if (old2 && distance6(old2.at(-1).to, row2.from) < 0.01) old2.push(row2);
+    else {
+      const list = [row2];
+      result.push(list);
+      previous.set(key2, list);
+    }
+  }
+  return result;
+}
+function ageGradient(c, chain, tick, rgb, minimum, maximum, span = 90) {
+  const first = chain[0], last = chain.find((r) => r.expiresTick - tick >= span) ?? chain.at(-1), a = first.from, b = last.to;
+  const alpha = (row2) => mix14(minimum, maximum, ease2((row2.expiresTick - tick) / span));
+  if (distance6(a, b) < 0.1) return `rgba(${rgb},${alpha(last)})`;
+  const gradient = c.createLinearGradient(a.x, a.y, b.x, b.y);
+  gradient.addColorStop(0, `rgba(${rgb},${alpha(first)})`);
+  gradient.addColorStop(1, `rgba(${rgb},${alpha(last)})`);
+  return gradient;
+}
+function drawCorrosiveTrails(c, rows, tick) {
+  const live = rows.flatMap((block) => (block.segments ?? []).map((segment7) => ({ ...segment7, id: block.id + "/" + segment7.sequence, sourceEntityId: block.sourceEntityId, kind: block.kind, radius: block.radius }))).filter((r) => r.createdTick <= tick && r.expiresTick > tick && r.from && r.to && r.radius > 0);
+  for (const chain of chains(live)) {
+    const slag = chain[0].kind === "slag", points = sampleChain(chain), seed2 = hash6(chain[0].chainId ?? chain[0].sourceEntityId) % 97;
+    if (points.length < 2) continue;
+    c.save();
+    footprint(c, chain);
+    c.clip();
+    footprint(c, chain);
+    fill(c, ageGradient(c, chain, tick, slag ? "77,56,46" : "38,60,38", 0.16, 0.48));
+    footprint(c, chain);
+    fill(c, ageGradient(c, chain, tick, slag ? "121,80,45" : "63,96,50", 0.07, 1));
+    {
+      c.save();
+      bankPath(c, points, 0.96, -0.045, seed2);
+      fill(c, ageGradient(c, chain, tick, slag ? "151,102,46" : "84,126,60", 0, 1));
+      bankPath(c, points, 0.48, -0.12, seed2 + 2);
+      fill(c, ageGradient(c, chain, tick, slag ? "184,137,64" : "114,154,73", 0, 0.65));
+      c.strokeStyle = ageGradient(c, chain, tick, slag ? "205,161,92" : "164,195,118", 0, 0.58);
+      c.lineWidth = 0.68;
+      c.lineCap = "round";
+      for (const offset2 of [-0.34, 0.23]) {
+        let open = false, streak = -1;
+        c.beginPath();
+        for (const p of points) {
+          const period = offset2 < 0 ? 46 : 61, start = p.s + seed2 * 2 + (offset2 < 0 ? 0 : 23), run = Math.floor(start / period), on = start % period < (offset2 < 0 ? 29 : 18);
+          if (!on) {
+            open = false;
+            continue;
+          }
+          const w = p.r * (offset2 + 0.045 * Math.sin(p.s * 0.085 + seed2)), x = p.x + p.nx * w, y = p.y + p.ny * w;
+          if (!open || streak !== run) {
+            c.moveTo(x, y);
+            open = true;
+            streak = run;
+          } else c.lineTo(x, y);
+        }
+        c.stroke();
+      }
+      c.globalAlpha *= 0.58;
+      for (let i = 4; i < points.length; i += 19) {
+        const p = points[i];
+        if (p.expiresTick - tick < 72) continue;
+        const pulse = 0.75 + 0.15 * Math.sin(tick * 0.06 + i), w = p.r * 0.45;
+        ellipse2(c, p.x + p.nx * w, p.y + p.ny * w, 0.72 * pulse, 0.48 * pulse, slag ? "#e8b970" : "#c9e399");
+      }
+      c.restore();
+    }
+    c.restore();
+  }
+}
+function approvedMinion(c, row2, tick, { scaleX = 1, scaleY = 1, alpha = 1, flash = false } = {}) {
+  const family = row2.enemyFamily, profile = creaturePresentationForRenderV3(family), frame = profile?.painterFrame, painter = CREATURE_PAINTERS_D11[family];
+  if (!profile || !painter) return;
+  const melee = typeof row2.meleePhase === "object" ? row2.meleePhase : null, span = Math.max(1, (melee?.phaseEndsTick ?? tick) - (melee?.phaseStartedTick ?? tick));
+  const attack = hostileMeleePose({ ...row2, alive: true, meleePhase: melee }, tick), seed2 = (row2.visualSeed ?? hash6(row2.id)) >>> 0;
+  const m = { x: frame.x, y: frame.y, w: frame.width, h: frame.height, flashTimer: flash ? 1 : 0, movedLastTick: !!row2.movedLastTick, meleePhase: melee, phaseProgress: melee ? clamp20((tick - melee.phaseStartedTick) / span) : 0, meleeAction: !!attack, familyAttack: attack, deathProgress: 0, presentationTick: tick, motionBlend: row2.movedLastTick ? 1 : 0, stepPhase: tick * 0.66 + seed2 % 17 * 0.13, paletteKey: profile.paletteKey };
+  c.save();
+  c.translate(row2.position.x, row2.position.y);
+  c.globalAlpha *= alpha;
+  c.scale(scaleX, scaleY);
+  if (attack) {
+    c.translate(attack.body.x, attack.body.y);
+    if (attack.bodyPivot) c.translate(attack.bodyPivot.x, attack.bodyPivot.y);
+    c.rotate(attack.body.rotation);
+    c.scale(attack.body.scaleX, attack.body.scaleY);
+    if (attack.bodyPivot) c.translate(-attack.bodyPivot.x, -attack.bodyPivot.y);
+  }
+  c.scale((row2.presentationFacingX ?? (Math.cos(row2.facingAngle ?? 0) < 0 ? -1 : 1)) === -1 ? -1 : 1, 1);
+  c.translate(profile.drawOffset.x, profile.drawOffset.y);
+  c.scale(profile.visualScale, profile.visualScale);
+  c.lineJoin = "round";
+  c.lineCap = "round";
+  c.strokeStyle = INK30;
+  c.lineWidth = 1.26 / profile.visualScale;
+  painter(c, m, tick * 1e3 / 60, seed2);
+  c.restore();
+}
+var shedRows = (actor) => actor.boss?.recentRuptures ?? (actor.boss?.lastRupture ? [actor.boss.lastRupture] : []);
+var visibleShed = (row2, tick) => row2.createdTick <= tick && tick - row2.createdTick < 40 && (row2.spawnedMinionIds?.length ?? row2.chunkCount) > 0;
+var tearOffset = (row2) => row2.bodyOriginPosition ? point4(row2.originPosition.x - row2.bodyOriginPosition.x, row2.originPosition.y - row2.bodyOriginPosition.y) : point4(row2.direction.x * 26, row2.direction.y * 26);
+function applyCorrosiveRupturePose(actor, tick, pose) {
+  if (actor.alive === false) return pose;
+  const row2 = shedRows(actor).filter((r) => visibleShed(r, tick)).sort((a, b) => b.createdTick - a.createdTick || b.damageSequence - a.damageSequence)[0];
+  if (!row2) return pose;
+  const age = tick - row2.createdTick, d = row2.direction, kick = (1 - ease2(age / 23)) * (1 + Math.min(2, (row2.spawnedMinionIds?.length ?? row2.chunkCount) - 1) * 0.12);
+  return { ...pose, bodyX: pose.bodyX - d.x * 4.8 * kick, bodyY: pose.bodyY - d.y * 2.8 * kick + 1.1 * kick, top: pose.top + 2.2 * kick, width: pose.width * (1 - 0.025 * kick) };
+}
+function drawCorrosiveBodyRuptures(c, actor, tick) {
+  for (const row2 of shedRows(actor).filter((r) => visibleShed(r, tick)).slice(-3)) {
+    const age = tick - row2.createdTick, open = 1 - ease2((age - 5) / 23), d = row2.direction;
+    if (open <= 0 || d.y < -0.65) continue;
+    const count = row2.spawnedMinionIds?.length ?? row2.chunkCount, w = 5 + Math.min(3, count) * 1.1;
+    const local4 = tearOffset(row2);
+    c.save();
+    c.translate(local4.x, local4.y - 33);
+    c.rotate(Math.atan2(d.y, d.x));
+    c.globalAlpha *= Math.min(1, open * 2.4);
+    c.beginPath();
+    c.moveTo(-3 * open, -w);
+    c.quadraticCurveTo(5 * open, -w * 0.63, 3.5 * open, 0);
+    c.quadraticCurveTo(4 * open, w * 0.52, -2 * open, w);
+    c.quadraticCurveTo(-7 * open, w * 0.22, -3 * open, -w);
+    c.closePath();
+    fill(c, DEEP, true);
+    c.beginPath();
+    c.moveTo(-3 * open, -w);
+    c.quadraticCurveTo(-7 * open, -w * 0.2, -2 * open, w);
+    c.quadraticCurveTo(-4 * open, w * 0.1, -1 * open, -w * 0.7);
+    c.closePath();
+    fill(c, LIGHT3);
+    c.beginPath();
+    c.moveTo(2 * open, -w * 0.7);
+    c.quadraticCurveTo(7 * open, -w * 0.25, 3 * open, 1);
+    c.quadraticCurveTo(4 * open, w * 0.6, 1 * open, w * 0.8);
+    c.strokeStyle = "#a1d893";
+    c.lineWidth = 0.8;
+    c.stroke();
+    c.restore();
+  }
+}
+function minionPose(row2, tick) {
+  const air = clamp20((tick - row2.spawnedTick) / Math.max(1, row2.landsTick - row2.spawnedTick));
+  const landing = clamp20((tick - row2.landsTick) / Math.max(1, row2.activatesTick - row2.landsTick));
+  const height = (1 - air) * 33 + 4 * air * (1 - air) * (31 + (row2.volleyOrdinal ?? 0) * 2.5);
+  const launch = unit3(row2.landingPosition.x - row2.originPosition.x, row2.landingPosition.y - row2.originPosition.y);
+  return { air, landing, height, launch, age: tick - row2.spawnedTick, terminalAge: row2.stage === "dissolving" ? tick - (row2.retireTick - 24) : null };
+}
+function splatPath(c, r, seed2) {
+  c.beginPath();
+  for (let i = 0; i <= 16; i++) {
+    const a = i / 16 * TAU33, w = 1 + 0.11 * Math.sin(i * 2.7 + seed2) + 0.06 * Math.sin(i * 1.8), x = Math.cos(a) * r * w, y = Math.sin(a) * r * 0.42 * w;
+    i ? c.lineTo(x, y) : c.moveTo(x, y);
+  }
+  c.closePath();
+}
+function drawCorrosiveMinionGround(c, rows, tick) {
+  for (const row2 of rows) {
+    const pose = minionPose(row2, tick), slag = row2.enemyFamily === "slag_slime";
+    if (pose.age < 0) continue;
+    c.save();
+    c.translate(row2.position.x, row2.position.y);
+    if (row2.stage === "airborne") ellipse2(c, 0, 2, 8 - pose.height * 0.025, 2.7 - pose.height * 8e-3, "#121b1750");
+    else if (row2.stage === "coalescing") {
+      const q = pose.landing, r = 15 - 5 * ease2(q);
+      c.globalAlpha *= 1 - ease2((q - 0.55) / 0.45);
+      splatPath(c, r, hash6(row2.id));
+      fill(c, slag ? "#b86b31" : "#419e55", true);
+      splatPath(c, r * 0.72, hash6(row2.id));
+      fill(c, slag ? "#eba245" : "#91d67b");
+      for (let i = 0; i < 4; i++) {
+        const a = i * 1.7 + hash6(row2.id) % 5, d = 14 + q * 11;
+        c.strokeStyle = slag ? "#d98d3c" : "#a6dc86";
+        c.lineWidth = 0.9;
+        c.beginPath();
+        c.moveTo(Math.cos(a) * d, Math.sin(a) * d * 0.45);
+        c.lineTo(Math.cos(a) * (d + 3 * (1 - q)), Math.sin(a) * (d + 3 * (1 - q)) * 0.45);
+        c.stroke();
+      }
+    } else if (row2.stage === "active") ellipse2(c, 0, 2, 11, 3, "#0a0e0f33");
+    else if (row2.stage === "dissolving") {
+      const q = clamp20(pose.terminalAge / 24);
+      c.globalAlpha *= 1 - q;
+      splatPath(c, 12 + q * 5, hash6(row2.id));
+      fill(c, slag ? "#7a4c30" : "#386e42");
+    }
+    c.restore();
+  }
+}
+function strand(c, root, tip, amount) {
+  if (amount <= 0) return;
+  const d = unit3(tip.x - root.x, tip.y - root.y), n = point4(-d.y, d.x), w = 3.8 * amount, thin = 0.8 * amount, m = point4(mix14(root.x, tip.x, 0.55), mix14(root.y, tip.y, 0.55) + 5 * amount);
+  c.beginPath();
+  c.moveTo(root.x + n.x * w, root.y + n.y * w);
+  c.quadraticCurveTo(m.x + n.x * w * 0.4, m.y + n.y * w * 0.4, tip.x + n.x * thin, tip.y + n.y * thin);
+  c.lineTo(tip.x - n.x * thin, tip.y - n.y * thin);
+  c.quadraticCurveTo(m.x - n.x * w * 0.4, m.y - n.y * w * 0.4, root.x - n.x * w, root.y - n.y * w);
+  c.closePath();
+  fill(c, BASE, true);
+  c.strokeStyle = LIGHT3;
+  c.lineWidth = 0.8 * amount;
+  c.beginPath();
+  c.moveTo(root.x - n.x * w * 0.4, root.y - n.y * w * 0.4);
+  c.quadraticCurveTo(m.x, m.y, tip.x, tip.y);
+  c.stroke();
+}
+function chunk(c, row2, pose) {
+  const slag = row2.enemyFamily === "slag_slime", q = pose.air, w = 7.5 + Math.sin(q * Math.PI) * 1.3, h = 6.7 + Math.sin(q * Math.PI) * 1.5;
+  c.save();
+  c.translate(row2.position.x, row2.position.y - pose.height);
+  c.rotate(Math.atan2(pose.launch.y, pose.launch.x) * 0.35 + Math.sin(q * Math.PI) * 0.6 * ((row2.volleyOrdinal ?? 0) % 2 ? -1 : 1));
+  c.beginPath();
+  c.moveTo(-w, -h * 0.2);
+  c.bezierCurveTo(-w * 1.2, -h * 0.8, -w * 0.2, -h * 1.2, w * 0.3, -h * 0.9);
+  c.quadraticCurveTo(w * 1.2, -h * 0.6, w * 0.9, h * 0.25);
+  c.quadraticCurveTo(w * 0.6, h * 1.1, -w * 0.25, h * 0.85);
+  c.quadraticCurveTo(-w * 0.95, h * 0.6, -w, -h * 0.2);
+  c.closePath();
+  fill(c, slag ? "#a97e46" : BASE, true);
+  c.beginPath();
+  c.moveTo(-w * 0.8, -h * 0.25);
+  c.quadraticCurveTo(-w * 0.65, -h * 0.95, w * 0.2, -h * 0.8);
+  c.quadraticCurveTo(w * 0.05, -h * 0.3, -w * 0.35, h * 0.1);
+  c.closePath();
+  fill(c, slag ? "#d6ab62" : LIGHT3);
+  if (slag) {
+    c.beginPath();
+    c.moveTo(-w * 0.4, h * 0.2);
+    c.lineTo(w * 0.2, -h * 0.15);
+    c.lineTo(w * 0.7, h * 0.1);
+    c.lineTo(w * 0.35, h * 0.65);
+    c.closePath();
+    fill(c, "#644633");
+  }
+  c.restore();
+}
+function minionBody(c, row2, tick, model, bodyPoseForActor) {
+  const pose = minionPose(row2, tick);
+  if (pose.age < 0) return;
+  if (row2.stage === "airborne") {
+    const event = (model.bossHazards?.corrosiveSheds ?? []).find((s) => s.spawnedMinionIds.includes(row2.id));
+    if (event && pose.age < 8) {
+      const boss = model.entitiesById?.[row2.sourceEntityId] ?? Object.values(model.entitiesById ?? {}).find((a) => a.boss?.bossId === row2.bossId), local4 = tearOffset(event), body4 = boss && bodyPoseForActor ? bodyPoseForActor(boss, tick) : { bodyX: 0, bodyY: 0 };
+      const root = boss ? point4(boss.position.x + local4.x + body4.bodyX, boss.position.y + local4.y - 33 + body4.bodyY) : point4(event.originPosition.x, event.originPosition.y - 33);
+      strand(c, root, point4(row2.position.x, row2.position.y - pose.height), 1 - ease2((pose.age - 3) / 5));
+    }
+    chunk(c, row2, pose);
+    return;
+  }
+  if (row2.stage === "coalescing") {
+    const q = ease2(pose.landing), rise = ease2((pose.landing - 0.1) / 0.9);
+    approvedMinion(c, row2, tick, { scaleX: 1.38 - 0.38 * q, scaleY: 0.22 + 0.78 * rise, alpha: 0.18 + 0.82 * ease2(pose.landing / 0.6) });
+    return;
+  }
+  if (row2.stage === "active") {
+    const flash = Number.isFinite(row2.lastDamagedTick) && tick - row2.lastDamagedTick >= 0 && tick - row2.lastDamagedTick < 4;
+    approvedMinion(c, row2, tick, { flash });
+    const profile = creaturePresentationForRenderV3(row2.enemyFamily), max = Math.max(1, presentCombat(row2.maxHp)), ratio = clamp20(presentCombat(row2.hp) / max), width = Math.max(18, Math.min(34, profile.visualBounds.width * 0.68)), y = row2.position.y + profile.labels.healthBarY;
+    c.save();
+    c.fillStyle = INK30;
+    c.fillRect(row2.position.x - width / 2, y, width, 3);
+    c.fillStyle = row2.enemyFamily === "slag_slime" ? "#f5b85b" : "#b4e484";
+    c.fillRect(row2.position.x - width / 2 + 0.6, y + 0.6, (width - 1.2) * ratio, 1.8);
+    c.restore();
+    return;
+  }
+  if (row2.stage === "dissolving") {
+    const q = clamp20(pose.terminalAge / 24);
+    if (q >= 1) return;
+    if (row2.retireTick - 24 < row2.landsTick) {
+      const atHit = minionPose(row2, row2.retireTick - 24), height = atHit.height * (1 - ease2(q));
+      c.save();
+      c.globalAlpha *= 1 - ease2(q);
+      chunk(c, row2, { ...atHit, height });
+      for (let i = 0; i < 3; i++) {
+        const a = i * 2.4 + hash6(row2.id) % 8, d = 4 + q * 14;
+        ellipse2(c, row2.position.x + Math.cos(a) * d, row2.position.y - height + Math.sin(a) * d * 0.6, 1.8 * (1 - q) + 0.2, 1.4 * (1 - q) + 0.2, row2.enemyFamily === "slag_slime" ? "#d78a41" : LIGHT3);
+      }
+      c.restore();
+      return;
+    }
+    const formed = minionPose(row2, row2.retireTick - 24).landing, startX = 1.38 - 0.38 * ease2(formed), startY = 0.22 + 0.78 * ease2((formed - 0.1) / 0.9);
+    approvedMinion(c, row2, tick, { scaleX: startX + q * 0.22, scaleY: startY * (1 - q * 0.82), alpha: 1 - ease2(q) });
+    c.save();
+    c.globalAlpha *= 1 - q;
+    for (let i = 0; i < 3; i++) {
+      const a = i * 2.4 + hash6(row2.id) % 8, d = 5 + q * 11;
+      ellipse2(c, row2.position.x + Math.cos(a) * d, row2.position.y + Math.sin(a) * d * 0.5 - q * 4, 1.2 * (1 - q) + 0.3, 0.9 * (1 - q) + 0.2, row2.enemyFamily === "slag_slime" ? "#d78a41" : LIGHT3);
+    }
+    c.restore();
+  }
+}
+function corrosiveSheddingDepthItems(model, tick, viewport, bodyPoseForActor) {
+  const items = [];
+  for (const row2 of model.bossHazards?.corrosiveMinions ?? []) {
+    const p = row2.position, r = row2.stage === "airborne" ? 86 : 42;
+    if (viewport && (p.x < viewport.x - r || p.x > viewport.x + viewport.width + r || p.y < viewport.y - r || p.y > viewport.y + viewport.height + r)) continue;
+    items.push(Object.freeze({ id: "corrosive-minion/" + row2.id, anchorX: p.x, anchorY: p.y + 4.5, draw: (c) => minionBody(c, row2, tick, model, bodyPoseForActor) }));
+  }
+  return items;
+}
+
+// src/client/boss_presentation_corrosive_v1.js
+var ID = "corrosive_abomination";
+var TAU34 = Math.PI * 2;
+var INK31 = "#11151a";
+var BASE2 = "#369a63";
+var LIGHT4 = "#75c988";
+var DARK4 = "#216b4c";
+var DEEP2 = "#143e30";
+var ACID = "#b5e976";
+var MINT = "#dbf8b5";
+var WET = "#b3e9ae";
+var clamp21 = (v) => Math.max(0, Math.min(1, v));
+var ease3 = (v) => {
+  v = clamp21(v);
+  return v * v * (3 - 2 * v);
+};
+var mix15 = (a, b, p) => a + (b - a) * p;
+var point5 = (x, y) => ({ x, y });
+var lerp2 = (a, b, p) => point5(mix15(a.x, b.x, p), mix15(a.y, b.y, p));
+function hash7(value) {
+  let n = 2166136261;
+  for (const ch of String(value)) n = Math.imul(n ^ ch.charCodeAt(0), 16777619);
+  return n >>> 0;
+}
+function unit4(x, y) {
+  const d = Math.hypot(x, y) || 1;
+  return point5(x / d, y / d);
+}
+function ellipse3(c, x, y, rx, ry, fill3, outline = true, line5 = 1.26) {
+  c.beginPath();
+  c.ellipse(x, y, Math.max(0.01, rx), Math.max(0.01, ry), 0, 0, TAU34);
+  c.fillStyle = fill3;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK31;
+    c.lineWidth = line5;
+    c.stroke();
+  }
+}
+function fill2(c, color27, outline = true, line5 = 1.26) {
+  c.fillStyle = color27;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK31;
+    c.lineWidth = line5;
+    c.lineJoin = "round";
+    c.stroke();
+  }
+}
+function localTarget(actor, record2, height = 0) {
+  const p = record2?.targetPosition ?? actor.position;
+  return point5(p.x - actor.position.x, p.y - actor.position.y - height);
+}
+function corrosiveAttackPose(actor, tick) {
+  const b = actor.boss ?? {}, pending = b.pendingAction, last = b.lastAction;
+  const active = actor.alive !== false && b.bossDefinitionId === ID;
+  const p = active && pending ? clamp21((tick - pending.startedTick) / Math.max(1, pending.resolvesTick - pending.startedTick)) : 0;
+  const age = last ? tick - last.resolvedTick : Infinity;
+  const recent = active && age >= 0 && age < 40 ? last : null;
+  const aim2 = pending ? localTarget(actor, pending) : recent ? localTarget(actor, recent) : point5(Math.cos(b.facingAngle ?? 1.57) * 40, Math.sin(b.facingAngle ?? 1.57) * 40);
+  const committed = pending ?? recent, origin = committed?.originPosition ?? actor.position;
+  const committedDirection = committed?.targetPosition ? point5(committed.targetPosition.x - origin.x, committed.targetPosition.y - origin.y) : aim2;
+  const direction3 = unit4(committedDirection.x, committedDirection.y), side = committedDirection.x < 0 ? -1 : 1;
+  const idle2 = Math.sin((tick + (actor.visualSeed ?? 0) * 0.7) * 0.045);
+  const moving = actor.movedLastTick === true, hop = moving ? Math.sin(tick * TAU34 / 30) : 0;
+  const motion = unit4(actor.movementIntent?.x ?? direction3.x, actor.movementIntent?.y ?? direction3.y);
+  const pose = { ability: pending?.ability ?? recent?.ability ?? null, p, age, side, aim: aim2, direction: direction3, bodyX: moving ? -motion.x * (1.1 + Math.abs(hop) * 1.4) : 0, bodyY: idle2 * 1.5 + Math.abs(hop) * 1.8, top: idle2 * 1.2 - Math.abs(hop) * 2, width: 1 + Math.abs(hop) * 0.025, pressure: b.phase === 2 ? 0.32 : 0, armAmount: 0, tip: null, slamWeight: 0 };
+  if (!active) return pose;
+  if (pending?.ability === "slam") {
+    const coil = ease3(p / 0.65), drive = ease3((p - 0.8) / 0.2);
+    pose.bodyX = -direction3.x * 4 * coil + direction3.x * 7 * drive;
+    pose.bodyY = 3 * coil + 5 * drive;
+    pose.top = -9 * coil + 15 * drive;
+    pose.width = 1 + 0.035 * coil + 0.06 * drive;
+    pose.armAmount = coil;
+    pose.slamWeight = drive;
+    pose.pressure += coil * 0.32;
+    const ready = point5(side * 49, -104), contact = localTarget(actor, pending, 2);
+    pose.tip = lerp2(ready, contact, drive);
+  } else if (recent?.ability === "slam") {
+    const recover = ease3((age - 3) / 32), amount = 1 - recover;
+    pose.bodyX = direction3.x * 7 * amount;
+    pose.bodyY = 8 * amount;
+    pose.top = 6 * amount;
+    pose.width = 1 + 0.095 * amount;
+    pose.armAmount = amount;
+    pose.slamWeight = amount;
+    pose.tip = localTarget(actor, recent, 2);
+    pose.pressure += amount * 0.22;
+  } else if (recent?.ability === "strike" && age < 26) {
+    const amount = 1 - ease3(age / 26);
+    pose.armAmount = amount;
+    pose.bodyX = direction3.x * 3 * amount;
+    pose.bodyY = direction3.y * 2 * amount;
+    pose.tip = localTarget(actor, recent, 17);
+    pose.top = -2 * amount;
+  } else if (pending?.ability === "spore_storm") {
+    const swell = ease3(p);
+    pose.width = 1 + swell * 0.1;
+    pose.top = -10 * swell;
+    pose.bodyY = -3 * swell;
+    pose.pressure += swell * 0.65;
+    pose.armAmount = swell * 0.45;
+  } else if (recent?.ability === "spore_storm") {
+    const amount = 1 - ease3(age / 30);
+    pose.width = 1 + 0.1 * amount;
+    pose.top = -10 * amount;
+    pose.bodyY = -3 * amount;
+    pose.pressure += 0.45 * amount;
+    pose.armAmount = 0.45 * amount;
+  }
+  return applyCorrosiveRupturePose(actor, tick, pose);
+}
+function bodyPath2(c, pose) {
+  const w = pose.width, t = pose.top;
+  c.beginPath();
+  c.moveTo(-23 * w, -63 + t * 0.6);
+  c.bezierCurveTo(-29 * w, -84 + t, -13 * w, -92 + t, 1, -88 + t);
+  c.bezierCurveTo(23 * w, -91 + t, 29 * w, -71 + t * 0.6, 28 * w, -53 + t * 0.3);
+  c.bezierCurveTo(31 * w, -35, 41 * w, -19, 31 * w, -4);
+  c.quadraticCurveTo(22 * w, 7, 10 * w, 4);
+  c.quadraticCurveTo(0, 10, -13 * w, 4);
+  c.quadraticCurveTo(-28 * w, 8, -33 * w, -5);
+  c.bezierCurveTo(-38 * w, -24, -23 * w, -42, -23 * w, -63 + t * 0.6);
+  c.closePath();
+}
+function ribbon(c, root, c1, c2, tip, width, flash = false) {
+  const start = unit4(c1.x - root.x, c1.y - root.y), end = unit4(tip.x - c2.x, tip.y - c2.y);
+  const n = point5(-start.y, start.x), e = point5(-end.y, end.x), endW = width * 0.09;
+  const path7 = () => {
+    c.beginPath();
+    c.moveTo(root.x + n.x * width, root.y + n.y * width);
+    c.bezierCurveTo(c1.x + n.x * width * 0.8, c1.y + n.y * width * 0.8, c2.x + e.x * width * 0.65, c2.y + e.y * width * 0.65, tip.x + e.x * endW, tip.y + e.y * endW);
+    c.quadraticCurveTo(tip.x + end.x * 0.8, tip.y + end.y * 0.8, tip.x - e.x * endW, tip.y - e.y * endW);
+    c.bezierCurveTo(c2.x - e.x * width * 0.6, c2.y - e.y * width * 0.6, c1.x - n.x * width * 0.8, c1.y - n.y * width * 0.8, root.x - n.x * width, root.y - n.y * width);
+    c.closePath();
+  };
+  path7();
+  fill2(c, flash ? "#fff" : BASE2);
+  if (!flash) {
+    c.save();
+    path7();
+    c.clip();
+    c.beginPath();
+    c.moveTo(root.x + n.x * width * 0.3, root.y + n.y * width * 0.3);
+    c.bezierCurveTo(c1.x + n.x * width * 0.45, c1.y + n.y * width * 0.45, c2.x + e.x * width * 0.4, c2.y + e.y * width * 0.4, tip.x, tip.y);
+    c.bezierCurveTo(c2.x, c2.y, c1.x, c1.y, root.x, root.y);
+    c.closePath();
+    fill2(c, LIGHT4, false);
+    c.restore();
+  }
+  path7();
+  c.strokeStyle = INK31;
+  c.lineWidth = 1.26;
+  c.stroke();
+}
+function arm3(c, side, pose, tick, flash) {
+  const sway = Math.sin(tick * 0.045 + side * 1.4) * 3;
+  const root = point5(side * 23 + pose.bodyX, -39 + pose.bodyY);
+  const rest = point5(side * (67 + sway * 0.45), -28 + sway + pose.bodyY);
+  const targeted = pose.tip && side === pose.side;
+  let tip = targeted ? lerp2(rest, pose.tip, pose.armAmount) : rest;
+  let c1 = point5(side * 38 + pose.bodyX, -60 + sway + pose.bodyY), c2 = point5(side * 60, -48 + sway + pose.bodyY);
+  if (targeted) {
+    const quick = pose.ability === "strike", d = unit4(tip.x - root.x, tip.y - root.y);
+    const bend1 = quick ? point5(mix15(root.x, tip.x, 0.33) + side * 9, mix15(root.y, tip.y, 0.33) - 4) : point5(root.x + side * 22, root.y - 42 - pose.slamWeight * 10);
+    const bend2 = quick ? point5(tip.x - d.x * 9 + side * 3, tip.y - d.y * 9) : point5(tip.x - side * (14 + Math.min(16, Math.abs(tip.x - root.x) * 0.12)), tip.y - 19 - pose.slamWeight * 14);
+    c1 = lerp2(c1, bend1, pose.armAmount);
+    c2 = lerp2(c2, bend2, pose.armAmount);
+  } else if (pose.ability === "slam" && pose.armAmount > 0) {
+    tip = lerp2(rest, point5(side * 57, -76), pose.armAmount * 0.8);
+    c1.y -= pose.armAmount * 22;
+    c2.y -= pose.armAmount * 30;
+  } else if (pose.ability === "spore_storm") {
+    tip.y -= pose.armAmount * 21;
+    c1.y -= pose.armAmount * 15;
+    c2.y -= pose.armAmount * 21;
+  }
+  ribbon(c, root, c1, c2, tip, targeted ? 5.7 : 4.5, flash);
+  if (targeted && pose.ability === "slam" && pose.slamWeight > 0.28) {
+    const s = ease3((pose.slamWeight - 0.28) / 0.6), x = (v) => tip.x + v * s, y = (v) => tip.y + v * s;
+    c.beginPath();
+    c.moveTo(x(-13), y(3));
+    c.bezierCurveTo(x(-17), y(-2), x(-13), y(-14), x(-6), y(-17));
+    c.quadraticCurveTo(x(4), y(-20), x(12), y(-10));
+    c.bezierCurveTo(x(17), y(-3), x(14), y(3), x(4), y(5));
+    c.quadraticCurveTo(x(-6), y(8), x(-13), y(3));
+    c.closePath();
+    fill2(c, flash ? "#fff" : BASE2);
+    if (!flash) {
+      c.beginPath();
+      c.moveTo(x(-11), y(-5));
+      c.quadraticCurveTo(x(-12), y(-14), x(-4), y(-16));
+      c.quadraticCurveTo(x(3), y(-17), x(6), y(-12));
+      c.quadraticCurveTo(x(-4), y(-14), x(-7), y(-3));
+      c.closePath();
+      fill2(c, LIGHT4, false);
+    }
+  }
+}
+function eye2(c, x, y, r, iris, look, open = 1, flash = false) {
+  ellipse3(c, x, y, r, r * open, flash ? "#fff" : "#eff3db");
+  if (flash) return;
+  c.save();
+  c.beginPath();
+  c.ellipse(x, y, Math.max(0.1, r - 0.7), Math.max(0.1, (r - 0.7) * open), 0, 0, TAU34);
+  c.clip();
+  const ix = x + look.x * r * 0.19, iy = y + look.y * r * 0.17;
+  ellipse3(c, ix, iy, r * 0.57, r * 0.57, iris, true, 0.7);
+  ellipse3(c, ix, iy, r * 0.25, r * 0.31, INK31, false);
+  ellipse3(c, ix - r * 0.17, iy - r * 0.17, Math.max(0.5, r * 0.11), Math.max(0.5, r * 0.11), "#fff", false);
+  c.restore();
+}
+function bodyPool(c, tick, phase) {
+  ellipse3(c, 0, 7, 43, 13, "#101d1980", false);
+  c.beginPath();
+  c.moveTo(-39, 5);
+  c.bezierCurveTo(-34, -5, -15, -7, 0, -5);
+  c.bezierCurveTo(17, -9, 43, -2, 42, 8);
+  c.bezierCurveTo(35, 16, 17, 13, 3, 15);
+  c.bezierCurveTo(-13, 16, -29, 14, -39, 10);
+  c.closePath();
+  fill2(c, "#28694bd9");
+  const slide = Math.sin(tick * 0.038) * 1.3;
+  c.strokeStyle = "#71b876";
+  c.lineWidth = 0.9;
+  c.beginPath();
+  c.moveTo(-34, 7);
+  c.bezierCurveTo(-21, 15, 17, 15, 29, 8);
+  c.bezierCurveTo(37, 1, 10 + slide, -2, -2 + slide, 3);
+  c.bezierCurveTo(-8 + slide, 7, 7 + slide, 10, 17 + slide, 6);
+  c.stroke();
+  for (let i = 0; i < 2; i++) {
+    const a = tick * 0.025 + i * Math.PI, x = Math.cos(a) * (23 + i * 6), y = 7 + Math.sin(a) * 5;
+    ellipse3(c, x, y, 1.6, 1, phase === 2 ? ACID : LIGHT4, false);
+  }
+}
+function drawCorrosiveAbomination(c, actor, tick, flash = false) {
+  const b = actor.boss;
+  if (b?.bossDefinitionId !== ID) return false;
+  const pose = corrosiveAttackPose(actor, tick), death = actor.alive === false ? clamp21((actor.deathAge ?? 0) / 36) : 0;
+  c.save();
+  c.translate(actor.position.x, actor.position.y);
+  c.globalAlpha *= 1 - death * 0.8;
+  const opacity = c.globalAlpha;
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  bodyPool(c, tick, b.phase);
+  const activeFront = pose.tip && pose.armAmount > 0 && pose.tip.y > -48;
+  for (const side of [-1, 1]) if (!activeFront || side !== pose.side) arm3(c, side, pose, tick, flash);
+  c.save();
+  c.translate(pose.bodyX, pose.bodyY + death * 15);
+  bodyPath2(c, pose);
+  fill2(c, flash ? "#fff" : BASE2);
+  if (!flash) {
+    c.save();
+    bodyPath2(c, pose);
+    c.clip();
+    c.beginPath();
+    c.moveTo(-34, -95 + pose.top);
+    c.lineTo(4, -95 + pose.top);
+    c.bezierCurveTo(-14, -76 + pose.top, -17, -59, -14, -42);
+    c.bezierCurveTo(-12, -22, -23, -12, -23, 6);
+    c.lineTo(-44, 15);
+    c.closePath();
+    fill2(c, LIGHT4, false);
+    c.beginPath();
+    c.moveTo(15, -91 + pose.top);
+    c.bezierCurveTo(25, -63, 17, -53, 23, -33);
+    c.bezierCurveTo(34, -13, 17, 0, 4, 8);
+    c.lineTo(46, 13);
+    c.lineTo(47, -96);
+    c.closePath();
+    fill2(c, DARK4, false);
+    const slide = Math.sin(tick * 0.045) * 1.8 + pose.bodyX * 0.35;
+    c.beginPath();
+    c.moveTo(-36, -10);
+    c.bezierCurveTo(-19, -24, 6 + slide, -11, 26, -18);
+    c.bezierCurveTo(39, -22, 38, -8, 25, -4);
+    c.bezierCurveTo(10, 2, -6 + slide, -8, -20, -1);
+    c.quadraticCurveTo(-28, 4, -35, 12);
+    c.lineTo(-43, 15);
+    c.closePath();
+    fill2(c, DARK4, false);
+    c.beginPath();
+    c.moveTo(-31, -10);
+    c.bezierCurveTo(-16, -19, 5 + slide, -9, 23, -15);
+    c.quadraticCurveTo(31, -18, 32, -14);
+    c.bezierCurveTo(21, -9, 4 + slide, -11, -8, -8);
+    c.quadraticCurveTo(-21, -6, -27, 1);
+    c.closePath();
+    fill2(c, LIGHT4, false);
+    c.beginPath();
+    c.moveTo(-33, 5);
+    c.bezierCurveTo(-18, -3, -6, 4, 7, 0);
+    c.quadraticCurveTo(25, -7, 36, 0);
+    c.lineTo(39, 15);
+    c.lineTo(-39, 15);
+    c.closePath();
+    fill2(c, DEEP2, false);
+    c.beginPath();
+    c.moveTo(-15, -77 + pose.top * 0.7);
+    c.quadraticCurveTo(-8, -84 + pose.top, 0, -82 + pose.top);
+    c.quadraticCurveTo(-6, -79 + pose.top, -11, -74 + pose.top * 0.7);
+    c.closePath();
+    fill2(c, WET, false);
+    for (const [x, y, r] of [[-17, -65, 4], [15, -69, 5]]) {
+      const swell = 1 + pose.pressure * (0.42 + Math.sin(tick * 0.095 + x) * 0.1);
+      ellipse3(c, x, y + pose.top * 0.55, r * swell, r * 0.72 * swell, b.phase === 2 ? "#9ed88c" : LIGHT4, false);
+    }
+    c.restore();
+  }
+  bodyPath2(c, pose);
+  c.strokeStyle = INK31;
+  c.lineWidth = 1.26;
+  c.stroke();
+  drawCorrosiveBodyRuptures(c, actor, tick);
+  const look = unit4(pose.aim.x, pose.aim.y + 32), open = pose.ability === "slam" && pose.p > 0 ? 1 - 0.13 * Math.sin(pose.p * Math.PI) : 1;
+  eye2(c, 0, -59 + pose.top * 0.58, 10.3, "#9d6fc0", look, open, flash);
+  eye2(c, -16, -38 + pose.top * 0.25, 5.9, "#d97562", look, 1, flash);
+  eye2(c, 16, -44 + pose.top * 0.33, 6.7, "#d9bf5d", look, 1, flash);
+  eye2(c, -5, -21 + pose.top * 0.08, 4.9, "#6ca8cb", look, 1, flash);
+  if (!flash) for (let i = 0; i < 3; i++) {
+    const age = (tick + i * 17 + (actor.visualSeed ?? 0)) % 51, x = [-24, 21, 11][i], drop = ease3(age / 51), y = -18 + drop * 28;
+    c.globalAlpha = opacity * (age < 45 ? 1 : 1 - (age - 45) / 6);
+    ellipse3(c, x + Math.sin(i * 3 + tick * 0.04), y, 1.2, 2.4, i === 1 ? ACID : LIGHT4, false);
+  }
+  c.restore();
+  if (activeFront) arm3(c, pose.side, pose, tick, flash);
+  c.restore();
+  return true;
+}
+function irregularPool(c, x, y, r, seed2) {
+  c.beginPath();
+  for (let i = 0; i <= 20; i++) {
+    const a = i / 20 * TAU34, f = 0.91 + 0.055 * Math.sin(i * 2.2 + seed2) + 0.03 * Math.cos(i * 4.3 + seed2), px = x + Math.cos(a) * r * f, py = y + Math.sin(a) * r * f;
+    i ? c.lineTo(px, py) : c.moveTo(px, py);
+  }
+  c.closePath();
+}
+function poolGround(c, row2, tick) {
+  const age = tick - row2.createdTick, left = row2.expiresTick - tick;
+  if (age < 0 || left <= 0) return;
+  const r = row2.radius ?? 12, seed2 = hash7(row2.id), spread = 0.25 + 0.75 * ease3(age / 13), fade = 0.28 + 0.72 * clamp21(left / 65);
+  c.save();
+  c.translate(row2.position.x, row2.position.y);
+  ellipse3(c, 0, 0, r, r, "#478b3533", false);
+  irregularPool(c, 0, 0, r * spread, seed2);
+  c.globalAlpha = fade;
+  fill2(c, "#285c30cc", true, 0.85);
+  irregularPool(c, -r * 0.09, -r * 0.13, r * 0.73 * spread, seed2);
+  fill2(c, "#609a42b8", false);
+  c.strokeStyle = ACID;
+  c.globalAlpha = Math.max(0.5, fade * 0.8);
+  c.lineWidth = 0.7;
+  c.beginPath();
+  c.arc(0, 0, r, -2.9, -0.65);
+  c.arc(0, 0, r, 0.2, 1.95);
+  c.stroke();
+  for (let i = 0; i < 3; i++) {
+    const life = (age + i * 17 + seed2 % 31) % 47, q = life / 47, a = seed2 + i * 2.4, x = Math.cos(a) * r * 0.46, y = Math.sin(a) * r * 0.46;
+    c.globalAlpha = fade * Math.sin(q * Math.PI);
+    ellipse3(c, x, y, 1 + q * 2.2, 0.7 + q * 1.4, q < 0.7 ? LIGHT4 : ACID, false);
+  }
+  c.restore();
+}
+function warning(c, row2, tick) {
+  const q = clamp21((tick - row2.startedTick) / Math.max(1, row2.resolvesTick - row2.startedTick));
+  if (row2.ability !== "slam") return;
+  const p = row2.targetPosition ?? row2.position, r = row2.radius ?? 64, seed2 = hash7(row2.id ?? row2.bossId);
+  c.save();
+  c.translate(p.x, p.y);
+  ellipse3(c, 0, 0, r, r, `rgba(113,182,75,${0.045 + q * 0.065})`, false);
+  c.strokeStyle = INK31;
+  c.lineWidth = 2.8;
+  c.beginPath();
+  c.arc(0, 0, r, 0, TAU34);
+  c.stroke();
+  c.strokeStyle = ACID;
+  c.lineWidth = 1.15;
+  c.stroke();
+  for (let i = 0; i < 6; i++) {
+    const a = i * TAU34 / 6 + seed2 % 37 * 0.1, rad = 12 + (1 - q) * 22, x = Math.cos(a) * rad, y = Math.sin(a) * rad;
+    c.globalAlpha = 0.2 + 0.5 * q;
+    ellipse3(c, x, y, 2 + q * (2 + i % 2), 1.4 + q * 2, LIGHT4, false);
+  }
+  c.globalAlpha = 0.35 + 0.5 * q;
+  c.strokeStyle = "#d9f5ac";
+  c.lineWidth = 1.6;
+  c.beginPath();
+  c.arc(0, 0, r - 3, -Math.PI / 2, -Math.PI / 2 + TAU34 * q);
+  c.stroke();
+  c.restore();
+}
+function slamGround(c, row2, tick) {
+  const age = tick - row2.resolvedTick;
+  if (row2.ability !== "slam" || age < 0 || age >= 40) return;
+  const p = row2.targetPosition, q = age / 40;
+  c.save();
+  c.translate(p.x, p.y);
+  c.globalAlpha = (1 - q) * 0.65;
+  irregularPool(c, 0, 0, 13 + ease3(age / 14) * 27, hash7(row2.bossId));
+  fill2(c, "#417f3e80", false);
+  c.globalAlpha = (1 - q) * 0.7;
+  c.strokeStyle = ACID;
+  c.lineWidth = 1.4;
+  c.beginPath();
+  c.arc(0, 0, 8 + ease3(age / 17) * 56, 0, TAU34);
+  c.stroke();
+  c.restore();
+}
+function drawCorrosiveGround(c, model, tick) {
+  const h = model.bossHazards ?? {};
+  c.save();
+  if (h.corrosiveTrails) drawCorrosiveTrails(c, h.corrosiveTrails, tick);
+  else for (const row2 of h.corrosivePools ?? []) poolGround(c, row2, tick);
+  drawCorrosiveMinionGround(c, h.corrosiveMinions ?? [], tick);
+  for (const row2 of h.corrosiveTelegraphs ?? []) warning(c, row2, tick);
+  for (const row2 of h.corrosiveImpacts ?? []) slamGround(c, row2, tick);
+  c.restore();
+}
+function droplet(c, x, y, r, flash = false) {
+  c.beginPath();
+  c.moveTo(x, y - r * 1.9);
+  c.bezierCurveTo(x + r * 0.45, y - r * 0.6, x + r * 1.15, y - r * 0.2, x + r * 0.85, y + r * 0.5);
+  c.quadraticCurveTo(x, y + r * 1.4, x - r * 0.85, y + r * 0.5);
+  c.bezierCurveTo(x - r * 1.1, y - r * 0.2, x - r * 0.25, y - r * 0.8, x, y - r * 1.9);
+  c.closePath();
+  fill2(c, flash ? "#fff" : BASE2, true, 1.05);
+  if (!flash) ellipse3(c, x - r * 0.25, y - r * 0.25, r * 0.22, r * 0.47, LIGHT4, false);
+}
+function splash(c, p, age, seed2, power = 1) {
+  if (age < 0 || age >= 40) return;
+  c.save();
+  c.translate(p.x, p.y);
+  const q = clamp21(age / 40);
+  c.globalAlpha = 1 - ease3((age - 25) / 15);
+  for (let i = 0; i < 7; i++) {
+    const a = i * 2.39996 + seed2 % 7, speed = (0.4 + i % 3 * 0.2) * power, dx = Math.cos(a) * speed * age, dy = Math.sin(a) * speed * age * 0.6;
+    const height = Math.max(0, (3.2 + i % 3 * 0.55) * age * 0.65 - age * age * 0.052) * power;
+    if (height > 0) droplet(c, dx, dy - height, (1.5 + i % 3 * 0.48) * (1 - q * 0.35));
+  }
+  if (age < 22) {
+    const rise = Math.sin(clamp21((age + 1) / 22) * Math.PI), h = (21 + power * 7) * rise, w = (7 + power * 2) * (1 - age / 44);
+    c.beginPath();
+    c.moveTo(-w, 1);
+    c.bezierCurveTo(-w * 1.5, -h * 0.2, -w * 0.5, -h * 0.45, -w * 0.6, -h);
+    c.quadraticCurveTo(0, -h * 0.76, w * 0.45, -h * 0.92);
+    c.bezierCurveTo(w * 0.1, -h * 0.5, w * 1.4, -h * 0.18, w, 1);
+    c.closePath();
+    fill2(c, BASE2);
+    c.beginPath();
+    c.moveTo(-w * 0.45, 0);
+    c.quadraticCurveTo(-w * 0.65, -h * 0.3, -w * 0.1, -h * 0.7);
+    c.quadraticCurveTo(w * 0.3, -h * 0.3, w * 0.4, 0);
+    c.closePath();
+    fill2(c, LIGHT4, false);
+  }
+  c.restore();
+}
+function spore(c, row2, tick) {
+  const p = row2.position, age = tick - row2.createdTick, stage2 = row2.stage ?? "drifting";
+  if (stage2 !== "drifting") {
+    const endAge = tick - (row2.resolvedTick ?? tick);
+    if (endAge < 0 || endAge >= 24) return;
+    c.save();
+    c.translate(p.x, p.y);
+    c.globalAlpha = 1 - endAge / 24;
+    for (let i = 0; i < 6; i++) {
+      const a = i * TAU34 / 6 + hash7(row2.id) % 9, dist3 = 3 + endAge * 0.7;
+      ellipse3(c, Math.cos(a) * dist3, Math.sin(a) * dist3 * 0.6 - 8 - endAge * 0.25, 1.4, 1.1, i % 2 ? LIGHT4 : ACID, false);
+    }
+    if (stage2 === "detonated") {
+      c.strokeStyle = ACID;
+      c.lineWidth = 1;
+      c.beginPath();
+      c.arc(0, 0, 4 + endAge * 0.8, 0, TAU34);
+      c.stroke();
+    }
+    c.restore();
+    return;
+  }
+  c.save();
+  c.translate(p.x, p.y);
+  const pulse = Math.sin((tick + hash7(row2.id) % 37) * 0.14), r = 6.1 + pulse * 0.45;
+  ellipse3(c, 0, 2, 8, 3, "#101c1855", false);
+  ellipse3(c, 0, -7, row2.radius ?? 12, row2.radius ?? 12, "#8dd66b2b", false);
+  ellipse3(c, 0, -7, r, r, BASE2);
+  c.save();
+  c.beginPath();
+  c.arc(0, -7, r, 0, TAU34);
+  c.clip();
+  ellipse3(c, -2, -9, r * 0.8, r * 0.8, LIGHT4, false);
+  ellipse3(c, 3, -4, r * 0.8, r * 0.8, DARK4, false);
+  c.restore();
+  ellipse3(c, -1.6, -8.7, 1.4, 1.2, MINT, false);
+  const prev = row2.previousPosition ?? p, velocity = unit4(p.x - prev.x, p.y - prev.y);
+  for (let i = 1; i <= 2; i++) {
+    c.globalAlpha = 0.34 / i;
+    ellipse3(c, -velocity.x * (r + 3 + i * 3), -7 - velocity.y * (r + 3 + i * 3), 1.1, 1.1, LIGHT4, false);
+  }
+  c.globalAlpha = 1;
+  c.fillStyle = INK31;
+  c.fillRect(-5, -19, 10, 2.5);
+  c.fillStyle = ACID;
+  c.fillRect(-4, -18.5, 8, 1.3);
+  if (row2.expiresTick - tick < 60) {
+    c.globalAlpha = 0.25 + Math.abs(Math.sin(tick * 0.22)) * 0.4;
+    c.strokeStyle = MINT;
+    c.lineWidth = 0.7;
+    c.beginPath();
+    c.arc(0, -7, r + 1.5, 0, TAU34);
+    c.stroke();
+  }
+  c.restore();
+}
+function stormPod(c, row2, p, index, tick) {
+  const q = clamp21((tick - row2.startedTick) / Math.max(1, row2.resolvesTick - row2.startedTick)), growth = ease3((q - 0.12) / 0.88);
+  if (growth <= 0) return;
+  const o = row2.originPosition, seed2 = index * 2.2, root = point5(o.x, o.y - 31), tip = point5(p.x, p.y - 7);
+  c.save();
+  c.globalAlpha = 0.35 + growth * 0.55;
+  c.strokeStyle = DARK4;
+  c.lineWidth = 1.2;
+  c.beginPath();
+  c.moveTo(root.x, root.y);
+  c.quadraticCurveTo(mix15(root.x, tip.x, 0.7), Math.min(root.y, tip.y) - 8 - growth * 7, tip.x, tip.y);
+  c.stroke();
+  ellipse3(c, p.x, p.y - 7, 1 + growth * 5.5, 1.3 + growth * 5.2, BASE2, true, 1.1);
+  ellipse3(c, p.x - 1.3, p.y - 8.5, 0.6 + growth * 1.7, 0.5 + growth * 1.3, LIGHT4, false);
+  c.restore();
+}
+function corrosiveDepthItems(model, tick, viewport = null) {
+  const h = model.bossHazards ?? {}, items = [];
+  const visible2 = (p, r = 45) => !viewport || p.x >= viewport.x - r && p.x <= viewport.x + viewport.width + r && p.y >= viewport.y - r && p.y <= viewport.y + viewport.height + r;
+  const add = (id, p, draw, r = 45) => {
+    if (visible2(p, r)) items.push(Object.freeze({ id: "corrosive-vfx/" + id, anchorX: p.x, anchorY: p.y + 1, draw }));
+  };
+  for (const row2 of h.corrosiveImpacts ?? []) {
+    const age = tick - row2.resolvedTick;
+    if (row2.ability === "slam" && age >= 0 && age < 40) add((row2.id ?? row2.bossId + "/" + row2.sequence) + "/slam", row2.targetPosition, (c) => splash(c, row2.targetPosition, age, hash7(row2.bossId), 1.4), 85);
+  }
+  for (const row2 of h.corrosiveSpores ?? []) add(row2.id, row2.position, (c) => spore(c, row2, tick), 28);
+  for (const row2 of h.corrosiveTelegraphs ?? []) if (row2.ability === "spore_storm") for (const [index, p] of (row2.sporeSpawnPositions ?? []).entries()) add((row2.id ?? row2.bossId) + "/pod/" + index, p, (c) => stormPod(c, row2, p, index, tick), 90);
+  return [...items, ...corrosiveSheddingDepthItems(model, tick, viewport, corrosiveAttackPose)];
+}
+function drawCorrosiveBossHud(c, canvas, model) {
+  const a = Object.values(model.entitiesById ?? {}).find((a2) => a2.alive && a2.boss?.bossDefinitionId === ID);
+  if (!a) return false;
+  const b = a.boss, w = Math.min(480, canvas.width - 24), x = (canvas.width - w) / 2, y = 10;
+  const hp = presentCombat(a.hp), max = Math.max(1, presentCombat(a.maxHp)), ratio = clamp21(hp / max);
+  c.save();
+  c.fillStyle = "#12221ded";
+  c.strokeStyle = "#8bb86c";
+  c.lineWidth = 1.3;
+  c.beginPath();
+  c.roundRect(x, y, w, 58, 7);
+  c.fill();
+  c.stroke();
+  c.fillStyle = "#e9f5d8";
+  c.font = "bold 13px sans-serif";
+  c.textAlign = "center";
+  c.fillText("CORROSIVE ABOMINATION", canvas.width / 2, y + 17);
+  c.fillStyle = "#263a29";
+  c.fillRect(x + 12, y + 24, w - 24, 8);
+  c.fillStyle = BASE2;
+  c.fillRect(x + 12, y + 24, (w - 24) * ratio, 8);
+  c.fillStyle = MINT;
+  c.font = "11px sans-serif";
+  const labels2 = { slam: "Caustic slam \u2014 leave the marked pool", spore_storm: "Spore storm \u2014 three fragile homing spores" };
+  c.fillText(labels2[b.pendingAction?.ability] ?? (b.phase === 2 ? "Toxic pressure \xB7 acid trails and spores" : "Alchemical sludge \xB7 avoid the acid trail"), canvas.width / 2, y + 47);
+  c.restore();
+  return true;
+}
+
+// src/client/boss_presentation_void_overseer_v1.js
+var ID2 = "void_overseer";
+var TAU35 = Math.PI * 2;
+var INK32 = "#11151a";
+var DARK5 = "#10081c";
+var STONE2 = "#251334";
+var LIGHT5 = "#49305f";
+var VIOLET = "#9d58d0";
+var PINK = "#ed459b";
+var PALE3 = "#efd3ff";
+var clamp22 = (x) => Math.max(0, Math.min(1, x));
+var ease4 = (x) => {
+  x = clamp22(x);
+  return x * x * (3 - 2 * x);
+};
+var mix16 = (a, b, p) => a + (b - a) * p;
+var point6 = (x, y) => ({ x, y });
+function unit5(x, y) {
+  const d = Math.hypot(x, y) || 1;
+  return point6(x / d, y / d);
+}
+function hash8(value) {
+  let n = 2166136261;
+  for (const ch of String(value)) n = Math.imul(n ^ ch.charCodeAt(0), 16777619);
+  return n >>> 0;
+}
+function ellipse4(c, x, y, rx, ry, color27, outline = false, width = 1.26) {
+  c.beginPath();
+  c.ellipse(x, y, Math.max(1e-3, rx), Math.max(1e-3, ry), 0, 0, TAU35);
+  c.fillStyle = color27;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK32;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function polygon16(c, points, color27, outline = true, width = 1.26) {
+  c.beginPath();
+  for (const [i, p] of points.entries()) i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]);
+  c.closePath();
+  c.fillStyle = color27;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK32;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function circle2(c, x, y, r, color27, width = 1) {
+  c.strokeStyle = color27;
+  c.lineWidth = width;
+  c.beginPath();
+  c.arc(x, y, Math.max(1e-3, r), 0, TAU35);
+  c.stroke();
+}
+function localTarget2(actor, record2) {
+  const p = record2?.targetPosition ?? point6(actor.position.x, actor.position.y + 60);
+  return point6(p.x - actor.position.x, p.y - actor.position.y);
+}
+function castProgress(row2, tick) {
+  return clamp22((tick - row2.startedTick) / Math.max(1, row2.resolvesTick - row2.startedTick));
+}
+function voidAttackPose(actor, tick) {
+  const b = actor.boss ?? {}, alive = actor.alive !== false && b.bossDefinitionId === ID2;
+  const pending = alive ? b.pendingAction : null, last = alive ? b.lastAction : null, age = last ? tick - last.resolvedTick : Infinity;
+  const recent = age >= 0 && age < 40 ? last : null, p = pending ? castProgress(pending, tick) : 0;
+  const record2 = pending ?? recent, aim2 = record2 ? localTarget2(actor, record2) : point6(Math.cos(b.facingAngle ?? Math.PI / 2) * 60, Math.sin(b.facingAngle ?? Math.PI / 2) * 60);
+  const origin = record2?.originPosition ?? actor.position, target = record2?.targetPosition ?? point6(actor.position.x + aim2.x, actor.position.y + aim2.y), direction3 = unit5(target.x - origin.x, target.y - origin.y);
+  const hover = Math.sin((tick + (actor.visualSeed ?? 0) * 0.13) / 8.4) * 4.2;
+  const pose = { ability: record2?.ability ?? null, p, age, aim: aim2, direction: direction3, bodyX: 0, bodyY: -43 + hover, rotation: Math.sin(tick * 0.025) * 0.018, scaleX: 1, scaleY: 1, charge: 0, drive: 0, release: 0 };
+  if (pending?.ability === "slam") {
+    const coil = ease4(p / 0.72), drive = ease4((p - 0.78) / 0.22);
+    pose.bodyX = -direction3.x * 4 * coil + direction3.x * 7 * drive;
+    pose.bodyY += -12 * coil + 17 * drive;
+    pose.rotation += direction3.x * (-0.16 * coil + 0.1 * drive);
+    pose.scaleX = 1 - 0.08 * coil + 0.1 * drive;
+    pose.scaleY = 1 + 0.1 * coil - 0.1 * drive;
+    pose.charge = coil;
+    pose.drive = drive;
+  } else if (recent?.ability === "slam") {
+    const amount = 1 - ease4(age / 35);
+    pose.bodyX = direction3.x * 3 * amount;
+    pose.bodyY += 5 * amount;
+    pose.rotation -= direction3.x * 0.06 * amount;
+    pose.scaleX = 1 + 0.02 * amount;
+    pose.charge = amount;
+    pose.drive = amount;
+    pose.release = 1 - ease4(age / 16);
+  } else if (recent?.ability === "strike" && age < 26) {
+    const amount = 1 - ease4(age / 26), angle3 = Math.atan2(aim2.y - 17 - pose.bodyY, aim2.x), nearest = Math.round(angle3 / (Math.PI / 2)) * (Math.PI / 2);
+    pose.bodyX = direction3.x * 7 * amount;
+    pose.bodyY += direction3.y * 6 * amount;
+    pose.rotation += (angle3 - nearest) * amount;
+    pose.scaleX = 1 + 0.045 * amount;
+    pose.charge = 0.45 * amount;
+    pose.drive = amount;
+  } else if (pending?.ability === "singularity") {
+    const coil = ease4(p / 0.9);
+    pose.bodyY -= 8 * coil;
+    pose.scaleX = 1 - 0.06 * coil;
+    pose.scaleY = 1 + 0.08 * coil;
+    pose.rotation += Math.sin(tick * 0.025) * 0.035 * coil;
+    pose.charge = coil;
+  } else if (recent?.ability === "singularity") {
+    const amount = 1 - ease4(age / 38), kick = Math.sin(Math.PI * clamp22(age / 14));
+    pose.bodyY += -8 * amount + 5 * kick;
+    pose.scaleX = 1 - 0.06 * amount;
+    pose.scaleY = 1 + 0.08 * amount;
+    pose.rotation += Math.sin(tick * 0.025) * 0.035 * amount;
+    pose.charge = amount;
+    pose.release = 1 - ease4(age / 20);
+  }
+  return pose;
+}
+function eye3(c, x, y, r, look, charge, flash) {
+  const glow4 = c.createRadialGradient(x, y, r * 0.25, x, y, r + 3.2 + charge * 1.5);
+  glow4.addColorStop(0, flash ? "#fff" : "#ed459b80");
+  glow4.addColorStop(1, "#ed459b00");
+  ellipse4(c, x, y, r + 3.2 + charge * 1.5, r + 3.2 + charge * 1.5, glow4);
+  ellipse4(c, x, y, r + 1.1, r * 1.13 + 1.1, DARK5, true, 1.05);
+  ellipse4(c, x, y, r, r * 1.13, flash ? "#fff" : PINK);
+  if (flash) return;
+  ellipse4(c, x - r * 0.19, y - r * 0.26, r * 0.49, r * 0.56, "#ff85c5");
+  ellipse4(c, x + look.x * r * 0.18, y + look.y * r * 0.14, r * 0.27, r * 0.72, DARK5);
+  ellipse4(c, x - r * 0.28, y - r * 0.48, Math.max(0.35, r * 0.1), Math.max(0.45, r * 0.14), PALE3);
+}
+function core4(c, pose, flash) {
+  const sx = pose.scaleX, sy = pose.scaleY, shape = (points) => points.map(([x, y]) => [x * sx, y * sy]);
+  polygon16(c, shape([[0, -33], [32, 0], [4, 37], [-28, 3]]), flash ? "#fff" : DARK5);
+  polygon16(c, shape([[0, -34], [29, 0], [0, 34], [-29, 0]]), flash ? "#fff" : STONE2);
+  if (!flash) {
+    polygon16(c, shape([[0, -34], [-4, -4], [-29, 0]]), LIGHT5, false);
+    polygon16(c, shape([[0, -34], [29, 0], [22, -1], [0, -25]]), "#382047", false);
+    polygon16(c, shape([[-29, 0], [-4, -4], [0, 34]]), "#321b45", false);
+    polygon16(c, shape([[0, 34], [29, 0], [21, 1], [0, 25]]), "#0a0612", false);
+    polygon16(c, shape([[0, -25], [21, 0], [0, 25], [-21, 0]]), "#190b29", false);
+    c.strokeStyle = "#785895";
+    c.lineWidth = 0.85;
+    c.beginPath();
+    c.moveTo(-25 * sx, -0.5 * sy);
+    c.lineTo(-0.5 * sx, -29 * sy);
+    c.stroke();
+    c.strokeStyle = "#49325d";
+    c.lineWidth = 0.75;
+    c.beginPath();
+    c.moveTo(2 * sx, 30 * sy);
+    c.lineTo(27 * sx, 1 * sy);
+    c.stroke();
+  }
+  const cos = Math.cos(pose.rotation), sin = Math.sin(pose.rotation), vx = pose.aim.x - pose.bodyX, vy = pose.aim.y - 17 - pose.bodyY;
+  const look = unit5(cos * vx + sin * vy, -sin * vx + cos * vy);
+  for (const [x, y, r] of [[-10.5, -11.5, 3], [10.5, -11.5, 3], [-10.5, 11.5, 3], [10.5, 11.5, 3], [0, 0, 6.4]]) eye3(c, x * sx, y * sy, r, look, pose.charge, flash);
+}
+function drawVoidOverseer(c, actor, tick, flash = false) {
+  if (actor.boss?.bossDefinitionId !== ID2) return false;
+  const pose = voidAttackPose(actor, tick), death = actor.alive === false ? clamp22((actor.deathAge ?? 0) / 36) : 0;
+  c.save();
+  c.translate(actor.position.x, actor.position.y);
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  c.globalAlpha *= 1 - death;
+  ellipse4(c, 0, 5, 30, 8, "#09061650");
+  c.save();
+  c.translate(pose.bodyX, pose.bodyY + death * 14);
+  c.rotate(pose.rotation);
+  const r = 43 + pose.charge * 5, aura2 = c.createRadialGradient(0, 0, 17, 0, 0, r);
+  aura2.addColorStop(0, "#a15cdb00");
+  aura2.addColorStop(0.45, flash ? "#e9c5ff66" : "#a15cdb37");
+  aura2.addColorStop(1, "#a15cdb00");
+  ellipse4(c, 0, 0, r, r, aura2);
+  core4(c, pose, flash);
+  c.restore();
+  c.restore();
+  return true;
+}
+function boundary(c, p, r, progress5, kind) {
+  c.save();
+  c.translate(p.x, p.y);
+  ellipse4(c, 0, 0, r, r, kind === "singularity" ? "#793bb714" : "#b74dba12");
+  circle2(c, 0, 0, r, INK32, 2.65);
+  circle2(c, 0, 0, r, kind === "singularity" ? "#ed68b6" : "#cb8bf0", 1.15);
+  c.strokeStyle = kind === "singularity" ? "#ffd1eb" : "#eee0ff";
+  c.lineWidth = 1.45;
+  c.beginPath();
+  c.arc(0, 0, r - 3, -Math.PI / 2, -Math.PI / 2 + TAU35 * progress5);
+  c.stroke();
+  c.restore();
+}
+function inwardDust(c, p, tick, startedTick, seed2, progress5, collapseAge = null) {
+  const elapsed = tick - startedTick, opacityScale = c.globalAlpha;
+  for (let i = 0; i < 28; i++) {
+    if (elapsed < i * 2) continue;
+    const q = (elapsed - i * 2) % 43 / 43, dist3 = 115 + (seed2 + i * 37) % 70, a = seed2 % 31 * 0.21 + i * 2.39996 + q * 0.32;
+    const drawQ = collapseAge === null ? q : mix16(q, 1, ease4(collapseAge / 14)), r = dist3 * (1 - drawQ * drawQ), tailQ = Math.max(0, drawQ - 0.075), rt = dist3 * (1 - tailQ * tailQ), opacity = Math.sin(q * Math.PI) * (0.3 + 0.35 * progress5) * (collapseAge === null ? 1 : 1 - clamp22(collapseAge / 18));
+    if (opacity <= 0) continue;
+    c.globalAlpha = opacityScale * opacity;
+    c.strokeStyle = i % 3 === 0 ? PALE3 : i % 2 ? PINK : VIOLET;
+    c.lineWidth = i % 3 === 0 ? 0.8 : 1.05;
+    c.beginPath();
+    c.moveTo(p.x + Math.cos(a - 0.025) * rt, p.y + Math.sin(a - 0.025) * rt);
+    c.lineTo(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r);
+    c.stroke();
+  }
+}
+function accretion(c, p, progress5, tick, collapse = 0) {
+  const amount = 1 - ease4(collapse), r = (22 + 39 * ease4(progress5)) * (1 - 0.9 * ease4(collapse));
+  c.save();
+  c.translate(p.x, p.y);
+  c.globalAlpha *= amount;
+  for (const [i, angle3] of [-tick * 0.012, tick * 9e-3 + 0.8].entries()) {
+    c.save();
+    c.rotate(angle3);
+    c.strokeStyle = INK32;
+    c.lineWidth = 3;
+    c.beginPath();
+    c.ellipse(0, 0, r * (i ? 0.78 : 1), r * (i ? 0.23 : 0.34), 0, 0, TAU35);
+    c.stroke();
+    c.strokeStyle = i ? "#8d7bdc" : "#b869d7";
+    c.lineWidth = 1.6;
+    c.stroke();
+    c.strokeStyle = i ? "#c8b7ff" : "#ef9fdb";
+    c.lineWidth = 0.85;
+    c.beginPath();
+    c.ellipse(0, 0, r * (i ? 0.78 : 1), r * (i ? 0.23 : 0.34), 0, 0.1, 1.65);
+    c.stroke();
+    c.restore();
+  }
+  const coreR = (5 + 20 * ease4(progress5 / 0.9)) * (1 - ease4(collapse));
+  ellipse4(c, 0, 0, coreR + 2, coreR + 2, "#8f45b75c");
+  ellipse4(c, 0, 0, coreR, coreR, "#080510", true);
+  circle2(c, 0, 0, coreR + 1, "#da62bd", 1.05);
+  c.restore();
+}
+function singularityGround(c, row2, tick) {
+  const p = row2.position ?? row2.originPosition, progress5 = castProgress(row2, tick), elapsed = tick - row2.startedTick, seed2 = hash8((row2.bossId ?? row2.sourceEntityId ?? ID2) + "/" + row2.sequence);
+  c.save();
+  boundary(c, p, row2.radius ?? 90, progress5, "singularity");
+  for (let i = 0; i < 3; i++) {
+    const q = ((elapsed / 53 + i / 3) % 1 + 1) % 1;
+    c.globalAlpha = Math.sin(q * Math.PI) * (0.14 + 0.12 * progress5);
+    circle2(c, p.x, p.y, (row2.radius ?? 90) * (1 - q), "#ad69d1", 0.85);
+  }
+  c.globalAlpha = 1;
+  accretion(c, p, progress5, tick);
+  inwardDust(c, p, tick, row2.startedTick, seed2, progress5);
+  c.restore();
+}
+function slamGround2(c, row2, tick) {
+  const age = tick - row2.resolvedTick;
+  if (age < 0 || age >= 40) return;
+  const p = row2.targetPosition, q = clamp22(age / 40), r = row2.radius ?? 64;
+  c.save();
+  if (age < 12) {
+    c.globalAlpha = 1 - ease4(age / 12);
+    circle2(c, p.x, p.y, r, INK32, 3);
+    circle2(c, p.x, p.y, r, "#dba3f8", 1.2);
+  }
+  c.globalAlpha = (1 - q) * 0.65;
+  ellipse4(c, p.x, p.y, 17 + ease4(age / 14) * 35, 9 + ease4(age / 14) * 19, "#6f3cae42");
+  circle2(c, p.x, p.y, 11 + ease4(age / 18) * (r - 11), "#cc8bf1", 1.25);
+  c.restore();
+}
+function collapseGround(c, row2, tick) {
+  const age = tick - row2.resolvedTick;
+  if (age < 0 || age >= 40) return;
+  const p = row2.targetPosition ?? row2.originPosition, r = row2.radius ?? 90, seed2 = hash8((row2.bossId ?? row2.sourceEntityId ?? ID2) + "/" + row2.sequence);
+  c.save();
+  if (age < 12) {
+    c.globalAlpha = 1 - ease4(age / 12);
+    circle2(c, p.x, p.y, r, INK32, 3);
+    circle2(c, p.x, p.y, r, "#ffd0ec", 1.6);
+  }
+  if (age < 18) {
+    c.globalAlpha = 1 - ease4(age / 18);
+    const ring2 = r * (1 - ease4(age / 15));
+    circle2(c, p.x, p.y, ring2, "#ec72c1", 1.8);
+  }
+  c.globalAlpha = 1;
+  accretion(c, p, 1, tick, age / 18);
+  inwardDust(c, p, tick, row2.resolvedTick - 360, seed2, 1, age);
+  c.restore();
+}
+function drawVoidGround(c, model, tick) {
+  const h = model.bossHazards ?? {};
+  c.save();
+  for (const row2 of h.voidTelegraphs ?? []) {
+    if (tick < row2.startedTick || tick > row2.resolvesTick) continue;
+    if (row2.ability === "singularity") singularityGround(c, row2, tick);
+    else if (row2.ability === "slam") boundary(c, row2.position ?? row2.targetPosition, row2.radius ?? 64, castProgress(row2, tick), "slam");
+  }
+  for (const row2 of h.voidImpacts ?? []) if (row2.ability === "singularity") collapseGround(c, row2, tick);
+  else if (row2.ability === "slam") slamGround2(c, row2, tick);
+  c.restore();
+}
+function forceGeometry(row2, tick, pending) {
+  if (pending) {
+    const p = castProgress(row2, tick), gather = ease4((p - 0.35) / 0.5), drop = ease4((p - 0.82) / 0.18);
+    return { visible: gather, y: -44 * gather * (1 - drop) - 6 * drop, height: 20 * gather * (1 - 0.65 * drop), width: (5 + 9 * drop) * gather, alpha: gather, drop };
+  }
+  const age = tick - row2.resolvedTick, q = clamp22(age / 40), rise = Math.sin(Math.PI * clamp22(age / 17));
+  return { visible: age >= 0 && age < 40 ? 1 : 0, y: -6 * (1 - ease4(age / 20)), height: (7 + 15 * rise) * (1 - ease4(age / 34)), width: (14 + 8 * rise) * (1 - ease4(age / 38)), alpha: 1 - ease4(q), drop: 1 };
+}
+function slamForce(c, row2, tick, pending, source2) {
+  const g = forceGeometry(row2, tick, pending);
+  if (g.visible <= 0 || g.alpha <= 0) return;
+  const p = row2.position ?? row2.targetPosition;
+  c.save();
+  c.globalAlpha *= g.alpha;
+  if (pending && source2) {
+    const pose = voidAttackPose(source2, tick), from = point6(source2.position.x + pose.bodyX, source2.position.y + pose.bodyY), alpha = 0.42 * Math.sin(Math.PI * castProgress(row2, tick));
+    c.save();
+    c.globalAlpha *= alpha;
+    c.strokeStyle = "#be7de5";
+    c.lineWidth = 0.9;
+    c.beginPath();
+    c.moveTo(from.x, from.y);
+    c.bezierCurveTo(from.x, from.y - 24, p.x, p.y + g.y - 44, p.x, p.y + g.y);
+    c.stroke();
+    c.restore();
+  }
+  c.translate(p.x, p.y + g.y);
+  const w = g.width, h = g.height;
+  polygon16(c, [[0, -h], [w, 0], [0, h], [-w, 0]], "#28113e", true);
+  polygon16(c, [[0, -h], [-w, 0], [0, h], [w * 0.18, 0]], "#7d3cad", false);
+  polygon16(c, [[0, -h * 0.86], [w * 0.18, 0], [0, h * 0.9], [-w * 0.22, 0]], "#dda0f2", false);
+  c.strokeStyle = "#f4d6ff";
+  c.lineWidth = 0.9;
+  c.beginPath();
+  c.moveTo(0, -h * 0.7);
+  c.lineTo(0, h * 0.72);
+  c.stroke();
+  c.restore();
+  if (!pending) {
+    const age = tick - row2.resolvedTick;
+    if (age < 24) {
+      c.save();
+      c.globalAlpha = 1 - ease4(age / 24);
+      for (let i = 0; i < 7; i++) {
+        const a = i * TAU35 / 7 + hash8(row2.bossId) % 7, d = age * (0.75 + i % 3 * 0.13), height = Math.max(0, age * 1.8 - age * age * 0.085);
+        c.strokeStyle = i % 2 ? PINK : VIOLET;
+        c.lineWidth = 1.1;
+        c.beginPath();
+        c.moveTo(p.x + Math.cos(a) * d, p.y + Math.sin(a) * d * 0.6 - height);
+        c.lineTo(p.x + Math.cos(a) * Math.max(0, d - 4), p.y + Math.sin(a) * Math.max(0, d - 4) * 0.6 - height - 2);
+        c.stroke();
+      }
+      c.restore();
+    }
+  }
+}
+function strikeGlint(c, row2, tick) {
+  const age = tick - row2.resolvedTick;
+  if (age < 0 || age >= 16) return;
+  const p = row2.targetPosition, amount = 1 - ease4(age / 16), d = unit5(p.x - row2.originPosition.x, p.y - row2.originPosition.y);
+  c.save();
+  c.translate(p.x, p.y - 17);
+  c.rotate(Math.atan2(d.y, d.x));
+  c.globalAlpha *= amount;
+  for (const side of [-1, 1]) {
+    c.strokeStyle = side < 0 ? PINK : PALE3;
+    c.lineWidth = 1.2;
+    c.beginPath();
+    c.moveTo(-4, side * 2);
+    c.lineTo(6 + age * 0.35, side * (5 + age * 0.16));
+    c.stroke();
+  }
+  c.restore();
+}
+function voidDepthItems(model, tick, viewport = null) {
+  const h = model.bossHazards ?? {}, items = [];
+  const visible2 = (p, r) => !viewport || p.x + r >= (viewport.x ?? viewport.left ?? -Infinity) && p.x - r <= (viewport.right ?? (viewport.x ?? 0) + (viewport.width ?? Infinity)) && p.y + r >= (viewport.y ?? viewport.top ?? -Infinity) && p.y - r <= (viewport.bottom ?? (viewport.y ?? 0) + (viewport.height ?? Infinity));
+  const add = (id, p, r, draw) => {
+    if (visible2(p, r)) items.push(Object.freeze({ id: "void-vfx/" + id, anchorX: p.x, anchorY: p.y + 1, draw }));
+  };
+  for (const row2 of h.voidTelegraphs ?? []) if (row2.ability === "slam" && tick >= row2.startedTick && tick <= row2.resolvesTick) {
+    const p = row2.position ?? row2.targetPosition;
+    add(row2.id ?? row2.bossId + "/pending", p, 100, (c) => slamForce(c, row2, tick, true, model.entitiesById?.[row2.sourceEntityId]));
+  }
+  for (const row2 of h.voidImpacts ?? []) {
+    const age = tick - row2.resolvedTick;
+    if (age < 0 || age >= 40) continue;
+    const p = row2.targetPosition;
+    if (row2.ability === "slam") add((row2.id ?? row2.bossId + "/" + row2.sequence) + "/slam", p, 100, (c) => slamForce(c, row2, tick, false));
+    else if (row2.ability === "strike") add((row2.id ?? row2.bossId + "/" + row2.sequence) + "/strike", p, 35, (c) => strikeGlint(c, row2, tick));
+  }
+  return items;
+}
+function drawVoidBossHud(c, canvas, model) {
+  const a = Object.values(model.entitiesById ?? {}).find((a2) => a2.alive && a2.boss?.bossDefinitionId === ID2);
+  if (!a) return false;
+  const b = a.boss, w = Math.min(480, canvas.width - 24), x = (canvas.width - w) / 2, y = 10, hp = presentCombat(a.hp), max = Math.max(1, presentCombat(a.maxHp)), ratio = clamp22(hp / max);
+  c.save();
+  c.fillStyle = "#171022ee";
+  c.strokeStyle = "#a369cb";
+  c.lineWidth = 1.3;
+  c.beginPath();
+  c.roundRect(x, y, w, 58, 7);
+  c.fill();
+  c.stroke();
+  c.fillStyle = "#f3e5fc";
+  c.font = "bold 13px sans-serif";
+  c.textAlign = "center";
+  c.fillText("VOID OVERSEER", canvas.width / 2, y + 17);
+  c.fillStyle = "#30203e";
+  c.fillRect(x + 12, y + 24, w - 24, 8);
+  c.fillStyle = PINK;
+  c.fillRect(x + 12, y + 24, (w - 24) * ratio, 8);
+  c.fillStyle = PALE3;
+  c.font = "11px sans-serif";
+  const labels2 = { slam: "Void slam \xB7 leave the marked circle", singularity: "Gravity pull \xB7 keep moving out of the magenta ring" };
+  c.fillText(labels2[b.pendingAction?.ability] ?? "The Eye of the Void", canvas.width / 2, y + 47);
+  c.restore();
+  return true;
+}
+
+// src/client/boss_presentation_chronos_arbitrator_v1.js
+var ID3 = "chronos_arbitrator";
+var TAU36 = Math.PI * 2;
+var INK33 = "#11151a";
+var GOLD2 = "#e2ac43";
+var PALE4 = "#ffe8ad";
+var BRASS = "#a86d27";
+var COPPER = "#ca713b";
+var IVORY = "#f7edd4";
+var clamp23 = (x) => Math.max(0, Math.min(1, x));
+var ease5 = (x) => {
+  x = clamp23(x);
+  return x * x * (3 - 2 * x);
+};
+var point22 = (x, y) => ({ x, y });
+var angleDelta = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
+var angleMix = (a, b, p) => a + angleDelta(a, b) * p;
+var unit6 = (x, y) => {
+  const d = Math.hypot(x, y) || 1;
+  return point22(x / d, y / d);
+};
+var progress = (row2, tick) => clamp23((tick - row2.startedTick) / Math.max(1, row2.resolvesTick - row2.startedTick));
+function fraction2(value, max) {
+  const a = asCombatAmount(value ?? 0), b = asCombatAmount(max ?? 1);
+  if (a.n === "0" || b.n === "0") return 0;
+  const head32 = (s) => Number(s.slice(0, 15)), exponent = (s) => s.length - Math.min(15, s.length);
+  const power = exponent(a.n) + exponent(b.d) - exponent(a.d) - exponent(b.n);
+  return clamp23(head32(a.n) * head32(b.d) / (head32(a.d) * head32(b.n)) * 10 ** Math.max(-330, Math.min(330, power)));
+}
+function ellipse5(c, x, y, rx, ry, fill3, outline = false, width = 1.26) {
+  c.beginPath();
+  c.ellipse(x, y, Math.max(1e-3, rx), Math.max(1e-3, ry), 0, 0, TAU36);
+  c.fillStyle = fill3;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK33;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function circle3(c, x, y, r, color82, width = 1) {
+  c.beginPath();
+  c.arc(x, y, Math.max(1e-3, r), 0, TAU36);
+  c.strokeStyle = color82;
+  c.lineWidth = width;
+  c.stroke();
+}
+function polygon17(c, points, fill3, outline = true, width = 1.26) {
+  c.beginPath();
+  for (const [i, [x, y]] of points.entries()) i ? c.lineTo(x, y) : c.moveTo(x, y);
+  c.closePath();
+  c.fillStyle = fill3;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK33;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function smoothIntegral(t, span) {
+  if (t <= 0) return 0;
+  if (t >= span) return t - span / 2;
+  return t * t * t / (span * span) - t * t * t * t / (2 * span * span * span);
+}
+function reverseClock(t) {
+  return t - 2 * smoothIntegral(t, 16);
+}
+function mechanismTime(b, tick) {
+  const rw = b.rewind;
+  if (!rw || tick < rw.startedTick) return tick;
+  const end = rw.outcome === "channeling" ? tick : rw.resolvedTick ?? tick, clock = rw.startedTick + reverseClock(Math.max(0, end - rw.startedTick));
+  if (rw.outcome === "channeling") return clock;
+  const age = Math.max(0, tick - end);
+  if (rw.outcome === "broken") {
+    const resume = b.dazeResumeTick ?? end + 211, after = Math.max(0, tick - resume);
+    return clock - 12 * (1 - Math.exp(-age / 12)) + smoothIntegral(after, 20);
+  }
+  return clock - age + 2 * smoothIntegral(age, 24);
+}
+function rewindHands(b, tick) {
+  const rw = b.rewind;
+  if (!rw || tick < rw.startedTick) return null;
+  const end = rw.outcome === "channeling" ? tick : rw.resolvedTick ?? tick, p = ease5(progress(rw, end));
+  const start2 = [rw.startedTick / 600, rw.startedTick / 108], turns = [1, 2];
+  const angles = start2.map((a, i) => a - (((a + Math.PI / 2) % TAU36 + TAU36) % TAU36 + turns[i] * TAU36) * p);
+  if (rw.outcome === "channeling") return angles;
+  const age = Math.max(0, tick - end), after = rw.outcome === "broken" ? Math.max(0, tick - (b.dazeResumeTick ?? end + 211)) : age;
+  return angles.map((a, i) => a + smoothIntegral(after, 20) / (i ? 108 : 600));
+}
+function chronosAttackPose(actor2, tick) {
+  const b = actor2.boss ?? {}, alive = actor2.alive !== false && b.bossDefinitionId === ID3;
+  const pending = alive ? b.pendingAction : null, last = alive ? b.lastAction : null, age = last ? tick - last.resolvedTick : Infinity;
+  const recent = age >= 0 && age < 40 ? last : null, record2 = pending ?? recent, p = pending ? progress(pending, tick) : 0;
+  const aim2 = record2?.targetPosition ?? point22(actor2.position.x + Math.cos(b.facingAngle ?? Math.PI / 2) * 60, actor2.position.y + Math.sin(b.facingAngle ?? Math.PI / 2) * 60);
+  const origin = record2?.originPosition ?? actor2.position, d = unit6(aim2.x - origin.x, aim2.y - origin.y), clock = mechanismTime(b, tick);
+  const pose = { ability: record2?.ability ?? null, p, age, bodyX: 0, bodyY: -47 + Math.sin((tick + (actor2.visualSeed ?? 0) * 0.11) / 12) * 3.3, rotation: Math.sin(tick / 53) * 0.018, charge: 0, slack: 0, mainAngle: clock / 90, silverAngle: -clock / 24, copperAngle: clock / 30 + 0.5, hourAngle: clock / 600, minuteAngle: clock / 108, direction: d };
+  const rw = b.rewind, rwAge = rw?.resolvedTick == null ? Infinity : tick - rw.resolvedTick, rwHands = rewindHands(b, tick);
+  if (rwHands) {
+    pose.hourAngle = rwHands[0];
+    pose.minuteAngle = rwHands[1];
+  }
+  if (alive && rw?.outcome === "channeling") {
+    const coil = ease5((tick - rw.startedTick) / 16);
+    pose.bodyY -= 7 * coil;
+    pose.charge = coil;
+  } else if (alive && rw?.outcome === "completed" && rwAge >= 0 && rwAge < 38) {
+    const amount2 = 1 - ease5(rwAge / 38);
+    pose.bodyY -= 7 * amount2;
+    pose.charge = amount2;
+  } else if (alive && rw?.outcome === "broken" && rwAge >= 0 && rwAge < 18) {
+    const heldLift = ease5((rw.resolvedTick - rw.startedTick) / 16), amount2 = 1 - ease5(rwAge / 18);
+    pose.bodyY -= 7 * heldLift * amount2;
+    pose.charge = heldLift * (1 - ease5(rwAge / 16));
+  }
+  if (alive && b.actionState === "dazed") {
+    const dazeAge = tick - (b.dazeStartedTick ?? tick), remaining = (b.dazeEndsTick ?? tick + 210) - tick;
+    pose.slack = ease5(dazeAge / 16) * (1 - ease5((18 - remaining) / 18));
+    pose.bodyY += 10 * pose.slack;
+    pose.rotation += 0.14 * pose.slack + Math.sin(dazeAge * 0.27) * 0.035 * pose.slack;
+  }
+  const rewindOwnsBody = alive && rw && (rw.outcome === "channeling" || b.actionState === "dazed" || ["completed", "broken"].includes(rw.outcome) && rwAge >= 0 && rwAge < 38);
+  if (rewindOwnsBody) {
+    const entryTick = rw.outcome === "channeling" ? tick : Math.min(tick, rw.resolvedTick ?? tick);
+    const entryWeight = (1 - ease5((entryTick - rw.startedTick) / 12)) * (rw.outcome === "channeling" ? 1 : 1 - ease5(rwAge / 18));
+    if (entryWeight > 0 && b.lastAction && rw.startedTick - b.lastAction.resolvedTick >= 0 && rw.startedTick - b.lastAction.resolvedTick < 40) {
+      const prior = chronosAttackPose({ ...actor2, position: rw.originPosition, boss: { ...b, rewind: null, actionState: "idle", pendingAction: null } }, rw.startedTick);
+      const idleY = -47 + Math.sin((rw.startedTick + (actor2.visualSeed ?? 0) * 0.11) / 12) * 3.3, idleRotation = Math.sin(rw.startedTick / 53) * 0.018;
+      pose.bodyX += prior.bodyX * entryWeight;
+      pose.bodyY += (prior.bodyY - idleY) * entryWeight;
+      pose.rotation += (prior.rotation - idleRotation) * entryWeight;
+      pose.hourAngle = angleMix(pose.hourAngle, prior.hourAngle, entryWeight);
+      pose.minuteAngle = angleMix(pose.minuteAngle, prior.minuteAngle, entryWeight);
+      pose.charge += prior.charge * entryWeight;
+    }
+    pose.ability = b.actionState === "dazed" ? "dazed" : "chrono_rewind";
+    pose.p = progress(rw, tick);
+    pose.age = rwAge;
+    return pose;
+  }
+  const targetAngle = Math.atan2(aim2.y - actor2.position.y - 17 - pose.bodyY - 6, aim2.x - actor2.position.x - pose.bodyX) - pose.rotation;
+  if (pending?.ability === "slam") {
+    const coil = ease5(p / 0.72), drive = ease5((p - 0.8) / 0.2);
+    pose.bodyX = -d.x * 4 * coil + d.x * 7 * drive;
+    pose.bodyY += -10 * coil + 15 * drive;
+    pose.rotation += d.x * (-0.1 * coil + 0.08 * drive);
+    pose.minuteAngle = angleMix(pose.minuteAngle, targetAngle - 1.05, coil);
+    pose.minuteAngle = angleMix(pose.minuteAngle, targetAngle, drive);
+    pose.hourAngle = angleMix(pose.hourAngle, targetAngle - 0.4, coil);
+    pose.charge = coil;
+  } else if (recent?.ability === "slam") {
+    const amount2 = 1 - ease5(age / 35);
+    pose.bodyX = d.x * 3 * amount2;
+    pose.bodyY += 5 * amount2;
+    pose.rotation -= d.x * 0.02 * amount2;
+    pose.minuteAngle = angleMix(pose.minuteAngle, targetAngle, amount2);
+    pose.hourAngle = angleMix(pose.hourAngle, targetAngle - 0.4, amount2);
+    pose.charge = amount2;
+  } else if (pending?.ability === "dilation_field") {
+    const coil = ease5(p / 0.85);
+    pose.bodyY -= 5 * coil;
+    pose.rotation -= d.x * 0.06 * coil;
+    pose.hourAngle = angleMix(pose.hourAngle, -Math.PI / 2, coil);
+    pose.minuteAngle = angleMix(pose.minuteAngle, -Math.PI / 2, coil);
+    pose.charge = coil * 0.65;
+  } else if (recent?.ability === "dilation_field") {
+    const amount2 = 1 - ease5(age / 32);
+    pose.bodyY -= 5 * amount2;
+    pose.rotation -= d.x * 0.06 * amount2;
+    pose.hourAngle = angleMix(pose.hourAngle, -Math.PI / 2, amount2);
+    pose.minuteAngle = angleMix(pose.minuteAngle, -Math.PI / 2, amount2);
+    pose.charge = amount2 * 0.65;
+  } else if (recent?.ability === "strike" && age < 25) {
+    const amount2 = 1 - ease5(age / 25);
+    pose.bodyX = d.x * 8 * amount2;
+    pose.bodyY += d.y * 6 * amount2;
+    pose.rotation += d.x * 0.1 * amount2;
+    pose.minuteAngle = angleMix(pose.minuteAngle, targetAngle, amount2);
+    pose.charge = 0.38 * amount2;
+  }
+  return pose;
+}
+function gearPath(c, r, teeth, angle22) {
+  c.beginPath();
+  for (let i = 0; i < teeth * 4; i++) {
+    const a = angle22 + (i - 0.5) * TAU36 / (teeth * 4), rad = i % 4 < 2 ? r + 2.5 : r - 2.6, x = Math.cos(a) * rad, y = Math.sin(a) * rad;
+    i ? c.lineTo(x, y) : c.moveTo(x, y);
+  }
+  c.closePath();
+}
+function gear(c, x, y, r, teeth, angle22, palette, flash) {
+  c.save();
+  c.translate(x, y);
+  gearPath(c, r, teeth, angle22);
+  c.fillStyle = flash ? "#fff" : palette[0];
+  c.fill();
+  c.strokeStyle = INK33;
+  c.lineWidth = 1.26;
+  c.stroke();
+  if (!flash) {
+    c.save();
+    c.clip();
+    c.fillStyle = palette[1];
+    c.beginPath();
+    c.arc(0, 0, r + 3, 0.08, Math.PI - 0.18);
+    c.lineTo(-r * 0.72, -r * 0.02);
+    c.quadraticCurveTo(0, r * 0.45, r * 0.9, 0);
+    c.closePath();
+    c.fill();
+    c.fillStyle = palette[2];
+    c.beginPath();
+    c.arc(-1, -1, r - 3, Math.PI * 1.04, Math.PI * 1.89);
+    c.lineTo(r * 0.63, -r * 0.3);
+    c.quadraticCurveTo(-r * 0.05, -r * 0.53, -r * 0.8, -r * 0.16);
+    c.closePath();
+    c.fill();
+    c.restore();
+  }
+  ellipse5(c, 0, 0, r * 0.69, r * 0.69, flash ? "#fff" : palette[1], true, 0.9);
+  ellipse5(c, 0, 0, r * 0.57, r * 0.57, flash ? "#fff" : "#272b2c", true, 0.85);
+  if (!flash) {
+    c.strokeStyle = palette[2];
+    c.lineWidth = 0.8;
+    c.beginPath();
+    c.arc(0, 0, r * 0.69, Math.PI * 1.05, Math.PI * 1.85);
+    c.stroke();
+  }
+  for (let i = 0; i < 4; i++) {
+    const a = angle22 + i * Math.PI / 2, px = Math.cos(a) * r * 0.79, py = Math.sin(a) * r * 0.79;
+    ellipse5(c, px, py, r > 30 ? 1.7 : 1.3, r > 30 ? 1.7 : 1.3, flash ? "#fff" : "#443324", true, 0.8);
+  }
+  if (r < 30) {
+    ellipse5(c, 0, 0, r * 0.22, r * 0.22, flash ? "#fff" : palette[0], true);
+    if (!flash) ellipse5(c, -r * 0.05, -r * 0.08, r * 0.09, r * 0.07, palette[2]);
+  }
+  c.restore();
+}
+function hand3(c, angle22, length, color82, flash) {
+  c.save();
+  c.translate(0, 6);
+  c.rotate(angle22);
+  polygon17(c, [[-3.3, 0], [0, -1.1], [length - 4, -1.1], [length, 0], [length - 4, 1.1], [0, 1.1]], flash ? "#fff" : color82, true, 1);
+  if (!flash) {
+    c.strokeStyle = PALE4;
+    c.lineWidth = 0.55;
+    c.beginPath();
+    c.moveTo(1, -0.4);
+    c.lineTo(length - 4, -0.4);
+    c.stroke();
+  }
+  c.restore();
+}
+function mask(c, pose, flash) {
+  c.save();
+  c.beginPath();
+  c.moveTo(-1, -26);
+  c.quadraticCurveTo(-21, -21, -20, 0);
+  c.lineTo(-12, 27);
+  c.lineTo(12, 27);
+  c.lineTo(20, 0);
+  c.quadraticCurveTo(21, -20, -1, -26);
+  c.closePath();
+  c.fillStyle = flash ? "#fff" : IVORY;
+  c.fill();
+  c.strokeStyle = INK33;
+  c.lineWidth = 1.26;
+  c.stroke();
+  if (!flash) {
+    c.save();
+    c.clip();
+    polygon17(c, [[3, -25], [20, -17], [23, 1], [12, 29], [4, 29], [8, 2], [5, -9]], "#cfbea0", false);
+    polygon17(c, [[-2, -24], [-15, -16], [-17, -3], [-14, 7], [-12, -7]], "#fff8e8", false);
+    c.restore();
+    c.strokeStyle = "#6b5c46";
+    c.lineWidth = 0.9;
+    c.beginPath();
+    c.moveTo(-12, -15);
+    c.lineTo(-8, -11);
+    c.lineTo(-11, -5);
+    c.moveTo(12, -16);
+    c.lineTo(8, -11);
+    c.lineTo(11, -6);
+    c.moveTo(10, 12);
+    c.lineTo(6, 17);
+    c.lineTo(8, 22);
+    c.stroke();
+    for (const side of [-1, 1]) {
+      const x = side * 7, y = -6;
+      const glow4 = c.createRadialGradient(x, y, 0.2, x, y, 7 + pose.charge * 2);
+      glow4.addColorStop(0, "#fff0b9cc");
+      glow4.addColorStop(1, "#f2c85500");
+      ellipse5(c, x, y, 7 + pose.charge * 2, 7 + pose.charge * 2, glow4);
+      ellipse5(c, x, y, 4.2, 3.8, "#68583f", true, 0.8);
+      ellipse5(c, x, y, 3.3, 3.1, "#fffbed");
+      ellipse5(c, x - 0.4, y - 0.5, 2.1, 1.8, "#fff");
+    }
+  }
+  hand3(c, pose.hourAngle, 14, "#42484a", flash);
+  hand3(c, pose.minuteAngle, 23, COPPER, flash);
+  ellipse5(c, 0, 6, 2.1, 2.1, flash ? "#fff" : GOLD2, true, 0.9);
+  if (!flash) ellipse5(c, -0.4, 5.5, 0.75, 0.65, PALE4);
+  c.restore();
+}
+function assembly(c, pose, flash) {
+  const silver = point22(-33, -27 + 3 * pose.slack), copper = point22(35, 24 + 5 * pose.slack);
+  for (const p of [silver, copper]) {
+    c.strokeStyle = INK33;
+    c.lineWidth = 7;
+    c.beginPath();
+    c.moveTo(p.x * 0.35, p.y * 0.35);
+    c.lineTo(p.x, p.y);
+    c.stroke();
+    c.strokeStyle = flash ? "#fff" : "#725038";
+    c.lineWidth = 3.7;
+    c.stroke();
+  }
+  gear(c, silver.x, silver.y, 20, 10, pose.silverAngle, ["#a0b4b8", "#61757c", "#d6e3e4"], flash);
+  gear(c, copper.x, copper.y, 23, 12, pose.copperAngle, [COPPER, "#85462c", "#f4b46d"], flash);
+  gear(c, 2.3, 3, 40, 16, pose.mainAngle, ["#74501e", "#573c22", "#a77931"], flash);
+  gear(c, 0, 0, 40, 16, pose.mainAngle, [GOLD2, BRASS, PALE4], flash);
+  mask(c, pose, flash);
+}
+function drawChronosArbitrator(c, actor2, tick, flash = false) {
+  if (actor2.boss?.bossDefinitionId !== ID3) return false;
+  const pose = chronosAttackPose(actor2, tick), death = actor2.alive === false ? clamp23((actor2.deathAge ?? 0) / 38) : 0;
+  c.save();
+  c.translate(actor2.position.x, actor2.position.y);
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  c.globalAlpha *= 1 - death;
+  ellipse5(c, 2, 6, 43, 9, "#100b0748");
+  c.translate(pose.bodyX, pose.bodyY + death * 16);
+  c.rotate(pose.rotation);
+  if (pose.charge > 0) {
+    const g = c.createRadialGradient(0, 0, 20, 0, 0, 60);
+    g.addColorStop(0, "#efbf4c00");
+    g.addColorStop(0.65, `rgba(239,191,76,${0.13 * pose.charge})`);
+    g.addColorStop(1, "#efbf4c00");
+    ellipse5(c, 0, 0, 60, 60, g);
+  }
+  assembly(c, pose, flash);
+  if (pose.slack > 0.05) {
+    c.save();
+    c.globalAlpha *= pose.slack;
+    for (let i = 0; i < 3; i++) {
+      const a = tick * 0.065 + i * TAU36 / 3, x = Math.cos(a) * 15, y = -48 + Math.sin(a) * 3;
+      polygon17(c, [[x - 2, y], [x, y - 2.5], [x + 2, y], [x, y + 2.5]], PALE4, false);
+    }
+    c.restore();
+  }
+  c.restore();
+  return true;
+}
+function clockFace(c, p, r, angle22, alpha = 1, marks = 1) {
+  c.save();
+  c.translate(p.x, p.y);
+  c.globalAlpha *= alpha;
+  circle3(c, 0, 0, r, INK33, 2.7);
+  circle3(c, 0, 0, r, GOLD2, 1.2);
+  c.strokeStyle = PALE4;
+  c.lineWidth = 0.9;
+  for (let i = 0; i < 12; i++) {
+    const a = -Math.PI / 2 + i * TAU36 / 12, visible2 = clamp23(marks * 12 - i);
+    if (visible2 <= 0) continue;
+    c.save();
+    c.globalAlpha *= visible2;
+    c.beginPath();
+    c.moveTo(Math.cos(a) * (r - (i % 3 ? 3 : 6)), Math.sin(a) * (r - (i % 3 ? 3 : 6)));
+    c.lineTo(Math.cos(a) * (r - 1), Math.sin(a) * (r - 1));
+    c.stroke();
+    c.restore();
+  }
+  c.strokeStyle = "#e7b858";
+  c.lineWidth = 1.1;
+  c.beginPath();
+  c.moveTo(0, 0);
+  c.lineTo(Math.cos(angle22) * (r - 9), Math.sin(angle22) * (r - 9));
+  c.moveTo(0, 0);
+  c.lineTo(Math.cos(angle22 * 0.25) * (r * 0.43), Math.sin(angle22 * 0.25) * (r * 0.43));
+  c.stroke();
+  ellipse5(c, 0, 0, 1.7, 1.7, PALE4);
+  c.restore();
+}
+function fieldGround(c, row2, tick, pending) {
+  const age = pending ? 0 : Math.max(0, tick - row2.createdTick), p = pending ? progress(row2, tick) : 1, pos = row2.position ?? row2.targetPosition, r = row2.radius ?? 35;
+  const remaining = pending ? 420 : row2.expiresTick - tick, fade = clamp23(remaining / 48), angle22 = -Math.PI / 2 + (pending ? p * TAU36 : TAU36 + age * 0.018);
+  c.save();
+  c.globalAlpha *= pending ? 0.65 + 0.35 * p : 0.55 + 0.45 * fade;
+  ellipse5(c, pos.x, pos.y, r, r, `rgba(190,130,36,${(0.05 + 0.09 * p) * (0.55 + 0.45 * fade)})`);
+  clockFace(c, pos, r, angle22, 1, pending ? ease5(p / 0.7) : 1);
+  if (pending) {
+    c.strokeStyle = PALE4;
+    c.lineWidth = 1.6;
+    c.beginPath();
+    c.arc(pos.x, pos.y, r - 2, -Math.PI / 2, -Math.PI / 2 + TAU36 * p);
+    c.stroke();
+  }
+  c.globalAlpha *= 0.32 * (pending ? ease5((p - 0.2) / 0.65) : fade);
+  circle3(c, pos.x, pos.y, r * 0.69 + Math.sin(age * 0.035) * 1.1, "#f4d184", 0.8);
+  c.restore();
+}
+function slamBoundary(c, row2, tick, pending) {
+  const p = row2.position ?? row2.targetPosition, r = row2.radius ?? 64, age = pending ? 0 : tick - row2.resolvedTick;
+  if (!pending && (age < 0 || age >= 40)) return;
+  const q = pending ? progress(row2, tick) : 1;
+  c.save();
+  if (pending) {
+    ellipse5(c, p.x, p.y, r, r, "#bf7f2517");
+    circle3(c, p.x, p.y, r, INK33, 2.7);
+    circle3(c, p.x, p.y, r, GOLD2, 1.2);
+    c.strokeStyle = PALE4;
+    c.lineWidth = 1.4;
+    c.beginPath();
+    c.arc(p.x, p.y, r - 3, -Math.PI / 2, -Math.PI / 2 + TAU36 * q);
+    c.stroke();
+  } else {
+    const fade = 1 - ease5(age / 40);
+    if (age < 12) {
+      c.globalAlpha *= 1 - ease5(age / 12);
+      circle3(c, p.x, p.y, r, PALE4, 1.6);
+    }
+    c.globalAlpha = fade;
+    circle3(c, p.x, p.y, 10 + (r - 10) * ease5(age / 18), GOLD2, 1.5);
+    ellipse5(c, p.x, p.y, 16 + 35 * ease5(age / 15), 8 + 16 * ease5(age / 15), "#d09b3533");
+  }
+  c.restore();
+}
+function teleportGround(c, row2, tick) {
+  const age = tick - row2.startedTick;
+  if (age < 0 || age > 18) return;
+  const origin = row2.originPosition, p = row2.position;
+  if (Math.hypot(p.x - origin.x, p.y - origin.y) < 1) return;
+  c.save();
+  c.globalAlpha *= 1 - ease5(age / 18);
+  for (const [at2, reverse] of [[origin, false], [p, true]]) {
+    const r = reverse ? 12 + 34 * ease5(age / 18) : 42 - 28 * ease5(age / 18);
+    circle3(c, at2.x, at2.y, r, GOLD2, 1.3);
+    for (let i = 0; i < 8; i++) {
+      const a = i * TAU36 / 8;
+      c.strokeStyle = PALE4;
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(at2.x + Math.cos(a) * (r - 4), at2.y + Math.sin(a) * (r - 4));
+      c.lineTo(at2.x + Math.cos(a) * r, at2.y + Math.sin(a) * r);
+      c.stroke();
+    }
+  }
+  c.restore();
+}
+function drawChronosGround(c, model2, tick) {
+  const h = model2.bossHazards ?? {};
+  c.save();
+  for (const row2 of h.chronosTelegraphs ?? []) {
+    if (tick < row2.startedTick || tick > row2.resolvesTick) continue;
+    if (row2.ability === "slam") slamBoundary(c, row2, tick, true);
+    else if (row2.ability === "dilation_field") fieldGround(c, row2, tick, true);
+  }
+  for (const row2 of h.chronosFields ?? []) if (tick >= row2.createdTick && tick <= row2.expiresTick) fieldGround(c, row2, tick, false);
+  for (const row2 of h.chronosImpacts ?? []) if (row2.ability === "slam") slamBoundary(c, row2, tick, false);
+  for (const row2 of h.chronosRewinds ?? []) teleportGround(c, row2, tick);
+  c.restore();
+}
+function slamForce2(c, row2, tick, pending, actor2) {
+  const p = row2.position ?? row2.targetPosition, age = pending ? 0 : tick - row2.resolvedTick;
+  if (!pending && (age < 0 || age >= 40)) return;
+  const q = pending ? progress(row2, tick) : 1, gather = pending ? ease5((q - 0.3) / 0.48) : 1, drop = pending ? ease5((q - 0.8) / 0.2) : 1, fade = pending ? 1 : 1 - ease5(age / 40);
+  if (gather <= 0 || fade <= 0) return;
+  const y = pending ? -46 * gather * (1 - drop) - 5 * drop : -5 * (1 - ease5(age / 20)), h = pending ? 24 * gather * (1 - 0.7 * drop) : (7.2 + 12 * Math.sin(Math.PI * clamp23(age / 18))) * (1 - ease5(age / 34)), w = pending ? (4 + 11 * drop) * gather : (15 + 9 * Math.sin(Math.PI * clamp23(age / 18))) * (1 - ease5(age / 38));
+  c.save();
+  c.globalAlpha *= gather * fade;
+  if (pending && actor2) {
+    const pose = chronosAttackPose(actor2, tick), x = 23 * Math.cos(pose.minuteAngle), tipY = 6 + 23 * Math.sin(pose.minuteAngle), cs = Math.cos(pose.rotation), sn = Math.sin(pose.rotation);
+    c.save();
+    c.globalAlpha *= 0.45 * Math.sin(Math.PI * q);
+    c.strokeStyle = GOLD2;
+    c.lineWidth = 1.1;
+    c.beginPath();
+    c.moveTo(actor2.position.x + pose.bodyX + x * cs - tipY * sn, actor2.position.y + pose.bodyY + x * sn + tipY * cs);
+    c.quadraticCurveTo(p.x, p.y + y - 43, p.x, p.y + y);
+    c.stroke();
+    c.restore();
+  }
+  c.translate(p.x, p.y + y);
+  polygon17(c, [[0, -h], [w * 0.35, -h * 0.26], [w, 0], [w * 0.3, h * 0.28], [0, h], [-w * 0.3, h * 0.28], [-w, 0], [-w * 0.35, -h * 0.26]], BRASS, true);
+  polygon17(c, [[0, -h], [-w * 0.35, -h * 0.26], [-w, 0], [0, h], [w * 0.16, 0]], GOLD2, false);
+  polygon17(c, [[0, -h * 0.78], [-w * 0.13, 0], [0, h * 0.84], [w * 0.13, 0]], PALE4, false);
+  c.restore();
+  if (!pending && age < 22) {
+    c.save();
+    c.globalAlpha *= 1 - ease5(age / 22);
+    for (let i = 0; i < 8; i++) {
+      const a = i * TAU36 / 8, d = age * (0.7 + i % 3 * 0.15), height = Math.max(0, age * 1.65 - age * age * 0.077);
+      c.strokeStyle = i % 2 ? GOLD2 : PALE4;
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(p.x + Math.cos(a) * d, p.y + Math.sin(a) * d * 0.6 - height);
+      c.lineTo(p.x + Math.cos(a) * (d + 3), p.y + Math.sin(a) * (d + 3) * 0.6 - height - 1);
+      c.stroke();
+    }
+    c.restore();
+  }
+}
+function rewindWard(c, row2, tick, actor2) {
+  const active = row2.outcome === "channeling", age = row2.resolvedTick == null ? 0 : tick - row2.resolvedTick;
+  if (!active && (age < 0 || age >= 40 || !["broken", "completed"].includes(row2.outcome))) return;
+  const p = row2.currentPosition ?? actor2?.position ?? row2.position, pose = actor2 ? chronosAttackPose(actor2, tick) : { bodyX: 0, bodyY: -47 }, radius = 64;
+  const enter = ease5((tick - row2.startedTick) / 12), ratio = fraction2(row2.shieldUnits, row2.maxShieldUnits), fade = active ? 1 : 1 - ease5(age / 40);
+  c.save();
+  c.translate(p.x + pose.bodyX, p.y + pose.bodyY);
+  c.globalAlpha *= enter * fade;
+  if (active) {
+    const glow4 = c.createRadialGradient(0, 0, 47, 0, 0, 69);
+    glow4.addColorStop(0, "#ffd15d00");
+    glow4.addColorStop(0.7, "#ffd15d18");
+    glow4.addColorStop(1, "#ffd15d00");
+    ellipse5(c, 0, 0, 69, 69, glow4);
+    circle3(c, 0, 0, radius, "#e2ac4338", 0.8);
+    for (let i = 0; i < 12; i++) {
+      const health = clamp23(ratio * 12 - i), a = -Math.PI / 2 + i * TAU36 / 12, span = TAU36 / 12 - 0.055;
+      if (health <= 0) continue;
+      c.strokeStyle = INK33;
+      c.lineWidth = 4.8;
+      c.beginPath();
+      c.arc(0, 0, radius, a + 0.027, a + 0.027 + span * health);
+      c.stroke();
+      c.strokeStyle = GOLD2;
+      c.lineWidth = 2.5;
+      c.stroke();
+      c.strokeStyle = PALE4;
+      c.lineWidth = 0.8;
+      c.beginPath();
+      c.arc(0, 0, radius - 0.9, a + 0.027 + span * health * 0.05, a + 0.027 + span * health);
+      c.stroke();
+    }
+    const cracks = Math.floor((1 - ratio) * 5);
+    c.strokeStyle = "#fff1ba";
+    c.lineWidth = 1;
+    for (let i = 0; i < cracks; i++) {
+      const a = i * 1.71 + 0.6;
+      c.save();
+      c.rotate(a);
+      c.beginPath();
+      c.moveTo(54, -3);
+      c.lineTo(59, 1);
+      c.lineTo(62, -2);
+      c.lineTo(67, 3);
+      c.stroke();
+      c.restore();
+    }
+    const q = progress(row2, tick);
+    c.strokeStyle = "#fff2c8";
+    c.lineWidth = 1.6;
+    c.beginPath();
+    c.arc(0, 0, radius + 4, -Math.PI / 2, -Math.PI / 2 + TAU36 * q);
+    c.stroke();
+    c.strokeStyle = PALE4;
+    c.lineWidth = 0.9;
+    for (const x of [-3, 1, 4]) {
+      c.beginPath();
+      if (x === -3) {
+        c.moveTo(x - 1.5, -radius - 10);
+        c.lineTo(x + 1.5, -radius - 5);
+        c.moveTo(x + 1.5, -radius - 10);
+        c.lineTo(x - 1.5, -radius - 5);
+      } else {
+        c.moveTo(x, -radius - 10);
+        c.lineTo(x, -radius - 5);
+      }
+      c.stroke();
+    }
+    const hitAge = row2.lastShieldHit ? tick - row2.lastShieldHit.tick : Infinity;
+    if (hitAge >= 0 && hitAge < 7) {
+      c.save();
+      c.globalAlpha *= 1 - ease5(hitAge / 7);
+      circle3(c, 0, 0, radius, "#fff6d4", 1.8);
+      c.restore();
+    }
+  } else if (row2.outcome === "broken") {
+    for (let i = 0; i < 12; i++) {
+      const a = -Math.PI / 2 + i * TAU36 / 12, r = radius + age * (0.45 + i % 3 * 0.16), fall = age * age * 0.032;
+      c.save();
+      c.translate(Math.cos(a) * r, Math.sin(a) * r + fall);
+      c.rotate(a + Math.PI / 2 + age * (i % 2 ? 0.024 : -0.024));
+      polygon17(c, [[-5, -1.5], [5, -1], [4, 2], [-4, 1.6]], GOLD2, true, 0.8);
+      c.restore();
+    }
+  } else {
+    const shrink = 1 - ease5(age / 28);
+    circle3(c, 0, 0, Math.max(1, radius * shrink), PALE4, 1.4);
+    circle3(c, 0, 0, Math.max(1, (radius - 5) * shrink), "#84d2a6", 1.1);
+    for (let i = 0; i < 12; i++) {
+      const a = i * TAU36 / 12, r = (48 + i % 3 * 6) * shrink;
+      c.strokeStyle = i % 3 ? "#f5d887" : "#a4efd0";
+      c.lineWidth = 1.1;
+      c.beginPath();
+      c.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+      c.lineTo(Math.cos(a) * Math.max(0, r - 5), Math.sin(a) * Math.max(0, r - 5));
+      c.stroke();
+    }
+  }
+  c.restore();
+}
+function strikeGlint2(c, row2, tick) {
+  const age = tick - row2.resolvedTick;
+  if (age < 0 || age >= 16) return;
+  const p = row2.targetPosition;
+  c.save();
+  c.translate(p.x, p.y - 17);
+  c.globalAlpha *= 1 - ease5(age / 16);
+  c.strokeStyle = PALE4;
+  c.lineWidth = 1.2;
+  c.beginPath();
+  c.moveTo(-5 - age * 0.2, -3);
+  c.lineTo(5 + age * 0.2, 3);
+  c.moveTo(-3, 4);
+  c.lineTo(3, -4);
+  c.stroke();
+  c.restore();
+}
+function chronosDepthItems(model2, tick, viewport = null) {
+  const h = model2.bossHazards ?? {}, items = [];
+  const visible2 = (p, r) => !viewport || p.x + r >= (viewport.x ?? viewport.left ?? -Infinity) && p.x - r <= (viewport.right ?? (viewport.x ?? 0) + (viewport.width ?? Infinity)) && p.y + r >= (viewport.y ?? viewport.top ?? -Infinity) && p.y - r <= (viewport.bottom ?? (viewport.y ?? 0) + (viewport.height ?? Infinity));
+  const add = (id, p, r, dy, draw) => {
+    if (visible2(p, r)) items.push(Object.freeze({ id: "chronos-vfx/" + id, anchorX: p.x, anchorY: p.y + dy, draw }));
+  };
+  for (const row2 of h.chronosTelegraphs ?? []) if (row2.ability === "slam" && tick >= row2.startedTick && tick <= row2.resolvesTick) {
+    const p = row2.position ?? row2.targetPosition;
+    add(row2.id ?? row2.bossId + "/pending", p, 100, 1, (c) => slamForce2(c, row2, tick, true, model2.entitiesById?.[row2.sourceEntityId]));
+  }
+  for (const row2 of h.chronosImpacts ?? []) {
+    const age = tick - row2.resolvedTick;
+    if (age < 0 || age >= 40) continue;
+    const p = row2.targetPosition;
+    if (row2.ability === "slam") add((row2.id ?? row2.bossId + "/" + row2.sequence) + "/slam", p, 100, 1, (c) => slamForce2(c, row2, tick, false));
+    else if (row2.ability === "strike") add((row2.id ?? row2.bossId + "/" + row2.sequence) + "/strike", p, 30, 1, (c) => strikeGlint2(c, row2, tick));
+  }
+  for (const row2 of h.chronosRewinds ?? []) {
+    const p = row2.currentPosition ?? row2.position;
+    add(row2.id ?? row2.bossId + "/rewind", p, 150, -2, (c) => rewindWard(c, row2, tick, model2.entitiesById?.[row2.sourceEntityId]));
+  }
+  return items;
+}
+
+// src/client/boss_presentation_nexus_overseer_v1.js
+var ID4 = "nexus_overseer";
+var TAU37 = Math.PI * 2;
+var INK34 = "#11151a";
+var PINK2 = "#f12c94";
+var HOT = "#ff8bc9";
+var CYAN2 = "#50e1e5";
+var PALE5 = "#e5fbff";
+var FACE = "#30233f";
+var LIGHT6 = "#573550";
+var TEAL = "#19bf9d";
+var clamp24 = (x) => Math.max(0, Math.min(1, x));
+var ease6 = (x) => {
+  x = clamp24(x);
+  return x * x * (3 - 2 * x);
+};
+var mix17 = (a, b, p) => a + (b - a) * p;
+var point23 = (x, y) => ({ x, y });
+var unit7 = (x, y) => {
+  const d = Math.hypot(x, y) || 1;
+  return point23(x / d, y / d);
+};
+var progress2 = (row2, tick) => clamp24((tick - row2.startedTick) / Math.max(1, row2.resolvesTick - row2.startedTick));
+function hash9(value) {
+  let n = 2166136261;
+  for (const ch of String(value)) n = Math.imul(n ^ ch.charCodeAt(0), 16777619);
+  return n >>> 0;
+}
+function fraction3(value, max) {
+  const a = asCombatAmount(value ?? 0), b = asCombatAmount(max ?? 1);
+  if (a.n === "0" || b.n === "0") return 0;
+  const head32 = (s) => Number(s.slice(0, 15)), exponent = (s) => s.length - Math.min(15, s.length);
+  const power = exponent(a.n) + exponent(b.d) - exponent(a.d) - exponent(b.n);
+  return clamp24(head32(a.n) * head32(b.d) / (head32(a.d) * head32(b.n)) * 10 ** Math.max(-330, Math.min(330, power)));
+}
+function ellipse6(c, x, y, rx, ry, fill3, outline = false, width = 1.26) {
+  c.beginPath();
+  c.ellipse(x, y, Math.max(1e-3, rx), Math.max(1e-3, ry), 0, 0, TAU37);
+  c.fillStyle = fill3;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK34;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function circle4(c, x, y, r, color82, width = 1) {
+  c.beginPath();
+  c.arc(x, y, Math.max(1e-3, r), 0, TAU37);
+  c.strokeStyle = color82;
+  c.lineWidth = width;
+  c.stroke();
+}
+function path3(c, points, close = false) {
+  c.beginPath();
+  for (const [i, p] of points.entries()) i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]);
+  if (close) c.closePath();
+}
+function polygon18(c, points, fill3, outline = true, width = 1.26) {
+  path3(c, points, true);
+  c.fillStyle = fill3;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK34;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function wire(c, points, color82, width = 1.1, backing = true, close = false) {
+  path3(c, points, close);
+  if (backing) {
+    c.strokeStyle = INK34;
+    c.lineWidth = width + 1.26;
+    c.stroke();
+  }
+  c.strokeStyle = color82;
+  c.lineWidth = width;
+  c.stroke();
+}
+function glow2(c, x, y, r, color82) {
+  const g = c.createRadialGradient(x, y, 0.1, x, y, r);
+  g.addColorStop(0, color82);
+  g.addColorStop(1, "#00000000");
+  ellipse6(c, x, y, r, r, g);
+}
+var isMain = (a) => a?.boss?.bossDefinitionId === ID4;
+var isDecoy = (a) => Boolean(a?.nexusDecoy);
+var FORMS = [
+  [[-24, -22], [24, -22], [24, 22], [-24, 22], [-24, 0]],
+  [[0, -30], [13, -4], [26, 22], [-26, 22], [-13, -4]],
+  [[-18, -25], [18, -25], [29, 9], [0, 29], [-29, 9]]
+];
+function formAt(time, lock = 0) {
+  const cycle = (time % 900 + 900) % 900, index = Math.floor(cycle / 300), p = ease6((cycle % 300 - 236) / 64);
+  return FORMS[index].map(([x, y], i) => [mix17(mix17(x, FORMS[(index + 1) % 3][i][0], p), FORMS[0][i][0], lock), mix17(mix17(y, FORMS[(index + 1) % 3][i][1], p), FORMS[0][i][1], lock)]);
+}
+function nexusAttackPose(actor2, tick) {
+  const b = actor2.boss ?? {}, decoy = isDecoy(actor2), alive = actor2.alive !== false;
+  const pending = alive ? b.pendingAction : null, last = alive ? b.lastAction : null, age = last ? tick - last.resolvedTick : Infinity;
+  const recent = age >= 0 && age < 40 ? last : null, record2 = pending ?? recent, p = pending ? progress2(pending, tick) : 0;
+  const origin = record2?.originPosition ?? actor2.position;
+  const aim2 = record2?.targetPosition ?? point23(actor2.position.x + Math.cos(b.facingAngle ?? actor2.facingAngle ?? Math.PI / 2) * 60, actor2.position.y + Math.sin(b.facingAngle ?? actor2.facingAngle ?? Math.PI / 2) * 60);
+  const d = unit7(aim2.x - origin.x, aim2.y - origin.y), seed2 = Number.isFinite(actor2.visualSeed) ? actor2.visualSeed : hash9(actor2.id ?? actor2.entityId ?? ID4) % 997;
+  const pose = { ability: record2?.ability ?? null, p, age, direction: d, aim: aim2, bodyX: 0, bodyY: (decoy ? -21 : -40) + Math.sin((tick + seed2 * 0.13) / 11) * (decoy ? 1.7 : 3), rotation: 0.09 + Math.sin((tick + seed2 * 0.04) / 77) * 0.12, yaw: 0.72 * Math.sin((tick + seed2 * 0.31) / 42 + 0.6), scaleX: 1, scaleY: 1, charge: 0, release: 0, lock: 0, formTime: tick + seed2 % 180, decoy };
+  if (decoy) {
+    const shotAge = tick - (actor2.nexusDecoy.lastShotTick ?? -Infinity), ready = actor2.nexusDecoy.aggro ? 1 - ease6(((actor2.nexusDecoy.nextShotTick ?? tick + 60) - tick) / 16) : 0;
+    pose.charge = clamp24(ready) * 0.5;
+    if (shotAge >= 0 && shotAge < 16) {
+      const recoil = 1 - ease6(shotAge / 16);
+      pose.bodyY -= 2 * recoil;
+      pose.scaleX = 1 - 0.07 * recoil;
+      pose.scaleY = 1 + 0.05 * recoil;
+      pose.release = recoil;
+    }
+    return pose;
+  }
+  const barrier = b.barrier, barrierAge = barrier?.resolvedTick == null ? Infinity : tick - barrier.resolvedTick;
+  const ownsBarrier = alive && barrier && (barrier.outcome === "active" || barrierAge >= 0 && barrierAge < 30 && barrier.outcome === "broken");
+  if (ownsBarrier) {
+    const lift = ease6((tick - barrier.startedTick) / 14) * (barrier.outcome === "active" ? 1 : 1 - ease6(barrierAge / 30));
+    pose.bodyY -= 5 * lift;
+    pose.charge = 0.7 * lift;
+    pose.lock = lift;
+    pose.ability = "cyber_barrier";
+    const entry = 1 - ease6((tick - barrier.startedTick) / 12);
+    if (entry > 0 && last && barrier.startedTick - last.resolvedTick >= 0 && barrier.startedTick - last.resolvedTick < 40) {
+      const prior = nexusAttackPose({ ...actor2, position: barrier.originPosition, boss: { ...b, barrier: null, pendingAction: null } }, barrier.startedTick);
+      const idleY = -40 + Math.sin((barrier.startedTick + seed2 * 0.13) / 11) * 3;
+      pose.bodyX += prior.bodyX * entry;
+      pose.bodyY += (prior.bodyY - idleY) * entry;
+    }
+    return pose;
+  }
+  if (pending?.ability === "prism_collapse") {
+    const coil = ease6(p / 0.68);
+    pose.bodyX = -d.x * 3 * coil;
+    pose.bodyY -= 6 * coil;
+    pose.rotation -= d.x * 0.07 * coil;
+    pose.scaleX = 1 - 0.055 * coil;
+    pose.scaleY = 1 + 0.055 * coil;
+    pose.charge = coil;
+  } else if (recent?.ability === "prism_collapse") {
+    const amount2 = 1 - ease6(age / 36), kick = Math.sin(Math.PI * clamp24(age / 12));
+    pose.bodyX = -d.x * 3 * amount2;
+    pose.bodyY += -6 * amount2 + 2.5 * kick;
+    pose.rotation -= d.x * 0.07 * amount2;
+    pose.scaleX = 1 - 0.055 * amount2;
+    pose.scaleY = 1 + 0.055 * amount2;
+    pose.charge = amount2;
+    pose.release = 1 - ease6(age / 12);
+  } else if (pending?.ability === "control_glitch") {
+    const coil = ease6(p / 0.85);
+    pose.bodyY -= 3 * coil;
+    pose.scaleX = 1 + 0.04 * coil;
+    pose.scaleY = 1 + 0.02 * coil;
+    pose.charge = coil;
+    pose.lock = coil;
+  } else if (recent?.ability === "control_glitch") {
+    const amount2 = 1 - ease6(age / 32);
+    pose.bodyY -= 3 * amount2;
+    pose.scaleX = 1 + 0.04 * amount2;
+    pose.scaleY = 1 + 0.02 * amount2;
+    pose.charge = amount2;
+    pose.lock = amount2;
+    pose.release = 1 - ease6(age / 13);
+  } else if (recent?.ability === "strike" && age < 26) {
+    const amount2 = 1 - ease6(age / 26);
+    pose.bodyX = d.x * 7 * amount2;
+    pose.bodyY += d.y * 5 * amount2;
+    pose.rotation += d.x * 0.12 * amount2;
+    pose.scaleX = 1 + 0.05 * amount2;
+    pose.charge = 0.4 * amount2;
+    pose.release = 0.5 * amount2;
+  }
+  return pose;
+}
+function eye4(c, pose, size, flash) {
+  const r = 9.3 * size, look = unit7(pose.aim.x, pose.aim.y), heat = pose.charge, release = pose.release;
+  glow2(c, 0, 0, (16 + heat * 5) * size, pose.decoy ? "#4ce5eb48" : `rgba(24,218,176,${0.22 + heat * 0.2})`);
+  ellipse6(c, 0, 0, r + 1.5 * size, r + 1 * size, flash ? "#fff" : "#0b302e", true, 1.05);
+  ellipse6(c, 0, 0, r, r * 0.98, flash ? "#fff" : pose.decoy ? "#60dfdf" : TEAL);
+  if (flash) return;
+  c.save();
+  c.beginPath();
+  c.ellipse(0, 0, r, r * 0.98, 0, 0, TAU37);
+  c.clip();
+  ellipse6(c, -r * 0.22, -r * 0.32, r * 0.93, r * 0.72, pose.decoy ? "#bbffff" : "#66e8bd");
+  ellipse6(c, r * 0.33, r * 0.68, r * 0.95, r * 0.55, pose.decoy ? "#30989f" : "#0a827c");
+  c.restore();
+  const px = look.x * 1.5 * size, py = look.y * 1.1 * size, w = (1.7 - 0.5 * heat) * size, h = (6.4 + heat * 0.8) * size;
+  polygon18(c, [[px, py - h], [px + w, py - h * 0.45], [px + w, py + h * 0.55], [px, py + h], [px - w, py + h * 0.45], [px - w, py - h * 0.55]], release > 0.3 ? PALE5 : PINK2, true, 0.75);
+  ellipse6(c, -r * 0.34, -r * 0.45, 1.8 * size, 1.2 * size, PALE5);
+  if (release > 0) {
+    c.save();
+    c.globalCompositeOperation = "lighter";
+    c.globalAlpha *= release;
+    wire(c, [[-r * 1.6, 0], [r * 1.6, 0]], PALE5, 0.8, false);
+    c.restore();
+  }
+}
+function prism(c, pose, size, flash) {
+  const yawSin = Math.sin(pose.yaw), yawCos = Math.cos(pose.yaw);
+  const verts = formAt(pose.formTime, pose.lock).map(([x, y]) => [x * size * pose.scaleX * yawCos, (y * pose.scaleY + x * yawSin * 0.13) * size]);
+  const ex = 19 * yawSin * size, ey = -10 * yawCos * size, back = verts.map(([x, y]) => [x + ex, y + ey]);
+  const color82 = pose.decoy ? CYAN2 : PINK2, backColor = pose.decoy ? "#143e4c" : "#211b36";
+  polygon18(c, back, flash ? "#fff" : backColor, true);
+  for (let i = 0; i < verts.length; i++) {
+    const j = (i + 1) % verts.length, a = verts[i], z = verts[j], visible2 = (z[1] - a[1]) * ex - (z[0] - a[0]) * ey > 0;
+    if (!visible2) continue;
+    polygon18(c, [a, z, back[j], back[i]], flash ? "#fff" : i === 0 ? pose.decoy ? "#286071" : LIGHT6 : pose.decoy ? "#1b4655" : "#392239", true);
+    wire(c, [back[i], back[j]], i === 0 ? HOT : color82, 0.9, false);
+  }
+  polygon18(c, verts, flash ? "#fff" : pose.decoy ? "#183541a8" : FACE, true);
+  if (!flash) {
+    c.save();
+    path3(c, verts, true);
+    c.clip();
+    polygon18(c, [[-40 * size, -35 * size], [35 * size, -35 * size], [-10 * size, 3 * size], [-40 * size, 15 * size]], pose.decoy ? "#58d6e21f" : "#5c365a", false);
+    polygon18(c, [[20 * size, -20 * size], [38 * size, -5 * size], [38 * size, 40 * size], [-12 * size, 40 * size]], pose.decoy ? "#0d1f3950" : "#241d37", false);
+    if (pose.decoy) {
+      c.strokeStyle = "#9af8ff5c";
+      c.lineWidth = 0.7;
+      for (let y = -22; y <= 22; y += 8) {
+        c.beginPath();
+        c.moveTo(-34 * size, y * size);
+        c.lineTo(34 * size, y * size);
+        c.stroke();
+      }
+    }
+    c.restore();
+    wire(c, verts.map(([x, y]) => [x * 0.85, y * 0.85]), color82, 1.05, false, true);
+    for (let i = 0; i < verts.length; i++) {
+      const a = verts[i], z = verts[(i + 1) % verts.length];
+      if (Math.hypot(z[0] - a[0], z[1] - a[1]) < 6 * size) continue;
+      wire(c, [[mix17(a[0], z[0], 0.08), mix17(a[1], z[1], 0.08)], [mix17(a[0], z[0], 0.29), mix17(a[1], z[1], 0.29)]], i % 2 ? CYAN2 : HOT, 0.9, false);
+    }
+    if (pose.charge > 0) {
+      c.save();
+      c.globalAlpha *= pose.charge * 0.55;
+      wire(c, verts.map(([x, y]) => [x * 0.68, y * 0.68]), pose.ability === "control_glitch" ? CYAN2 : HOT, 0.7, false, true);
+      c.restore();
+    }
+  }
+  c.save();
+  c.rotate(-pose.rotation);
+  const cos = Math.cos(pose.rotation), sin = Math.sin(pose.rotation);
+  eye4(c, { ...pose, aim: point23(cos * pose.aim.x - sin * pose.aim.y, sin * pose.aim.x + cos * pose.aim.y) }, size, flash);
+  c.restore();
+}
+function deathFragments(c, actor2, tick) {
+  const age = tick - actor2.nexusDecoy.defeatedTick;
+  if (age < 0 || age >= 24) return;
+  c.save();
+  c.globalAlpha *= 1 - ease6(age / 24);
+  c.translate(actor2.position.x, actor2.position.y - 21);
+  for (let i = 0; i < 7; i++) {
+    const a = i * 2.39996 + hash9(actor2.id ?? actor2.entityId) % 11, r = 5 + age * (0.45 + i % 3 * 0.17), x = Math.cos(a) * r, y = Math.sin(a) * r + age * age * 0.018;
+    c.save();
+    c.translate(x, y);
+    c.rotate(a + age * 0.045);
+    polygon18(c, [[-2.5, -1.5], [2.5, -1.5], [2.5, 1.5], [-2.5, 1.5]], i % 2 ? CYAN2 : PINK2, true, 0.8);
+    c.restore();
+  }
+  c.restore();
+}
+function drawNexusOverseer(c, actor2, tick, flash = false) {
+  if (!isMain(actor2) && !isDecoy(actor2)) return false;
+  const decoy = isDecoy(actor2), pose = nexusAttackPose(actor2, tick), size = decoy ? 0.51 : 1;
+  const deathAge = decoy && actor2.nexusDecoy.defeatedTick != null ? tick - actor2.nexusDecoy.defeatedTick : actor2.deathAge ?? 0;
+  const death = actor2.alive === false ? ease6(deathAge / (decoy ? 18 : 36)) : 0;
+  c.save();
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  c.translate(actor2.position.x, actor2.position.y);
+  c.globalAlpha *= 1 - death;
+  ellipse6(c, 2, 4, decoy ? 14 : 31, decoy ? 4 : 8, "#0b0b1648");
+  c.save();
+  c.translate(pose.bodyX, pose.bodyY + death * 10);
+  c.rotate(pose.rotation);
+  if (pose.charge > 0) glow2(c, 2, 0, decoy ? 24 : 46, `rgba(241,44,148,${pose.charge * 0.12})`);
+  const vx = pose.aim.x - actor2.position.x - pose.bodyX, vy = pose.aim.y - actor2.position.y - pose.bodyY - 17, cos = Math.cos(pose.rotation), sin = Math.sin(pose.rotation);
+  const localPose = { ...pose, aim: point23(cos * vx + sin * vy, -sin * vx + cos * vy) };
+  prism(c, localPose, size, flash);
+  const phase = ((tick + hash9(actor2.id ?? actor2.entityId ?? ID4) % 173) % 173 + 173) % 173;
+  if (phase < 8 && !flash) {
+    c.save();
+    c.globalAlpha *= Math.sin(phase / 8 * Math.PI) * 0.45;
+    wire(c, [[-22 * size, -12 * size], [-8 * size, -12 * size]], CYAN2, 0.9, false);
+    wire(c, [[11 * size, 14 * size], [27 * size, 14 * size]], PINK2, 0.8, false);
+    c.restore();
+  }
+  c.restore();
+  if (decoy && actor2.alive !== false) {
+    const barY = pose.bodyY - 25, w = 26;
+    c.fillStyle = INK34;
+    c.fillRect(-w / 2 - 1, barY - 1, w + 2, 4.5);
+    c.fillStyle = "#173541";
+    c.fillRect(-w / 2, barY, w, 2.5);
+    c.fillStyle = CYAN2;
+    c.fillRect(-w / 2, barY, w * fraction3(actor2.hp, actor2.maxHp), 2.5);
+  }
+  c.restore();
+  if (decoy && actor2.alive === false) deathFragments(c, actor2, tick);
+  return true;
+}
+function perimeter(c, pos, r, p, color82) {
+  ellipse6(c, pos.x, pos.y, r, r, "#d22e7d0c");
+  circle4(c, pos.x, pos.y, r, INK34, 2.5);
+  circle4(c, pos.x, pos.y, r, color82, 1.05);
+  c.strokeStyle = PALE5;
+  c.lineWidth = 1.25;
+  c.beginPath();
+  c.arc(pos.x, pos.y, r - 3, -Math.PI / 2, -Math.PI / 2 + TAU37 * p);
+  c.stroke();
+}
+function cageState(row2, tick, pending) {
+  const age = pending ? 0 : tick - row2.resolvedTick, p = pending ? progress2(row2, tick) : 1, build = ease6(p / 0.68), collapse = ease6((p - 0.82) / 0.18);
+  const r = (row2.radius ?? 64) * Math.SQRT1_2 * (1 - 0.84 * collapse), height = 56 * build * (1 - 0.88 * collapse);
+  return { age, p, build, collapse, r: pending ? r : r + ease6(age / 13) * 45, height: pending ? height : height * (1 - ease6(age / 10)), alpha: pending ? 0.22 + 0.65 * build : 1 - ease6(age / 28) };
+}
+function cageGround(c, row2, tick, pending) {
+  const pos = row2.position ?? row2.targetPosition, r = row2.radius ?? 64, q = cageState(row2, tick, pending);
+  if (!pending && (q.age < 0 || q.age >= 40)) return;
+  c.save();
+  if (pending) {
+    perimeter(c, pos, r, q.p, PINK2);
+    c.globalAlpha *= 0.25 + 0.45 * q.build;
+    const span = r * Math.SQRT1_2;
+    wire(c, [[pos.x - span, pos.y - span], [pos.x + span, pos.y - span], [pos.x + span, pos.y + span], [pos.x - span, pos.y + span]], CYAN2, 0.75, false, true);
+    for (const side of [-1, 1]) {
+      wire(c, [[pos.x + side * (r - 9), pos.y - 4], [pos.x + side * (r - 2), pos.y], [pos.x + side * (r - 9), pos.y + 4]], HOT, 0.9, false);
+    }
+  } else {
+    const fade = 1 - ease6(q.age / 32);
+    c.globalAlpha *= fade;
+    if (q.age < 10) {
+      c.save();
+      c.globalAlpha *= 1 - ease6(q.age / 10);
+      ellipse6(c, pos.x, pos.y, r, r, "#f459b123");
+      circle4(c, pos.x, pos.y, r, PALE5, 1.6);
+      c.restore();
+    }
+    circle4(c, pos.x, pos.y, 8 + (r - 8) * ease6(q.age / 16), PINK2, 1.5);
+    for (let i = 0; i < 8; i++) {
+      const a = i * TAU37 / 8 + 0.16, dist3 = 8 + (r - 7) * ease6(q.age / 18);
+      wire(c, [[pos.x + Math.cos(a) * (dist3 - 5), pos.y + Math.sin(a) * (dist3 - 5)], [pos.x + Math.cos(a) * dist3, pos.y + Math.sin(a) * dist3]], i % 2 ? CYAN2 : HOT, 0.9, false);
+    }
+  }
+  c.restore();
+}
+function glitchGrid(c, row2, tick, pending) {
+  const pos = pending ? row2.position ?? row2.originPosition : row2.originPosition, r = row2.radius ?? 180, age = pending ? 0 : tick - row2.resolvedTick, p = pending ? progress2(row2, tick) : 1;
+  if (!pending && (age < 0 || age >= 36)) return;
+  const fade = pending ? 1 : 1 - ease6(age / 36);
+  c.save();
+  c.globalAlpha *= fade;
+  perimeter(c, pos, r, p, CYAN2);
+  c.save();
+  c.translate(pos.x, pos.y);
+  c.beginPath();
+  c.arc(0, 0, r - 2, 0, TAU37);
+  c.clip();
+  c.rotate(-0.12 + p * 0.24 + (pending ? 0 : ease6(age / 15) * Math.PI / 2));
+  for (let i = -5; i <= 5; i++) {
+    const at2 = i * 30, brightness = (0.07 + 0.24 * ease6((p - 0.1) / 0.9)) * (0.5 + 0.5 * ease6((p - Math.abs(i) * 0.1) / 0.35));
+    c.strokeStyle = i % 2 ? "#e757b1" : CYAN2;
+    c.lineWidth = 0.7;
+    c.globalAlpha = fade * brightness;
+    c.beginPath();
+    c.moveTo(at2, -r);
+    c.lineTo(at2, r);
+    c.moveTo(-r, at2);
+    c.lineTo(r, at2);
+    c.stroke();
+  }
+  c.restore();
+  c.globalAlpha *= 0.45 + 0.4 * p;
+  const travel = pending ? (r - 6) * ease6(p) : r * (1 - ease6(age / 26));
+  circle4(c, pos.x, pos.y, Math.max(1, travel), pending ? PINK2 : PALE5, 1.25);
+  for (let i = 0; i < 4; i++) {
+    const a = i * Math.PI / 2, dist3 = r - 10;
+    c.save();
+    c.translate(pos.x + Math.cos(a) * dist3, pos.y + Math.sin(a) * dist3);
+    c.rotate(a);
+    wire(c, [[-4, -4], [0, 0], [-4, 4]], PALE5, 1, false);
+    c.restore();
+  }
+  c.restore();
+}
+function teleportGround2(c, row2, tick) {
+  const age = tick - row2.startedTick;
+  if (age < 0 || age >= 22 || !row2.originPosition || !row2.position) return;
+  if (Math.hypot(row2.position.x - row2.originPosition.x, row2.position.y - row2.originPosition.y) < 1) return;
+  c.save();
+  c.globalAlpha *= 1 - ease6(age / 22);
+  for (const [pos, depart] of [[row2.originPosition, true], [row2.position, false]]) {
+    const r = depart ? 30 * (1 - ease6(age / 22)) + 5 : 8 + 30 * ease6(age / 22);
+    for (let i = 0; i < 4; i++) {
+      const a = i * Math.PI / 2 + 0.2;
+      c.save();
+      c.translate(pos.x, pos.y);
+      c.rotate(a);
+      wire(c, [[r - 6, -6], [r, -6], [r, 2]], depart ? PINK2 : CYAN2, 1, false);
+      c.restore();
+    }
+  }
+  c.restore();
+}
+function drawNexusGround(c, model2, tick) {
+  const h = model2.bossHazards ?? {};
+  c.save();
+  for (const row2 of h.nexusTelegraphs ?? []) {
+    if (tick < row2.startedTick || tick > row2.resolvesTick) continue;
+    if (row2.ability === "prism_collapse") cageGround(c, row2, tick, true);
+    else if (row2.ability === "control_glitch") glitchGrid(c, row2, tick, true);
+  }
+  for (const row2 of h.nexusImpacts ?? []) {
+    if (row2.ability === "prism_collapse") cageGround(c, row2, tick, false);
+    else if (row2.ability === "control_glitch") glitchGrid(c, row2, tick, false);
+  }
+  for (const row2 of h.nexusBarriers ?? []) teleportGround2(c, row2, tick);
+  c.restore();
+}
+function targetCage(c, row2, tick, pending, front2) {
+  const q = cageState(row2, tick, pending);
+  if (!pending && (q.age < 0 || q.age >= 28)) return;
+  const pos = row2.position ?? row2.targetPosition, r = q.r, top = q.height, base = [[-r, -r], [r, -r], [r, r], [-r, r]];
+  const color82 = !pending && q.age < 5 ? PALE5 : front2 ? HOT : CYAN2;
+  c.save();
+  c.translate(pos.x, pos.y);
+  c.globalAlpha *= q.alpha;
+  const indices2 = front2 ? [2, 3] : [0, 1];
+  for (const i of indices2) {
+    const [x, y] = base[i];
+    wire(c, [[x, y], [x, y - top]], color82, 1.05, true);
+    ellipse6(c, x, y - top, 1.9, 1.9, color82, true, 0.75);
+  }
+  const edges = front2 ? [[1, 2], [2, 3], [3, 0]] : [[0, 1]];
+  for (const [a, b] of edges) {
+    const A = base[a], B = base[b];
+    wire(c, [[A[0], A[1] - top], [B[0], B[1] - top]], color82, 1, true);
+  }
+  if (!front2 && pending) {
+    const A = base[0], B = base[1];
+    polygon18(c, [[A[0], A[1]], [B[0], B[1]], [B[0], B[1] - top], [A[0], A[1] - top]], "#41d8eb0e", false);
+  }
+  if (!pending) {
+    for (const i of indices2) {
+      const [x, y] = base[i], distance42 = q.age * 0.4, fall = q.age * q.age * 0.023;
+      c.save();
+      c.translate(x + Math.sign(x) * distance42, y - top + fall);
+      c.rotate(i + q.age * 0.09);
+      polygon18(c, [[-3, -2], [3, -2], [3, 2], [-3, 2]], color82, true, 0.8);
+      c.restore();
+    }
+  }
+  c.restore();
+}
+function barrierCenter(row2, model2) {
+  return model2.entitiesById?.[row2.sourceEntityId]?.position ?? row2.currentPosition ?? row2.position;
+}
+function barrierWard(c, row2, tick, model2) {
+  const active = row2.outcome === "active", age = tick - (row2.resolvedTick ?? tick);
+  if (!active && (age < 0 || age >= 30)) return;
+  const p = barrierCenter(row2, model2), actor2 = model2.entitiesById?.[row2.sourceEntityId], pose = actor2 ? nexusAttackPose(actor2, tick) : { bodyX: 0, bodyY: -45 };
+  const charge = ease6((tick - row2.startedTick) / 14), fade = active ? 1 : 1 - ease6(age / 30), hitAge = row2.blockedHitTick == null ? Infinity : tick - row2.blockedHitTick;
+  c.save();
+  c.translate(p.x + pose.bodyX, p.y + pose.bodyY);
+  c.globalAlpha *= fade;
+  const shape = [[-38, -31], [0, -45], [39, -29], [43, 24], [0, 40], [-42, 25]];
+  if (active) {
+    polygon18(c, shape, "#2fbfd60b", false);
+    wire(c, shape, CYAN2, 1.35, true, true);
+    for (let i = 0; i < 6; i++) {
+      const a = shape[i], b = shape[(i + 1) % 6];
+      wire(c, [[mix17(a[0], b[0], 0.08), mix17(a[1], b[1], 0.08)], [mix17(a[0], b[0], 0.08 + 0.28 * charge), mix17(a[1], b[1], 0.08 + 0.28 * charge)]], i % 2 ? HOT : PALE5, 0.8, false);
+    }
+    if (hitAge >= 0 && hitAge < 8) {
+      c.save();
+      c.globalAlpha *= 1 - ease6(hitAge / 8);
+      wire(c, shape, PALE5, 2, false, true);
+      c.restore();
+    }
+  } else if (row2.outcome === "broken") {
+    for (let i = 0; i < 6; i++) {
+      const a = shape[i], b = shape[(i + 1) % 6], cx = (a[0] + b[0]) / 2, cy = (a[1] + b[1]) / 2, d = unit7(cx, cy), travel = age * 0.7, fall = age * age * 0.018;
+      c.save();
+      c.translate(cx + d.x * travel, cy + d.y * travel + fall);
+      c.rotate((i % 2 ? 1 : -1) * age * 0.025);
+      wire(c, [[a[0] - cx, a[1] - cy], [b[0] - cx, b[1] - cy]], i % 2 ? CYAN2 : HOT, 1.15, true);
+      c.restore();
+    }
+  } else wire(c, shape, CYAN2, 1, false, true);
+  c.restore();
+}
+function tether(c, row2, decoy, tick, model2) {
+  if (row2.outcome !== "active" || decoy.alive === false) return;
+  const a = barrierCenter(row2, model2), boss2 = model2.entitiesById?.[row2.sourceEntityId], bp = boss2 ? nexusAttackPose(boss2, tick) : { bodyX: 0, bodyY: -45 }, dp = nexusAttackPose(decoy, tick);
+  const from = point23(a.x + bp.bodyX, a.y + bp.bodyY), to = point23(decoy.position.x + dp.bodyX, decoy.position.y + dp.bodyY), middle = point23(mix17(from.x, to.x, 0.5), Math.min(from.y, to.y) - 8);
+  c.save();
+  c.globalAlpha *= 0.65;
+  c.strokeStyle = INK34;
+  c.lineWidth = 2.7;
+  c.beginPath();
+  c.moveTo(from.x, from.y);
+  c.quadraticCurveTo(middle.x, middle.y, to.x, to.y);
+  c.stroke();
+  c.strokeStyle = CYAN2;
+  c.lineWidth = 1.1;
+  c.stroke();
+  const travel = ((tick - row2.startedTick) * 0.023 + hash9(decoy.id ?? decoy.entityId) % 10 * 0.1) % 1, u = 1 - travel, x = u * u * to.x + 2 * u * travel * middle.x + travel * travel * from.x, y = u * u * to.y + 2 * u * travel * middle.y + travel * travel * from.y;
+  ellipse6(c, x, y, 2, 1.5, PALE5);
+  c.restore();
+}
+function bolt(c, row2, tick) {
+  if (tick < row2.createdTick || tick > row2.expiresTick) return;
+  const p = row2.position, v = row2.velocity ?? point23(p.x - (row2.previousPosition?.x ?? p.x), p.y - (row2.previousPosition?.y ?? p.y)), d = unit7(v.x, v.y), r = row2.radius ?? 6;
+  c.save();
+  ellipse6(c, p.x, p.y + 2, r + 2, 2.3, "#11152235");
+  c.translate(p.x, p.y - 14);
+  glow2(c, 0, 0, r + 5, "#65dfe355");
+  wire(c, [[-d.x * (r + 11), -d.y * (r + 11)], [-d.x * r, -d.y * r]], "#ed389b7d", 2, false);
+  const n = point23(-d.y, d.x);
+  polygon18(c, [[d.x * r, d.y * r], [n.x * r * 0.67, n.y * r * 0.67], [-d.x * r, -d.y * r], [-n.x * r * 0.67, -n.y * r * 0.67]], PINK2, true, 1.1);
+  ellipse6(c, 0, 0, r * 0.44, r * 0.44, PALE5);
+  c.restore();
+}
+function glitchStatus(c, row2, tick) {
+  if (tick < row2.appliedTick || tick >= row2.expiresTick) return;
+  const p = row2.position, remaining = clamp24((row2.expiresTick - tick) / Math.max(1, row2.expiresTick - row2.appliedTick));
+  c.save();
+  c.translate(p.x, p.y);
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  c.strokeStyle = CYAN2;
+  c.lineWidth = 1;
+  c.beginPath();
+  c.arc(0, 2, 16, -Math.PI / 2, -Math.PI / 2 + TAU37 * remaining);
+  c.stroke();
+  c.fillStyle = "#171628e8";
+  c.fillRect(-27, -48, 54, 12);
+  c.strokeStyle = PINK2;
+  c.lineWidth = 0.7;
+  c.strokeRect(-27, -48, 54, 12);
+  c.fillStyle = PALE5;
+  c.textAlign = "center";
+  c.textBaseline = "middle";
+  c.font = "bold 7px sans-serif";
+  c.fillText("REVERSED", 0, -42);
+  wire(c, [[-8, 9], [8, 9], [4, 5]], PINK2, 1.1, true);
+  wire(c, [[8, 13], [-8, 13], [-4, 17]], CYAN2, 1.1, true);
+  c.restore();
+}
+function strikeGlint3(c, row2, tick) {
+  const age = tick - row2.resolvedTick;
+  if (age < 0 || age >= 15) return;
+  const p = row2.targetPosition, d = unit7(p.x - row2.originPosition.x, p.y - row2.originPosition.y);
+  c.save();
+  c.translate(p.x, p.y - 17);
+  c.rotate(Math.atan2(d.y, d.x));
+  c.globalAlpha *= 1 - ease6(age / 15);
+  wire(c, [[-4, -4], [4, 0], [-4, 4]], HOT, 1.2, false);
+  wire(c, [[3, -5], [7, 0], [3, 5]], CYAN2, 0.8, false);
+  c.restore();
+}
+function nexusDepthItems(model2, tick, viewport = null) {
+  const h = model2.bossHazards ?? {}, items = [];
+  const visible2 = (p, r) => !viewport || p.x + r >= (viewport.x ?? viewport.left ?? -Infinity) && p.x - r <= (viewport.right ?? (viewport.x ?? 0) + (viewport.width ?? Infinity)) && p.y + r >= (viewport.y ?? viewport.top ?? -Infinity) && p.y - r <= (viewport.bottom ?? (viewport.y ?? 0) + (viewport.height ?? Infinity));
+  const add = (id, p, r, dy, draw) => {
+    if (p && visible2(p, r)) items.push(Object.freeze({ id: "nexus-vfx/" + id, anchorX: p.x, anchorY: p.y + dy, draw }));
+  };
+  for (const row2 of h.nexusTelegraphs ?? []) {
+    if (row2.ability !== "prism_collapse" || tick < row2.startedTick || tick > row2.resolvesTick) continue;
+    const p = row2.position ?? row2.targetPosition, id = row2.id ?? row2.bossId + "/" + row2.sequence;
+    for (const front2 of [false, true]) add(id + "/cage/" + front2, p, 140, front2 ? 47 : -47, (c) => targetCage(c, row2, tick, true, front2));
+  }
+  for (const row2 of h.nexusImpacts ?? []) {
+    const age = tick - row2.resolvedTick;
+    if (age < 0 || age >= 40) continue;
+    const p = row2.targetPosition, id = row2.id ?? row2.bossId + "/" + row2.sequence;
+    if (row2.ability === "prism_collapse") for (const front2 of [false, true]) add(id + "/cage/" + front2, p, 140, front2 ? 47 : -47, (c) => targetCage(c, row2, tick, false, front2));
+    else if (row2.ability === "strike") add(id + "/strike", p, 35, 1, (c) => strikeGlint3(c, row2, tick));
+  }
+  for (const row2 of h.nexusBarriers ?? []) {
+    const p = barrierCenter(row2, model2), id = row2.id ?? row2.bossId + "/barrier/" + row2.sequence;
+    add(id + "/ward", p, 110, -1, (c) => barrierWard(c, row2, tick, model2));
+    if (row2.outcome === "active") for (const entityId2 of row2.livingDecoyEntityIds ?? row2.decoyEntityIds ?? []) {
+      const a = model2.entitiesById?.[entityId2];
+      if (!a || a.alive === false) continue;
+      const middle = point23((p.x + a.position.x) / 2, (p.y + a.position.y) / 2);
+      add(id + "/tether/" + entityId2, middle, Math.hypot(p.x - a.position.x, p.y - a.position.y) / 2 + 80, -2, (c) => tether(c, row2, a, tick, model2));
+    }
+  }
+  for (const row2 of h.nexusProjectiles ?? []) add(row2.id, row2.position, 30, 1, (c) => bolt(c, row2, tick));
+  for (const row2 of h.nexusGlitches ?? []) add(row2.id ?? (row2.sourceBossId ?? row2.bossId ?? ID4) + "/glitch/" + row2.targetEntityId, row2.position, 65, 2, (c) => glitchStatus(c, row2, tick));
+  return items;
+}
+
+// src/client/boss_presentation_hooktail_v1.js
+var ID5 = "hooktail";
+var TAU38 = Math.PI * 2;
+var INK35 = "#100e17";
+var BLACK = "#19151e";
+var SCARLET = "#74242d";
+var RIDGE = "#aa3d38";
+var BELLY = "#ab513e";
+var HORN = "#d77a3a";
+var PALE6 = "#ffe7a5";
+var FIRE = "#ff6031";
+var clamp25 = (x) => Math.max(0, Math.min(1, x));
+var ease7 = (x) => {
+  x = clamp25(x);
+  return x * x * (3 - 2 * x);
+};
+var mix18 = (a, b, u) => a + (b - a) * u;
+var point24 = (x, y) => ({ x, y });
+var progress3 = (row2, tick) => clamp25((tick - row2.startedTick) / Math.max(1, row2.resolvesTick - row2.startedTick));
+function hash10(s) {
+  let h = 2166136261;
+  for (const x of String(s)) h = Math.imul(h ^ x.charCodeAt(0), 16777619);
+  return h >>> 0;
+}
+function path4(c, points, closed = false) {
+  c.beginPath();
+  for (const [i, p] of points.entries()) i ? c.lineTo(...p) : c.moveTo(...p);
+  if (closed) c.closePath();
+}
+function polygon19(c, p, fill3, outline = true, width = 1.3) {
+  path4(c, p, true);
+  c.fillStyle = fill3;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK35;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function line(c, p, color82, width = 1) {
+  path4(c, p);
+  c.strokeStyle = color82;
+  c.lineWidth = width;
+  c.stroke();
+}
+function ellipse7(c, x, y, rx, ry, fill3, outline = false, width = 1.3) {
+  c.beginPath();
+  c.ellipse(x, y, Math.max(0.01, rx), Math.max(0.01, ry), 0, 0, TAU38);
+  c.fillStyle = fill3;
+  c.fill();
+  if (outline) {
+    c.strokeStyle = INK35;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function circle5(c, x, y, r, color82, width = 1) {
+  c.beginPath();
+  c.arc(x, y, Math.max(0.01, r), 0, TAU38);
+  c.strokeStyle = color82;
+  c.lineWidth = width;
+  c.stroke();
+}
+function glow3(c, x, y, r, color82) {
+  const g = c.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, color82);
+  g.addColorStop(1, "#00000000");
+  ellipse7(c, x, y, r, r, g);
+}
+function rotate2(x, y, a) {
+  return point24(x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a));
+}
+function hooktailAttackPose(actor2, tick) {
+  const b = actor2.boss ?? {}, alive = actor2.alive !== false, pending = alive ? b.pendingAction : null, last = alive ? b.lastAction : null, age = last ? tick - last.resolvedTick : Infinity, recent = age >= 0 && age < 42 ? last : null, row2 = pending ?? recent, q = pending ? progress3(pending, tick) : 0;
+  const facing = (pending?.facing ?? recent?.facing ?? b.facing ?? -1) < 0 ? -1 : 1, seed2 = hash10(actor2.entityId ?? ID5) % 193, hover = Math.sin((tick + seed2) / 13) * 1.65;
+  const p = { ability: row2?.ability ?? null, p: q, age, facing, orientation: -facing, bodyX: 22, bodyY: -14 + hover, neckX: 0, neckY: 0, headAngle: 0.025 * Math.sin(tick / 23), jaw: 0.07 + 0.025 * Math.sin(tick / 17), heat: 0, pulse: 0, wing: 0.1 * Math.sin(tick / 12), coil: 0, compression: 0, tailDrive: 0, tailReturn: 0, target: row2?.targetPosition ?? actor2.position };
+  if (pending?.ability === "scarlet_fire") {
+    const u = ease7(q / 0.86);
+    p.bodyX += 3 * u;
+    p.neckX = 4 * u;
+    p.neckY = -4 * u;
+    p.headAngle = -0.04 * u;
+    p.jaw += 0.36 * u;
+    p.heat = ease7(q);
+    p.pulse = Math.sin(Math.PI * clamp25((q - 0.8) / 0.2));
+    p.wing -= 0.12 * u;
+    p.coil = 0.3 * u;
+  } else if (recent?.ability === "scarlet_fire") {
+    const u = 1 - ease7(age / 34), kick = Math.sin(Math.PI * clamp25(age / 11));
+    p.bodyX += (3 + 2 * kick) * u;
+    p.neckX = (4 + 2 * kick) * u;
+    p.neckY = -4 * u;
+    p.headAngle = -0.04 * u;
+    p.jaw += 0.36 * u;
+    p.heat = 1 - ease7(age / 24);
+    p.wing -= 0.12 * u;
+    p.coil = 0.3 * u;
+  } else if (pending?.ability === "slam") {
+    const rise = ease7(q / 0.61), drive = ease7((q - 0.72) / 0.28);
+    p.bodyY += -14 * rise + 17 * drive;
+    p.neckY = -3 * rise + 5 * drive;
+    p.headAngle = -0.13 * rise + 0.18 * drive;
+    p.jaw += 0.1 * rise + 0.1 * drive;
+    p.wing += 0.42 * rise - 0.4 * drive;
+    p.coil = rise;
+    p.tailDrive = drive;
+    p.compression = 0.12 * drive;
+  } else if (recent?.ability === "slam") {
+    const u = 1 - ease7(age / 38);
+    p.bodyY += 3 * u;
+    p.neckY = 2 * u;
+    p.headAngle = 0.05 * u;
+    p.jaw += 0.2 * u;
+    p.wing += 0.02 * u;
+    p.coil = u;
+    p.tailDrive = 1;
+    p.tailReturn = ease7(age / 38);
+    p.compression = 0.12 * u;
+  } else if (pending?.ability === "calamity_slam") {
+    const rise = ease7(q / 0.63), drive = ease7((q - 0.81) / 0.19);
+    p.bodyY += -22 * rise + 25 * drive;
+    p.neckY = -7 * rise + 10 * drive;
+    p.headAngle = -0.22 * rise + 0.3 * drive;
+    p.jaw += 0.2 * rise + 0.15 * drive;
+    p.wing += 0.72 * rise - 0.88 * drive;
+    p.coil = rise;
+    p.compression = 0.18 * drive;
+    p.heat = 0.48 * rise;
+    p.pulse = Math.sin(Math.PI * clamp25((q - 0.86) / 0.14));
+  } else if (recent?.ability === "calamity_slam") {
+    const u = 1 - ease7(age / 42);
+    p.bodyY += 3 * u;
+    p.neckY = 3 * u;
+    p.headAngle = 0.08 * u;
+    p.jaw += 0.35 * u;
+    p.wing -= 0.16 * u;
+    p.coil = u;
+    p.compression = 0.18 * u;
+    p.heat = 0.48 * u;
+  } else if (recent?.ability === "strike" && age < 20) {
+    const u = 1 - ease7(age / 20);
+    p.neckX = -7 * u;
+    p.headAngle = -0.08 * u;
+    p.jaw += 0.32 * u;
+    p.wing += 0.1 * u;
+  }
+  return p;
+}
+function idleTail(p, tick) {
+  return [[18, -14, 14], [36, -11, 12.5], [54, -18, 10.2], [72, -32, 8], [89, -35, 6.1], [105, -26, 4.3], [116, -35, 2.4]].map(([x, y, r], i) => point24(x + Math.sin(tick * 0.045 - i * 0.67) * i * 0.6, y + Math.sin(tick * 0.075 - i * 0.62) * i * 0.7 - p.coil * Math.sin(i / 6 * Math.PI) * 14)).map((v, i) => ({ ...v, r: [14, 12.5, 10.2, 8, 6.1, 4.3, 2.4][i] }));
+}
+function tailNodes(actor2, p, tick) {
+  const idle2 = idleTail(p, tick);
+  if (p.ability !== "slam") return idle2;
+  const gathering = p.p ? ease7(p.p / 0.61) : 1, drive = p.tailDrive * (1 - p.tailReturn), tip = idle2.at(-1), cock = point24(53, -85), target = point24((p.target.x - actor2.position.x) / p.orientation - p.bodyX, p.target.y - actor2.position.y - p.bodyY - 2);
+  const end = point24(mix18(mix18(tip.x, cock.x, gathering), target.x, drive), mix18(mix18(tip.y, cock.y, gathering), target.y, drive));
+  const start2 = idle2[0], control = point24(mix18(95, target.x * 0.4, drive), mix18(-60, -85, drive));
+  return idle2.map((v, i) => {
+    const t = i / 6, u = 1 - t, curve = point24(u * u * start2.x + 2 * u * t * control.x + t * t * end.x, u * u * start2.y + 2 * u * t * control.y + t * t * end.y), weight2 = gathering * (1 - p.tailReturn);
+    return { x: mix18(v.x, curve.x, weight2), y: mix18(v.y, curve.y, weight2), r: v.r };
+  });
+}
+function smoothBoundary(c, nodes) {
+  const sides = [];
+  for (const s of [-1, 1]) {
+    const out = [];
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[Math.max(0, i - 1)], b = nodes[Math.min(nodes.length - 1, i + 1)], d = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+      out.push([nodes[i].x - (b.y - a.y) / d * nodes[i].r * s, nodes[i].y + (b.x - a.x) / d * nodes[i].r * s]);
+    }
+    sides.push(out);
+  }
+  const points = [...sides[0], ...sides[1].reverse()];
+  c.beginPath();
+  c.moveTo((points[0][0] + points.at(-1)[0]) / 2, (points[0][1] + points.at(-1)[1]) / 2);
+  for (let i = 0; i < points.length; i++) {
+    const a = points[i], b = points[(i + 1) % points.length];
+    c.quadraticCurveTo(a[0], a[1], (a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
+  }
+  c.closePath();
+}
+function tail(c, nodes, flash) {
+  smoothBoundary(c, nodes);
+  c.fillStyle = flash ? "#fff" : SCARLET;
+  c.fill();
+  c.strokeStyle = INK35;
+  c.lineWidth = 1.4;
+  c.stroke();
+  if (!flash) {
+    c.save();
+    c.clip();
+    for (let i = 1; i < nodes.length; i++) {
+      const a = nodes[i - 1], b = nodes[i], angle22 = Math.atan2(b.y - a.y, b.x - a.x);
+      c.save();
+      c.translate(b.x, b.y);
+      c.rotate(angle22);
+      polygon19(c, [[-6, -b.r], [2, -b.r], [-0.5, b.r], [-7, b.r]], i % 2 ? BLACK : "#3c1c29", false);
+      line(c, [[-5, -b.r * 0.83], [-7, 0], [-5, b.r * 0.78]], RIDGE, 0.75);
+      line(c, [[2, b.r * 0.56], [-2, b.r * 0.64]], BELLY, 0.7);
+      c.restore();
+    }
+    c.restore();
+  }
+  for (let i = 1; i < nodes.length - 1; i++) {
+    const a = nodes[i - 1], b = nodes[i], d = Math.hypot(b.x - a.x, b.y - a.y) || 1, n = point24((b.y - a.y) / d, -(b.x - a.x) / d);
+    polygon19(c, [[b.x + n.x * b.r, b.y + n.y * b.r], [b.x + n.x * (b.r + 5 - i * 0.45) - 3, b.y + n.y * (b.r + 5 - i * 0.45)], [b.x + n.x * b.r + 4, b.y + n.y * b.r + 1]], flash ? "#fff" : BLACK, true, 1);
+  }
+  const last = nodes.at(-1), prior = nodes.at(-2), angle3 = Math.atan2(last.y - prior.y, last.x - prior.x);
+  c.save();
+  c.translate(last.x, last.y);
+  c.rotate(angle3);
+  c.beginPath();
+  c.moveTo(-1, -2);
+  c.quadraticCurveTo(13, -7, 15, -20);
+  c.quadraticCurveTo(20, -7, 9, 3);
+  c.lineTo(0, 3);
+  c.closePath();
+  c.fillStyle = flash ? "#fff" : HORN;
+  c.fill();
+  c.strokeStyle = INK35;
+  c.lineWidth = 1.2;
+  c.stroke();
+  if (!flash) line(c, [[2, -1], [9, -4], [13, -12]], "#ffbb66", 0.8);
+  c.restore();
+}
+function wing2(c, p, flash, far = false) {
+  c.save();
+  c.translate(far ? 12 : 22, far ? -28 : -24);
+  c.rotate((far ? -0.12 : 0.04) + p.wing * (far ? -0.48 : -0.72));
+  c.scale(far ? 0.68 : 1, far ? 0.82 : 1);
+  c.beginPath();
+  c.moveTo(-6, 5);
+  c.quadraticCurveTo(3, -29, 19, -44);
+  c.lineTo(52, -60);
+  c.quadraticCurveTo(35, -35, 34, -25);
+  c.quadraticCurveTo(42, -33, 57, -32);
+  c.quadraticCurveTo(43, -16, 41, -5);
+  c.quadraticCurveTo(50, -13, 61, -6);
+  c.quadraticCurveTo(44, 16, 27, 17);
+  c.quadraticCurveTo(11, 2, -6, 5);
+  c.closePath();
+  c.fillStyle = flash ? "#fff" : far ? "#2b1723" : "#401b28";
+  c.fill();
+  c.strokeStyle = INK35;
+  c.lineWidth = 1.45;
+  c.stroke();
+  if (!flash) {
+    polygon19(c, [[-4, 3], [18, -41], [36, -49], [22, -17], [27, 13], [11, 5]], far ? "#331b29" : "#5b2630", false);
+    for (const end of [[51, -58], [55, -31], [58, -5], [28, 15]]) {
+      c.beginPath();
+      c.moveTo(-3, 3);
+      c.quadraticCurveTo(16, -22, 19, -42);
+      c.quadraticCurveTo(21, -25, end[0], end[1]);
+      c.strokeStyle = far ? "#714037" : "#ad493e";
+      c.lineWidth = 0.85;
+      c.stroke();
+    }
+    line(c, [[2, -10], [18, -42], [43, -55]], far ? "#83523d" : "#dd7651", 0.9);
+  }
+  c.restore();
+}
+function head11(c, p, flash) {
+  const fill3 = (x) => flash ? "#fff" : x;
+  c.save();
+  c.translate(-15 + p.neckX, -31 + p.neckY);
+  c.rotate(p.headAngle);
+  c.beginPath();
+  c.moveTo(6, -7);
+  c.quadraticCurveTo(20, 0, 20, 17);
+  c.quadraticCurveTo(5, 14, -4, 3);
+  c.closePath();
+  c.fillStyle = fill3(BELLY);
+  c.fill();
+  c.strokeStyle = INK35;
+  c.lineWidth = 1.2;
+  c.stroke();
+  if (!flash) {
+    for (let i = 0; i < 4; i++) line(c, [[4 + i * 3, 3 + i * 2], [12 + i * 2, 2 + i * 3]], "#632b30", 0.8);
+    if (p.heat > 0) {
+      glow3(c, 5, 3, 17, `rgba(255,84,24,${0.22 + 0.4 * p.heat})`);
+      line(c, [[4, 0], [8, 3], [11, 8]], p.pulse > 0.35 ? PALE6 : "#fa8d3b", 1 + p.heat);
+    }
+  }
+  c.save();
+  c.translate(-2, 1);
+  c.rotate(-p.jaw);
+  polygon19(c, [[-31, 0], [-28, 6], [-11, 11], [6, 7], [8, -1]], fill3("#7e3435"));
+  if (!flash) polygon19(c, [[-27, 2], [-16, 3], [-10, 8], [-22, 6]], "#c56645", false);
+  polygon19(c, [[-24, 1], [-21, -4], [-18, 2]], fill3(PALE6), true, 0.7);
+  polygon19(c, [[-11, 3], [-8, -1], [-6, 4]], fill3("#e5bd85"), true, 0.7);
+  c.restore();
+  if (!flash && p.heat > 0) {
+    glow3(c, -23, 2, 13 + p.pulse * 7, `rgba(255,109,32,${p.heat * 0.5 + p.pulse * 0.4})`);
+    ellipse7(c, -21, 2, 8 * p.heat, 2.5 + p.heat, "#ee552b");
+    ellipse7(c, -23, 1, 4 * p.heat, 1.4, p.pulse > 0.2 ? PALE6 : "#ffbc5e");
+  }
+  polygon19(c, [[-11, -21], [-27, -16], [-34, -9], [-39, -2], [-33, 2], [-14, 1], [2, -2], [9, -13], [5, -23], [-2, -28]], fill3(BLACK));
+  if (!flash) {
+    polygon19(c, [[-28, -15], [-11, -21], [3, -23], [-3, -13], [-21, -9], [-35, -3]], "#4d2631", false);
+    polygon19(c, [[3, -13], [8, -13], [2, -2], [-15, 1], [-8, -6]], "#35202a", false);
+    line(c, [[-32, -9], [-22, -13], [-13, -13]], "#875148", 0.8);
+  }
+  polygon19(c, [[-32, 2], [-29, 6], [-27, 1]], fill3(PALE6), true, 0.7);
+  polygon19(c, [[-19, 1], [-16, 5], [-14, 1]], fill3("#d9b18a"), true, 0.7);
+  polygon19(c, [[-4, -24], [2, -40], [15, -48], [10, -33], [5, -19]], fill3(HORN));
+  if (!flash) polygon19(c, [[0, -28], [7, -38], [13, -45], [8, -31], [5, -25]], "#efaa59", false);
+  polygon19(c, [[-17, -20], [-17, -32], [-9, -22]], fill3("#30212c"));
+  ellipse7(c, -15, -11, 5.7, 4.1, fill3("#ad292c"), true, 1);
+  if (!flash) {
+    ellipse7(c, -16, -11.2, 4.4, 2.8, "#ff5d3d");
+    ellipse7(c, -17.3, -11.1, 1.1, 2.7, "#ffd877");
+    ellipse7(c, -18, -12.3, 0.75, 0.65, "#fff1c5");
+    line(c, [[-21, -15], [-15, -17], [-9, -14]], "#0b0a12", 1.3);
+    ellipse7(c, -34, -4, 0.85, 0.75, "#09080f");
+  }
+  c.restore();
+}
+function torso(c, p, flash) {
+  c.save();
+  c.translate(0, p.compression * 5);
+  c.scale(1 + p.compression * 0.5, 1 - p.compression);
+  c.beginPath();
+  c.moveTo(-13, -34);
+  c.quadraticCurveTo(11, -46, 29, -26);
+  c.quadraticCurveTo(38, -8, 21, 1);
+  c.quadraticCurveTo(2, 6, -15, -8);
+  c.quadraticCurveTo(-23, -22, -13, -34);
+  c.closePath();
+  c.fillStyle = flash ? "#fff" : SCARLET;
+  c.fill();
+  c.strokeStyle = INK35;
+  c.lineWidth = 1.4;
+  c.stroke();
+  if (!flash) {
+    c.save();
+    c.clip();
+    polygon19(c, [[-12, -32], [3, -39], [19, -30], [9, -20], [-12, -15]], "#9c3c3e", false);
+    polygon19(c, [[-11, -14], [8, -10], [28, -15], [25, 0], [7, 4], [-14, -7]], BELLY, false);
+    for (let i = 0; i < 4; i++) line(c, [[-10 + i * 7, -11], [-7 + i * 7, -3]], "#642c32", 0.8);
+    polygon19(c, [[17, -34], [29, -25], [34, -10], [23, -6], [16, -18]], "#321923", false);
+    c.restore();
+    line(c, [[-10, -30], [-1, -34], [6, -31]], "#ca6853", 0.9);
+  }
+  for (const [x, y, r] of [[2, -39, 9], [15, -35, 7], [25, -27, 6]]) polygon19(c, [[x - 4, y + 4], [x, y - r], [x + 4, y + 2]], flash ? "#fff" : BLACK, true, 1.1);
+  c.restore();
+}
+function drawHooktail(c, actor2, tick, flash = false) {
+  if (actor2.boss?.bossDefinitionId !== ID5) return false;
+  const p = hooktailAttackPose(actor2, tick), death = actor2.alive === false ? ease7((actor2.deathAge ?? 0) / 42) : 0;
+  c.save();
+  c.translate(actor2.position.x, actor2.position.y);
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  c.globalAlpha *= 1 - death;
+  ellipse7(c, -p.facing * 38, 5, 66, 9, "#08080d55");
+  c.scale(p.orientation, 1);
+  c.translate(p.bodyX, p.bodyY + death * 16);
+  wing2(c, p, flash, true);
+  tail(c, tailNodes(actor2, p, tick), flash);
+  torso(c, p, flash);
+  wing2(c, p, flash);
+  head11(c, p, flash);
+  if (!flash && actor2.alive !== false) {
+    for (let i = 0; i < 4; i++) {
+      const a = (tick + i * 17) % 83 / 83, x = 42 + i * 17 + Math.sin(a * 5 + i) * 3, y = -19 - i * 2 - a * 19;
+      c.save();
+      c.globalAlpha *= Math.sin(a * Math.PI) * 0.22;
+      c.beginPath();
+      c.moveTo(x, y);
+      c.quadraticCurveTo(x - 3 - a * 4, y - 4, x + a * 3, y - 7 - a * 6);
+      c.strokeStyle = i % 2 ? "#b74b39" : "#878091";
+      c.lineWidth = 1 + a * 0.8;
+      c.stroke();
+      c.restore();
+    }
+  }
+  c.restore();
+  return true;
+}
+function mouth2(actor2, p) {
+  const q = rotate2(-35, 5 + p.jaw * 7, p.headAngle);
+  return point24(actor2.position.x + (p.bodyX - 15 + p.neckX + q.x) * p.orientation, actor2.position.y + p.bodyY - 31 + p.neckY + q.y);
+}
+function ringWarning(c, row2, tick) {
+  const ring2 = row2.ring;
+  if (!ring2) return;
+  const q = progress3(row2, tick), pulse = 0.7 + 0.3 * Math.sin(tick * 0.4);
+  c.save();
+  for (const tile of ring2.tiles ?? []) {
+    const seed2 = (tile.column * 71 + tile.row * 97) % 19, x = tile.x, y = tile.y, s2 = tile.size ?? ring2.tileSize;
+    c.fillStyle = `rgba(170,45,37,${0.035 + 0.09 * q})`;
+    c.fillRect(x + 0.5, y + 0.5, s2 - 1, s2 - 1);
+    const reach = ease7((q - seed2 * 0.011) / 0.66), a = [[x + s2 * 0.08, y + s2 * 0.24], [x + s2 * 0.36, y + s2 * 0.48], [x + s2 * 0.52, y + s2 * 0.33], [x + s2 * 0.67, y + s2 * 0.68], [x + s2 * 0.94, y + s2 * 0.82]];
+    const end = Math.max(1, Math.floor(reach * 4));
+    path4(c, a.slice(0, end + 1));
+    c.strokeStyle = INK35;
+    c.lineWidth = 2.8;
+    c.stroke();
+    c.strokeStyle = q > 0.82 ? "#ffd097" : "#b94a3e";
+    c.lineWidth = 0.65 + q * 0.35;
+    c.stroke();
+    if (q > 0.45) {
+      c.globalAlpha = (0.2 + 0.6 * q) * pulse;
+      line(c, [[x + s2 * 0.37, y + s2 * 0.48], [x + s2 * 0.28, y + s2 * 0.79]], FIRE, 0.6);
+      c.globalAlpha = 1;
+    }
+  }
+  const s = ring2.tileSize, l = ring2.minColumn * s, t = ring2.minRow * s, r = (ring2.maxColumn + 1) * s, b = (ring2.maxRow + 1) * s;
+  c.strokeStyle = "#e06c4b";
+  c.lineWidth = 0.9;
+  c.strokeRect(l + 0.4, t + 0.4, r - l - 0.8, b - t - 0.8);
+  c.strokeRect(l + s - 0.4, t + s - 0.4, r - l - 2 * s + 0.8, b - t - 2 * s + 0.8);
+  c.restore();
+}
+function collapsedRing(c, row2, tick) {
+  const ring2 = row2.ring;
+  if (!ring2) return;
+  const age = tick - row2.createdTick;
+  if (age < 0) return;
+  c.save();
+  for (const tile of ring2.tiles ?? []) {
+    const s2 = tile.size ?? ring2.tileSize, x = tile.x, y = tile.y, seed2 = (tile.column * 71 + tile.row * 97) % 19;
+    c.fillStyle = "#070810";
+    c.fillRect(x - 0.2, y - 0.2, s2 + 0.4, s2 + 0.4);
+    c.save();
+    c.beginPath();
+    c.rect(x, y, s2, s2);
+    c.clip();
+    const hot = 1 - ease7(age / 44);
+    if (hot > 0) {
+      glow3(c, x + s2 / 2, y + s2 * 0.6, s2 * 0.8, `rgba(191,42,35,${hot * 0.18})`);
+    }
+    const local32 = Math.max(0, age - seed2 % 6), u = clamp25(local32 / 27), fall = ease7(u), drop = (u * 0.45 + u * u * 0.85) * s2, shrink = 1 - fall * 0.34;
+    if (fall < 1) {
+      c.save();
+      c.translate(x + s2 * 0.5, y + s2 * 0.5 + drop);
+      c.scale((seed2 % 2 ? -1 : 1) * shrink, shrink);
+      c.globalAlpha *= 1 - ease7((fall - 0.52) / 0.48);
+      const h = s2 * 0.44, split = (seed2 % 5 - 2) * 1.4;
+      c.save();
+      c.translate(-0.65 - fall * (3 + seed2 % 3), -fall * 2);
+      c.rotate(-fall * (0.14 + seed2 % 3 * 0.035));
+      polygon19(c, [[-h, -h], [h, -h], [split + 3, -3], [split - 4, 4], [-h, h]], seed2 % 3 ? "#393340" : "#473a45", true, 1);
+      line(c, [[-h + 2, -h + 2], [h - 3, -h + 2]], "#6a535d", 0.85);
+      c.restore();
+      c.save();
+      c.translate(0.65 + fall * 4, fall * (7 + seed2 % 4));
+      c.rotate(fall * (0.17 + seed2 % 3 * 0.04));
+      polygon19(c, [[h, -h + 2], [h, h], [-h + 2, h], [split - 3, 5], [split + 5, -1]], seed2 % 3 ? "#282636" : "#34303e", true, 1);
+      line(c, [[h - 2, -h + 4], [h - 2, h - 3]], "#69505d", 0.85);
+      c.restore();
+      c.save();
+      c.translate(split - fall * 5, 3 + fall * 20);
+      c.rotate(fall * 1.8 + seed2);
+      polygon19(c, [[-3, -3], [3, -2], [4, 1], [-1, 4]], "#78606a", true, 0.6);
+      c.restore();
+      c.restore();
+    }
+    for (let i = 0; i < 3; i++) {
+      const u2 = ((tick * 0.011 + seed2 * 0.07 + i * 0.31) % 1 + 1) % 1;
+      c.save();
+      c.globalAlpha *= (0.12 + hot * 0.5) * Math.sin(Math.PI * u2);
+      ellipse7(c, x + 4 + (seed2 * 7 + i * 11) % (s2 - 8), y + s2 - 4 - u2 * s2, hot ? 1.2 : 0.65, hot ? 1.4 : 0.9, i % 2 ? "#8d4c75" : "#ce503c");
+      c.restore();
+    }
+    c.restore();
+  }
+  const s = ring2.tileSize, l = ring2.minColumn * s, t = ring2.minRow * s, r = (ring2.maxColumn + 1) * s, b = (ring2.maxRow + 1) * s;
+  c.strokeStyle = age < 24 ? "#e48157" : "#663b53";
+  c.lineWidth = age < 24 ? 1.4 : 0.9;
+  c.strokeRect(l + s - 0.2, t + s - 0.2, r - l - 2 * s + 0.4, b - t - 2 * s + 0.4);
+  c.restore();
+}
+function fireWarning(c, row2, tick) {
+  const q = progress3(row2, tick), p = row2.originPosition, r = row2.range ?? 110, a = row2.facing < 0 ? Math.PI : 0, h = row2.halfAngle ?? 0.8;
+  c.save();
+  c.translate(p.x, p.y);
+  c.rotate(a);
+  c.beginPath();
+  c.moveTo(0, 0);
+  c.arc(0, 0, r, -h, h);
+  c.closePath();
+  c.fillStyle = `rgba(227,67,34,${0.025 + 0.04 * q})`;
+  c.fill();
+  c.strokeStyle = "#aa463755";
+  c.lineWidth = 0.6;
+  c.stroke();
+  c.beginPath();
+  c.arc(0, 0, r, -h, h);
+  c.strokeStyle = q > 0.83 ? "#ffc084" : "#d26346";
+  c.lineWidth = 0.8;
+  c.stroke();
+  for (const s of [-1, 1]) line(c, [[Math.cos(s * h) * r * 0.76, Math.sin(s * h) * r * 0.76], [Math.cos(s * h) * r, Math.sin(s * h) * r]], "#d46d4f", 0.8);
+  c.restore();
+}
+function slamWarning(c, row2, tick) {
+  const p = row2.targetPosition, r = row2.radius ?? 64, q = progress3(row2, tick);
+  c.save();
+  ellipse7(c, p.x, p.y, r, r, "#a82f2a12");
+  circle5(c, p.x, p.y, r, INK35, 2.8);
+  circle5(c, p.x, p.y, r, "#db7252", 1.1);
+  c.beginPath();
+  c.arc(p.x, p.y, r - 3, -Math.PI / 2, -Math.PI / 2 + TAU38 * q);
+  c.strokeStyle = PALE6;
+  c.lineWidth = 1.2;
+  c.stroke();
+  for (let i = 0; i < 5; i++) {
+    const a = i * TAU38 / 5 + 0.3, reach = (5 + 15 * ease7(q)) * q;
+    line(c, [[p.x + Math.cos(a) * 4, p.y + Math.sin(a) * 4], [p.x + Math.cos(a + 0.12) * reach, p.y + Math.sin(a + 0.12) * reach]], q > 0.85 ? "#ffd6a0" : "#813d37", 0.8);
+  }
+  c.restore();
+}
+function slamGround3(c, row2, tick) {
+  const age = tick - row2.resolvedTick;
+  if (age < 0 || age >= 42) return;
+  const p = row2.targetPosition, r = row2.radius ?? 64, u = ease7(age / 16), fade = 1 - ease7(age / 42);
+  c.save();
+  c.globalAlpha *= fade;
+  ellipse7(c, p.x, p.y, r, r, "#0e101d50");
+  if (age < 12) {
+    ellipse7(c, p.x, p.y, r, r, `rgba(234,104,56,${(1 - ease7(age / 12)) * 0.16})`);
+    circle5(c, p.x, p.y, r, "#f9c08b", 1.4 * (1 - ease7(age / 12)) + 0.2);
+  }
+  for (let i = 0; i < 9; i++) {
+    const a = i * TAU38 / 9 + 0.15, rr = r * (0.45 + i % 3 * 0.16) * (0.82 + 0.18 * u), points = [[p.x, p.y], [p.x + Math.cos(a + 0.09) * rr * 0.38, p.y + Math.sin(a + 0.09) * rr * 0.38], [p.x + Math.cos(a - 0.07) * rr * 0.68, p.y + Math.sin(a - 0.07) * rr * 0.68], [p.x + Math.cos(a) * rr, p.y + Math.sin(a) * rr]];
+    line(c, points, INK35, 3);
+    line(c, points, age < 18 ? "#cf633d" : "#513e46", 1);
+  }
+  if (age < 22) circle5(c, p.x, p.y, r * (0.12 + 0.88 * u), "#c67e5a", 1.3 * (1 - ease7(age / 22)) + 0.1);
+  c.restore();
+}
+function drawHooktailGround(c, model2, tick) {
+  const h = model2.bossHazards ?? {};
+  c.save();
+  for (const row2 of h.hooktailCollapsedRings ?? []) collapsedRing(c, row2, tick);
+  for (const row2 of h.hooktailTelegraphs ?? []) {
+    if (tick < row2.startedTick || tick > row2.resolvesTick) continue;
+    if (row2.ability === "slam") slamWarning(c, row2, tick);
+    else if (row2.ability === "scarlet_fire") fireWarning(c, row2, tick);
+    else if (row2.ability === "calamity_slam") ringWarning(c, row2, tick);
+  }
+  for (const row2 of h.hooktailImpacts ?? []) if (row2.ability === "slam") slamGround3(c, row2, tick);
+  for (const actor2 of Object.values(model2.entitiesById ?? {})) {
+    if (actor2.boss?.bossDefinitionId !== ID5) continue;
+    const age = tick - (actor2.boss.phaseStartedTick ?? -1e3);
+    if (age >= 0 && age < 32) {
+      c.save();
+      c.globalAlpha *= 1 - ease7(age / 32);
+      circle5(c, actor2.position.x, actor2.position.y, 24 + 72 * ease7(age / 32), "#ce5142", 1.5);
+      c.restore();
+    }
+  }
+  c.restore();
+}
+function fireBurst(c, row2, tick, model2) {
+  const age = tick - row2.resolvedTick;
+  if (age < 0 || age >= 30) return;
+  const actor2 = model2.entitiesById?.[row2.sourceEntityId], caster = actor2 ? { ...actor2, alive: true, position: row2.originPosition, boss: { ...actor2.boss, pendingAction: null, lastAction: row2 } } : { position: row2.originPosition, boss: { lastAction: row2, facing: row2.facing } }, pose = hooktailAttackPose(caster, row2.resolvedTick), from = mouth2(caster, pose), sign = row2.facing < 0 ? -1 : 1, range = row2.range ?? 110, half = row2.halfAngle ?? 0.8, outer = point24(row2.originPosition.x + sign * range, row2.originPosition.y - 13), width = range * Math.sin(half), fade = 1 - ease7((age - 6) / 24), burn = 1 - ease7(age / 15);
+  c.save();
+  c.translate(from.x, from.y);
+  c.scale(sign, 1);
+  const length = (outer.x - from.x) * sign, dy = outer.y - from.y;
+  c.globalAlpha = fade * 0.35;
+  glow3(c, length * 0.54, dy * 0.54, width * 0.86, "#ed4b3180");
+  for (let i = -3; i <= 3; i++) {
+    const offset2 = i / 3 * width * 0.77, reach = length * (0.83 + 0.15 * (1 - Math.abs(i) / 3)) + Math.sin(age * 0.58 + i * 1.7) * 3, endY = dy + offset2, w = (12 + 4 * (1 - Math.abs(i) / 3)) * (0.84 + 0.16 * burn), curl = Math.sin(age * 0.34 + i * 2.1) * 4;
+    for (let layer = 0; layer < 3; layer++) {
+      const k = [1.35, 0.94, 0.44][layer], l = reach * [1, 0.96, 0.8][layer], ey = endY * [1, 0.97, 0.89][layer], thick = w * k;
+      c.beginPath();
+      c.moveTo(0, -1.5 - layer);
+      c.bezierCurveTo(l * 0.24, ey * 0.17 - thick * 0.25, l * 0.5, ey * 0.48 - thick * 1.05, l * 0.66, ey * 0.67 - thick * 0.82);
+      c.quadraticCurveTo(l * 0.79, ey - thick * 1.24, l * 0.88, ey - thick * 0.42 + curl);
+      c.quadraticCurveTo(l * 0.94, ey - thick * 0.02, l * 1.04, ey - thick * 0.52);
+      c.quadraticCurveTo(l * 0.96, ey + thick * 0.68 + curl, l * 0.78, ey + thick * 0.44);
+      c.quadraticCurveTo(l * 0.62, ey * 0.82 + thick * 1.12, l * 0.49, ey * 0.52 + thick * 0.49);
+      c.bezierCurveTo(l * 0.34, ey * 0.31 + thick * 0.27, l * 0.12, 3.1, 0, 2);
+      c.closePath();
+      c.globalAlpha = fade * [0.64, 0.82, 0.85][layer];
+      c.fillStyle = ["#d9452f", "#ff963d", "#ffe9a5"][layer];
+      c.fill();
+    }
+  }
+  c.globalAlpha = fade * 0.8;
+  glow3(c, 0, 0, 15 + 8 * burn, "#ffd070aa");
+  for (let i = 0; i < 14; i++) {
+    const t = (age * 0.049 + i * 0.077) % 1, a = (i % 7 - 3) / 3, px = length * t, py = dy * t + a * width * t * 0.77 + Math.sin(t * 9 + i) * 4;
+    c.beginPath();
+    c.moveTo(px - 5, py);
+    c.quadraticCurveTo(px, py - 2, px + 4, py + a * 2);
+    c.strokeStyle = i % 3 ? "#ffd475" : "#fff3c8";
+    c.lineWidth = 0.8;
+    c.stroke();
+  }
+  c.restore();
+}
+function impactDebris(c, row2, tick) {
+  const age = tick - row2.resolvedTick;
+  if (age < 0 || age >= 34) return;
+  const p = row2.targetPosition, seed2 = hash10(row2.id ?? row2.sequence), q = age / 34;
+  c.save();
+  c.globalAlpha *= 1 - ease7((q - 0.55) / 0.45);
+  for (let i = 0; i < 13; i++) {
+    const a = i * 2.39996 + seed2 % 13, r = 12 + age * (0.7 + i % 3 * 0.17), x = p.x + Math.cos(a) * r, y = p.y + Math.sin(a) * r * 0.6 - Math.sin(q * Math.PI) * (10 + i % 4 * 6), s = 1.5 + i % 3 * 0.55;
+    c.save();
+    c.translate(x, y);
+    c.rotate(i + q * 3);
+    polygon19(c, [[-s, -s], [s * 0.7, -s * 0.6], [s, s * 0.5], [-s * 0.5, s]], i % 2 ? "#5b4650" : "#8d5e4e", true, 0.65);
+    c.restore();
+  }
+  c.restore();
+}
+function hooktailDepthItems(model2, tick, viewport = null) {
+  const h = model2.bossHazards ?? {}, items = [], visible2 = (p, r) => !viewport || p.x + r >= (viewport.x ?? viewport.left ?? -Infinity) && p.x - r <= (viewport.right ?? (viewport.x ?? 0) + (viewport.width ?? Infinity)) && p.y + r >= (viewport.y ?? viewport.top ?? -Infinity) && p.y - r <= (viewport.bottom ?? (viewport.y ?? 0) + (viewport.height ?? Infinity));
+  const add = (id, p, r, draw) => {
+    if (visible2(p, r)) items.push(Object.freeze({ id: "hooktail-vfx/" + id, anchorX: p.x, anchorY: p.y + 1, draw }));
+  };
+  for (const row2 of h.hooktailImpacts ?? []) {
+    const age = tick - row2.resolvedTick;
+    if (age < 0 || age >= 42) continue;
+    const id = row2.id ?? row2.bossId + "/" + row2.sequence;
+    if (row2.ability === "scarlet_fire") add(id + "/fire", row2.originPosition, 160, (c) => fireBurst(c, row2, tick, model2));
+    else if (row2.ability === "slam") add(id + "/debris", row2.targetPosition, 90, (c) => impactDebris(c, row2, tick));
+    else if (row2.ability === "strike" && age < 12) add(id + "/bite", row2.targetPosition, 26, (c) => {
+      c.save();
+      c.globalAlpha *= 1 - ease7(age / 12);
+      for (const s of [-1, 1]) line(c, [[row2.targetPosition.x - 4, row2.targetPosition.y - 12 + s * 3], [row2.targetPosition.x + 5, row2.targetPosition.y - 12 + s * 8]], "#ffb06b", 1.2);
+      c.restore();
+    });
+  }
+  return items;
+}
+
+// src/client/boss_presentation_cinderhart_v1.js
+var ID6 = "cinderhart";
+var BUNNY_ID = "cinder_bunny";
+var TAU39 = Math.PI * 2;
+var INK36 = "#101318";
+var COAL = "#25272d";
+var DARK6 = "#191c23";
+var EDGE = "#59504b";
+var RED = "#ba442a";
+var FIRE2 = "#f27632";
+var GOLD3 = "#ffc36b";
+var HOT2 = "#fff0b5";
+var clamp26 = (x) => Math.max(0, Math.min(1, x));
+var ease8 = (x) => {
+  x = clamp26(x);
+  return x * x * (3 - 2 * x);
+};
+function hash11(value) {
+  let h = 2166136261;
+  for (const ch of String(value)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  return h >>> 0;
+}
+function path5(c, points, closed = false) {
+  c.beginPath();
+  for (const [i, p] of points.entries()) i ? c.lineTo(...p) : c.moveTo(...p);
+  if (closed) c.closePath();
+}
+function polygon20(c, points, fill3, edge = INK36, width = 1.15) {
+  path5(c, points, true);
+  c.fillStyle = fill3;
+  c.fill();
+  if (edge) {
+    c.strokeStyle = edge;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function line2(c, points, color82, width = 1) {
+  path5(c, points);
+  c.strokeStyle = color82;
+  c.lineWidth = width;
+  c.stroke();
+}
+function ellipse8(c, x, y, rx, ry, color82, edge = null, width = 1) {
+  c.beginPath();
+  c.ellipse(x, y, Math.max(0.01, rx), Math.max(0.01, ry), 0, 0, TAU39);
+  c.fillStyle = color82;
+  c.fill();
+  if (edge) {
+    c.strokeStyle = edge;
+    c.lineWidth = width;
+    c.stroke();
+  }
+}
+function ring(c, x, y, r, color82, width = 1) {
+  c.beginPath();
+  c.arc(x, y, Math.max(0.01, r), 0, TAU39);
+  c.strokeStyle = color82;
+  c.lineWidth = width;
+  c.stroke();
+}
+function progress4(row2, tick) {
+  return clamp26((tick - row2.startedTick) / Math.max(1, row2.resolvesTick - row2.startedTick));
+}
+function tongue(c, x, y, width, height, tick, seed2 = 0, heat = 1) {
+  const bend = Math.sin(tick * 0.16 + seed2) * width * 0.35;
+  c.save();
+  c.translate(x, y);
+  c.beginPath();
+  c.moveTo(-width * 0.68, 0);
+  c.bezierCurveTo(-width, -height * 0.25, -width * 0.16, -height * 0.4, -width * 0.38, -height * 0.67);
+  c.quadraticCurveTo(width * 0.04, -height * 0.54, bend, -height);
+  c.quadraticCurveTo(width * 0.85, -height * 0.53, width * 0.52, -height * 0.33);
+  c.quadraticCurveTo(width, -height * 0.12, width * 0.65, 0);
+  c.closePath();
+  c.fillStyle = heat > 0.35 ? RED : "#9a392b";
+  c.fill();
+  c.beginPath();
+  c.moveTo(-width * 0.43, 0);
+  c.quadraticCurveTo(-width * 0.72, -height * 0.21, -width * 0.18, -height * 0.48);
+  c.quadraticCurveTo(width * 0.07, -height * 0.27, bend * 0.75, -height * 0.83);
+  c.quadraticCurveTo(width * 0.64, -height * 0.39, width * 0.3, -height * 0.2);
+  c.quadraticCurveTo(width * 0.62, -height * 0.1, width * 0.38, 0);
+  c.closePath();
+  c.fillStyle = heat > 0.35 ? FIRE2 : "#d15b2f";
+  c.fill();
+  c.beginPath();
+  c.moveTo(-width * 0.19, 0);
+  c.quadraticCurveTo(-width * 0.33, -height * 0.14, width * 0.03, -height * 0.3);
+  c.quadraticCurveTo(width * 0.25, -height * 0.14, width * 0.2, 0);
+  c.closePath();
+  c.fillStyle = heat > 0.6 ? HOT2 : GOLD3;
+  c.fill();
+  c.restore();
+}
+function cinderhartAttackPose(actor2, tick) {
+  const b = actor2.boss ?? {}, alive = actor2.alive !== false, pending = alive ? b.pendingAction : null, rush = alive ? b.rush : null, last = alive ? b.lastAction : null;
+  const age = last ? tick - last.resolvedTick : Infinity, q = pending ? progress4(pending, tick) : 0;
+  const p = {
+    facing: (pending?.facing ?? b.facing ?? 1) < 0 ? -1 : 1,
+    ability: pending?.ability ?? (rush ? "cinder_rush" : age >= 0 && age < 48 ? last?.ability : null),
+    q,
+    age,
+    rush: !!rush,
+    bodyY: Math.sin(tick * 0.055) * 0.8,
+    bodyAngle: Math.sin(tick * 0.035) * 0.012,
+    headAngle: Math.sin(tick * 0.041) * 0.025,
+    headDrop: 0,
+    rear: 0,
+    heat: b.phase === 2 ? 0.36 : 0.12,
+    pulse: 0,
+    stride: actor2.movedLastTick ? Math.sin(tick * 0.42) : Math.sin(tick * 0.034) * 0.15,
+    stretch: 0,
+    callRelease: 0
+  };
+  if (pending?.ability === "warren_call") {
+    p.rear = ease8(q / 0.7);
+    p.bodyY -= 8 * p.rear;
+    p.bodyAngle -= 0.11 * p.rear;
+    p.headAngle -= 0.32 * p.rear;
+    p.heat = 0.2 + 0.8 * ease8(q);
+    p.pulse = Math.sin(Math.PI * clamp26((q - 0.8) / 0.2));
+  } else if (pending?.ability === "cinder_rush") {
+    const u = ease8(q / 0.65);
+    p.bodyY += 5 * u;
+    p.bodyAngle += 0.06 * u;
+    p.headDrop = 15 * u;
+    p.headAngle = 0.63 * u;
+    p.heat = 0.35 + 0.65 * q;
+    p.stride = Math.sin(tick * 0.75) * q * 0.35;
+    p.stretch = 0.15 * u;
+    p.pulse = Math.sin(Math.PI * clamp26((q - 0.82) / 0.18));
+  } else if (rush) {
+    p.bodyY = 3 + Math.sin(tick * 0.8) * 2;
+    p.bodyAngle = 0.09;
+    p.headDrop = 13;
+    p.headAngle = 0.64;
+    p.stride = Math.sin(tick * 0.8);
+    p.stretch = 0.3;
+    p.heat = 1;
+  } else if (last?.ability === "warren_call" && age >= 0 && age < 48) {
+    const u = 1 - ease8(age / 35);
+    p.rear = u;
+    p.bodyY -= 8 * u;
+    p.bodyAngle -= 0.11 * u;
+    p.headAngle -= 0.32 * u;
+    p.heat = 0.2 + 0.8 * u;
+    p.callRelease = 1 - ease8(age / 28);
+  } else if (last?.ability === "cinder_rush" && age >= 24 && age < 48) {
+    const u = 1 - ease8((age - 24) / 24);
+    p.bodyY = 5 * u;
+    p.bodyAngle = 0.06 * u;
+    p.headDrop = 15 * u;
+    p.headAngle = 0.63 * u;
+    p.stride = 0.3 * u;
+    p.heat = 0.2 + 0.65 * u;
+  }
+  return p;
+}
+function leg2(c, hip, knee, ankle, foot, far, flash) {
+  const shade = flash ? HOT2 : far ? DARK6 : COAL, lit = flash ? HOT2 : far ? "#3a3738" : EDGE;
+  line2(c, [hip, knee, ankle, foot], INK36, 8);
+  line2(c, [hip, knee], shade, 6);
+  line2(c, [knee, ankle], shade, 4.8);
+  line2(c, [ankle, foot], shade, 3.5);
+  line2(c, [[hip[0] - 1, hip[1]], [knee[0] - 1, knee[1]], [ankle[0] - 1, ankle[1]]], lit, 1.15);
+  ellipse8(c, knee[0], knee[1], 3.6, 3.2, shade, INK36, 0.8);
+  if (!flash) {
+    line2(c, [[knee[0] - 1.8, knee[1] - 0.7], [knee[0] + 1, knee[1] + 1.6]], far ? RED : FIRE2, 0.85);
+  }
+  polygon20(c, [[foot[0] - 4, foot[1] - 2.8], [foot[0] + 3.4, foot[1] - 3.2], [foot[0] + 6, foot[1] + 1.5], [foot[0] - 5, foot[1] + 1.5]], flash ? HOT2 : "#17191f", INK36, 1);
+  if (!flash) {
+    line2(c, [[foot[0] + 1, foot[1] - 1.6], [foot[0] + 0.7, foot[1] + 1.5]], "#8c704f", 0.65);
+    line2(c, [[foot[0] - 3, foot[1] - 2.6], [foot[0] + 2, foot[1] - 2.6]], "#b4663b", 0.65);
+  }
+}
+function antler(c, far, heat, tick, flash) {
+  c.save();
+  c.translate(far ? 3 : -6, far ? -10 : -9);
+  c.scale(far ? 0.86 : 1, far ? 0.9 : 1);
+  c.rotate(far ? 0.2 : -0.06);
+  const branches = [
+    [[0, 0], [-1, -14], [-10, -26], [-14, -42], [-24, -54]],
+    [[-1, -14], [10, -22], [13, -34]],
+    [[-10, -26], [-24, -27], [-36, -36], [-39, -46]],
+    [[-14, -40], [-1, -44], [4, -55]],
+    [[-24, -54], [-23, -66]],
+    [[-25, -28], [-29, -42]],
+    [[-36, -36], [-49, -35], [-57, -41]]
+  ];
+  for (let i = 0; i < branches.length; i++) {
+    const points = branches[i], width = i ? 2.9 : 5.6;
+    line2(c, points, INK36, width + 2.3);
+    line2(c, points, flash ? HOT2 : far ? "#49413c" : "#75604b", width);
+    if (!flash) line2(c, points, heat > 0.65 ? "#ffc277" : far ? "#945234" : "#c4763d", i ? 0.7 : 1.35);
+  }
+  if (!flash) {
+    for (const [i, branch] of branches.entries()) {
+      const end = branch.at(-1);
+      ellipse8(c, end[0], end[1], 0.9 + 0.8 * heat, 1.3 + heat, heat > 0.7 ? HOT2 : FIRE2);
+      if (heat > 0.35 && i % 2 === 0) tongue(c, end[0], end[1] + 0.4, 1.6 + heat, 5 + heat * 6, tick, i, heat);
+    }
+  }
+  c.restore();
+}
+function stagHead(c, p, tick, flash) {
+  c.save();
+  c.translate(28, -64 + p.headDrop);
+  c.rotate(p.headAngle);
+  antler(c, true, p.heat, tick, flash);
+  polygon20(c, [[-4, -9], [-20, -16], [-15, -4], [-4, 0]], flash ? HOT2 : COAL, INK36, 1.1);
+  if (!flash) polygon20(c, [[-6, -8], [-16, -12], [-12, -6], [-6, -3]], "#aa633e", null);
+  polygon20(c, [[3, -10], [16, -20], [15, -8], [7, -2]], flash ? HOT2 : DARK6, INK36, 1.1);
+  if (!flash) polygon20(c, [[7, -9], [13, -16], [12, -8], [7, -5]], "#b46d42", null);
+  polygon20(c, [[-7, -10], [6, -13], [16, -5], [27, 4], [27, 12], [15, 14], [5, 9], [-8, 5], [-12, -3]], flash ? HOT2 : COAL, INK36, 1.3);
+  if (!flash) {
+    polygon20(c, [[-7, -10], [5, -11], [11, -4], [1, 4], [-8, 3], [-10, -2]], "#57504a", null);
+    polygon20(c, [[8, -3], [17, 1], [25, 6], [24, 10], [14, 8], [7, 5]], "#373335", null);
+    polygon20(c, [[5, 7], [15, 11], [24, 10], [24, 13], [15, 14], [6, 10]], "#935439", null);
+    line2(c, [[-6, -3], [-1, -0.7], [3, -4], [6, -1]], FIRE2, 1.1);
+    ellipse8(c, 9, -2, 3.7, 2.25, "#0e1118");
+    ellipse8(c, 10, -2, 2.35, 1.65, p.pulse > 0.15 ? HOT2 : GOLD3);
+    ellipse8(c, 11, -2.3, 0.7, 0.8, "#fff8d8");
+    polygon20(c, [[22, 3], [28, 5], [28, 11], [24, 12], [21, 9]], "#10141b", null);
+    line2(c, [[13, 9], [20, 11], [26, 10]], "#0c1017", 0.8);
+    line2(c, [[-7, -8], [-1, -9], [5, -8]], "#a18a69", 0.7);
+  }
+  antler(c, false, p.heat, tick + 5, flash);
+  c.restore();
+}
+function stagBody(c, p, tick, flash) {
+  const fill3 = (color82) => flash ? HOT2 : color82;
+  c.save();
+  c.translate(-35, -39);
+  c.rotate(-0.15 + Math.sin(tick * 0.08) * 0.12);
+  polygon20(c, [[0, 2], [-12, -2], [-18, -12], [-8, -7], [2, -5]], fill3(DARK6), INK36, 1.1);
+  if (!flash) {
+    polygon20(c, [[-5, -2], [-13, -7], [-15, -10], [-7, -6]], FIRE2, null);
+  }
+  c.restore();
+  c.beginPath();
+  c.moveTo(-35, -44);
+  c.quadraticCurveTo(-26, -54, -8, -52);
+  c.quadraticCurveTo(13, -53, 23, -43);
+  c.quadraticCurveTo(31, -29, 17, -20);
+  c.quadraticCurveTo(-4, -19, -25, -25);
+  c.quadraticCurveTo(-39, -29, -35, -44);
+  c.closePath();
+  c.fillStyle = fill3(COAL);
+  c.fill();
+  c.strokeStyle = INK36;
+  c.lineWidth = 1.5;
+  c.stroke();
+  if (!flash) {
+    polygon20(c, [[-33, -43], [-19, -51], [-3, -50], [9, -43], [1, -36], [-22, -36]], "#4d4843", null);
+    polygon20(c, [[-32, -35], [-17, -38], [-7, -32], [-10, -23], [-25, -26]], "#343238", null);
+    polygon20(c, [[5, -49], [22, -43], [26, -30], [17, -21], [4, -22], [9, -34]], "#181c25", null);
+    line2(c, [[-28, -43], [-20, -42], [-18, -33], [-12, -29]], "#c36235", 1.3);
+    line2(c, [[-15, -49], [-11, -40], [-3, -35], [-4, -28]], p.heat > 0.6 ? GOLD3 : FIRE2, 1.4);
+    line2(c, [[-10, -40], [-2, -44], [4, -42]], RED, 1);
+    line2(c, [[-30, -42], [-25, -46], [-20, -47]], "#84715c", 0.8);
+  }
+  polygon20(c, [[10, -27], [12, -49], [18, -66], [27, -74], [35, -69], [37, -55], [30, -38], [26, -23], [16, -19]], fill3(COAL), INK36, 1.4);
+  if (!flash) {
+    polygon20(c, [[16, -49], [20, -64], [26, -69], [31, -66], [30, -55], [25, -46], [23, -30], [16, -26]], "#121720", null);
+    polygon20(c, [[21, -60], [27, -65], [28, -55], [24, -46], [22, -32], [18, -29], [18, -43]], RED, null);
+    polygon20(c, [[23, -57], [26, -59], [25, -49], [22, -40], [20, -33], [21, -48]], FIRE2, null);
+    polygon20(c, [[23, -52], [25, -55], [23, -44], [21, -40]], p.pulse > 0.1 ? HOT2 : GOLD3, null);
+    for (const [y, x] of [[-58, 17], [-49, 14], [-39, 13], [-29, 14]]) polygon20(c, [[x, y], [x + 8, y + 3], [x + 10, y + 6], [x + 1, y + 4]], "#5b4b42", null);
+    line2(c, [[30, -67], [33, -59], [28, -43], [26, -28]], "#9c7048", 1);
+  }
+  if (!flash) {
+    for (let i = 0; i < 5; i++) tongue(c, 13 + i * 2.3, -46 - i * 4.6, 3.2 + p.heat * 0.5, 10 + p.heat * 10 + i % 2 * 3, tick + i * 5, i, p.heat + 0.3);
+  }
+  stagHead(c, p, tick, flash);
+}
+function drawCinderhart(c, actor2, tick, flash = false) {
+  if (actor2.boss?.bossDefinitionId !== ID6) return false;
+  const p = cinderhartAttackPose(actor2, tick), death = actor2.alive === false ? ease8((actor2.deathAge ?? 0) / 48) : 0;
+  c.save();
+  c.translate(actor2.position.x, actor2.position.y);
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  c.globalAlpha *= 1 - death;
+  ellipse8(c, -4, 5, 45, 11, "#0b10194d");
+  c.scale(p.facing, 1);
+  c.translate(0, p.bodyY + death * 14);
+  c.rotate(p.bodyAngle);
+  const gait = p.stride * (p.rush ? 15 : 4), rear = p.rear, stretch = p.stretch;
+  const foot = (x, y, lift = 0) => [x, (y - lift - p.bodyY - Math.sin(p.bodyAngle) * x) / Math.cos(p.bodyAngle)];
+  const frontLift = p.rush ? Math.max(0, p.stride) * 7 : 0, rearLift = p.rush ? Math.max(0, -p.stride) * 7 : 0;
+  leg2(c, [-25, -35], [-28 + gait * 0.4, -22], [-24 - gait * 0.5, -9], foot(-26 - gait, 1, rearLift), true, flash);
+  leg2(c, [18, -36], [20 - gait * 0.5, -20 - 12 * rear], [24 + gait * 0.6, -9 - 24 * rear], foot(27 + gait, 1 - 28 * rear, frontLift), true, flash);
+  stagBody(c, p, tick, flash);
+  leg2(c, [-18, -31], [-12 - gait * 0.45, -18], [-24 + gait * 0.65, -9], foot(-23 + gait, 4, frontLift), false, flash);
+  leg2(c, [22, -35], [16 + gait * 0.48 + stretch * 8, -18 - 10 * rear], [21 - gait * 0.7 + stretch * 10, -7 - 23 * rear], foot(26 - gait + stretch * 14, 4 - 27 * rear, rearLift), false, flash);
+  if (!flash && actor2.alive !== false) {
+    for (let i = 0; i < 5; i++) {
+      const u = (tick + i * 17) % 77 / 77, x = 9 + i * 5 + Math.sin(u * 8 + i) * 3, y = -48 - i * 2 - u * 27;
+      c.save();
+      c.globalAlpha *= Math.sin(u * Math.PI) * (0.28 + p.heat * 0.5);
+      ellipse8(c, x, y, 0.7 + i % 2 * 0.3, 1.1, i % 2 ? GOLD3 : FIRE2);
+      c.restore();
+    }
+    if (p.callRelease > 0) {
+      for (let i = 0; i < 7; i++) {
+        const u = 1 - p.callRelease, a = i * 2.3999, r = 18 + u * 48;
+        c.save();
+        c.globalAlpha *= p.callRelease * 0.8;
+        ellipse8(c, Math.cos(a) * r, -34 + Math.sin(a) * r * 0.4 - u * 18, 1.2, 1.7, i % 2 ? FIRE2 : GOLD3);
+        c.restore();
+      }
+    }
+  }
+  c.restore();
+  return true;
+}
+function drawCinderBunny(c, actor2, tick, flash = false) {
+  const b = actor2.cinderBunny;
+  if (b?.summonType !== BUNNY_ID) return false;
+  const dead = actor2.alive === false || b.stage === "defeated", age = dead ? Math.max(0, tick - (b.defeatedTick ?? tick)) : 0, fade = dead ? 1 - ease8(age / 24) : 1;
+  const hopping = !dead && b.stage === "hopping", u = hopping ? clamp26((tick - b.hopStartedTick) / Math.max(1, b.landsTick - b.hopStartedTick)) : 0, arc3 = hopping ? Math.sin(Math.PI * u) * 24 : 0;
+  const restAge = Math.max(0, tick - b.stageStartedTick), restLength = Math.max(1, (b.nextHopTick ?? tick + 18) - b.stageStartedTick), crouch = !hopping && !dead ? ease8((restAge / restLength - 0.55) / 0.45) : 0;
+  const recentLand = !hopping && b.hopSequence > 0 && !dead ? Math.max(0, 1 - restAge / 8) : 0, stretch = hopping ? Math.sin(Math.PI * u) : 0, sign = (b.facing ?? 1) < 0 ? -1 : 1;
+  const seed2 = hash11(actor2.entityId) % 31;
+  c.save();
+  c.translate(actor2.position.x, actor2.position.y);
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  c.globalAlpha *= fade;
+  ellipse8(c, 0, 3, 10 - arc3 * 0.09, 3.4 - arc3 * 0.035, "#080e1868");
+  c.translate(0, -arc3 + 2 * crouch + recentLand * 2 + age * 0.1);
+  c.scale(sign, 1);
+  c.rotate(hopping ? -0.14 * Math.cos(Math.PI * u) : -0.035 * crouch);
+  const sx = 1 + stretch * 0.13 + recentLand * 0.1, sy = 1 - crouch * 0.17 - recentLand * 0.13;
+  c.scale(sx, sy);
+  const kick = hopping ? Math.sin(Math.PI * u) * 4 : 0;
+  polygon20(c, [[-8, -2], [-10 - kick, 1], [-12 - kick, 3], [-5, 3], [0, -1]], flash ? HOT2 : "#51423b", INK36, 0.8);
+  polygon20(c, [[4, -2], [6 + kick * 0.4, 2], [10 + kick * 0.6, 3], [10, -0.4], [7, -4]], flash ? HOT2 : "#5b473a", INK36, 0.8);
+  ellipse8(c, -1, -5, 11, 7.8, flash ? HOT2 : COAL, INK36, 1.1);
+  if (!flash) {
+    ellipse8(c, -4, -5, 6.8, 5.4, "#54453b");
+    polygon20(c, [[-8, -6], [-3, -4], [-4, 0], [0, 1]], FIRE2, null);
+    polygon20(c, [[-3, -11], [2, -9], [4, -5], [1, -6]], "#ad4e2d", null);
+  }
+  ellipse8(c, -11, -5, 3.7, 3.6, flash ? HOT2 : "#bf905e", INK36, 0.8);
+  if (!flash) ellipse8(c, -12, -5.8, 1.8, 1.9, "#ffe0a0");
+  const earLean = hopping ? 0.3 + 0.3 * stretch : 0.1 + Math.sin((tick + seed2) * 0.12) * 0.06;
+  c.save();
+  c.translate(5, -10);
+  c.rotate(-earLean);
+  ellipse8(c, -1, -6, 2.5, 8.6, flash ? HOT2 : DARK6, INK36, 0.8);
+  if (!flash) ellipse8(c, -1.1, -6, 1.05, 6.1, "#ec8f42");
+  c.restore();
+  c.save();
+  c.translate(8, -10);
+  c.rotate(-earLean + 0.24);
+  ellipse8(c, 0, -7, 2.8, 9.6, flash ? HOT2 : COAL, INK36, 0.8);
+  if (!flash) ellipse8(c, 0.1, -7.2, 1.15, 6.8, GOLD3);
+  c.restore();
+  ellipse8(c, 7, -7.5, 6.3, 5.8, flash ? HOT2 : COAL, INK36, 1);
+  if (!flash) {
+    ellipse8(c, 10.8, -5.4, 3.9, 2.8, "#806048");
+    ellipse8(c, 13, -5.1, 1.1, 0.8, "#f9b365");
+    ellipse8(c, 8.8, -8.8, 2, 2, "#10151e");
+    ellipse8(c, 9.3, -9, 1.05, 1.25, HOT2);
+    line2(c, [[10.5, -3.7], [12.3, -3.5]], "#302d30", 0.65);
+  }
+  if (!flash && !dead) {
+    tongue(c, -4, -11, 4, 10 + Math.sin((tick + seed2) * 0.17) * 2, tick, seed2, 0.8);
+    tongue(c, -10, -8, 1.9, 5, tick + 8, seed2 + 2, 0.7);
+  }
+  if (dead && !flash) {
+    for (let i = 0; i < 6; i++) {
+      const a = i * 2.3999, r = age * 0.52;
+      c.save();
+      c.globalAlpha *= 1 - clamp26(age / 24);
+      ellipse8(c, Math.cos(a) * r, -6 + Math.sin(a) * r * 0.6 - age * 0.35, 0.8, 1.1, i % 2 ? GOLD3 : FIRE2);
+      c.restore();
+    }
+  }
+  c.restore();
+  return true;
+}
+function fireGround(c, row2, tick) {
+  const age = tick - row2.createdTick, left = row2.expiresTick - tick;
+  if (age < 0 || left <= 0) return;
+  const r = row2.radius, ignite = clamp26((tick - row2.createdTick) / Math.max(1, row2.ignitesTick - row2.createdTick)), active = tick >= row2.ignitesTick, fade = 0.2 + 0.8 * clamp26(left / 60), seed2 = hash11(row2.id) % 31;
+  c.save();
+  c.translate(row2.position.x, row2.position.y);
+  ellipse8(c, 0, 0, r, r, `rgba(22,19,24,${active ? 0.44 * fade : 0.22 * ignite})`);
+  if (active) {
+    ellipse8(c, 0, 0, r * 0.88, r * 0.79, `rgba(171,52,27,${0.17 * fade})`);
+    ring(c, 0, 0, r, "#e3803c66", 0.7 * fade + 0.3);
+  } else {
+    c.setLineDash([2, 3]);
+    ring(c, 0, 0, r, "#e7ae62b8", 0.9);
+    c.setLineDash([]);
+  }
+  for (let i = 0; i < 4; i++) {
+    const a = i * 2.3999 + seed2, rr = r * (0.33 + i * 0.11), x = Math.cos(a) * rr, y = Math.sin(a) * rr;
+    c.globalAlpha = fade * (active ? 0.75 : ignite * 0.5);
+    line2(c, [[x - 2, y], [x + 1, y - 1], [x + 2, y + 1]], active ? FIRE2 : GOLD3, 0.8);
+  }
+  c.restore();
+}
+function fireTongues(c, row2, tick) {
+  const age = tick - row2.createdTick, left = row2.expiresTick - tick;
+  if (age < 0 || left <= 0) return;
+  const active = tick >= row2.ignitesTick, seed2 = hash11(row2.id) % 47, ignite = ease8(age / 12), fade = clamp26(left / 60), heat = active ? Math.max(0.18, fade) : 0.25;
+  c.save();
+  c.translate(row2.position.x, row2.position.y);
+  if (!active) {
+    c.globalAlpha *= ignite * 0.6;
+    for (let i = 0; i < 3; i++) {
+      const a = i * 2.3999 + seed2;
+      ellipse8(c, Math.cos(a) * 8, Math.sin(a) * 5 - 1, 1, 1.6, GOLD3);
+    }
+    c.restore();
+    return;
+  }
+  c.globalAlpha *= 0.76 + 0.24 * fade;
+  const h = (10 + 11 * ease8((tick - row2.ignitesTick) / 14)) * (0.24 + 0.76 * fade);
+  tongue(c, -8, 3, 6.7, h * 0.76, tick, seed2, heat);
+  tongue(c, 7, 4, 6.1, h * 0.89, tick + 6, seed2 + 2, heat);
+  tongue(c, -0.7, 0, 7, h * 1.18, tick + 11, seed2 + 4, heat);
+  for (let i = 0; i < 2; i++) {
+    const u = (tick + seed2 * 3 + i * 19) % 53 / 53;
+    c.save();
+    c.globalAlpha *= (1 - u) * fade * 0.6;
+    ellipse8(c, Math.sin(u * 8 + seed2 + i) * 9, -5 - u * (h + 7), 0.65, 0.95, i ? GOLD3 : FIRE2);
+    c.restore();
+  }
+  c.restore();
+}
+function landingWarning(c, row2, tick) {
+  if (tick < row2.startedTick || tick > row2.landsTick) return;
+  const u = clamp26((tick - row2.startedTick) / Math.max(1, row2.landsTick - row2.startedTick)), r = row2.radius;
+  c.save();
+  c.translate(row2.position.x, row2.position.y);
+  c.globalAlpha *= 0.25 + 0.6 * ease8(u);
+  c.setLineDash([2, 4]);
+  ring(c, 0, 0, r, "#f8b766", 0.7);
+  c.setLineDash([]);
+  for (let i = 0; i < 3; i++) {
+    const a = i * TAU39 / 3 - Math.PI / 2, rr = r * (0.5 + 0.32 * (1 - u));
+    line2(c, [[Math.cos(a) * rr, Math.sin(a) * rr], [Math.cos(a) * (rr + 3), Math.sin(a) * (rr + 3)]], GOLD3, 0.8);
+  }
+  c.restore();
+}
+function rushWarning(c, row2, tick) {
+  const end = row2.rushEndPosition;
+  if (!end) return;
+  const from = row2.originPosition, q = progress4(row2, tick), r = row2.radius;
+  c.save();
+  c.lineCap = "round";
+  line2(c, [[from.x, from.y], [end.x, end.y]], `rgba(212,79,35,${0.06 + 0.07 * q})`, r * 2);
+  const dx = end.x - from.x, dy = end.y - from.y, n = Math.hypot(dx, dy) || 1, nx = -dy / n, ny = dx / n;
+  for (const s of [-1, 1]) line2(c, [[from.x + nx * r * s, from.y + ny * r * s], [end.x + nx * r * s, end.y + ny * r * s]], q > 0.84 ? GOLD3 : "#e7894b", 0.85);
+  c.beginPath();
+  c.arc(end.x, end.y, r, Math.atan2(dy, dx) - Math.PI / 2, Math.atan2(dy, dx) + Math.PI / 2);
+  c.strokeStyle = "#e7894b";
+  c.lineWidth = 0.85;
+  c.stroke();
+  const a = Math.atan2(dy, dx);
+  c.translate(end.x, end.y);
+  c.rotate(a);
+  for (let i = 0; i < 3; i++) {
+    c.globalAlpha = 0.2 + 0.6 * q;
+    line2(c, [[-13 - i * 17, -5], [-7 - i * 17, 0], [-13 - i * 17, 5]], GOLD3, 1);
+  }
+  c.restore();
+}
+function callWarning(c, row2, tick) {
+  const p = row2.originPosition, q = progress4(row2, tick), r = row2.radius;
+  c.save();
+  c.globalAlpha *= 0.35 + 0.5 * q;
+  ring(c, p.x, p.y, r, "#e8974e", 0.85);
+  for (let i = 0; i < row2.spawnCount; i++) {
+    const a = i * TAU39 / row2.spawnCount + 0.6, x = p.x + Math.cos(a) * r, y = p.y + Math.sin(a) * r;
+    c.save();
+    c.translate(x, y);
+    c.rotate(a);
+    line2(c, [[-2, -4], [1, 0], [-2, 4]], GOLD3, 1);
+    c.restore();
+  }
+  c.restore();
+}
+function drawCinderhartGround(c, model2, tick) {
+  const h = model2.bossHazards ?? {};
+  c.save();
+  for (const row2 of h.cinderhartFires ?? []) fireGround(c, row2, tick);
+  for (const row2 of h.cinderhartLandings ?? []) landingWarning(c, row2, tick);
+  for (const row2 of h.cinderhartTelegraphs ?? []) {
+    if (tick < row2.startedTick || tick > row2.resolvesTick) continue;
+    if (row2.ability === "cinder_rush") rushWarning(c, row2, tick);
+    else if (row2.ability === "warren_call") callWarning(c, row2, tick);
+  }
+  for (const row2 of h.cinderhartImpacts ?? []) {
+    const age = tick - row2.resolvedTick;
+    if (row2.ability !== "warren_call" || age < 0 || age >= 24) continue;
+    const p = row2.originPosition;
+    c.save();
+    c.globalAlpha *= 0.6 * (1 - ease8(age / 24));
+    ring(c, p.x, p.y, 20 + 38 * ease8(age / 24), FIRE2, 1.3);
+    c.restore();
+  }
+  for (const actor2 of Object.values(model2.entitiesById ?? {})) {
+    if (actor2.boss?.bossDefinitionId !== ID6) continue;
+    const age = tick - (actor2.boss.phaseStartedTick ?? -1e3);
+    if (age >= 0 && age < 36) {
+      c.save();
+      c.globalAlpha *= (1 - ease8(age / 36)) * 0.75;
+      ring(c, actor2.position.x, actor2.position.y, 27 + 62 * ease8(age / 36), "#ee8b43", 1.4);
+      c.restore();
+    }
+  }
+  c.restore();
+}
+function rushWake(c, actor2, tick) {
+  const rush = actor2.boss.rush;
+  if (!rush) return;
+  const dx = rush.endPosition.x - rush.originPosition.x, dy = rush.endPosition.y - rush.originPosition.y, n = Math.hypot(dx, dy) || 1, nx = dx / n, ny = dy / n;
+  c.save();
+  c.translate(actor2.position.x, actor2.position.y);
+  for (let i = 0; i < 7; i++) {
+    const u = (tick + i * 5) % 23 / 23, spread = (i % 3 - 1) * 8, x = -nx * (10 + u * 33) - ny * spread, y = -ny * (10 + u * 33) + nx * spread - 2 - u * 7;
+    c.save();
+    c.globalAlpha *= (1 - u) * 0.65;
+    line2(c, [[x - nx * 5, y - ny * 5], [x, y]], i % 2 ? GOLD3 : "#ba593a", 1.1);
+    c.restore();
+  }
+  c.restore();
+}
+function cinderhartDepthItems(model2, tick, viewport = null) {
+  const h = model2.bossHazards ?? {}, items = [];
+  const visible2 = (p, r) => !viewport || p.x + r >= (viewport.x ?? viewport.left ?? -Infinity) && p.x - r <= (viewport.right ?? (viewport.x ?? 0) + (viewport.width ?? Infinity)) && p.y + r >= (viewport.y ?? viewport.top ?? -Infinity) && p.y - r <= (viewport.bottom ?? (viewport.y ?? 0) + (viewport.height ?? Infinity));
+  for (const row2 of h.cinderhartFires ?? []) if (visible2(row2.position, row2.radius + 24)) items.push(Object.freeze({ id: "cinderhart-fire/" + row2.id, anchorX: row2.position.x, anchorY: row2.position.y + 2, draw: (c) => fireTongues(c, row2, tick) }));
+  for (const actor2 of Object.values(model2.entitiesById ?? {})) if (actor2.boss?.bossDefinitionId === ID6 && actor2.boss.rush && visible2(actor2.position, 70)) items.push(Object.freeze({ id: "cinderhart-rush/" + actor2.entityId, anchorX: actor2.position.x, anchorY: actor2.position.y - 1, draw: (c) => rushWake(c, actor2, tick) }));
+  return items;
+}
+
+// src/client/boss_archive_world_extended_v1.js
+var kinds = ["chronos_arbitrator", "nexus_overseer", "hooktail", "cinderhart"];
+var hasExtendedBossPainter = (id) => kinds.includes(id);
+var point7 = (p) => ({ x: p.x, y: p.y });
+var ids = (a) => a?.bossSummon?.kind;
+var isExtendedSummon = (a) => ["bunny", "hologram"].includes(ids(a));
+var renamed = (kind, ability) => {
+  if (kind === "chronos_arbitrator") return { chronos_slam: "slam", time_field: "dilation_field", chronos_rewind: "rewind" }[ability] ?? ability;
+  if (kind === "hooktail") return { hooked_tail: "slam", arena_collapse: "calamity_slam" }[ability] ?? ability;
+  if (kind === "cinderhart") return { fire_charge: "cinder_rush" }[ability] ?? ability;
+  if (kind === "nexus_overseer") return { prism_slam: "strike" }[ability] ?? ability;
+  return ability;
+};
+var action = (kind, x, origin) => x ? { ...x, ability: renamed(kind, x.ability), originPosition: x.originPosition ?? origin } : null;
+function rewindRecord(b, actor, tick) {
+  const pending = b.pendingAction, last = b.lastAction;
+  if (pending?.ability === "chronos_rewind") return { startedTick: pending.startedTick, resolvesTick: pending.resolvesTick, outcome: "channeling", originPosition: point7(actor.position), targetPosition: point7(pending.targetPosition) };
+  if (last?.ability === "chronos_rewind" && tick - last.resolvedTick < 48) return { startedTick: last.resolvedTick - 240, resolvedTick: last.resolvedTick, resolvesTick: last.resolvedTick, outcome: "completed", originPosition: point7(actor.position), targetPosition: point7(last.targetPosition) };
+  return null;
+}
+function barrierRecord(b, actor, tick) {
+  if (b.phase !== 2) return null;
+  const alive = (b.minions ?? []).filter((m) => m.kind === "hologram" && m.stage === "hatched");
+  if (!alive.length) return null;
+  return {
+    id: b.bossId + ":barrier",
+    bossId: b.bossId,
+    sourceEntityId: actor.entityId,
+    startedTick: Math.min(b.activatedTick ?? tick, tick - 16),
+    outcome: "active",
+    position: point7(actor.position),
+    originPosition: point7(actor.position),
+    sequence: b.abilitySequence ?? 0,
+    decoyEntityIds: alive.map((m) => m.entityId),
+    livingDecoyEntityIds: alive.map((m) => m.entityId),
+    blockedHitTick: null
+  };
+}
+function originalActor(actor, tick) {
+  const kind = actor.boss?.bossDefinitionId;
+  if (!hasExtendedBossPainter(kind)) return actor;
+  const b = actor.boss;
+  const pending = action(kind, b.pendingAction, actor.position), last = action(kind, b.lastAction, actor.position);
+  const aim2 = pending?.targetPosition ?? last?.targetPosition;
+  const facing = aim2?.x < actor.position.x ? -1 : 1;
+  const add = {
+    facing,
+    phaseStartedTick: null,
+    abilitySequence: b.abilitySequence ?? 0,
+    pendingAction: pending,
+    lastAction: last
+  };
+  if (kind === "chronos_arbitrator") {
+    add.rewind = rewindRecord(b, actor, tick);
+    add.dazeResumeTick = b.dazedUntilTick ?? null;
+  }
+  if (kind === "nexus_overseer") add.barrier = barrierRecord(b, actor, tick);
+  if (kind === "cinderhart") add.rush = null;
+  return { ...actor, boss: { ...b, ...add } };
+}
+function syntheticBunny(actor, tick, owner = null) {
+  const b = actor.bossSummon, age = Math.max(0, tick - (b.activatedTick ?? tick)), period = owner?.boss?.phase === 2 ? 36 : 46, flight = owner?.boss?.phase === 2 ? 24 : 28;
+  const cycle = Math.floor(age / period), elapsed = age % period, start = tick - elapsed, hopping = elapsed < flight;
+  return { ...actor, cinderBunny: {
+    summonType: "cinder_bunny",
+    stage: hopping ? "hopping" : "idle",
+    hopStartedTick: start,
+    landsTick: start + flight,
+    stageStartedTick: start,
+    nextHopTick: start + period,
+    hopSequence: cycle,
+    defeatedTick: null,
+    facing: (cycle + (b.ordinal ?? 0)) % 2 ? 1 : -1
+  } };
+}
+function syntheticDecoy(actor, tick) {
+  const b = actor.bossSummon, initial = b.activatedTick ?? tick, age = Math.max(0, tick - initial), seq = Math.floor(age / 90), last = initial + seq * 90 + (b.ordinal ?? 0) * 17;
+  return { ...actor, nexusDecoy: { sourceBossId: b.bossId, stage: "active", aggro: true, defeatedTick: null, lastShotTick: last, nextShotTick: last + 90 } };
+}
+function drawExtendedBossActor(c, actor, tick, flash = false) {
+  const a = originalActor(actor, tick), kind = actor.boss?.bossDefinitionId;
+  if (kind === "chronos_arbitrator") return drawChronosArbitrator(c, a, tick, flash);
+  if (kind === "nexus_overseer") return drawNexusOverseer(c, a, tick, flash);
+  if (kind === "hooktail") return drawHooktail(c, a, tick, flash);
+  if (kind === "cinderhart") return drawCinderhart(c, a, tick, flash);
+  return false;
+}
+var cacheModel = null;
+var cacheTick = null;
+var cacheArt = null;
+function projected(model, tick) {
+  if (cacheModel === model && cacheTick === tick) return cacheArt;
+  cacheModel = model;
+  cacheTick = tick;
+  const original = Object.values(model.entitiesById ?? {}), bosses = original.filter((a) => a.alive && hasExtendedBossPainter(a.boss?.bossDefinitionId));
+  if (!bosses.length) {
+    cacheArt = null;
+    return null;
+  }
+  const byId = new Map(bosses.map((a) => [a.boss.bossId, a]));
+  const actors2 = Object.fromEntries(original.map((a) => {
+    if (hasExtendedBossPainter(a.boss?.bossDefinitionId)) return [a.entityId, originalActor(a, tick)];
+    if (isExtendedSummon(a) && byId.has(a.bossSummon.bossId)) return [a.entityId, ids(a) === "bunny" ? syntheticBunny(a, tick, byId.get(a.bossSummon.bossId)) : syntheticDecoy(a, tick)];
+    return [a.entityId, a];
+  }));
+  const h = model.bossHazards ?? {}, tele = (h.recoveredTelegraphs ?? []).filter((q) => hasExtendedBossPainter(q.bossDefinitionId)), pools = (h.recoveredPools ?? []).filter((q) => hasExtendedBossPainter(q.bossDefinitionId));
+  const casts = tele.map((q) => {
+    const b = byId.get(q.bossId), at2 = b?.position ?? q.originPosition ?? q.position;
+    const ability = renamed(q.bossDefinitionId, q.ability), common = { ...q, id: q.bossId + ":cast:" + q.sequence, ability, originPosition: point7(at2), targetPosition: point7(q.position) };
+    if (q.bossDefinitionId === "chronos_arbitrator") return { ...common, position: point7(q.position), radius: q.ability === "time_field" ? 105 : 65, sourceEntityId: b?.entityId };
+    if (q.bossDefinitionId === "cinderhart") return {
+      ...common,
+      position: point7(q.position),
+      radius: 18,
+      spawnCount: b?.boss?.minions?.length ?? 5,
+      rushEndPosition: q.ability === "fire_charge" ? point7(q.position) : null
+    };
+    return { ...common, position: point7(q.position), radius: q.ability === "prism_collapse" ? 120 : 80, sourceEntityId: b?.entityId };
+  });
+  const impacts2 = [];
+  for (const b of bosses) {
+    const last = b.boss.lastAction, age = last ? tick - last.resolvedTick : Infinity;
+    if (!last || age < 0 || age >= 40) continue;
+    impacts2.push({
+      ...last,
+      ability: renamed(b.boss.bossDefinitionId, last.ability),
+      bossDefinitionId: b.boss.bossDefinitionId,
+      bossId: b.boss.bossId,
+      sourceEntityId: b.entityId,
+      originPosition: point7(b.position),
+      radius: 75,
+      sequence: b.boss.abilitySequence ?? 0
+    });
+  }
+  const field = pools.filter((p) => p.bossDefinitionId === "chronos_arbitrator" && p.kind === "time").map((p) => ({ ...p, radius: 105 }));
+  const fires = pools.filter((p) => p.bossDefinitionId === "cinderhart" && p.kind === "fire").map((p) => ({ ...p, ignitesTick: p.createdTick }));
+  const barriers = bosses.filter((b) => b.boss.bossDefinitionId === "nexus_overseer").map((b) => barrierRecord(b.boss, b, tick)).filter(Boolean);
+  const glitches = [];
+  for (const b of bosses.filter((x) => x.boss.bossDefinitionId === "nexus_overseer")) {
+    for (const a of original) if (a?.timedStatuses?.control_glitch) {
+      const s = a.timedStatuses.control_glitch;
+      glitches.push({ id: b.boss.bossId + ":glitch:" + a.entityId, sourceBossId: b.boss.bossId, targetEntityId: a.entityId, position: point7(a.position), appliedTick: s.applicationTick ?? tick, expiresTick: s.expirationTick ?? tick + 1 });
+    }
+  }
+  const artHazards = {
+    ...h,
+    chronosTelegraphs: casts.filter((q) => q.bossDefinitionId === "chronos_arbitrator"),
+    chronosFields: field,
+    chronosImpacts: impacts2.filter((q) => q.bossDefinitionId === "chronos_arbitrator" && q.ability === "slam"),
+    chronosRewinds: [],
+    nexusTelegraphs: casts.filter((q) => q.bossDefinitionId === "nexus_overseer"),
+    nexusImpacts: impacts2.filter((q) => q.bossDefinitionId === "nexus_overseer"),
+    nexusBarriers: barriers,
+    nexusProjectiles: [],
+    nexusGlitches: glitches,
+    hooktailTelegraphs: casts.filter((q) => q.bossDefinitionId === "hooktail"),
+    hooktailImpacts: impacts2.filter((q) => q.bossDefinitionId === "hooktail"),
+    hooktailCollapsedRings: [],
+    cinderhartFires: fires,
+    cinderhartLandings: [],
+    cinderhartTelegraphs: casts.filter((q) => q.bossDefinitionId === "cinderhart"),
+    cinderhartImpacts: impacts2.filter((q) => q.bossDefinitionId === "cinderhart")
+  };
+  cacheArt = { ...model, entitiesById: actors2, bossHazards: artHazards };
+  return cacheArt;
+}
+function drawExtendedBossGround(c, model, tick) {
+  const a = projected(model, tick);
+  if (!a) return;
+  drawChronosGround(c, a, tick);
+  drawNexusGround(c, a, tick);
+  drawHooktailGround(c, a, tick);
+  drawCinderhartGround(c, a, tick);
+}
+function extendedBossDepthItems(model, tick, viewport) {
+  const a = projected(model, tick);
+  if (!a) return [];
+  return [...chronosDepthItems(a, tick, viewport), ...nexusDepthItems(a, tick, viewport), ...hooktailDepthItems(a, tick, viewport), ...cinderhartDepthItems(a, tick, viewport)];
+}
+function drawExtendedSummonActor(c, actor, tick, flash = false) {
+  if (!isExtendedSummon(actor)) return false;
+  const boss = Object.values(cacheModel?.entitiesById ?? {}).find((a) => a.boss?.bossId === actor.bossSummon.bossId);
+  if (ids(actor) === "bunny") return drawCinderBunny(c, syntheticBunny(actor, tick, boss), tick, flash);
+  if (ids(actor) === "hologram") return drawNexusOverseer(c, syntheticDecoy(actor, tick), tick, flash);
+  return false;
+}
+
+// src/client/boss_archive_world_adapter_v1.js
+var hasArchivedBossPainter = (id) => id === "corrosive_abomination" || id === "void_overseer" || hasExtendedBossPainter(id);
+var corrosive = (id) => id === "corrosive_abomination";
+var isVoid = (id) => id === "void_overseer";
+var TAU40 = Math.PI * 2;
+var point8 = (x, y) => ({ x, y });
+var rand = (seed2, n, salt = 0) => {
+  let v = (seed2 ^ Math.imul(n + 1, 2654435761) ^ salt) >>> 0;
+  v = Math.imul(v ^ v >>> 16, 2246822507) >>> 0;
+  v = Math.imul(v ^ v >>> 13, 3266489909) >>> 0;
+  return ((v ^ v >>> 16) >>> 0) / 4294967296;
+};
+var renamed2 = (ability) => ability === "corrosive_slam" ? "slam" : ability;
+function record(original) {
+  return original ? { ...original, ability: renamed2(original.ability) } : null;
+}
+function archivalActor(actor) {
+  if (!hasArchivedBossPainter(actor?.boss?.bossDefinitionId)) return actor;
+  const boss = actor.boss;
+  return { ...actor, boss: {
+    ...boss,
+    pendingAction: record(boss.pendingAction),
+    lastAction: record(boss.lastAction),
+    facingAngle: Math.atan2(
+      (boss.pendingAction?.targetPosition?.y ?? boss.lastAction?.targetPosition?.y ?? actor.position.y + 1) - actor.position.y,
+      (boss.pendingAction?.targetPosition?.x ?? boss.lastAction?.targetPosition?.x ?? actor.position.x) - actor.position.x
+    ),
+    recentRuptures: boss.recentRuptures ?? []
+  } };
+}
+function drawArchivedBossActor(c, actor, tick, flash = false) {
+  if (hasExtendedBossPainter(actor.boss?.bossDefinitionId)) return drawExtendedBossActor(c, actor, tick, flash);
+  if (corrosive(actor.boss?.bossDefinitionId)) return drawCorrosiveAbomination(c, archivalActor(actor), tick, flash);
+  if (isVoid(actor.boss?.bossDefinitionId)) return drawVoidOverseer(c, archivalActor(actor), tick, flash);
+  return false;
+}
+var cacheKey = null;
+var cacheTick2 = null;
+var cacheView = null;
+function archivedBossArtModel(model, tick) {
+  if (cacheKey === model && cacheTick2 === tick) return cacheView;
+  cacheKey = model;
+  cacheTick2 = tick;
+  const all = Object.values(model.entitiesById ?? {}), bosses = all.filter((a) => a.alive && hasArchivedBossPainter(a.boss?.bossDefinitionId));
+  if (!bosses.length) {
+    cacheView = null;
+    return null;
+  }
+  const byBossId = new Map(bosses.map((a) => [a.boss.bossId, a]));
+  const bodyById = Object.fromEntries(all.map((a) => [a.entityId, archivalActor(a)]));
+  const h = model.bossHazards ?? {};
+  const tele = (h.recoveredTelegraphs ?? []).filter((q) => hasArchivedBossPainter(q.bossDefinitionId));
+  const pools = (h.recoveredPools ?? []).filter((q) => hasArchivedBossPainter(q.bossDefinitionId));
+  const acid = pools.filter((q) => corrosive(q.bossDefinitionId) && ["acid", "slag"].includes(q.kind)).map((q) => ({ ...q }));
+  const minions = all.filter((a) => a.alive && ["slime", "slag"].includes(a.bossSummon?.kind) && byBossId.has(a.bossSummon.bossId)).map((a) => {
+    const b = a.bossSummon, created = b.activatedTick ?? tick;
+    return {
+      id: a.entityId,
+      sourceEntityId: byBossId.get(b.bossId).entityId,
+      bossId: b.bossId,
+      position: { ...a.position },
+      landingPosition: { ...a.position },
+      originPosition: { ...a.position },
+      enemyFamily: b.kind === "slag" ? "slag_slime" : "slime",
+      stage: "active",
+      spawnedTick: created,
+      landsTick: created,
+      activatesTick: created,
+      hp: a.hp,
+      maxHp: a.maxHp,
+      movedLastTick: a.movedLastTick,
+      visualSeed: a.visualSeed,
+      meleePhase: a.meleePhase,
+      facingAngle: 0,
+      lastDamagedTick: a.lastDamagedTick
+    };
+  });
+  const cTele = tele.filter((q) => corrosive(q.bossDefinitionId)).map((q) => {
+    const b = byBossId.get(q.bossId), at2 = q.position, target = q.position, origin = b?.position ?? target;
+    const positions = q.ability === "spore_storm" ? [0, 1, 2].map((i) => {
+      const angle3 = i * TAU40 / 3 + rand(q.selectionSeed ?? 0, q.sequence ?? 0, i) * 0.35;
+      return point8(at2.x + Math.cos(angle3) * 43, at2.y + Math.sin(angle3) * 43);
+    }) : [];
+    return {
+      ...q,
+      id: q.bossId + ":cast:" + q.sequence,
+      ability: renamed2(q.ability),
+      targetPosition: target,
+      originPosition: origin,
+      radius: q.ability === "corrosive_slam" ? 72 : 105,
+      sporeSpawnPositions: positions
+    };
+  });
+  const vTele = tele.filter((q) => isVoid(q.bossDefinitionId) && q.ability === "singularity").map((q) => {
+    const b = byBossId.get(q.bossId), center2 = b?.position ?? q.position;
+    return {
+      ...q,
+      id: q.bossId + ":cast:" + q.sequence,
+      ability: "singularity",
+      position: { ...center2 },
+      targetPosition: { ...center2 },
+      originPosition: { ...center2 },
+      radius: 93
+    };
+  });
+  const cImpacts = [], vImpacts = [];
+  for (const b of bosses) {
+    const row2 = b.boss.lastAction, age = row2 ? tick - row2.resolvedTick : Infinity;
+    if (!row2 || age < 0 || age >= 40) continue;
+    const common = { ...row2, bossId: b.boss.bossId, sourceEntityId: b.entityId, originPosition: { ...b.position }, sequence: b.boss.abilitySequence ?? 1 };
+    if (corrosive(b.boss.bossDefinitionId) && row2.ability === "corrosive_slam") cImpacts.push({ ...common, ability: "slam", radius: 72 });
+    if (isVoid(b.boss.bossDefinitionId) && row2.ability === "singularity") vImpacts.push({ ...common, ability: "singularity", radius: 93 });
+  }
+  const archivedHazards = {
+    ...h,
+    corrosivePools: acid,
+    corrosiveMinions: minions,
+    corrosiveTelegraphs: cTele,
+    corrosiveImpacts: cImpacts,
+    // Current authority has acid pool hazards, but not physical shootable spores.
+    // Never fabricate targetable spores in the purely visual adapter.
+    corrosiveSpores: [],
+    corrosiveSheds: [],
+    voidTelegraphs: vTele,
+    voidImpacts: vImpacts
+  };
+  cacheView = { ...model, entitiesById: bodyById, bossHazards: archivedHazards };
+  return cacheView;
+}
+function drawArchivedBossGround(c, model, tick) {
+  const v = archivedBossArtModel(model, tick);
+  if (!v) return;
+  drawCorrosiveGround(c, v, tick);
+  drawVoidGround(c, v, tick);
+  drawExtendedBossGround(c, model, tick);
+}
+function archivedBossDepthItems(model, tick, viewport = null) {
+  const v = archivedBossArtModel(model, tick);
+  if (!v) return [];
+  return [...corrosiveDepthItems(v, tick, viewport), ...voidDepthItems(v, tick, viewport), ...extendedBossDepthItems(model, tick, viewport)];
+}
+function drawArchivedBossHud(c, canvas, model) {
+  const v = archivedBossArtModel(model, model.tick);
+  if (!v) return false;
+  return drawCorrosiveBossHud(c, canvas, v) || drawVoidBossHud(c, canvas, v);
+}
+var drawArchivedBossSummon = drawExtendedSummonActor;
+
+// src/client/recovered_boss_presentation_v1.js
+var TAU41 = Math.PI * 2;
+var circle6 = (c, x, y, r, fill3, stroke2 = null, width = 1) => {
+  c.beginPath();
+  c.arc(x, y, r, 0, TAU41);
+  if (fill3) {
+    c.fillStyle = fill3;
     c.fill();
   }
   if (stroke2) {
@@ -26269,12 +30405,12 @@ var circle2 = (c, x, y, r, fill, stroke2 = null, width = 1) => {
     c.stroke();
   }
 };
-var poly2 = (c, pts, fill, stroke2 = "#101925", w = 2) => {
+var poly2 = (c, pts, fill3, stroke2 = "#101925", w = 2) => {
   c.beginPath();
   pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
   c.closePath();
-  if (fill) {
-    c.fillStyle = fill;
+  if (fill3) {
+    c.fillStyle = fill3;
     c.fill();
   }
   if (stroke2) {
@@ -26283,7 +30419,7 @@ var poly2 = (c, pts, fill, stroke2 = "#101925", w = 2) => {
     c.stroke();
   }
 };
-var line = (c, pts, color27, width = 2) => {
+var line3 = (c, pts, color27, width = 2) => {
   c.beginPath();
   pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
   c.strokeStyle = color27;
@@ -26292,28 +30428,28 @@ var line = (c, pts, color27, width = 2) => {
   c.lineCap = "round";
   c.stroke();
 };
-var ease2 = (x) => {
+var ease9 = (x) => {
   x = Math.max(0, Math.min(1, x));
   return x * x * (3 - 2 * x);
 };
-function gear(c, x, y, r, teeth, tick, sign = 1) {
+function gear2(c, x, y, r, teeth, tick, sign = 1) {
   c.save();
   c.translate(x, y);
   c.rotate(tick * 6e-3 * sign);
   let pts = [];
   for (let i = 0; i < teeth * 4; i++) {
-    const a = i * TAU33 / (teeth * 4), rad = i % 4 < 2 ? r + 3 : r - 3;
+    const a = i * TAU41 / (teeth * 4), rad = i % 4 < 2 ? r + 3 : r - 3;
     pts.push([Math.cos(a) * rad, Math.sin(a) * rad]);
   }
   poly2(c, pts, "#32425b", "#edd99f", 2);
-  circle2(c, 0, 0, r * 0.48, "#1b2334", "#e5c37a", 2);
-  circle2(c, 0, 0, 3, "#c9f6ff");
+  circle6(c, 0, 0, r * 0.48, "#1b2334", "#e5c37a", 2);
+  circle6(c, 0, 0, 3, "#c9f6ff");
   c.restore();
 }
 function blob(c, tick, color27) {
   const p = [];
   for (let i = 0; i < 32; i++) {
-    const a = i * TAU33 / 32, r = 34 + 4 * Math.sin(a * 5 + tick * 0.035) + 2 * Math.sin(a * 9 - tick * 0.024);
+    const a = i * TAU41 / 32, r = 34 + 4 * Math.sin(a * 5 + tick * 0.035) + 2 * Math.sin(a * 9 - tick * 0.024);
     p.push([Math.cos(a) * r, Math.sin(a) * r * 0.82]);
   }
   poly2(c, p, color27, "#2a443b", 3);
@@ -26322,71 +30458,71 @@ function rabbit(c, x, y, q) {
   c.save();
   c.translate(x, y - Math.abs(Math.sin(q)) * 7);
   c.rotate(Math.sin(q * 0.7) * 0.12);
-  circle2(c, 0, 0, 6, "#c5a48b", "#462b2b", 1.4);
-  circle2(c, 5, -4, 4, "#a88971");
+  circle6(c, 0, 0, 6, "#c5a48b", "#462b2b", 1.4);
+  circle6(c, 5, -4, 4, "#a88971");
   poly2(c, [[4, -7], [3, -18], [6, -17], [8, -7]], "#b5a28b");
   poly2(c, [[10, -6], [10, -16], [13, -13], [13, -5]], "#b5a28b");
-  circle2(c, 7, -4, 1, "#1b1417");
+  circle6(c, 7, -4, 1, "#1b1417");
   c.restore();
 }
-function drawCinderhart(c, a, t) {
+function drawCinderhart2(c, a, t) {
   const step = Math.sin(t * 0.12) * 3;
   for (const side of [-1, 1]) {
     const x = side * 14;
-    line(c, [[x, 1], [x + side * 5, 12 + step * side], [x + side * 7, 23]], "#302a2a", 6);
-    line(c, [[x + side * 7, 23], [x + side * 11, 23]], "#180f12", 3);
+    line3(c, [[x, 1], [x + side * 5, 12 + step * side], [x + side * 7, 23]], "#302a2a", 6);
+    line3(c, [[x + side * 7, 23], [x + side * 11, 23]], "#180f12", 3);
   }
   poly2(c, [[-26, -8], [-18, -27], [14, -27], [29, -7], [14, 5], [-20, 5]], "#452b29", "#15161b", 3);
   poly2(c, [[-2, -20], [12, -43], [24, -48], [31, -35], [23, -17]], "#3b2727");
   for (const side of [-1, 1]) {
-    line(c, [[side * 18, -38], [side * 24, -57], [side * 34, -70]], "#342c2b", 5);
-    line(c, [[side * 24, -57], [side * 16, -73]], "#c97a36", 3);
-    line(c, [[side * 30, -65], [side * 41, -62]], "#cb723c", 2);
+    line3(c, [[side * 18, -38], [side * 24, -57], [side * 34, -70]], "#342c2b", 5);
+    line3(c, [[side * 24, -57], [side * 16, -73]], "#c97a36", 3);
+    line3(c, [[side * 30, -65], [side * 41, -62]], "#cb723c", 2);
   }
-  circle2(c, 14, -36, 8, "#35252a", "#b34f32", 2);
-  circle2(c, 17, -37, 3, "#ffcd55");
-  circle2(c, 3, -16, 5, "#f47230");
+  circle6(c, 14, -36, 8, "#35252a", "#b34f32", 2);
+  circle6(c, 17, -37, 3, "#ffcd55");
+  circle6(c, 3, -16, 5, "#f47230");
   for (let i = 0; i < 9; i++) {
     let x = -24 + i * 6, y = -24 - Math.sin(t * 0.055 + i * 1.9) * 14;
-    circle2(c, x, y, 1.5 + i % 3, i % 2 ? "#f0a53d" : "#ed5133");
+    circle6(c, x, y, 1.5 + i % 3, i % 2 ? "#f0a53d" : "#ed5133");
   }
 }
-function drawHooktail(c, a, t) {
+function drawHooktail2(c, a, t) {
   const q = Math.sin(t * 0.045), w = Math.sin(t * 0.07) * 12;
   poly2(c, [[-28, -4], [-57, -41 - w], [-47, -5], [-39, 2], [-20, 5]], "#752e39", "#260f1a", 2);
   poly2(c, [[12, -7], [59, -42 + w], [38, 12], [24, 11]], "#a13b3d", "#381a29", 2);
-  line(c, [[-23, 4], [-51, 24], [-62, 5], [-46, -1]], "#a7454a", 11);
+  line3(c, [[-23, 4], [-51, 24], [-62, 5], [-46, -1]], "#a7454a", 11);
   poly2(c, [[-48, -3], [-58, -17], [-71, -9], [-62, 6]], "#e87e67");
   poly2(c, [[-25, -21], [5, -34], [28, -14], [34, 6], [11, 19], [-15, 10]], "#84333c", "#391923", 3);
   for (let i = 0; i < 7; i++) poly2(c, [[-22 + i * 7, -20], [-16 + i * 7, -33], [-11 + i * 7, -19]], "#dc886c");
   poly2(c, [[19, -27], [43, -31], [51, -21], [37, -10], [20, -10]], "#ac4c4a");
   poly2(c, [[39, -11], [56, -6], [38, -2], [28, -8]], "#7e3032");
-  circle2(c, 39, -23, 2.4, "#ffd76e");
+  circle6(c, 39, -23, 2.4, "#ffd76e");
   for (let i = 0; i < 3; i++) {
-    circle2(c, 47 + i * 7, -9 + Math.sin(t * 0.08 + i) * 4, 2 + i, "#ff8b40");
+    circle6(c, 47 + i * 7, -9 + Math.sin(t * 0.08 + i) * 4, 2 + i, "#ff8b40");
   }
 }
 function drawMarcus(c, a, t) {
   const q = Math.sin(t * 0.072);
   poly2(c, [[-20, 7], [-28, -31], [-17, -43], [5, -32], [21, 6]], "#823d35", "#2d1d24", 3);
   poly2(c, [[-12, -7], [-7, -33], [10, -33], [15, -5], [21, 15], [-23, 15]], "#4b2c32");
-  circle2(c, 0, -40, 12, "#d19b70", "#553c35", 2);
+  circle6(c, 0, -40, 12, "#d19b70", "#553c35", 2);
   poly2(c, [[-18, -53], [-9, -63], [9, -63], [18, -53]], "#403444");
-  line(c, [[-24, -53], [24, -53]], "#e7b85d", 4);
-  circle2(c, -4, -41, 1.8, "#f8e2a4");
-  circle2(c, 6, -41, 1.8, "#f8e2a4");
-  line(c, [[-17, -27], [-28, -12 + q * 3]], "#c9a273", 7);
-  line(c, [[15, -26], [29, -8 - q * 3]], "#d5aa73", 7);
+  line3(c, [[-24, -53], [24, -53]], "#e7b85d", 4);
+  circle6(c, -4, -41, 1.8, "#f8e2a4");
+  circle6(c, 6, -41, 1.8, "#f8e2a4");
+  line3(c, [[-17, -27], [-28, -12 + q * 3]], "#c9a273", 7);
+  line3(c, [[15, -26], [29, -8 - q * 3]], "#d5aa73", 7);
   for (let i = 0; i < 8; i++) {
-    const ang = i * TAU33 / 8 + t * 0.018, near = Math.sin(ang) > 0, x = Math.cos(ang) * 49, y = -18 + Math.sin(ang) * 20;
-    if (!near) circle2(c, x, y, 6, "#af7e32", "#fce099", 1.5);
+    const ang = i * TAU41 / 8 + t * 0.018, near = Math.sin(ang) > 0, x = Math.cos(ang) * 49, y = -18 + Math.sin(ang) * 20;
+    if (!near) circle6(c, x, y, 6, "#af7e32", "#fce099", 1.5);
   }
   for (let i = 0; i < 8; i++) {
-    const ang = i * TAU33 / 8 + t * 0.018;
+    const ang = i * TAU41 / 8 + t * 0.018;
     if (Math.sin(ang) <= 0) continue;
     const x = Math.cos(ang) * 49, y = -18 + Math.sin(ang) * 20;
-    circle2(c, x, y, 6, "#bb883f", "#ffdf87", 2);
-    line(c, [[x - 2, y - 3], [x + 2, y + 3]], "#fff1b8", 1);
+    circle6(c, x, y, 6, "#bb883f", "#ffdf87", 2);
+    line3(c, [[x - 2, y - 3], [x + 2, y + 3]], "#fff1b8", 1);
   }
 }
 function drawGilded(c, a, t) {
@@ -26398,12 +30534,12 @@ function drawGilded(c, a, t) {
   poly2(c, [[-30, -19], [25, -19], [18, -7], [-22, -7]], "#211b1c", "#e1ba55", 2);
   for (let i = 0; i < 5; i++) poly2(c, [[-28 + i * 12, -17], [-23 + i * 12, -5], [-19 + i * 12, -17]], "#fcdfaa", null);
   poly2(c, [[-11, -5], [0, -19], [12, -5], [0, 13]], "#bd2c58", "#f6a5ab", 2);
-  circle2(c, 0, -5, 4, "#ffdde2");
+  circle6(c, 0, -5, 4, "#ffdde2");
   for (let side of [-1, 1]) {
-    line(c, [[side * 30, 2], [side * 42, 14], [side * 48, 8]], "#e3aa4b", 6);
-    line(c, [[side * 42, 14], [side * 50, 20]], "#e3aa4b", 5);
+    line3(c, [[side * 30, 2], [side * 42, 14], [side * 48, 8]], "#e3aa4b", 6);
+    line3(c, [[side * 42, 14], [side * 50, 20]], "#e3aa4b", 5);
   }
-  circle2(c, 0, -49, 4, "#f8d170");
+  circle6(c, 0, -49, 4, "#f8d170");
 }
 function drawNexus(c, a, t) {
   const angle3 = t * 0.012, q = Math.sin(t * 0.061);
@@ -26413,29 +30549,29 @@ function drawNexus(c, a, t) {
   poly2(c, [[0, -51], [0, 46], [39, 22], [34, -15]], "#364e7c", "#6ff5f3", 1.5);
   poly2(c, [[0, -51], [0, 46], [-39, 22], [-34, -15]], "#433968", "#bd99ff", 1.5);
   poly2(c, [[0, -24], [18, 0], [0, 24], [-18, 0]], "#9e69de", "#e5d4ff", 2);
-  circle2(c, 0, 0, 6, "#a6ffff");
+  circle6(c, 0, 0, 6, "#a6ffff");
   c.restore();
   for (let i = 0; i < 6; i++) {
-    let an = i * TAU33 / 6 - angle3 * 0.7;
-    circle2(c, Math.cos(an) * 54, Math.sin(an) * 43, 2.6, "#63dbea");
+    let an = i * TAU41 / 6 - angle3 * 0.7;
+    circle6(c, Math.cos(an) * 54, Math.sin(an) * 43, 2.6, "#63dbea");
   }
 }
 function drawChronos(c, a, t) {
   const spin = a.boss.phase === 2 ? 2 : 1;
-  gear(c, -21, -13, 24, 10, t * spin, 1);
-  gear(c, 23, -18, 20, 9, t * spin, -1);
-  gear(c, 2, -36, 12, 7, t * spin, 1);
-  circle2(c, 0, -7, 28, "#2b3d4c", "#dcc87f", 3);
-  circle2(c, 0, -7, 17, "#1b2633", "#a9bcd0", 2);
+  gear2(c, -21, -13, 24, 10, t * spin, 1);
+  gear2(c, 23, -18, 20, 9, t * spin, -1);
+  gear2(c, 2, -36, 12, 7, t * spin, 1);
+  circle6(c, 0, -7, 28, "#2b3d4c", "#dcc87f", 3);
+  circle6(c, 0, -7, 17, "#1b2633", "#a9bcd0", 2);
   for (let i = 0; i < 12; i++) {
-    const q2 = i * TAU33 / 12;
-    line(c, [[Math.sin(q2) * 22, -7 - Math.cos(q2) * 22], [Math.sin(q2) * 25, -7 - Math.cos(q2) * 25]], "#f0daa1", 1.4);
+    const q2 = i * TAU41 / 12;
+    line3(c, [[Math.sin(q2) * 22, -7 - Math.cos(q2) * 22], [Math.sin(q2) * 25, -7 - Math.cos(q2) * 25]], "#f0daa1", 1.4);
   }
   const q = t * 0.028;
-  line(c, [[0, -7], [Math.sin(q) * 16, -7 - Math.cos(q) * 16]], "#eac778", 2.3);
-  line(c, [[0, -7], [Math.sin(q * 0.32) * 11, -7 - Math.cos(q * 0.32) * 11]], "#7de8e8", 3.1);
-  circle2(c, 0, -7, 3, "#fff6bd");
-  for (let side of [-1, 1]) line(c, [[side * 22, 8], [side * 28, 26]], "#9ca6a6", 5);
+  line3(c, [[0, -7], [Math.sin(q) * 16, -7 - Math.cos(q) * 16]], "#eac778", 2.3);
+  line3(c, [[0, -7], [Math.sin(q * 0.32) * 11, -7 - Math.cos(q * 0.32) * 11]], "#7de8e8", 3.1);
+  circle6(c, 0, -7, 3, "#fff6bd");
+  for (let side of [-1, 1]) line3(c, [[side * 22, 8], [side * 28, 26]], "#9ca6a6", 5);
 }
 function drawVoid(c, a, t) {
   const pulse = Math.sin(t * 0.06) * 3;
@@ -26443,24 +30579,24 @@ function drawVoid(c, a, t) {
   poly2(c, [[0, -57 - pulse], [0, 30], [34, 9], [28, -27]], "#392441");
   poly2(c, [[0, -57 - pulse], [0, 30], [-34, 9], [-28, -27]], "#201a37");
   for (const [x, y, r] of [[0, -28, 7], [-16, -13, 6], [16, -13, 6], [-10, 4, 5], [10, 4, 5]]) {
-    circle2(c, x, y, r, "#ef70d6", "#fee4ff", 1.1);
-    circle2(c, x, y, r * 0.43, "#2f1639");
+    circle6(c, x, y, r, "#ef70d6", "#fee4ff", 1.1);
+    circle6(c, x, y, r * 0.43, "#2f1639");
   }
   for (let i = 0; i < 10; i++) {
-    let q = i * TAU33 / 10 + t * 7e-3, x = Math.cos(q) * (45 + i % 3 * 7), y = -14 + Math.sin(q) * (39 + i % 3 * 6);
-    circle2(c, x, y, 1.5, "#dc75e0");
+    let q = i * TAU41 / 10 + t * 7e-3, x = Math.cos(q) * (45 + i % 3 * 7), y = -14 + Math.sin(q) * (39 + i % 3 * 6);
+    circle6(c, x, y, 1.5, "#dc75e0");
   }
 }
 function drawCorrosive(c, a, t) {
   blob(c, t, "#548d62b9");
   blob(c, t * 0.78, "#72c4899b");
   for (let i = 0; i < 12; i++) {
-    const q = i * TAU33 / 12 + t * 4e-3, rad = 18 + i % 3 * 5;
-    circle2(c, Math.cos(q) * rad, Math.sin(q) * rad * 0.68, 3 + i % 3, "#d4f7a4a8");
+    const q = i * TAU41 / 12 + t * 4e-3, rad = 18 + i % 3 * 5;
+    circle6(c, Math.cos(q) * rad, Math.sin(q) * rad * 0.68, 3 + i % 3, "#d4f7a4a8");
   }
   for (const [x, y] of [[-12, -8], [10, -7], [0, 8]]) {
-    circle2(c, x, y, 6, "#eaf7b2");
-    circle2(c, x + 1, y, 2.6, "#24493c");
+    circle6(c, x, y, 6, "#eaf7b2");
+    circle6(c, x + 1, y, 2.6, "#24493c");
   }
   for (let i = 0; i < 4; i++) {
     const x = -25 + i * 16;
@@ -26468,6 +30604,7 @@ function drawCorrosive(c, a, t) {
   }
 }
 function drawRecoveredBossV1(c, a, t, flash = false) {
+  if (hasArchivedBossPainter(a.boss?.bossDefinitionId)) return drawArchivedBossActor(c, a, t, flash);
   const spec = recoveredBossForId(a.boss?.bossDefinitionId);
   if (!spec) return false;
   c.save();
@@ -26475,17 +30612,17 @@ function drawRecoveredBossV1(c, a, t, flash = false) {
   c.globalAlpha = a.alive ? 1 : 0.3;
   c.fillStyle = "#09101688";
   c.beginPath();
-  c.ellipse(0, 18, 44, 15, 0, 0, TAU33);
+  c.ellipse(0, 18, 44, 15, 0, 0, TAU41);
   c.fill();
   c.strokeStyle = spec.color + "a0";
   c.lineWidth = 1.8;
   c.beginPath();
-  c.ellipse(0, 17, 46 + Math.sin(t * 0.03) * 2, 17, 0, 0, TAU33);
+  c.ellipse(0, 17, 46 + Math.sin(t * 0.03) * 2, 17, 0, 0, TAU41);
   c.stroke();
   c.translate(0, Math.sin(t * 0.04) * 2);
   const id = spec.id;
-  if (id === "cinderhart") drawCinderhart(c, a, t);
-  if (id === "hooktail") drawHooktail(c, a, t);
+  if (id === "cinderhart") drawCinderhart2(c, a, t);
+  if (id === "hooktail") drawHooktail2(c, a, t);
   if (id === "marcus") drawMarcus(c, a, t);
   if (id === "gilded_vault_keeper") drawGilded(c, a, t);
   if (id === "nexus_overseer") drawNexus(c, a, t);
@@ -26493,8 +30630,8 @@ function drawRecoveredBossV1(c, a, t, flash = false) {
   if (id === "void_overseer") {
     drawVoid(c, a, t);
     if (a.boss.pendingAction?.ability === "eye_lance") {
-      const q = ease2((t - a.boss.pendingAction.startedTick) / Math.max(1, a.boss.pendingAction.resolvesTick - a.boss.pendingAction.startedTick));
-      circle2(c, 0, -28, 6 + q * 11, "#ffd9ffa0", "#ff8cf8", 2 + q * 2);
+      const q = ease9((t - a.boss.pendingAction.startedTick) / Math.max(1, a.boss.pendingAction.resolvesTick - a.boss.pendingAction.startedTick));
+      circle6(c, 0, -28, 6 + q * 11, "#ffd9ffa0", "#ff8cf8", 2 + q * 2);
     }
   }
   if (id === "corrosive_abomination") drawCorrosive(c, a, t);
@@ -26503,7 +30640,7 @@ function drawRecoveredBossV1(c, a, t, flash = false) {
     c.strokeStyle = spec.color;
     c.lineWidth = 2;
     c.beginPath();
-    c.arc(0, -12, 41 + Math.sin(t * 0.06) * 2, 0, TAU33);
+    c.arc(0, -12, 41 + Math.sin(t * 0.06) * 2, 0, TAU41);
     c.stroke();
   }
   if (a.boss.shieldActive) {
@@ -26511,13 +30648,13 @@ function drawRecoveredBossV1(c, a, t, flash = false) {
     c.strokeStyle = "#b2f8f3";
     c.lineWidth = 3;
     c.beginPath();
-    c.arc(0, -12, 51, 0, TAU33);
+    c.arc(0, -12, 51, 0, TAU41);
     c.stroke();
   }
   if (flash) {
     c.fillStyle = "#fff5e98c";
     c.beginPath();
-    c.arc(0, -12, 33, 0, TAU33);
+    c.arc(0, -12, 33, 0, TAU41);
     c.fill();
   }
   c.restore();
@@ -26527,6 +30664,8 @@ function drawRecoveredSummonV1(c, a, t, flash = false) {
   const s = a.bossSummon;
   if (!s || !["slime", "slag", "hologram", "bunny"].includes(s.kind)) return false;
   if (s.stage === "dormant" || s.stage === "defeated") return true;
+  if (s.kind === "slime" || s.kind === "slag") return true;
+  if (s.kind === "hologram" || s.kind === "bunny") return drawArchivedBossSummon(c, a, t, flash);
   c.save();
   c.translate(a.position.x, a.position.y);
   let q = Math.sin(t * 0.085 + a.position.x * 0.01);
@@ -26535,20 +30674,22 @@ function drawRecoveredSummonV1(c, a, t, flash = false) {
   } else if (s.kind === "hologram") {
     c.globalAlpha = 0.62;
     poly2(c, [[0, -21 + q * 3], [16, 0], [0, 19 + q * 3], [-16, 0]], "#5788cba8", "#a3efff", 2);
-    circle2(c, 0, 0, 3, "#f1ddff");
+    circle6(c, 0, 0, 3, "#f1ddff");
   } else {
     poly2(c, [[-17, 7], [-16, -4], [-7, -14 + q * 3], [8, -13 + q * 3], [17, 3], [12, 13], [-11, 13]], s.kind === "slag" ? "#b26942" : "#71aa77", s.kind === "slag" ? "#ffbe5d" : "#c6f49b", 2);
-    circle2(c, -6, -3, 3, "#fcf4d6");
-    circle2(c, 6, -3, 3, "#fcf4d6");
+    circle6(c, -6, -3, 3, "#fcf4d6");
+    circle6(c, 6, -3, 3, "#fcf4d6");
   }
-  if (flash) circle2(c, 0, 0, 18, "#ffffff45");
+  if (flash) circle6(c, 0, 0, 18, "#ffffff45");
   c.restore();
   return true;
 }
 var color26 = (kind) => ({ acid: "#90dc63", slag: "#f3ab3e", fire: "#f17131", molten: "#da683f", void: "#ba75d9", time: "#74bed4", gold: "#e7b749", collapse: "#eb5a69" })[kind] ?? "#c87866";
 function drawRecoveredBossGroundV1(c, model, t) {
   const h = model.bossHazards ?? {};
+  drawArchivedBossGround(c, model, t);
   for (const p of h.recoveredPools ?? []) {
+    if (hasArchivedBossPainter(p.bossDefinitionId) && !(p.bossDefinitionId === "hooktail" && p.kind === "collapse")) continue;
     const life = Math.min(1, (p.expiresTick - t) / 40, (t - p.createdTick) / 15);
     if (life <= 0) continue;
     const col = color26(p.kind);
@@ -26559,7 +30700,7 @@ function drawRecoveredBossGroundV1(c, model, t) {
     c.strokeStyle = col;
     c.lineWidth = 3;
     c.beginPath();
-    c.arc(0, 0, p.kind === "prism" ? p.radius * (1 - 0.64 * Math.min(1, (t - p.createdTick) / (p.expiresTick - p.createdTick))) : p.radius, 0, TAU33);
+    c.arc(0, 0, p.kind === "prism" ? p.radius * (1 - 0.64 * Math.min(1, (t - p.createdTick) / (p.expiresTick - p.createdTick))) : p.radius, 0, TAU41);
     if (p.kind === "collapse" || p.kind === "prism") {
       c.setLineDash([12, 10]);
       c.stroke();
@@ -26570,48 +30711,48 @@ function drawRecoveredBossGroundV1(c, model, t) {
       c.stroke();
     }
     if (p.kind === "fire" || p.kind === "molten" || p.kind === "slag") for (let i = 0; i < 8; i++) {
-      const q = i * TAU33 / 8 + t * 0.013;
-      circle2(c, Math.cos(q) * p.radius * 0.7, Math.sin(q) * p.radius * 0.62, 2 + Math.sin(t * 0.08 + i), "#ffdda1");
+      const q = i * TAU41 / 8 + t * 0.013;
+      circle6(c, Math.cos(q) * p.radius * 0.7, Math.sin(q) * p.radius * 0.62, 2 + Math.sin(t * 0.08 + i), "#ffdda1");
     }
     c.restore();
   }
   for (const a of Object.values(model.entitiesById ?? {})) {
     if (a?.boss?.bossDefinitionId !== "void_overseer" || !a.alive) continue;
-    const action = a.boss.lastAction;
-    if (action?.ability === "eye_lance" && t - action.resolvedTick >= 0 && t - action.resolvedTick < 16) {
-      const from = { x: a.position.x, y: a.position.y - 23 }, v = { x: action.targetPosition.x - a.position.x, y: action.targetPosition.y - a.position.y };
+    const action2 = a.boss.lastAction;
+    if (action2?.ability === "eye_lance" && t - action2.resolvedTick >= 0 && t - action2.resolvedTick < 16) {
+      const from = { x: a.position.x, y: a.position.y - 23 }, v = { x: action2.targetPosition.x - a.position.x, y: action2.targetPosition.y - a.position.y };
       const norm = Math.hypot(v.x, v.y) || 1, to = { x: from.x + v.x / norm * 260, y: from.y + v.y / norm * 260 };
       c.save();
-      c.globalAlpha = 1 - (t - action.resolvedTick) / 16;
-      line(c, [[from.x, from.y], [to.x, to.y]], "#a949c6", 8);
-      line(c, [[from.x, from.y], [to.x, to.y]], "#ffe2ff", 2.3);
+      c.globalAlpha = 1 - (t - action2.resolvedTick) / 16;
+      line3(c, [[from.x, from.y], [to.x, to.y]], "#a949c6", 8);
+      line3(c, [[from.x, from.y], [to.x, to.y]], "#ffe2ff", 2.3);
       c.restore();
     }
   }
   for (const q of h.recoveredTelegraphs ?? []) {
     const spec = recoveredBossForId(q.bossDefinitionId);
-    if (!spec || q.ability === "eye_lance") continue;
-    const span = Math.max(1, q.resolvesTick - q.startedTick), progress = ease2((t - q.startedTick) / span);
+    if (!spec || q.ability === "eye_lance" || hasArchivedBossPainter(q.bossDefinitionId) && !(q.bossDefinitionId === "hooktail" && q.ability === "arena_collapse") && !(q.bossDefinitionId === "nexus_overseer" && q.ability === "prism_slam")) continue;
+    const span = Math.max(1, q.resolvesTick - q.startedTick), progress5 = ease9((t - q.startedTick) / span);
     c.save();
     c.translate(q.position.x, q.position.y);
-    c.globalAlpha = 0.35 + progress * 0.55;
+    c.globalAlpha = 0.35 + progress5 * 0.55;
     c.strokeStyle = spec.color;
-    c.lineWidth = 1.5 + progress * 2;
+    c.lineWidth = 1.5 + progress5 * 2;
     const radius = attackRadiusForVisual(q.ability);
     c.beginPath();
-    c.arc(0, 0, radius, 0, TAU33);
+    c.arc(0, 0, radius, 0, TAU41);
     c.stroke();
     c.setLineDash([3, 6]);
     c.lineDashOffset = -t * 0.55;
     c.beginPath();
-    c.arc(0, 0, radius * (0.95 - 0.45 * progress), 0, TAU33);
+    c.arc(0, 0, radius * (0.95 - 0.45 * progress5), 0, TAU41);
     c.stroke();
     c.setLineDash([]);
-    if (progress > 0.85) {
+    if (progress5 > 0.85) {
       c.fillStyle = spec.color;
-      c.globalAlpha = (progress - 0.85) * 0.9;
+      c.globalAlpha = (progress5 - 0.85) * 0.9;
       c.beginPath();
-      c.arc(0, 0, radius, 0, TAU33);
+      c.arc(0, 0, radius, 0, TAU41);
       c.fill();
     }
     c.restore();
@@ -26645,6 +30786,7 @@ function attackRadiusForVisual(a) {
   }[a] ?? 75;
 }
 function drawRecoveredBossHudV1(c, canvas, model) {
+  if (drawArchivedBossHud(c, canvas, model)) return true;
   const actor = Object.values(model.entitiesById ?? {}).find((a) => a.alive && recoveredBossForId(a.boss?.bossDefinitionId));
   if (!actor) return false;
   const spec = recoveredBossForId(actor.boss.bossDefinitionId), width = Math.min(430, canvas.width - 28), x = (canvas.width - width) / 2, y = 14;
@@ -26828,14 +30970,14 @@ function createBrimstoneEruptionPresentation() {
     context = key2;
     lastTick = tick;
     const live = new Set(Object.values(model.entitiesById ?? {}).filter((a) => a.alive !== false && a.boss?.bossDefinitionId === BRIMSTONE_ID).map((a) => a.boss.bossId));
-    const current = model.bossHazards?.brimstoneVents ?? [], ids = new Set(current.map((v) => v.id));
+    const current = model.bossHazards?.brimstoneVents ?? [], ids2 = new Set(current.map((v) => v.id));
     for (const v of current) {
       const owner = [...live].find((id) => v.id.startsWith(id + ":vent:"));
       if (!owner) continue;
       const before = recent.get(v.id), entry = { vent: Object.freeze({ ...v, position: Object.freeze({ ...v.position }), arms: Object.freeze({ ...v.arms }), hitEntityIds: Object.freeze([...v.hitEntityIds ?? []]) }), owner, confirmed: before?.confirmed === true || v.stage === "erupting" };
       recent.set(v.id, entry);
     }
-    for (const [id, e] of recent) if (!live.has(e.owner) || tick >= e.vent.detonatesTick + 60 || !ids.has(id) && (!e.confirmed || tick < e.vent.expiresTick)) recent.delete(id);
+    for (const [id, e] of recent) if (!live.has(e.owner) || tick >= e.vent.detonatesTick + 60 || !ids2.has(id) && (!e.confirmed || tick < e.vent.expiresTick)) recent.delete(id);
     const counts = /* @__PURE__ */ new Map();
     for (const [id, e] of [...recent].sort(([a, x], [b, y]) => y.vent.detonatesTick - x.vent.detonatesTick || (y.vent.sequence ?? 0) - (x.vent.sequence ?? 0) || b.localeCompare(a))) {
       const n = counts.get(e.owner) ?? 0;
@@ -26844,46 +30986,46 @@ function createBrimstoneEruptionPresentation() {
     }
     if (!current.length && !recent.size) return model;
     const vents = current.map((v) => recent.has(v.id) ? { ...v, presentationUntilTick: v.detonatesTick + 60, presentationOnly: false } : v);
-    for (const [id, e] of recent) if (!ids.has(id) && e.confirmed) vents.push({ ...e.vent, stage: "erupting", presentationUntilTick: e.vent.detonatesTick + 60, presentationOnly: true });
+    for (const [id, e] of recent) if (!ids2.has(id) && e.confirmed) vents.push({ ...e.vent, stage: "erupting", presentationUntilTick: e.vent.detonatesTick + 60, presentationOnly: true });
     return Object.freeze({ ...model, bossHazards: Object.freeze({ ...model.bossHazards, brimstoneVents: Object.freeze(vents) }) });
   }
   return Object.freeze({ update, clear: clear2, inspect: () => ({ retained: recent.size, lastTick }) });
 }
-function brimstoneEruptionEnvelope(v, tick, distance7 = 0) {
+function brimstoneEruptionEnvelope(v, tick, distance8 = 0) {
   const duration = (v.presentationUntilTick ?? v.expiresTick ?? v.detonatesTick + 18) - v.detonatesTick, age = tick - v.detonatesTick;
   if (age < 0 || age >= duration) return { height: 0, opacity: 0, age, localAge: -1 };
-  const delay = clamp20(distance7 / 96) * Math.min(10, duration * 0.23), localAge = age - delay;
+  const delay = clamp27(distance8 / 96) * Math.min(10, duration * 0.23), localAge = age - delay;
   if (localAge <= 0) return { height: 0, opacity: 0, age, localAge };
-  const rise = ease3(localAge / Math.min(6, duration * 0.25));
-  const fall = 1 - ease3((localAge - duration * 0.27) / (duration * 0.46));
-  const fade = 1 - ease3((age - duration * 0.57) / (duration * 0.43));
+  const rise = ease10(localAge / Math.min(6, duration * 0.25));
+  const fall = 1 - ease10((localAge - duration * 0.27) / (duration * 0.46));
+  const fade = 1 - ease10((age - duration * 0.57) / (duration * 0.43));
   return { height: rise * fall, opacity: fade, age, localAge };
 }
-var TAU34 = Math.PI * 2;
-var INK30 = "#11141b";
-var COAL = "#292b37";
-var STONE2 = "#555561";
+var TAU42 = Math.PI * 2;
+var INK37 = "#11141b";
+var COAL2 = "#292b37";
+var STONE3 = "#555561";
 var RUST = "#a04f35";
 var LAVA = "#f6662c";
-var GOLD2 = "#ffbd53";
+var GOLD4 = "#ffbd53";
 var WHITE = "#fff0b0";
-var clamp20 = (v) => Math.max(0, Math.min(1, v));
-var lerp2 = (a, b, p) => a + (b - a) * p;
-var ease3 = (p) => {
-  p = clamp20(p);
+var clamp27 = (v) => Math.max(0, Math.min(1, v));
+var lerp3 = (a, b, p) => a + (b - a) * p;
+var ease10 = (p) => {
+  p = clamp27(p);
   return p * p * (3 - 2 * p);
 };
-var hash6 = (s) => {
+var hash12 = (s) => {
   let v = 2166136261;
   for (const x of String(s)) v = Math.imul(v ^ x.charCodeAt(0), 16777619);
   return v >>> 0;
 };
-function polygon16(c, pts, fill, stroke2 = INK30, width = 1.26) {
+function polygon21(c, pts, fill3, stroke2 = INK37, width = 1.26) {
   c.beginPath();
   c.moveTo(...pts[0]);
   for (const p of pts.slice(1)) c.lineTo(...p);
   c.closePath();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.fill();
   if (stroke2) {
     c.strokeStyle = stroke2;
@@ -26892,13 +31034,13 @@ function polygon16(c, pts, fill, stroke2 = INK30, width = 1.26) {
     c.stroke();
   }
 }
-function disc(c, x, y, r, fill) {
-  c.fillStyle = fill;
+function disc(c, x, y, r, fill3) {
+  c.fillStyle = fill3;
   c.beginPath();
-  c.arc(x, y, r, 0, TAU34);
+  c.arc(x, y, r, 0, TAU42);
   c.fill();
 }
-function line2(c, points, color27, width) {
+function line4(c, points, color27, width) {
   c.beginPath();
   c.moveTo(...points[0]);
   for (const p of points.slice(1)) c.lineTo(...p);
@@ -26909,41 +31051,41 @@ function line2(c, points, color27, width) {
   c.stroke();
 }
 function brimstoneAttackPose(b, tick) {
-  const action = b.pendingAction, ability = action?.ability, p = action ? clamp20((tick - action.startedTick) / Math.max(1, action.resolvesTick - action.startedTick)) : 0;
+  const action2 = b.pendingAction, ability = action2?.ability, p = action2 ? clamp27((tick - action2.startedTick) / Math.max(1, action2.resolvesTick - action2.startedTick)) : 0;
   const last = b.lastAction, age = last ? tick - last.resolvedTick : 999, side = Math.cos(b.facingAngle ?? Math.PI / 2) >= 0 ? 1 : -1, hands = {};
   let drop = 0, heat = 0, strikeSide = 0;
   if (ability === "slam") {
-    const q = ease3(p / 0.84);
-    for (const s of [-1, 1]) hands[s] = { x: s * lerp2(36, 55, q), y: lerp2(-9, -104, q) };
+    const q = ease10(p / 0.84);
+    for (const s of [-1, 1]) hands[s] = { x: s * lerp3(36, 55, q), y: lerp3(-9, -104, q) };
     drop = -3 * q;
     heat = 0.3 + 0.7 * q;
   } else if (last?.ability === "slam" && age >= 0 && age < 30) {
-    const q = ease3((age - 7) / 23);
-    for (const s of [-1, 1]) hands[s] = { x: s * lerp2(40, 34, q), y: lerp2(-1, -8, q) };
+    const q = ease10((age - 7) / 23);
+    for (const s of [-1, 1]) hands[s] = { x: s * lerp3(40, 34, q), y: lerp3(-1, -8, q) };
     drop = (1 - q) * 6;
     heat = (1 - q) * 0.7;
   } else if (ability === "strike") {
     strikeSide = side;
-    const q = ease3(p);
-    hands[side] = { x: side * lerp2(34, 49, q), y: lerp2(-8, -57, q) };
+    const q = ease10(p);
+    hands[side] = { x: side * lerp3(34, 49, q), y: lerp3(-8, -57, q) };
     drop = -q;
     heat = q * 0.8;
   } else if (last?.ability === "strike" && age >= 0 && age < 20) {
     strikeSide = side;
-    const q = ease3((age - 3) / 17), angle3 = b.facingAngle ?? Math.PI / 2;
-    hands[side] = { x: lerp2(Math.cos(angle3) * 61, side * 34, q), y: lerp2(Math.sin(angle3) * 43 - 22, -8, q) };
+    const q = ease10((age - 3) / 17), angle3 = b.facingAngle ?? Math.PI / 2;
+    hands[side] = { x: lerp3(Math.cos(angle3) * 61, side * 34, q), y: lerp3(Math.sin(angle3) * 43 - 22, -8, q) };
     drop = 2 * (1 - q);
     heat = (1 - q) * 0.9;
   } else if (ability === "magma_vents") {
-    const q = ease3(p);
-    for (const s of [-1, 1]) hands[s] = { x: s * lerp2(34, 57, q), y: lerp2(-8, -37, q) };
+    const q = ease10(p);
+    for (const s of [-1, 1]) hands[s] = { x: s * lerp3(34, 57, q), y: lerp3(-8, -37, q) };
     drop = -q * 2;
     heat = 0.2 + 0.8 * q;
   }
   return { hands, drop, heat, strikeSide, charge: p, ability };
 }
-function brimstoneArmAngles(side, hand3) {
-  const x = hand3.x - side * 28, y = hand3.y + 61, r = Math.hypot(x, y) || 1, d = Math.max(5, Math.min(49, r));
+function brimstoneArmAngles(side, hand4) {
+  const x = hand4.x - side * 28, y = hand4.y + 61, r = Math.hypot(x, y) || 1, d = Math.max(5, Math.min(49, r));
   const bend = Math.acos(Math.max(-1, Math.min(1, (d * d + 23 * 23 - 27 * 27) / (2 * d * 23))));
   const upper = Math.atan2(y, x) - Math.PI / 2 + side * bend;
   const ex = -Math.sin(upper) * 23, ey = Math.cos(upper) * 23, tx = x / r * d, ty = y / r * d;
@@ -26951,7 +31093,7 @@ function brimstoneArmAngles(side, hand3) {
 }
 function circlePath(c, p, r) {
   c.beginPath();
-  c.arc(p.x, p.y, r, 0, TAU34);
+  c.arc(p.x, p.y, r, 0, TAU42);
 }
 function traceBrimstoneVent(c, v) {
   const p = v.position, a = v.arms;
@@ -26959,56 +31101,56 @@ function traceBrimstoneVent(c, v) {
   if (a.east + a.west > 0) c.rect(p.x - a.west, p.y - 12, a.east + a.west, 24);
   if (a.north + a.south > 0) c.rect(p.x - 12, p.y - a.north, 24, a.north + a.south);
 }
-function spokes(c, seed2, r, progress) {
+function spokes(c, seed2, r, progress5) {
   for (let i = 0; i < 7; i++) {
-    const angle3 = i * TAU34 / 7 + seed2 % 101 * 0.01, length = r * (0.55 + 0.38 * Math.sin(i * 3.7 + seed2)), j = Math.sin(i * 2.1 + seed2) * 0.09;
-    const pts = [[Math.cos(angle3) * 7, Math.sin(angle3) * 7], [Math.cos(angle3 + j) * length * 0.45, Math.sin(angle3 + j) * length * 0.45], [Math.cos(angle3 - j) * length * progress, Math.sin(angle3 - j) * length * progress]];
-    line2(c, pts, "#713c36", 5);
-    line2(c, pts, LAVA, 2.4);
-    line2(c, pts, progress > 0.8 ? GOLD2 : "#ee8140", 0.8);
+    const angle3 = i * TAU42 / 7 + seed2 % 101 * 0.01, length = r * (0.55 + 0.38 * Math.sin(i * 3.7 + seed2)), j = Math.sin(i * 2.1 + seed2) * 0.09;
+    const pts = [[Math.cos(angle3) * 7, Math.sin(angle3) * 7], [Math.cos(angle3 + j) * length * 0.45, Math.sin(angle3 + j) * length * 0.45], [Math.cos(angle3 - j) * length * progress5, Math.sin(angle3 - j) * length * progress5]];
+    line4(c, pts, "#713c36", 5);
+    line4(c, pts, LAVA, 2.4);
+    line4(c, pts, progress5 > 0.8 ? GOLD4 : "#ee8140", 0.8);
     if (i % 2 === 0) {
       const m = pts[1];
-      line2(c, [m, [m[0] + Math.cos(angle3 + 0.8) * 11, m[1] + Math.sin(angle3 + 0.8) * 11]], LAVA, 1.3);
+      line4(c, [m, [m[0] + Math.cos(angle3 + 0.8) * 11, m[1] + Math.sin(angle3 + 0.8) * 11]], LAVA, 1.3);
     }
   }
 }
-function moltenTarget(c, p, r, progress, seed2) {
+function moltenTarget(c, p, r, progress5, seed2) {
   c.save();
   c.translate(p.x, p.y);
   circlePath(c, { x: 0, y: 0 }, r);
   c.save();
   c.clip();
   disc(c, 0, 0, r, "#3a252842");
-  disc(c, 0, 0, r * (0.18 + 0.72 * progress), "#f7782420");
+  disc(c, 0, 0, r * (0.18 + 0.72 * progress5), "#f7782420");
   for (let i = 0; i < 7; i++) {
-    const a = i * TAU34 / 7 + 0.15, inner = 15 + i % 3 * 2, outer = r * (0.65 + i % 2 * 0.13);
+    const a = i * TAU42 / 7 + 0.15, inner = 15 + i % 3 * 2, outer = r * (0.65 + i % 2 * 0.13);
     c.save();
     c.rotate(a);
-    c.globalAlpha *= 0.12 + progress * 0.16;
-    polygon16(c, [[inner, -3], [outer * 0.73, -outer * 0.3], [outer, -3], [outer * 0.87, outer * 0.22], [inner + 7, 5]], COAL, null);
+    c.globalAlpha *= 0.12 + progress5 * 0.16;
+    polygon21(c, [[inner, -3], [outer * 0.73, -outer * 0.3], [outer, -3], [outer * 0.87, outer * 0.22], [inner + 7, 5]], COAL2, null);
     c.restore();
   }
-  spokes(c, seed2, r, 0.35 + 0.65 * progress);
+  spokes(c, seed2, r, 0.35 + 0.65 * progress5);
   c.restore();
   circlePath(c, { x: 0, y: 0 }, r);
-  c.strokeStyle = INK30;
+  c.strokeStyle = INK37;
   c.lineWidth = 4;
   c.stroke();
   c.strokeStyle = "#ed9a54";
   c.lineWidth = 1.8;
   c.stroke();
   for (let i = 0; i < 8; i++) {
-    const a = i * TAU34 / 8;
+    const a = i * TAU42 / 8;
     c.save();
     c.rotate(a);
-    polygon16(c, [[r - 9, -2], [r - 1, -4], [r, 0], [r - 1, 4], [r - 9, 2], [r - 5, 0]], progress > i / 9 ? GOLD2 : RUST, INK30, 1);
+    polygon21(c, [[r - 9, -2], [r - 1, -4], [r, 0], [r - 1, 4], [r - 9, 2], [r - 5, 0]], progress5 > i / 9 ? GOLD4 : RUST, INK37, 1);
     c.restore();
   }
   for (let i = 0; i < 12; i++) {
-    const a = i * TAU34 / 12 + 0.03;
+    const a = i * TAU42 / 12 + 0.03;
     c.beginPath();
-    c.arc(0, 0, r - 5, a, a + TAU34 / 12 - 0.13);
-    c.strokeStyle = i / 12 < progress ? GOLD2 : "#824e3f";
+    c.arc(0, 0, r - 5, a, a + TAU42 / 12 - 0.13);
+    c.strokeStyle = i / 12 < progress5 ? GOLD4 : "#824e3f";
     c.lineWidth = 2.2;
     c.stroke();
   }
@@ -27017,36 +31159,36 @@ function moltenTarget(c, p, r, progress, seed2) {
 function ventMouthGround(c, p, q, tick) {
   c.save();
   c.translate(p.x, p.y);
-  polygon16(c, [[-19, 0], [-13, -10], [-2, -14], [11, -11], [20, -3], [18, 7], [6, 12], [-9, 10]], "#2b242ac0", null);
+  polygon21(c, [[-19, 0], [-13, -10], [-2, -14], [11, -11], [20, -3], [18, 7], [6, 12], [-9, 10]], "#2b242ac0", null);
   c.beginPath();
-  c.ellipse(0, 0, 13, 8, 0, 0, TAU34);
+  c.ellipse(0, 0, 13, 8, 0, 0, TAU42);
   c.fillStyle = "#a83e28";
   c.fill();
-  c.strokeStyle = INK30;
+  c.strokeStyle = INK37;
   c.lineWidth = 1.26;
   c.stroke();
   c.beginPath();
-  c.ellipse(-1, -1, 9 + q * 2, 5 + q, 0, 0, TAU34);
+  c.ellipse(-1, -1, 9 + q * 2, 5 + q, 0, 0, TAU42);
   c.fillStyle = LAVA;
   c.fill();
   c.beginPath();
-  c.ellipse(-2, -2, 4 + q * 3, 2.5 + q, 0, 0, TAU34);
-  c.fillStyle = GOLD2;
+  c.ellipse(-2, -2, 4 + q * 3, 2.5 + q, 0, 0, TAU42);
+  c.fillStyle = GOLD4;
   c.fill();
   for (let i = 0; i < 5; i++) {
-    const a = i * TAU34 / 5, x = Math.cos(a) * 15, y = Math.sin(a) * 9;
-    polygon16(c, [[x - 4, y - 3], [x + 1, y - 5], [x + 6, y - 1], [x + 3, y + 4], [x - 3, y + 3]], i % 2 ? STONE2 : COAL, INK30, 1.1);
+    const a = i * TAU42 / 5, x = Math.cos(a) * 15, y = Math.sin(a) * 9;
+    polygon21(c, [[x - 4, y - 3], [x + 1, y - 5], [x + 6, y - 1], [x + 3, y + 4], [x - 3, y + 3]], i % 2 ? STONE3 : COAL2, INK37, 1.1);
   }
   c.restore();
 }
 var armSpecs = (v) => [["east", 1, 0], ["west", -1, 0], ["north", 0, -1], ["south", 0, 1]].map(([key2, x, y]) => ({ key: key2, x, y, length: v.arms[key2] }));
 function ventFissure(c, v, q, erupt, tick) {
-  const since = tick - v.createdTick, reveal = ease3(since / 45), duration = (v.presentationUntilTick ?? v.expiresTick) - v.detonatesTick, age = tick - v.detonatesTick;
-  const cooling = erupt ? 1 - ease3((age - duration * 0.24) / (duration * 0.6)) : 1;
+  const since = tick - v.createdTick, reveal = ease10(since / 45), duration = (v.presentationUntilTick ?? v.expiresTick) - v.detonatesTick, age = tick - v.detonatesTick;
+  const cooling = erupt ? 1 - ease10((age - duration * 0.24) / (duration * 0.6)) : 1;
   c.save();
   traceBrimstoneVent(c, v);
   c.clip();
-  if (erupt) c.globalAlpha *= 1 - ease3((age - (duration - 18)) / 18);
+  if (erupt) c.globalAlpha *= 1 - ease10((age - (duration - 18)) / 18);
   c.fillStyle = erupt ? "#642d201a" : "#c9642c" + (q > 0.78 ? "30" : "16");
   c.fill();
   for (const a of armSpecs(v)) {
@@ -27054,34 +31196,34 @@ function ventFissure(c, v, q, erupt, tick) {
     c.save();
     c.translate(v.position.x, v.position.y);
     c.rotate(Math.atan2(a.y, a.x));
-    const seed2 = hash6(v.id + a.key), path4 = [[0, 0]], opened = a.length * (erupt ? 1 : reveal);
-    for (let d = 8; d < opened; d += 10) path4.push([d, Math.sin(d * 0.19 + seed2) * 4]);
-    path4.push([opened, 0]);
-    line2(c, path4, "#1b1c27a8", 18);
-    line2(c, path4, erupt ? "#64372f" : "#8c4739", 7 + q * 2);
+    const seed2 = hash12(v.id + a.key), path7 = [[0, 0]], opened = a.length * (erupt ? 1 : reveal);
+    for (let d = 8; d < opened; d += 10) path7.push([d, Math.sin(d * 0.19 + seed2) * 4]);
+    path7.push([opened, 0]);
+    line4(c, path7, "#1b1c27a8", 18);
+    line4(c, path7, erupt ? "#64372f" : "#8c4739", 7 + q * 2);
     if (erupt) {
       for (let d = 8; d < opened - 4; d += 17) {
         const e = brimstoneEruptionEnvelope(v, tick, d), y = Math.sin(d * 0.19 + seed2) * 3.3, split = e.height * 2.8;
         for (const side of [-1, 1]) {
           const y0 = y + side * (4 + split), y1 = y + side * (8 + split);
-          polygon16(c, [[d - 5, y0], [d + 2, y0 - side], [d + 6, y1 - side], [d - 2, y1]], side < 0 ? "#554940" : "#38353b", INK30, 0.8);
+          polygon21(c, [[d - 5, y0], [d + 2, y0 - side], [d + 6, y1 - side], [d - 2, y1]], side < 0 ? "#554940" : "#38353b", INK37, 0.8);
         }
       }
       c.save();
       c.globalAlpha *= cooling;
-      line2(c, path4, LAVA, 3.5 + cooling * 3);
-      line2(c, path4, GOLD2, 1 + cooling * 2.4);
+      line4(c, path7, LAVA, 3.5 + cooling * 3);
+      line4(c, path7, GOLD4, 1 + cooling * 2.4);
       if (age < 18) {
-        c.globalAlpha *= 1 - ease3(age / 18);
-        line2(c, path4, WHITE, 1.2);
+        c.globalAlpha *= 1 - ease10(age / 18);
+        line4(c, path7, WHITE, 1.2);
       }
       c.restore();
-    } else line2(c, path4, "#fa7239", 1.4 + q * 2);
+    } else line4(c, path7, "#fa7239", 1.4 + q * 2);
     for (let d = 19; d < opened - 4; d += 25) {
       const sign = Math.sin(d + seed2) > 0 ? 1 : -1, y = Math.sin(d * 0.19 + seed2) * 4;
-      line2(c, [[d, y], [d + 4, sign * 7], [d + 11, sign * 11]], erupt ? cooling > 0.5 ? GOLD2 : "#754935" : q > 0.8 ? GOLD2 : "#c47443", erupt ? 1.7 : 1);
+      line4(c, [[d, y], [d + 4, sign * 7], [d + 11, sign * 11]], erupt ? cooling > 0.5 ? GOLD4 : "#754935" : q > 0.8 ? GOLD4 : "#c47443", erupt ? 1.7 : 1);
     }
-    if (!erupt) for (const side of [-1, 1]) for (let d = 0; d < a.length; d += 19) line2(c, [[d, side * 11.5], [Math.min(a.length, d + 10), side * 11.5]], q > 0.78 ? "#ffd36e" : "#9d6347", q > 0.78 ? 1.3 : 0.9);
+    if (!erupt) for (const side of [-1, 1]) for (let d = 0; d < a.length; d += 19) line4(c, [[d, side * 11.5], [Math.min(a.length, d + 10), side * 11.5]], q > 0.78 ? "#ffd36e" : "#9d6347", q > 0.78 ? 1.3 : 0.9);
     c.restore();
   }
   c.restore();
@@ -27100,24 +31242,24 @@ function brimstoneSlams(model, tick) {
   for (const a of Object.values(model.entitiesById ?? {})) if (a.boss?.bossDefinitionId === BRIMSTONE_ID && a.alive !== false) accept(a.boss.lastAction);
   return rows;
 }
-function slamGround(c, s, tick) {
-  const age = tick - s.resolvedTick, p = clamp20(age / 42), burst = clamp20(age / 10), fade = 1 - ease3((age - 15) / 27), pos = s.targetPosition;
+function slamGround4(c, s, tick) {
+  const age = tick - s.resolvedTick, p = clamp27(age / 42), burst = clamp27(age / 10), fade = 1 - ease10((age - 15) / 27), pos = s.targetPosition;
   c.save();
   c.translate(pos.x, pos.y);
   circlePath(c, { x: 0, y: 0 }, 64);
   c.clip();
   c.globalAlpha = fade;
-  polygon16(c, Array.from({ length: 16 }, (_, i) => {
-    const a = i * TAU34 / 16, r = 54 + (i % 2 ? 2 : 7);
+  polygon21(c, Array.from({ length: 16 }, (_, i) => {
+    const a = i * TAU42 / 16, r = 54 + (i % 2 ? 2 : 7);
     return [Math.cos(a) * r, Math.sin(a) * r];
   }), "#30242b9a", null);
   disc(c, 0, 0, 55 * (1 - burst * 0.45), "#ff923b" + (age < 4 ? "7a" : "28"));
   spokes(c, 17, 62, 1);
-  c.globalAlpha = fade * (1 - clamp20(age / 21));
-  c.strokeStyle = GOLD2;
+  c.globalAlpha = fade * (1 - clamp27(age / 21));
+  c.strokeStyle = GOLD4;
   c.lineWidth = 4 * (1 - burst) + 1;
   c.beginPath();
-  c.arc(0, 0, 12 + 52 * Math.sin(burst * Math.PI * 0.5), 0, TAU34);
+  c.arc(0, 0, 12 + 52 * Math.sin(burst * Math.PI * 0.5), 0, TAU42);
   c.stroke();
   c.restore();
 }
@@ -27125,8 +31267,8 @@ function drawBrimstoneAttackGround(c, model, tick) {
   c.save();
   const h = model.bossHazards ?? {};
   for (const t of h.brimstoneTelegraphs ?? []) {
-    const q = clamp20((tick - t.startedTick) / Math.max(1, t.resolvesTick - t.startedTick));
-    if (t.ability === "slam") moltenTarget(c, t.position, 64, q, hash6(t.bossId));
+    const q = clamp27((tick - t.startedTick) / Math.max(1, t.resolvesTick - t.startedTick));
+    if (t.ability === "slam") moltenTarget(c, t.position, 64, q, hash12(t.bossId));
     else if (t.ability === "strike") {
       c.save();
       c.translate(t.position.x, t.position.y);
@@ -27143,14 +31285,14 @@ function drawBrimstoneAttackGround(c, model, tick) {
       for (let i = -1; i <= 1; i++) {
         c.save();
         c.rotate(i * 0.56);
-        polygon16(c, [[37, -1.8], [49, -3.6], [45, 0], [49, 3.6], [37, 1.8], [41, 0]], q > 0.55 ? GOLD2 : RUST, null);
+        polygon21(c, [[37, -1.8], [49, -3.6], [45, 0], [49, 3.6], [37, 1.8], [41, 0]], q > 0.55 ? GOLD4 : RUST, null);
         c.restore();
       }
       c.restore();
-    } else for (const p of t.ventTargets) moltenTarget(c, p, 18, q, hash6(t.bossId));
+    } else for (const p of t.ventTargets) moltenTarget(c, p, 18, q, hash12(t.bossId));
   }
-  for (const v of h.brimstoneVents ?? []) ventFissure(c, v, clamp20((tick - v.createdTick) / 270), v.stage === "erupting", tick);
-  for (const s of brimstoneSlams(model, tick)) slamGround(c, s, tick);
+  for (const v of h.brimstoneVents ?? []) ventFissure(c, v, clamp27((tick - v.createdTick) / 270), v.stage === "erupting", tick);
+  for (const s of brimstoneSlams(model, tick)) slamGround4(c, s, tick);
   c.restore();
 }
 function lavaJet(c, p, height, width, age, seed2, opacity = 1) {
@@ -27170,7 +31312,7 @@ function lavaJet(c, p, height, width, age, seed2, opacity = 1) {
   c.closePath();
   c.fillStyle = "#d73f29";
   c.fill();
-  c.strokeStyle = INK30;
+  c.strokeStyle = INK37;
   c.lineWidth = 1.26;
   c.stroke();
   c.beginPath();
@@ -27188,16 +31330,16 @@ function lavaJet(c, p, height, width, age, seed2, opacity = 1) {
   c.quadraticCurveTo(width * 0.25, -height * 0.36, width * 0.23, -height * 0.2);
   c.lineTo(width * 0.25, -1);
   c.closePath();
-  c.fillStyle = GOLD2;
+  c.fillStyle = GOLD4;
   c.fill();
-  polygon16(c, [[-width * 0.1, -1], [0, -height * 0.23], [width * 0.12, -1]], WHITE, null);
+  polygon21(c, [[-width * 0.1, -1], [0, -height * 0.23], [width * 0.12, -1]], WHITE, null);
   c.restore();
 }
 function ember(c, p, seed2, age, life = 30) {
-  const q = clamp20(age / life), a = seed2 * 2.39996, x = p.x + Math.cos(a) * (7 + q * 25), y = p.y - Math.sin(q * Math.PI) * (17 + seed2 % 4 * 6) - q * 8, r = 1.5 + seed2 % 3 * 0.25;
+  const q = clamp27(age / life), a = seed2 * 2.39996, x = p.x + Math.cos(a) * (7 + q * 25), y = p.y - Math.sin(q * Math.PI) * (17 + seed2 % 4 * 6) - q * 8, r = 1.5 + seed2 % 3 * 0.25;
   c.save();
   c.globalAlpha *= Math.sin(q * Math.PI);
-  polygon16(c, [[x - r, y], [x, y - r * 2], [x + r, y], [x, y + r]], seed2 % 2 ? GOLD2 : LAVA, null);
+  polygon21(c, [[x - r, y], [x, y - r * 2], [x + r, y], [x, y + r]], seed2 % 2 ? GOLD4 : LAVA, null);
   c.restore();
 }
 function brimstoneEffectDepthItems(model, tick, viewport = null) {
@@ -27206,9 +31348,9 @@ function brimstoneEffectDepthItems(model, tick, viewport = null) {
     if (visible2(p)) items.push(Object.freeze({ id: "brimstone-vfx/" + id, anchorX: p.x, anchorY: p.y + 2, draw }));
   };
   for (const v of model.bossHazards?.brimstoneVents ?? []) {
-    const seed2 = hash6(v.id);
+    const seed2 = hash12(v.id);
     if (v.stage !== "erupting") {
-      const q = clamp20((tick - v.createdTick) / 270);
+      const q = clamp27((tick - v.createdTick) / 270);
       add(v.id + "/boil", v.position, (c) => {
         c.save();
         lavaJet(c, { x: v.position.x, y: v.position.y - 2 }, 9 + q * 13, 5 + q * 2, tick, seed2);
@@ -27233,8 +31375,8 @@ function brimstoneEffectDepthItems(model, tick, viewport = null) {
         if (local4 < 24) for (let i = 0; i < 2; i++) {
           const q = local4 / 24, x = p.x + (i ? 1 : -1) * (3 + q * 12), y = p.y - Math.sin(q * Math.PI) * 15;
           c.save();
-          c.globalAlpha *= 1 - ease3((local4 - 14) / 10);
-          polygon16(c, [[x - 3, y], [x - 2, y - 4], [x + 3, y - 2], [x + 3, y + 2]], COAL);
+          c.globalAlpha *= 1 - ease10((local4 - 14) / 10);
+          polygon21(c, [[x - 3, y], [x - 2, y - 4], [x + 3, y - 2], [x + 3, y + 2]], COAL2);
           c.restore();
         }
       }
@@ -27243,16 +31385,16 @@ function brimstoneEffectDepthItems(model, tick, viewport = null) {
   }
   for (const s of brimstoneSlams(model, tick)) {
     const age = tick - s.resolvedTick, p = s.targetPosition, key2 = "slam/" + s.resolvedTick + "/" + p.x + "/" + p.y;
-    if (age < 18) add(key2 + "/core", p, (c) => lavaJet(c, p, (1 - ease3((age - 5) / 13)) * 58, 22, age, 3, 1 - clamp20((age - 12) / 6)));
+    if (age < 18) add(key2 + "/core", p, (c) => lavaJet(c, p, (1 - ease10((age - 5) / 13)) * 58, 22, age, 3, 1 - clamp27((age - 12) / 6)));
     if (age < 30) for (let i = 0; i < 10; i++) {
-      const q = age / 30, a = i * TAU34 / 10 + 0.2, r = 9 + q * (29 + i % 3 * 7), contact = { x: p.x + Math.cos(a) * r, y: p.y + Math.sin(a) * r }, lift = Math.sin(q * Math.PI) * (29 + i % 3 * 9), size = (3 + i % 3 * 0.8) * (1 - q * 0.45);
+      const q = age / 30, a = i * TAU42 / 10 + 0.2, r = 9 + q * (29 + i % 3 * 7), contact = { x: p.x + Math.cos(a) * r, y: p.y + Math.sin(a) * r }, lift = Math.sin(q * Math.PI) * (29 + i % 3 * 9), size = (3 + i % 3 * 0.8) * (1 - q * 0.45);
       add(key2 + "/shard/" + i, contact, (c) => {
         c.save();
         c.translate(contact.x, contact.y - lift);
         c.rotate(i * 0.8 + q * (i % 2 ? 2 : -2));
-        c.globalAlpha *= 1 - ease3((age - 18) / 12);
-        polygon16(c, [[-size, -size * 0.5], [0, -size], [size, size * 0.1], [size * 0.5, size], [-size * 0.7, size * 0.7]], COAL);
-        polygon16(c, [[-size, -size * 0.5], [0, -size], [size, size * 0.1], [-size * 0.2, 0]], i % 3 ? STONE2 : LAVA, null);
+        c.globalAlpha *= 1 - ease10((age - 18) / 12);
+        polygon21(c, [[-size, -size * 0.5], [0, -size], [size, size * 0.1], [size * 0.5, size], [-size * 0.7, size * 0.7]], COAL2);
+        polygon21(c, [[-size, -size * 0.5], [0, -size], [size, size * 0.1], [-size * 0.2, 0]], i % 3 ? STONE3 : LAVA, null);
         c.restore();
       });
     }
@@ -27277,10 +31419,10 @@ function brimstoneEffectDepthItems(model, tick, viewport = null) {
         c.closePath();
         c.fillStyle = LAVA;
         c.fill();
-        c.strokeStyle = INK30;
+        c.strokeStyle = INK37;
         c.lineWidth = 1.26;
         c.stroke();
-        line2(c, [[-12, -4], [5, -3], [13, 0]], GOLD2, 2.2);
+        line4(c, [[-12, -4], [5, -3], [13, 0]], GOLD4, 2.2);
         c.restore();
       });
     }
@@ -27289,36 +31431,36 @@ function brimstoneEffectDepthItems(model, tick, viewport = null) {
 }
 
 // src/client/boss_presentation_brimstone_v1.js
-var TAU35 = Math.PI * 2;
-var INK31 = "#101316";
+var TAU43 = Math.PI * 2;
+var INK38 = "#101316";
 var IRON = "#454955";
 var LIT = "#777d89";
 var SHADE = "#292c37";
-var DEEP = "#1c2029";
+var DEEP3 = "#1c2029";
 var ORANGE = "#f56829";
-var HOT = "#ffcb61";
-var clamp21 = (v) => Math.max(0, Math.min(1, v));
-function poly3(c, p, fill, edge = true) {
+var HOT3 = "#ffcb61";
+var clamp28 = (v) => Math.max(0, Math.min(1, v));
+function poly3(c, p, fill3, edge = true) {
   c.beginPath();
   c.moveTo(...p[0]);
   for (const v of p.slice(1)) c.lineTo(...v);
   c.closePath();
-  c.fillStyle = fill;
+  c.fillStyle = fill3;
   c.fill();
   if (edge) {
-    c.strokeStyle = INK31;
+    c.strokeStyle = INK38;
     c.lineWidth = 1.26;
     c.lineJoin = "round";
     c.stroke();
   }
 }
-function ellipse2(c, x, y, rx, ry, fill, edge = true) {
+function ellipse9(c, x, y, rx, ry, fill3, edge = true) {
   c.beginPath();
-  c.ellipse(x, y, rx, ry, 0, 0, TAU35);
-  c.fillStyle = fill;
+  c.ellipse(x, y, rx, ry, 0, 0, TAU43);
+  c.fillStyle = fill3;
   c.fill();
   if (edge) {
-    c.strokeStyle = INK31;
+    c.strokeStyle = INK38;
     c.lineWidth = 1.26;
     c.stroke();
   }
@@ -27329,27 +31471,27 @@ function flame(c, x, y, s, t) {
   c.scale(s, s);
   const bend = Math.sin(t * 0.11) * 2;
   poly3(c, [[-5, 1], [-7, -5], [-3, -10], [bend, -19], [3, -10], [7, -5], [5, 1]], ORANGE, false);
-  poly3(c, [[-3, 1], [-3, -6], [1, -12], [4, -4], [3, 1]], HOT, false);
+  poly3(c, [[-3, 1], [-3, -6], [1, -12], [4, -4], [3, 1]], HOT3, false);
   c.restore();
 }
-function arm3(c, side, raise, impact, t, flash, hand3 = null, heat = 0) {
-  const angles = hand3 ? brimstoneArmAngles(side, hand3) : null;
+function arm4(c, side, raise, impact, t, flash, hand4 = null, heat = 0) {
+  const angles = hand4 ? brimstoneArmAngles(side, hand4) : null;
   c.save();
   c.translate(side * 28, -61);
   c.rotate(angles ? angles.upper : side * (-0.12 - raise * 1.5 + impact * 0.4));
-  poly3(c, [[-8, -5], [8, -5], [10, 15], [7, 22], [-6, 22], [-10, 14]], flash ? HOT : SHADE);
+  poly3(c, [[-8, -5], [8, -5], [10, 15], [7, 22], [-6, 22], [-10, 14]], flash ? HOT3 : SHADE);
   poly3(c, [[-8, -5], [2, -5], [3, 16], [-6, 19], [-10, 14]], LIT, false);
-  ellipse2(c, 0, 21, 7, 7, DEEP);
-  ellipse2(c, 0, 21, 3, 3, ORANGE, false);
+  ellipse9(c, 0, 21, 7, 7, DEEP3);
+  ellipse9(c, 0, 21, 3, 3, ORANGE, false);
   c.translate(0, 23);
   c.rotate(angles ? angles.lower : side * (raise * 0.4 + Math.sin(t * 0.06) * 0.015));
-  poly3(c, [[-12, -1], [10, -1], [14, 10], [11, 28], [-11, 28], [-15, 12]], flash ? HOT : IRON);
+  poly3(c, [[-12, -1], [10, -1], [14, 10], [11, 28], [-11, 28], [-15, 12]], flash ? HOT3 : IRON);
   poly3(c, [[-12, -1], [1, -1], [-1, 20], [-11, 28], [-15, 12]], LIT, false);
   poly3(c, [[7, 0], [10, -1], [14, 10], [11, 28], [4, 24]], SHADE, false);
-  poly3(c, [[-11, 21], [11, 21], [13, 30], [6, 35], [-9, 33], [-14, 27]], flash ? HOT : SHADE);
+  poly3(c, [[-11, 21], [11, 21], [13, 30], [6, 35], [-9, 33], [-14, 27]], flash ? HOT3 : SHADE);
   poly3(c, [[-11, 21], [7, 21], [5, 26], [-11, 27], [-14, 25]], IRON, false);
   poly3(c, [[-7, 3], [-1, 7], [-4, 12], [3, 17], [0, 19], [-8, 12], [-5, 8]], ORANGE, false);
-  c.strokeStyle = INK31;
+  c.strokeStyle = INK38;
   c.lineWidth = 1.1;
   c.beginPath();
   c.moveTo(-5, 27);
@@ -27360,7 +31502,7 @@ function arm3(c, side, raise, impact, t, flash, hand3 = null, heat = 0) {
   if (heat > 0) {
     c.save();
     c.globalAlpha = heat;
-    poly3(c, [[-10, 22], [7, 22], [8, 25], [-11, 26]], HOT, false);
+    poly3(c, [[-10, 22], [7, 22], [8, 25], [-11, 26]], HOT3, false);
     for (let i = 0; i < 2; i++) {
       const d = (t * 0.7 + i * 11) % 24, x = -6 + i * 11;
       c.globalAlpha = heat * (1 - d / 24);
@@ -27374,11 +31516,11 @@ function drawBrimstoneColossus(c, a, tick, flash = false) {
   const b = a.boss;
   if (b?.bossDefinitionId !== BRIMSTONE_ID) return false;
   const ability = b.pendingAction?.ability, pose = brimstoneAttackPose(b, tick), raising = 0, punch = 0;
-  const walk = a.movedLastTick ? Math.sin(tick * TAU35 / 30) : 0, breath = Math.sin(tick * 0.055), lean = Math.cos(b.facingAngle ?? 1.57) * 2.2;
+  const walk = a.movedLastTick ? Math.sin(tick * TAU43 / 30) : 0, breath = Math.sin(tick * 0.055), lean = Math.cos(b.facingAngle ?? 1.57) * 2.2;
   c.save();
   c.translate(a.position.x, a.position.y);
   c.globalAlpha = a.alive === false ? 0.45 : 1;
-  ellipse2(c, 0, 4, 40, 12, "#10131a44", false);
+  ellipse9(c, 0, 4, 40, 12, "#10131a44", false);
   for (const side of [-1, 1]) {
     const step = side * walk * 1.5;
     c.save();
@@ -27391,17 +31533,17 @@ function drawBrimstoneColossus(c, a, tick, flash = false) {
     c.restore();
   }
   c.translate(lean, breath * 0.7 + pose.drop);
-  if (pose.strikeSide !== -1) arm3(c, -1, raising, 0, tick, flash, pose.hands[-1], pose.heat);
-  if (pose.strikeSide !== 1) arm3(c, 1, raising + punch * 0.6, 0, tick, flash, pose.hands[1], pose.heat);
-  poly3(c, [[-17, -35], [-23, -62], [-11, -75], [12, -75], [24, -60], [16, -33], [0, -24]], flash ? HOT : DEEP);
+  if (pose.strikeSide !== -1) arm4(c, -1, raising, 0, tick, flash, pose.hands[-1], pose.heat);
+  if (pose.strikeSide !== 1) arm4(c, 1, raising + punch * 0.6, 0, tick, flash, pose.hands[1], pose.heat);
+  poly3(c, [[-17, -35], [-23, -62], [-11, -75], [12, -75], [24, -60], [16, -33], [0, -24]], flash ? HOT3 : DEEP3);
   poly3(c, [[-19, -65], [-7, -72], [-6, -38], [-13, -32]], ORANGE, false);
   poly3(c, [[17, -65], [9, -70], [6, -39], [13, -32]], ORANGE, false);
-  poly3(c, [[-26, -70], [0, -78], [26, -70], [21, -51], [12, -45], [-13, -45], [-23, -53]], flash ? HOT : IRON);
+  poly3(c, [[-26, -70], [0, -78], [26, -70], [21, -51], [12, -45], [-13, -45], [-23, -53]], flash ? HOT3 : IRON);
   poly3(c, [[-26, -70], [0, -78], [6, -70], [-7, -58], [-23, -53]], LIT, false);
   poly3(c, [[14, -73], [26, -70], [21, -51], [12, -45], [6, -54]], SHADE, false);
-  poly3(c, [[-12, -56], [0, -62], [13, -55], [12, -37], [0, -30], [-12, -38]], INK31);
+  poly3(c, [[-12, -56], [0, -62], [13, -55], [12, -37], [0, -30], [-12, -38]], INK38);
   poly3(c, [[-8, -53], [1, -58], [9, -52], [8, -40], [0, -35], [-8, -41]], ORANGE, false);
-  poly3(c, [[-5, -51], [1, -56], [5, -50], [4, -42], [0, -39], [-4, -44]], HOT, false);
+  poly3(c, [[-5, -51], [1, -56], [5, -50], [4, -42], [0, -39], [-4, -44]], HOT3, false);
   poly3(c, [[-2, -48], [1, -51], [3, -47], [0, -43]], "#fff0ba", false);
   c.strokeStyle = IRON;
   c.lineWidth = 2.7;
@@ -27416,7 +31558,7 @@ function drawBrimstoneColossus(c, a, tick, flash = false) {
   for (const side of [-1, 1]) {
     c.save();
     c.scale(side, 1);
-    poly3(c, [[18, -73], [28, -83], [43, -79], [39, -69], [48, -60], [28, -61], [23, -65]], flash ? HOT : IRON);
+    poly3(c, [[18, -73], [28, -83], [43, -79], [39, -69], [48, -60], [28, -61], [23, -65]], flash ? HOT3 : IRON);
     poly3(c, [[18, -73], [28, -83], [43, -79], [35, -75], [27, -70]], LIT, false);
     poly3(c, [[35, -75], [39, -69], [48, -60], [28, -61], [27, -66]], SHADE, false);
     poly3(c, [[30, -79], [34, -91], [39, -80]], "#bc743e");
@@ -27433,9 +31575,9 @@ function drawBrimstoneColossus(c, a, tick, flash = false) {
     c.bezierCurveTo(20, -89, 27, -103, 26, -114);
     c.bezierCurveTo(35, -102, 32, -89, 16, -78);
     c.closePath();
-    c.fillStyle = flash ? HOT : "#c18747";
+    c.fillStyle = flash ? HOT3 : "#c18747";
     c.fill();
-    c.strokeStyle = INK31;
+    c.strokeStyle = INK38;
     c.lineWidth = 1.26;
     c.stroke();
     c.beginPath();
@@ -27447,19 +31589,19 @@ function drawBrimstoneColossus(c, a, tick, flash = false) {
     c.fill();
     c.restore();
   }
-  poly3(c, [[-13, -97], [0, -102], [14, -96], [15, -78], [9, -69], [-10, -70], [-15, -80]], flash ? HOT : IRON);
+  poly3(c, [[-13, -97], [0, -102], [14, -96], [15, -78], [9, -69], [-10, -70], [-15, -80]], flash ? HOT3 : IRON);
   poly3(c, [[-13, -97], [0, -102], [3, -95], [-1, -87], [-14, -83]], LIT, false);
   poly3(c, [[7, -99], [14, -96], [15, -78], [9, -69], [4, -74]], SHADE, false);
-  poly3(c, [[-12, -88], [11, -88], [10, -81], [0, -78], [-11, -82]], INK31);
-  poly3(c, [[-9, -86], [-1, -85], [-2, -82], [-9, -83]], HOT, false);
-  poly3(c, [[2, -85], [9, -86], [9, -83], [3, -82]], HOT, false);
+  poly3(c, [[-12, -88], [11, -88], [10, -81], [0, -78], [-11, -82]], INK38);
+  poly3(c, [[-9, -86], [-1, -85], [-2, -82], [-9, -83]], HOT3, false);
+  poly3(c, [[2, -85], [9, -86], [9, -83], [3, -82]], HOT3, false);
   poly3(c, [[-3, -89], [3, -89], [2, -78], [0, -75], [-3, -78]], SHADE);
   c.restore();
-  if (pose.strikeSide) arm3(c, pose.strikeSide, 0, 0, tick, flash, pose.hands[pose.strikeSide], pose.heat);
+  if (pose.strikeSide) arm4(c, pose.strikeSide, 0, 0, tick, flash, pose.hands[pose.strikeSide], pose.heat);
   for (let i = 0; i < 3; i++) {
     const age = (tick * 0.6 + i * 17) % 53, x = Math.sin(i * 3.2 + tick * 0.018) * (8 + age * 0.12), y = -59 - age * 0.65;
     c.globalAlpha = (1 - age / 53) * 0.75;
-    poly3(c, [[x, y - 1.5], [x + 1, y], [x, y + 1.5], [x - 1, y]], i % 2 ? HOT : ORANGE, false);
+    poly3(c, [[x, y - 1.5], [x + 1, y], [x, y + 1.5], [x - 1, y]], i % 2 ? HOT3 : ORANGE, false);
   }
   c.globalAlpha = 1;
   if (ability === "magma_vents") {
@@ -27476,7 +31618,7 @@ function drawBrimstoneBossHud(c, canvas, model) {
   const a = Object.values(model.entitiesById).find((a2) => a2.alive && a2.boss?.bossDefinitionId === BRIMSTONE_ID);
   if (!a) return false;
   const b = a.boss, w = Math.min(480, canvas.width - 24), x = (canvas.width - w) / 2, y = 10;
-  const ratio = a.hp && typeof a.hp.m === "number" && typeof a.maxHp?.m === "number" ? clamp21(a.hp.m / a.maxHp.m) : clamp21(presentCombat(a.hp) / Math.max(1, presentCombat(a.maxHp)));
+  const ratio = a.hp && typeof a.hp.m === "number" && typeof a.maxHp?.m === "number" ? clamp28(a.hp.m / a.maxHp.m) : clamp28(presentCombat(a.hp) / Math.max(1, presentCombat(a.maxHp)));
   c.save();
   c.fillStyle = "#15151fed";
   c.strokeStyle = "#cc8b4e";
@@ -27494,7 +31636,7 @@ function drawBrimstoneBossHud(c, canvas, model) {
   c.fillStyle = "#e46e39";
   c.fillRect(x + 12, y + 24, (w - 24) * ratio, 8);
   c.font = "11px sans-serif";
-  c.fillStyle = HOT;
+  c.fillStyle = HOT3;
   const labels2 = { strike: "Gauntlet strike", slam: "Molten slam \u2014 move out of the ring", magma_vents: "Magma vents \u2014 watch the cross-shaped fissures" };
   c.fillText(labels2[b.pendingAction?.ability] ?? "Brimstone furnace", canvas.width / 2, y + 47);
   c.restore();
@@ -27503,18 +31645,18 @@ function drawBrimstoneBossHud(c, canvas, model) {
 
 // src/client/ordinary_hostile_projectile_presentation.js
 var ORDINARY_HOSTILE_PROJECTILE_IMPACT_MS = 190;
-var TAU36 = Math.PI * 2;
-var clamp22 = (v, a, b) => Math.max(a, Math.min(b, v));
+var TAU44 = Math.PI * 2;
+var clamp29 = (v, a, b) => Math.max(a, Math.min(b, v));
 var styles = /* @__PURE__ */ new Set(["thorn", "frost", "fireball", "maelstrom", "void", "clockwork"]);
 function ordinaryHostileProjectilePose(projectile, presentationTick) {
   const direction3 = projectile.direction ?? { x: 1, y: 0 }, length = Math.hypot(direction3.x, direction3.y);
-  const unit3 = length > 1e-3 ? { x: direction3.x / length, y: direction3.y / length } : { x: 1, y: 0 };
+  const unit8 = length > 1e-3 ? { x: direction3.x / length, y: direction3.y / length } : { x: 1, y: 0 };
   const age = Number.isFinite(projectile.firedTick) ? Math.max(0, presentationTick - projectile.firedTick) : 3;
-  const radius = clamp22(Number.isFinite(projectile.radius) ? projectile.radius : 6, 2, 8);
+  const radius = clamp29(Number.isFinite(projectile.radius) ? projectile.radius : 6, 2, 8);
   return {
     position: { x: projectile.position.x, y: projectile.position.y - 8 },
-    direction: unit3,
-    angle: Math.atan2(unit3.y, unit3.x),
+    direction: unit8,
+    angle: Math.atan2(unit8.y, unit8.x),
     radius,
     age,
     style: styles.has(projectile.style) ? projectile.style : null
@@ -27620,30 +31762,30 @@ function drawOrdinaryHostileProjectile(c, projectile, presentationTick) {
       break;
     case "fireball":
       if (projectile.sourceFamily === "lava_serpent" || projectile.sourceFamily === "magma_elemental") {
-        const tail = Math.min(12, pose.age * 2.2), magma = projectile.sourceFamily === "magma_elemental";
+        const tail2 = Math.min(12, pose.age * 2.2), magma = projectile.sourceFamily === "magma_elemental";
         c.strokeStyle = "#11151a";
         c.lineWidth = 1.26;
         c.fillStyle = magma ? "#b84323" : "#bf3510";
         c.beginPath();
         c.moveTo(r, 0);
-        c.quadraticCurveTo(0, -r, -r - tail, -r * 0.45);
-        c.lineTo(-r - tail * 0.45, 0);
-        c.lineTo(-r - tail * 0.8, r * 0.5);
+        c.quadraticCurveTo(0, -r, -r - tail2, -r * 0.45);
+        c.lineTo(-r - tail2 * 0.45, 0);
+        c.lineTo(-r - tail2 * 0.8, r * 0.5);
         c.quadraticCurveTo(0, r, r, 0);
         c.closePath();
         c.fill();
         c.fillStyle = magma ? "#ef7f28" : "#f55518";
         c.beginPath();
-        c.arc(0, 0, r * 0.9, 0, TAU36);
+        c.arc(0, 0, r * 0.9, 0, TAU44);
         c.fill();
         c.stroke();
         c.fillStyle = magma ? "#ffd27d" : "#ffc964";
         c.beginPath();
-        c.ellipse(r * 0.1, -r * 0.07, r * 0.58, r * 0.55, -0.2, 0, TAU36);
+        c.ellipse(r * 0.1, -r * 0.07, r * 0.58, r * 0.55, -0.2, 0, TAU44);
         c.fill();
         c.fillStyle = "#fff2b8";
         c.beginPath();
-        c.ellipse(r * 0.25, -r * 0.17, r * 0.25, r * 0.21, -0.3, 0, TAU36);
+        c.ellipse(r * 0.25, -r * 0.17, r * 0.25, r * 0.21, -0.3, 0, TAU44);
         c.fill();
         break;
       }
@@ -27658,16 +31800,16 @@ function drawOrdinaryHostileProjectile(c, projectile, presentationTick) {
       c.fill();
       c.fillStyle = "#e67e22";
       c.beginPath();
-      c.arc(0, 0, r * 0.9, 0, TAU36);
+      c.arc(0, 0, r * 0.9, 0, TAU44);
       c.fill();
       c.stroke();
       c.fillStyle = "#f1c40f";
       c.beginPath();
-      c.ellipse(r * 0.15, 0, r * 0.5, r * 0.55, 0, 0, TAU36);
+      c.ellipse(r * 0.15, 0, r * 0.5, r * 0.55, 0, 0, TAU44);
       c.fill();
       c.fillStyle = "#fff0a8";
       c.beginPath();
-      c.arc(r * 0.32, -1, r * 0.2, 0, TAU36);
+      c.arc(r * 0.32, -1, r * 0.2, 0, TAU44);
       c.fill();
       break;
     case "maelstrom":
@@ -27686,10 +31828,10 @@ function drawOrdinaryHostileProjectile(c, projectile, presentationTick) {
       c.stroke();
       c.fillStyle = "#a3fd83";
       c.beginPath();
-      c.ellipse(-r - 5, -2, 2.3, 1.4, -0.3, 0, TAU36);
+      c.ellipse(-r - 5, -2, 2.3, 1.4, -0.3, 0, TAU44);
       c.fill();
       c.beginPath();
-      c.arc(-r - 10, 2, 1.3, 0, TAU36);
+      c.arc(-r - 10, 2, 1.3, 0, TAU44);
       c.fill();
       break;
     case "void": {
@@ -27699,17 +31841,17 @@ function drawOrdinaryHostileProjectile(c, projectile, presentationTick) {
       c.strokeStyle = "#8e44ad";
       c.lineWidth = 1.4;
       c.beginPath();
-      c.ellipse(0, 0, r + 2, r * 0.45, 0, Math.PI, TAU36);
+      c.ellipse(0, 0, r + 2, r * 0.45, 0, Math.PI, TAU44);
       c.stroke();
       c.restore();
       c.fillStyle = "#291039";
       c.beginPath();
-      c.arc(0, 0, r * 0.88, 0, TAU36);
+      c.arc(0, 0, r * 0.88, 0, TAU44);
       c.fill();
       c.stroke();
       c.fillStyle = "#ff007f";
       c.beginPath();
-      c.arc(1, -0.5, r * 0.38 + pulse * 0.3, 0, TAU36);
+      c.arc(1, -0.5, r * 0.38 + pulse * 0.3, 0, TAU44);
       c.fill();
       c.save();
       c.rotate(rotation);
@@ -27731,7 +31873,7 @@ function drawOrdinaryHostileProjectile(c, projectile, presentationTick) {
     default:
       c.fillStyle = "#efb8a5";
       c.beginPath();
-      c.arc(0, 0, r * 0.7, 0, TAU36);
+      c.arc(0, 0, r * 0.7, 0, TAU44);
       c.fill();
       c.stroke();
   }
@@ -27751,7 +31893,7 @@ function drawOrdinaryHostileProjectileImpact(c, contact, age) {
       c.strokeStyle = "#11151a";
       c.fillStyle = "#60d9bc";
       for (let i = 0; i < 3; i++) {
-        const a = i * TAU36 / 3 + 0.2, r = 2 + 5 * t;
+        const a = i * TAU44 / 3 + 0.2, r = 2 + 5 * t;
         c.save();
         c.translate(Math.cos(a) * r, Math.sin(a) * r);
         c.rotate(a);
@@ -27767,14 +31909,14 @@ function drawOrdinaryHostileProjectileImpact(c, contact, age) {
       }
       c.strokeStyle = "#ffe4a4";
       c.beginPath();
-      c.arc(0, 0, 1 + 3 * t, 0, TAU36);
+      c.arc(0, 0, 1 + 3 * t, 0, TAU44);
       c.stroke();
       break;
     case "thorn":
       c.fillStyle = "#7cbd58";
       c.strokeStyle = "#c6ed9d";
       for (let i = 0; i < 3; i++) {
-        const a = i * TAU36 / 3 + 0.3, r = 3 + 5 * t;
+        const a = i * TAU44 / 3 + 0.3, r = 3 + 5 * t;
         c.save();
         c.translate(Math.cos(a) * r, Math.sin(a) * r);
         c.rotate(a);
@@ -27810,7 +31952,7 @@ function drawOrdinaryHostileProjectileImpact(c, contact, age) {
     case "fireball":
       c.fillStyle = "#e67e22";
       for (let i = 0; i < 3; i++) {
-        const a = i * TAU36 / 3 - 0.4, r = 2 + 4 * t;
+        const a = i * TAU44 / 3 - 0.4, r = 2 + 4 * t;
         c.save();
         c.translate(Math.cos(a) * r, Math.sin(a) * r);
         c.rotate(a);
@@ -27824,15 +31966,15 @@ function drawOrdinaryHostileProjectileImpact(c, contact, age) {
       }
       c.fillStyle = "#f1c40f";
       c.beginPath();
-      c.arc(0, 0, 2.6 * s + 0.5, 0, TAU36);
+      c.arc(0, 0, 2.6 * s + 0.5, 0, TAU44);
       c.fill();
       break;
     case "maelstrom":
       c.fillStyle = "#55cf7d";
       for (let i = 0; i < 5; i++) {
-        const a = i * TAU36 / 5 + 0.2, r = 2 + 6 * t;
+        const a = i * TAU44 / 5 + 0.2, r = 2 + 6 * t;
         c.beginPath();
-        c.ellipse(Math.cos(a) * r, Math.sin(a) * r, 1.4 * s + 0.3, 2 * s + 0.4, a, 0, TAU36);
+        c.ellipse(Math.cos(a) * r, Math.sin(a) * r, 1.4 * s + 0.3, 2 * s + 0.4, a, 0, TAU44);
         c.fill();
       }
       c.strokeStyle = "#a3fd83";
@@ -27862,7 +32004,7 @@ function drawOrdinaryHostileProjectileImpact(c, contact, age) {
     default:
       c.fillStyle = "#f3c6ad";
       c.beginPath();
-      c.arc(0, 0, 2.5 * s + 0.7, 0, TAU36);
+      c.arc(0, 0, 2.5 * s + 0.7, 0, TAU44);
       c.fill();
   }
   c.restore();
@@ -27898,7 +32040,7 @@ function drawTavernEntrance(c, b, frontage2) {
 }
 
 // src/client/settlement_building_presentation.js
-function polygon17(c, points, color27) {
+function polygon22(c, points, color27) {
   c.fillStyle = color27;
   c.beginPath();
   points.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
@@ -27922,8 +32064,8 @@ function drawSettlementBuilding(c, b) {
     c.fillStyle = "#574936";
     c.fillRect(px, y + h - 40, 7, 40);
   }
-  polygon17(c, [[x - 4, y - 26], [x + w + 4, y - 26], [x + w + 4, ridge], [x - 4, ridge]], color27);
-  polygon17(c, [[x - 4, ridge], [x + w + 4, ridge], [x + w + 4, y + h - 44], [x - 4, y + h - 44]], color27);
+  polygon22(c, [[x - 4, y - 26], [x + w + 4, y - 26], [x + w + 4, ridge], [x - 4, ridge]], color27);
+  polygon22(c, [[x - 4, ridge], [x + w + 4, ridge], [x + w + 4, y + h - 44], [x - 4, y + h - 44]], color27);
   c.fillStyle = "#fff1";
   c.fillRect(x, y - 24, w, ridge - y + 24);
   c.strokeStyle = "#17191440";
@@ -27960,14 +32102,14 @@ function drawSettlementBuilding(c, b) {
     c.fillRect(px - 3, y + h - 10, 24, 5);
   }
   if (b.kind === "home" && n % 3 === 0) {
-    polygon17(c, [[x + w * 0.3 - 19, ridge + 10], [x + w * 0.3, ridge - 15], [x + w * 0.3 + 19, ridge + 10]], "#aaa387");
+    polygon22(c, [[x + w * 0.3 - 19, ridge + 10], [x + w * 0.3, ridge - 15], [x + w * 0.3 + 19, ridge + 10]], "#aaa387");
     c.fillStyle = "#394c48";
     c.fillRect(x + w * 0.3 - 9, ridge - 2, 18, 13);
   }
   if (/Chapel|Parish/.test(b.label)) {
     c.fillStyle = "#b1aca0";
     c.fillRect(x + w * 0.46, y - 48, 28, 55);
-    polygon17(c, [[x + w * 0.46 - 7, y - 48], [x + w * 0.46 + 14, y - 83], [x + w * 0.46 + 35, y - 48]], "#65756e");
+    polygon22(c, [[x + w * 0.46 - 7, y - 48], [x + w * 0.46 + 14, y - 83], [x + w * 0.46 + 35, y - 48]], "#65756e");
     c.strokeStyle = "#c9b577";
     c.lineWidth = 4;
     c.beginPath();
@@ -28018,7 +32160,7 @@ function drawSettlementBuilding(c, b) {
     c.fillRect(p.x * 32 + 6, p.y * 32 + 27, 22, 7);
   }
   if (/Merchant|Tavern/.test(b.label) && b.doorSide === "south") {
-    polygon17(c, [[doorX - 45, doorY - 8], [doorX + 45, doorY - 8], [doorX + 48, doorY + 14], [doorX - 48, doorY + 14]], "#776e4d");
+    polygon22(c, [[doorX - 45, doorY - 8], [doorX + 45, doorY - 8], [doorX + 48, doorY + 14], [doorX - 48, doorY + 14]], "#776e4d");
     for (let q = -36; q <= 36; q += 24) {
       c.fillStyle = "#c1b387";
       c.fillRect(doorX + q, doorY - 8, 12, 22);
@@ -28568,7 +32710,7 @@ function drawIronChest(ctx, cx, cy, time, P) {
 }
 
 // src/client/extraction_portal_presentation_d12_5c.js
-var TAU37 = Math.PI * 2;
+var TAU45 = Math.PI * 2;
 var seed = (text) => {
   let value = 2166136261;
   for (let i = 0; i < text.length; i++) value = Math.imul(value ^ text.charCodeAt(i), 16777619);
@@ -28579,31 +32721,31 @@ function revealScale(portal, tick) {
   const age = Math.max(0, tick - portal.extractionPortal.activatedTick);
   return Math.min(1, 0.32 + age / 30 * 0.68);
 }
-function footprint(ctx, portal, tick) {
-  const x = portal.x, y = portal.y, s = revealScale(portal, tick), phase = tick * 0.022 + seed(portal.exitId) % 97 / 97 * TAU37;
+function footprint2(ctx, portal, tick) {
+  const x = portal.x, y = portal.y, s = revealScale(portal, tick), phase = tick * 0.022 + seed(portal.exitId) % 97 / 97 * TAU45;
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(s, s);
   ctx.fillStyle = "rgba(7,10,27,.55)";
   ctx.beginPath();
-  ctx.ellipse(3, 8, 39, 19, 0, 0, TAU37);
+  ctx.ellipse(3, 8, 39, 19, 0, 0, TAU45);
   ctx.fill();
   ctx.fillStyle = "rgba(49,46,129,.54)";
   ctx.beginPath();
-  ctx.ellipse(0, 2, 34, 15, 0, 0, TAU37);
+  ctx.ellipse(0, 2, 34, 15, 0, 0, TAU45);
   ctx.fill();
   ctx.fillStyle = "rgba(34,211,238,.20)";
   ctx.beginPath();
-  ctx.ellipse(Math.cos(phase) * 3, Math.sin(phase) * 1.5, 25, 10, 0, 0, TAU37);
+  ctx.ellipse(Math.cos(phase) * 3, Math.sin(phase) * 1.5, 25, 10, 0, 0, TAU45);
   ctx.fill();
   ctx.fillStyle = "rgba(224,242,254,.55)";
   ctx.beginPath();
-  ctx.ellipse(0, 2, 11 + Math.sin(phase) * 1.5, 4.5, 0, 0, TAU37);
+  ctx.ellipse(0, 2, 11 + Math.sin(phase) * 1.5, 4.5, 0, 0, TAU45);
   ctx.fill();
   ctx.restore();
 }
 function arc2(ctx, portal, tick, rear) {
-  const x = portal.x, y = portal.y, s = revealScale(portal, tick), phase = tick * 0.022 + seed(portal.exitId) % 97 / 97 * TAU37, start = rear ? Math.PI : 0, end = rear ? TAU37 : Math.PI;
+  const x = portal.x, y = portal.y, s = revealScale(portal, tick), phase = tick * 0.022 + seed(portal.exitId) % 97 / 97 * TAU45, start = rear ? Math.PI : 0, end = rear ? TAU45 : Math.PI;
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(s, s);
@@ -28622,7 +32764,7 @@ function arc2(ctx, portal, tick, rear) {
   ctx.stroke();
   ctx.setLineDash([]);
   for (let i = 0; i < 8; i++) {
-    const a = phase + i * TAU37 / 8, isRear = Math.sin(a) < 0;
+    const a = phase + i * TAU45 / 8, isRear = Math.sin(a) < 0;
     if (isRear !== rear) continue;
     const rx = Math.cos(a) * 38, ry = Math.sin(a) * 16 + 2, tilt = a + 0.75;
     ctx.save();
@@ -28648,7 +32790,7 @@ function createExtractionPortalPresentationD12_5C() {
     const items = [];
     for (const portal of model.space.exits ?? []) {
       if (!portal.extractionPortal?.visible || !visible(portal, viewport)) continue;
-      items.push(depthItem({ id: portal.exitId + "/ground", anchorX: portal.x, anchorY: portal.y - 18, draw: (ctx) => footprint(ctx, portal, model.tick) }));
+      items.push(depthItem({ id: portal.exitId + "/ground", anchorX: portal.x, anchorY: portal.y - 18, draw: (ctx) => footprint2(ctx, portal, model.tick) }));
       items.push(depthItem({ id: portal.exitId + "/rear", anchorX: portal.x, anchorY: portal.y - 7, draw: (ctx) => arc2(ctx, portal, model.tick, true) }));
       items.push(depthItem({ id: portal.exitId + "/front", anchorX: portal.x, anchorY: portal.y + 20, draw: (ctx) => arc2(ctx, portal, model.tick, false) }));
     }
@@ -28911,10 +33053,10 @@ function drawTavernGround(c, space) {
   c.lineTo((s.x + 0.3) * 32, (s.y + 0.65) * 32);
   c.stroke();
   if (f.id === "ground") {
-    const glow2 = c.createRadialGradient(55, 84, 3, 55, 84, 74);
-    glow2.addColorStop(0, "#f9bd5a22");
-    glow2.addColorStop(1, "#f9bd5a00");
-    c.fillStyle = glow2;
+    const glow4 = c.createRadialGradient(55, 84, 3, 55, 84, 74);
+    glow4.addColorStop(0, "#f9bd5a22");
+    glow4.addColorStop(1, "#f9bd5a00");
+    c.fillStyle = glow4;
     c.fillRect(28, 32, 104, 128);
   }
   for (let x = 0; x < 14; x++) {
@@ -29198,13 +33340,13 @@ function createGroundItemPresentation() {
       b.closePath();
       b.fill();
     }
-    const core4 = b.createLinearGradient(0, 5, 0, 120);
-    core4.addColorStop(0, color27 + "00");
-    core4.addColorStop(0.22, color27 + "65");
-    core4.addColorStop(0.6, color27 + "cc");
-    core4.addColorStop(0.88, "#ffffffdd");
-    core4.addColorStop(1, color27 + "00");
-    b.strokeStyle = core4;
+    const core5 = b.createLinearGradient(0, 5, 0, 120);
+    core5.addColorStop(0, color27 + "00");
+    core5.addColorStop(0.22, color27 + "65");
+    core5.addColorStop(0.6, color27 + "cc");
+    core5.addColorStop(0.88, "#ffffffdd");
+    core5.addColorStop(1, color27 + "00");
+    b.strokeStyle = core5;
     b.lineWidth = [0, 1.2, 1.5, 1.8, 2.1, 2.4][tier2];
     b.beginPath();
     b.moveTo(32, 5);
@@ -29307,8 +33449,8 @@ function createGroundItemPresentation() {
         const count = [0, 1, 2, 3, 4, 5][t.rarity];
         for (let n = 0; n < count && counts.motes < LOOT_VISUAL_BUDGET.motes; n++) {
           counts.motes++;
-          const progress = (time / (2100 - t.rarity * 90) + t.phase + n * 0.47) % 1, mx = t.visibleCenter.x + Math.sin(progress * 5 + t.phase + n) * (2 + t.rarity * 0.65), my = t.visibleCenter.y - progress * height;
-          ctx.globalAlpha = t.alpha * Math.sin(progress * Math.PI) * (0.5 + t.rarity * 0.065);
+          const progress5 = (time / (2100 - t.rarity * 90) + t.phase + n * 0.47) % 1, mx = t.visibleCenter.x + Math.sin(progress5 * 5 + t.phase + n) * (2 + t.rarity * 0.65), my = t.visibleCenter.y - progress5 * height;
+          ctx.globalAlpha = t.alpha * Math.sin(progress5 * Math.PI) * (0.5 + t.rarity * 0.065);
           ctx.fillStyle = t.rarity >= 4 ? "#fff1c2" : color27;
           const radius = t.rarity >= 4 ? 1.2 : 0.85;
           if (t.rarity >= 4) {
@@ -29609,12 +33751,12 @@ function drawBaseSubweapon(ctx, type, time, bounce, art, guard = null, facing = 
 function primaryPose(primary, tick) {
   const a = primary?.current;
   if (!a) return { body: 0, sword: -0.6, weight: 0, active: false, aim: primary?.facing ?? { x: 1, y: 0 } };
-  const progress = Math.max(0, Math.min(1, (tick - a.phaseStartedTick) / Math.max(1, a.phaseEndsTick - a.phaseStartedTick)));
+  const progress5 = Math.max(0, Math.min(1, (tick - a.phaseStartedTick) / Math.max(1, a.phaseEndsTick - a.phaseStartedTick)));
   const reverse = a.comboStep === 2 ? -1 : 1, heavy = a.comboStep === 3;
   const wind = heavy ? -2.35 : -1.35, follow = heavy ? 1.35 : 1.05;
-  const sword2 = a.phase === "startup" ? -0.6 + (wind + 0.6) * progress : a.phase === "active" ? wind + (follow - wind) * progress : follow + (-0.6 - follow) * progress;
+  const sword2 = a.phase === "startup" ? -0.6 + (wind + 0.6) * progress5 : a.phase === "active" ? wind + (follow - wind) * progress5 : follow + (-0.6 - follow) * progress5;
   return {
-    body: reverse * (a.phase === "startup" ? -0.18 * progress : a.phase === "active" ? 0.24 : 0.24 * (1 - progress)) * (heavy ? 1.8 : 1),
+    body: reverse * (a.phase === "startup" ? -0.18 * progress5 : a.phase === "active" ? 0.24 : 0.24 * (1 - progress5)) * (heavy ? 1.8 : 1),
     sword: sword2 * reverse,
     weight: heavy ? 3 : 1,
     active: a.phase === "active",
@@ -29739,14 +33881,14 @@ function tomeFocusPosition(actor, facing, time, primary, tick) {
 }
 
 // src/client/combat_vfx.js
-var INK32 = "#190f20";
+var INK39 = "#190f20";
 var MECHANIC_COLORS = Object.freeze({ ...MASTERY_COLORS, lightning: "#c7b5ff", frost: "#ced8ff", shieldRiposte: "#d5b666", offhand: "#dce5ef", riposte: "#c99cff", bash: "#ffe08a", fire: "#ff962e", burn: "#ff962e", bleed: "#f34a56", block: "#ffe6a0", parry: "#e4ceff" });
 function drawStatusIcon(ctx, kind, x, y, size = 12) {
   if (drawMasteryGlyph(ctx, kind, x, y, size)) return;
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(size / 18, size / 18);
-  ctx.strokeStyle = INK32;
+  ctx.strokeStyle = INK39;
   ctx.lineWidth = 2.5;
   ctx.lineJoin = "round";
   ctx.beginPath();
@@ -29843,7 +33985,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
   }
   const duration = kind === "fire" ? 270 : kind === "bash" ? 240 : kind === "bleed" || kind === "burn" ? 170 : 150;
   if (age < 0 || age >= duration) return;
-  const t = age / duration, ease4 = 1 - (1 - t) ** 3, color27 = MECHANIC_COLORS[kind] ?? "#e4ceff";
+  const t = age / duration, ease11 = 1 - (1 - t) ** 3, color27 = MECHANIC_COLORS[kind] ?? "#e4ceff";
   ctx.save();
   ctx.translate(x, y - 9);
   ctx.rotate(Math.atan2(dy, dx));
@@ -29865,7 +34007,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.fillStyle = "#ff571d";
     ctx.beginPath();
     for (let i = 0; i < 16; i++) {
-      const a = i * Math.PI / 8, r = (i % 2 ? 13 : 23) * ease4 + 3;
+      const a = i * Math.PI / 8, r = (i % 2 ? 13 : 23) * ease11 + 3;
       ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r * 0.8);
     }
     ctx.closePath();
@@ -29884,7 +34026,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.strokeStyle = "#ffe29a";
     ctx.lineWidth = 2 * (1 - t);
     ctx.beginPath();
-    ctx.arc(0, 0, 8 + 23 * ease4, -1.2, 1.5);
+    ctx.arc(0, 0, 8 + 23 * ease11, -1.2, 1.5);
     ctx.stroke();
   } else if (kind === "bleed") {
     const reach = crit ? 1.18 : 1;
@@ -29910,7 +34052,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.stroke();
     ctx.restore();
     for (let i = 0; i < 4; i++) {
-      const a = -0.9 + i * 0.62, d = 4 + ease4 * (10 + i * 2);
+      const a = -0.9 + i * 0.62, d = 4 + ease11 * (10 + i * 2);
       ctx.save();
       ctx.translate(Math.cos(a) * d, Math.sin(a) * d + t * t * 9);
       ctx.rotate(a + 0.5);
@@ -29922,7 +34064,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     }
   } else if (kind === "burn") {
     ctx.rotate(-Math.atan2(dy, dx));
-    drawStatusIcon(ctx, "burn", 0, -5 - 6 * ease4, 12 + 5 * (1 - t));
+    drawStatusIcon(ctx, "burn", 0, -5 - 6 * ease11, 12 + 5 * (1 - t));
   } else if (kind === "block") {
     ctx.save();
     ctx.translate(10, 0);
@@ -29932,10 +34074,10 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.strokeStyle = "#78d8ff";
     ctx.lineWidth = 1.4 * (1 - t);
     ctx.beginPath();
-    ctx.arc(0, 0, 12 + 9 * ease4, -2.6, 0.9);
+    ctx.arc(0, 0, 12 + 9 * ease11, -2.6, 0.9);
     ctx.stroke();
     ctx.lineWidth = 1.7;
-    ctx.strokeStyle = INK32;
+    ctx.strokeStyle = INK39;
     ctx.fillStyle = "#edbd53";
     ctx.beginPath();
     ctx.moveTo(-7.5, -9);
@@ -29977,14 +34119,14 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.lineWidth = 2 * (1 - t);
     ctx.beginPath();
     ctx.moveTo(-16, 0);
-    ctx.lineTo(13 * ease4, 0);
-    ctx.moveTo(5 * ease4, -6);
-    ctx.lineTo(13 * ease4, 0);
-    ctx.lineTo(5 * ease4, 6);
+    ctx.lineTo(13 * ease11, 0);
+    ctx.moveTo(5 * ease11, -6);
+    ctx.lineTo(13 * ease11, 0);
+    ctx.lineTo(5 * ease11, 6);
     ctx.stroke();
-    diamond(ctx, 13 * ease4, 0, 5 * (1 - t), "#dfbc65");
+    diamond(ctx, 13 * ease11, 0, 5 * (1 - t), "#dfbc65");
   } else if (kind === "bash") {
-    const r = 10 + 20 * ease4;
+    const r = 10 + 20 * ease11;
     ctx.strokeStyle = "#785221";
     ctx.lineWidth = 8 * (1 - t) + 1;
     ctx.beginPath();
@@ -30001,7 +34143,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.moveTo(-r * 0.7, r * 0.45);
     ctx.lineTo(r * 0.7, -r * 0.45);
     ctx.stroke();
-    diamond(ctx, 7 * ease4, 0, 9 * (1 - t), "#fff5dc");
+    diamond(ctx, 7 * ease11, 0, 9 * (1 - t), "#fff5dc");
   } else if (kind === "parry") {
     ctx.save();
     ctx.rotate(-Math.atan2(dy, dx));
@@ -30009,7 +34151,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.strokeStyle = "#90efff";
     ctx.lineWidth = 1.4 * (1 - t);
     ctx.beginPath();
-    ctx.arc(0, 0, 8 + 13 * ease4, -2.2, -0.4);
+    ctx.arc(0, 0, 8 + 13 * ease11, -2.2, -0.4);
     ctx.stroke();
     diamond(ctx, 0, -8, 7 * (1 - t), "#e9ffff");
     ctx.restore();
@@ -30017,7 +34159,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.fillStyle = "#713eaa";
     ctx.beginPath();
     ctx.moveTo(-26, -4);
-    ctx.lineTo(25 * ease4 + 7, 0);
+    ctx.lineTo(25 * ease11 + 7, 0);
     ctx.lineTo(-24, 4);
     ctx.lineTo(-15, 0);
     ctx.closePath();
@@ -30026,7 +34168,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.lineWidth = 2 * (1 - t);
     ctx.beginPath();
     ctx.moveTo(-20, 0);
-    ctx.lineTo(27 * ease4, 0);
+    ctx.lineTo(27 * ease11, 0);
     ctx.stroke();
   } else if (kind === "offhand") {
     ctx.fillStyle = "#51375f";
@@ -30052,8 +34194,8 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
     ctx.strokeStyle = "#4b2438";
     ctx.lineWidth = 6 * (1 - t);
     ctx.beginPath();
-    ctx.moveTo(-20 + ease4 * 9, 0);
-    ctx.lineTo(19 + ease4 * 8, 0);
+    ctx.moveTo(-20 + ease11 * 9, 0);
+    ctx.lineTo(19 + ease11 * 8, 0);
     ctx.stroke();
     ctx.strokeStyle = kind === "parry" ? "#e0c7ff" : "#fff6ed";
     ctx.lineWidth = 2 * (1 - t) + 0.7;
@@ -30067,7 +34209,7 @@ function drawCombatImpact(ctx, kind, x, y, dx, dy, age, crit = false) {
   }
   const count = kind === "bleed" || kind === "offhand" ? 0 : kind === "fire" ? 7 : kind === "bash" ? 6 : 4;
   for (let i = 0; i < count; i++) {
-    const a = (i - (count - 1) / 2) * 0.6 + (kind === "fire" ? i * 0.35 : 0), d = 5 + ease4 * (kind === "fire" ? 29 : 22);
+    const a = (i - (count - 1) / 2) * 0.6 + (kind === "fire" ? i * 0.35 : 0), d = 5 + ease11 * (kind === "fire" ? 29 : 22);
     diamond(ctx, Math.cos(a) * d, Math.sin(a) * d, (kind === "bash" ? 3 : 2) * (1 - t), i % 2 ? color27 : "#fff1cc");
   }
   if (crit) {
@@ -30310,7 +34452,7 @@ function createCombatVfx() {
 }
 
 // src/client/economy_resource_presentation.js
-var TAU38 = Math.PI * 2;
+var TAU46 = Math.PI * 2;
 var BOSS_REVEAL_TICKS = 90;
 var stableVisualSeed = (id) => {
   let value = 2166136261;
@@ -30318,22 +34460,22 @@ var stableVisualSeed = (id) => {
   return value >>> 0;
 };
 function drawBossChestGroundD12_5B(ctx, x, y, age) {
-  const progress = Math.max(0, Math.min(1, age / BOSS_REVEAL_TICKS)), fade = 1 - progress;
+  const progress5 = Math.max(0, Math.min(1, age / BOSS_REVEAL_TICKS)), fade = 1 - progress5;
   ctx.save();
   ctx.translate(x, y + 8);
   ctx.globalAlpha = fade * 0.42;
   ctx.fillStyle = "#6fb35a";
   ctx.beginPath();
-  ctx.ellipse(0, 0, 32 + progress * 13, 14 + progress * 5, 0, 0, TAU38);
+  ctx.ellipse(0, 0, 32 + progress5 * 13, 14 + progress5 * 5, 0, 0, TAU46);
   ctx.fill();
   ctx.globalAlpha = fade * 0.56;
   ctx.strokeStyle = "#e9bd58";
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.ellipse(0, 0, 22 + progress * 18, 9 + progress * 8, 0, -2.86, -1.56);
-  ctx.ellipse(0, 0, 22 + progress * 18, 9 + progress * 8, 0, -1.22, -0.18);
-  ctx.ellipse(0, 0, 22 + progress * 18, 9 + progress * 8, 0, 0.24, 1.14);
-  ctx.ellipse(0, 0, 22 + progress * 18, 9 + progress * 8, 0, 1.55, 2.65);
+  ctx.ellipse(0, 0, 22 + progress5 * 18, 9 + progress5 * 8, 0, -2.86, -1.56);
+  ctx.ellipse(0, 0, 22 + progress5 * 18, 9 + progress5 * 8, 0, -1.22, -0.18);
+  ctx.ellipse(0, 0, 22 + progress5 * 18, 9 + progress5 * 8, 0, 0.24, 1.14);
+  ctx.ellipse(0, 0, 22 + progress5 * 18, 9 + progress5 * 8, 0, 1.55, 2.65);
   ctx.stroke();
   ctx.restore();
 }
@@ -30419,7 +34561,7 @@ function createResourcePresentation() {
         for (let n = 0; n < 22; n++) {
           const fly = n < 16;
           if (fly && age > 600) continue;
-          const progress = Math.min(age / 1e3, fly ? 0.6 : 0.5), angle3 = n * 2.39996 + r.ordinal, speed = fly ? 60 + n % 5 * 18 : 10 + n % 5 * 5, px = x + Math.cos(angle3) * speed * progress, py = y + Math.sin(angle3) * speed * progress - (fly ? 75 * progress - 140 * progress * progress : 0);
+          const progress5 = Math.min(age / 1e3, fly ? 0.6 : 0.5), angle3 = n * 2.39996 + r.ordinal, speed = fly ? 60 + n % 5 * 18 : 10 + n % 5 * 5, px = x + Math.cos(angle3) * speed * progress5, py = y + Math.sin(angle3) * speed * progress5 - (fly ? 75 * progress5 - 140 * progress5 * progress5 : 0);
           ctx.globalAlpha = Math.max(0, 1 - age / (fly ? 600 : 4500));
           ctx.fillStyle = palette[n % 3];
           ctx.beginPath();
@@ -30489,11 +34631,11 @@ function drawForgeStation(ctx, cx, cy, time) {
   ctx.fill();
   for (let s = 0; s < 4; s++) {
     let seed2 = s * 73.1;
-    let progress = (time / 850 + seed2) % 1;
+    let progress5 = (time / 850 + seed2) % 1;
     let smkX = cx - 8 + Math.sin(time / 180 + seed2) * 8;
-    let smkY = cy - 42 - progress * 26;
-    let smkAlpha = (1 - progress) * 0.35;
-    let smkSize = 4 + progress * 7;
+    let smkY = cy - 42 - progress5 * 26;
+    let smkAlpha = (1 - progress5) * 0.35;
+    let smkSize = 4 + progress5 * 7;
     ctx.fillStyle = `rgba(120, 113, 108, ${smkAlpha})`;
     ctx.beginPath();
     ctx.arc(smkX, smkY, smkSize, 0, Math.PI * 2);
@@ -30735,7 +34877,7 @@ function createInteriorLightClips() {
     if (!dynamic && fixed.has(key2)) return fixed.get(key2);
     const start = performance.now(), v = space.visual, t = space.collision.tileSize, ox = v.originTile?.x ?? 0, oy = v.originTile?.y ?? 0;
     const floor = (x, y) => v.terrain[y - oy]?.[x - ox] === "1";
-    const radius = Math.min(208, light.radius), path4 = new Path2D();
+    const radius = Math.min(208, light.radius), path7 = new Path2D();
     let sx = light.x, sy = light.y, cx = Math.floor(sx / t), cy = Math.floor(sy / t);
     if (!floor(cx, cy)) {
       const inset = t * 0.5;
@@ -30744,7 +34886,7 @@ function createInteriorLightClips() {
       if (options.length) {
         sx = options[0][2];
         sy = options[0][3];
-      } else return path4;
+      } else return path7;
     }
     let count = 0;
     for (let i = 0; i < 64; i++) angles[count++] = i * Math.PI * 2 / 64 - Math.PI;
@@ -30782,20 +34924,20 @@ function createInteriorLightClips() {
         }
       }
       const px = sx + dx * dist3, py = sy + dy * dist3;
-      if (i === 0) path4.moveTo(px, py);
-      else path4.lineTo(px, py);
+      if (i === 0) path7.moveTo(px, py);
+      else path7.lineTo(px, py);
     }
-    path4.closePath();
+    path7.closePath();
     builds++;
     if (dynamic) {
       movingBuilds++;
-      moving = { key: key2, path: path4 };
+      moving = { key: key2, path: path7 };
     } else {
-      fixed.set(key2, path4);
+      fixed.set(key2, path7);
       while (fixed.size > 64) fixed.delete(fixed.keys().next().value);
     }
     worstMs = Math.max(worstMs, performance.now() - start);
-    return path4;
+    return path7;
   }
   return Object.freeze({ pathFor, clear: clear2, resources: () => ({ lightFixedClips: fixed.size, lightPlayerClips: moving ? 1 : 0, lightClipBuilds: builds, lightPlayerClipBuilds: movingBuilds, lightWorstClipMs: worstMs, lightMaxClipRays: maxRays }) });
 }
@@ -30844,12 +34986,12 @@ function describeLights(space) {
       }
       let added2 = 0;
       while (added2 < 4 && lights.length < 8) {
-        let best = null, distance7 = 200;
+        let best = null, distance8 = 200;
         for (const p of candidates) {
           const d = Math.min(...lights.map((l) => Math.hypot(l.x - p.x, l.y - p.y)));
-          if (d > distance7) {
+          if (d > distance8) {
             best = p;
-            distance7 = d;
+            distance8 = d;
           }
         }
         if (!best) break;
@@ -30949,15 +35091,15 @@ function createLighting(canvas) {
     g.translate(radius - light.x, radius - light.y);
     const coarse = canvas.ownerDocument.createElement("canvas");
     coarse.width = coarse.height = field.side;
-    const c = coarse.getContext("2d"), mask = new Path2D();
+    const c = coarse.getContext("2d"), mask2 = new Path2D();
     for (let i = 0; i < field.values.length; i++) {
-      const distance7 = field.values[i];
-      if (!Number.isFinite(distance7)) continue;
+      const distance8 = field.values[i];
+      if (!Number.isFinite(distance8)) continue;
       const x = i % field.side, y = Math.floor(i / field.side), px = field.x0 + x * field.step, py = field.y0 + y * field.step;
-      c.globalAlpha = 0.36 * Math.pow(1 - distance7 / field.reach, 1.25);
+      c.globalAlpha = 0.36 * Math.pow(1 - distance8 / field.reach, 1.25);
       c.fillStyle = "#dfbf87";
       c.fillRect(x, y, 1, 1);
-      mask.rect(px, py, field.step, field.step);
+      mask2.rect(px, py, field.step, field.step);
       g.fillStyle = "#dfbf87";
       g.globalAlpha = c.globalAlpha * 0.28;
       if (!field.floor(px - 1, py + 8)) g.fillRect(px - 2, py, 2, 16);
@@ -30967,14 +35109,14 @@ function createLighting(canvas) {
     }
     g.globalAlpha = 1;
     g.save();
-    g.clip(mask);
+    g.clip(mask2);
     g.imageSmoothingEnabled = true;
     g.drawImage(coarse, field.x0, field.y0, field.side * 16, field.side * 16);
     g.restore();
-    const core4 = 88, path4 = clips.pathFor(space, { ...light, radius: 104 });
+    const core5 = 88, path7 = clips.pathFor(space, { ...light, radius: 104 });
     g.save();
-    g.clip(path4);
-    g.drawImage(stamps.get("torch"), light.x - core4, light.y - core4, core4 * 2, core4 * 2);
+    g.clip(path7);
+    g.drawImage(stamps.get("torch"), light.x - core5, light.y - core5, core5 * 2, core5 * 2);
     g.restore();
     torchStamps.set(key2, stamp);
     worstStaticBuildMs = Math.max(worstStaticBuildMs, performance.now() - at2);
@@ -31100,8 +35242,8 @@ function createWalletDisplay() {
       const [w, f = ""] = a2.split(".");
       return BigInt(w + f.padEnd(scale, "0"));
     };
-    const a = units(from), b = units(target), ease4 = BigInt(Math.floor((1 - (1 - t) ** 3) * 1e6));
-    let digits = (a + (b - a) * ease4 / 1000000n).toString().padStart(scale + 1, "0");
+    const a = units(from), b = units(target), ease11 = BigInt(Math.floor((1 - (1 - t) ** 3) * 1e6));
+    let digits = (a + (b - a) * ease11 / 1000000n).toString().padStart(scale + 1, "0");
     if (scale) digits = (digits.slice(0, -scale) + "." + digits.slice(-scale)).replace(/0+$/, "").replace(/\.$/, "");
     value = digits;
     return value;
@@ -31446,13 +35588,13 @@ var STEEL_LIGHT = "#e2e8f0";
 var WOOD_DARK = "#2b1b12";
 var WOOD_LIGHT = "#ad7040";
 var FORT_RACK_PROP_SCALE = 0.54;
-var path3 = (ctx, points, fill, line3 = OUT, width = 1.8) => {
+var path6 = (ctx, points, fill3, line5 = OUT, width = 1.8) => {
   ctx.beginPath();
   points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
   ctx.closePath();
-  ctx.fillStyle = fill;
+  ctx.fillStyle = fill3;
   ctx.fill();
-  ctx.strokeStyle = line3;
+  ctx.strokeStyle = line5;
   ctx.lineWidth = width;
   ctx.stroke();
 };
@@ -31461,17 +35603,17 @@ function sword(ctx, x, y, angle3 = 0, scale = 1) {
   ctx.translate(x, y);
   ctx.rotate(angle3);
   ctx.scale(scale, scale);
-  path3(ctx, [[0, -28], [-4, -23], [-3, 11], [0, 13]], STEEL_DARK);
-  path3(ctx, [[0, -28], [4, -23], [3, 11], [0, 13]], STEEL_LIGHT);
+  path6(ctx, [[0, -28], [-4, -23], [-3, 11], [0, 13]], STEEL_DARK);
+  path6(ctx, [[0, -28], [4, -23], [3, 11], [0, 13]], STEEL_LIGHT);
   ctx.fillStyle = "rgba(255,255,255,.45)";
   ctx.fillRect(1, -22, 1.2, 29);
-  path3(ctx, [[-11, 10], [0, 7], [11, 10], [9, 14], [-9, 14]], STEEL);
+  path6(ctx, [[-11, 10], [0, 7], [11, 10], [9, 14], [-9, 14]], STEEL);
   ctx.fillStyle = WOOD_DARK;
   ctx.fillRect(-2.5, 14, 5, 13);
   ctx.strokeStyle = OUT;
   ctx.lineWidth = 1.5;
   ctx.strokeRect(-2.5, 14, 5, 13);
-  path3(ctx, [[0, 25], [4, 29], [0, 32], [-4, 29]], STEEL);
+  path6(ctx, [[0, 25], [4, 29], [0, 32], [-4, 29]], STEEL);
   ctx.restore();
 }
 function axe(ctx, x, y, angle3 = 0, scale = 1) {
@@ -31486,16 +35628,16 @@ function axe(ctx, x, y, angle3 = 0, scale = 1) {
   ctx.strokeStyle = OUT;
   ctx.lineWidth = 1.5;
   ctx.strokeRect(-2.5, -21, 5, 49);
-  path3(ctx, [[0, -20], [11, -25], [17, -18], [14, -7], [0, -10]], STEEL_DARK);
-  path3(ctx, [[0, -20], [-9, -23], [-14, -17], [-12, -8], [0, -10]], STEEL_LIGHT);
+  path6(ctx, [[0, -20], [11, -25], [17, -18], [14, -7], [0, -10]], STEEL_DARK);
+  path6(ctx, [[0, -20], [-9, -23], [-14, -17], [-12, -8], [0, -10]], STEEL_LIGHT);
   ctx.restore();
 }
 function shield(ctx, x, y, scale = 1) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(scale, scale);
-  path3(ctx, [[-14, -14], [0, -18], [14, -14], [12, 5], [0, 19], [-12, 5]], STEEL_DARK);
-  path3(ctx, [[0, -16], [12, -13], [10, 4], [0, 16]], STEEL);
+  path6(ctx, [[-14, -14], [0, -18], [14, -14], [12, 5], [0, 19], [-12, 5]], STEEL_DARK);
+  path6(ctx, [[0, -16], [12, -13], [10, 4], [0, 16]], STEEL);
   ctx.strokeStyle = STEEL_LIGHT;
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -31542,24 +35684,24 @@ function drawFortEquipmentRack(ctx, x, y, variant = 0) {
 }
 
 // src/client/cave_art_d10.js
-var TAU39 = Math.PI * 2;
+var TAU47 = Math.PI * 2;
 var OUT2 = "#101816";
-var DEEP2 = "#070b0a";
+var DEEP4 = "#070b0a";
 var ROCK_DARK = "#26322f";
 var ROCK = "#4b5b55";
 var ROCK_LIGHT = "#78877b";
 var MOSS2 = "#4d7547";
 var EARTH = "#343830";
-var hash7 = (x, y, s = 0) => {
+var hash13 = (x, y, s = 0) => {
   let n = (Math.imul((x | 0) + s, 374761393) ^ Math.imul((y | 0) - s, 668265263)) >>> 0;
   n = Math.imul(n ^ n >>> 13, 1274126177) >>> 0;
   return n ^ n >>> 16;
 };
-var poly4 = (ctx, p, fill, stroke2 = OUT2, w = 2) => {
+var poly4 = (ctx, p, fill3, stroke2 = OUT2, w = 2) => {
   ctx.beginPath();
   p.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
   ctx.closePath();
-  ctx.fillStyle = fill;
+  ctx.fillStyle = fill3;
   ctx.fill();
   if (stroke2) {
     ctx.strokeStyle = stroke2;
@@ -31570,20 +35712,20 @@ var poly4 = (ctx, p, fill, stroke2 = OUT2, w = 2) => {
 var shadow = (ctx, x, y, rx, ry, a = 0.42) => {
   ctx.fillStyle = `rgba(5,10,8,${a})`;
   ctx.beginPath();
-  ctx.ellipse(x, y, rx, ry, 0, 0, TAU39);
+  ctx.ellipse(x, y, rx, ry, 0, 0, TAU47);
   ctx.fill();
 };
 function roughShape(x, y, rx, ry, seed2, count = 8) {
   const p = [];
   for (let i = 0; i < count; i++) {
-    const a = i / count * TAU39, n = hash7(seed2, i, 17), r = 0.82 + n % 25 / 100;
+    const a = i / count * TAU47, n = hash13(seed2, i, 17), r = 0.82 + n % 25 / 100;
     p.push([x + Math.cos(a) * rx * r, y + Math.sin(a) * ry * (0.86 + (n >>> 8) % 22 / 100)]);
   }
   return p;
 }
 function rock(ctx, x, y, rx, ry, seed2, light = ROCK_LIGHT) {
   shadow(ctx, x + 2, y + ry * 0.72, rx * 0.84, ry * 0.32, 0.34);
-  const n = hash7(seed2, 7);
+  const n = hash13(seed2, 7);
   poly4(ctx, roughShape(x, y, rx, ry, seed2), [ROCK_DARK, ROCK, "#40504a"][n % 3], OUT2, 2);
   poly4(ctx, roughShape(x - rx * 0.12, y - ry * 0.24, rx * 0.62, ry * 0.36, seed2 + 31, 7), [light, "#68786e", "#829080"][(n >>> 4) % 3], null);
   ctx.strokeStyle = "rgba(17,27,24,.55)";
@@ -31600,7 +35742,7 @@ function drawGeneratedCaveSurfaceD12_1(ctx, space) {
   const voidFade = ctx.createRadialGradient(w * 0.5, h * 0.5, 70, w * 0.5, h * 0.5, Math.max(w, h) * 0.62);
   voidFade.addColorStop(0, "#14201c");
   voidFade.addColorStop(0.58, "#0b1411");
-  voidFade.addColorStop(1, DEEP2);
+  voidFade.addColorStop(1, DEEP4);
   ctx.fillStyle = voidFade;
   ctx.fillRect(0, 0, w, h);
   const floor = new Path2D();
@@ -31610,19 +35752,19 @@ function drawGeneratedCaveSurfaceD12_1(ctx, space) {
   ctx.fillStyle = EARTH;
   ctx.fillRect(0, 0, w, h);
   for (const motif of space.visual.motifs ?? []) {
-    const x = motif.x * t, y = motif.y * t, s = motif.scale ?? 1, r = motif.rotation ?? 0, n = hash7(Math.floor(motif.x * 31), Math.floor(motif.y * 29), motif.kind.length) >>> 0;
+    const x = motif.x * t, y = motif.y * t, s = motif.scale ?? 1, r = motif.rotation ?? 0, n = hash13(Math.floor(motif.x * 31), Math.floor(motif.y * 29), motif.kind.length) >>> 0;
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(r);
     if (motif.kind === "earth-patch" || motif.kind === "damp-patch") {
       ctx.fillStyle = motif.kind === "earth-patch" ? "rgba(118,95,62,.26)" : "rgba(25,57,49,.34)";
       ctx.beginPath();
-      ctx.ellipse(0, 0, 58 * s, 25 * s, 0, 0, TAU39);
+      ctx.ellipse(0, 0, 58 * s, 25 * s, 0, 0, TAU47);
       ctx.fill();
     } else if (motif.kind === "floor-shadow") {
       ctx.fillStyle = "rgba(8,17,14,.22)";
       ctx.beginPath();
-      ctx.ellipse(0, 0, 72 * s, 30 * s, 0, 0, TAU39);
+      ctx.ellipse(0, 0, 72 * s, 30 * s, 0, 0, TAU47);
       ctx.fill();
     } else if (motif.kind === "light-shaft") {
       const g = ctx.createLinearGradient(0, -70 * s, 0, 55 * s);
@@ -31645,34 +35787,34 @@ function drawGeneratedCaveSurfaceD12_1(ctx, space) {
     if (n % 2 === 0) {
       ctx.fillStyle = "rgba(120,119,101,.42)";
       ctx.beginPath();
-      ctx.ellipse(x + 8, y + 7, 2.5 + s, 1.5 + s * 0.5, r, 0, TAU39);
+      ctx.ellipse(x + 8, y + 7, 2.5 + s, 1.5 + s * 0.5, r, 0, TAU47);
       ctx.fill();
     }
   }
   for (let y = 1; y < rows.length - 1; y++) for (let x = 1; x < rows[y].length - 1; x++) {
     if (rows[y][x] !== "1") continue;
-    const n = hash7(x, y, 117) >>> 0;
+    const n = hash13(x, y, 117) >>> 0;
     if (n % 19) continue;
     ctx.fillStyle = n % 3 ? "#596158" : "#77766a";
     ctx.beginPath();
-    ctx.ellipse((x + 0.5) * t + (n % 9 - 4), (y + 0.5) * t + ((n >>> 5) % 7 - 3), 1.5 + n % 3, 1 + (n >>> 8) % 2, n % 10 * 0.16, 0, TAU39);
+    ctx.ellipse((x + 0.5) * t + (n % 9 - 4), (y + 0.5) * t + ((n >>> 5) % 7 - 3), 1.5 + n % 3, 1 + (n >>> 8) % 2, n % 10 * 0.16, 0, TAU47);
     ctx.fill();
   }
   ctx.restore();
-  const boundary = [];
-  for (let y = 0; y < rows.length; y++) for (let x = 0; x < rows[y].length; x++) if (rows[y][x] === "0" && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => rows[y + dy]?.[x + dx] === "1")) boundary.push({ x, y });
+  const boundary2 = [];
+  for (let y = 0; y < rows.length; y++) for (let x = 0; x < rows[y].length; x++) if (rows[y][x] === "0" && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => rows[y + dy]?.[x + dx] === "1")) boundary2.push({ x, y });
   const band = new Path2D();
-  for (const b of boundary) band.roundRect(b.x * t - 3, b.y * t - 3, t + 6, t + 6, 10);
+  for (const b of boundary2) band.roundRect(b.x * t - 3, b.y * t - 3, t + 6, t + 6, 10);
   ctx.fillStyle = "#222e2a";
   ctx.fill(band);
-  for (const b of boundary) {
-    const n = hash7(b.x, b.y, space.visual.motifs?.length ?? 0) >>> 0;
+  for (const b of boundary2) {
+    const n = hash13(b.x, b.y, space.visual.motifs?.length ?? 0) >>> 0;
     if (n % 100 > 62) continue;
     rock(ctx, (b.x + 0.5) * t + (n % 7 - 3), (b.y + 0.5) * t + ((n >>> 5) % 5 - 2), 20 + n % 10, 16 + (n >>> 8) % 10, n);
     if (n % 6 === 0) {
       ctx.fillStyle = MOSS2;
       ctx.beginPath();
-      ctx.ellipse((b.x + 0.42) * t, (b.y + 0.25) * t, 17 + n % 8, 5, (n % 5 - 2) * 0.08, 0, TAU39);
+      ctx.ellipse((b.x + 0.42) * t, (b.y + 0.25) * t, 17 + n % 8, 5, (n % 5 - 2) * 0.08, 0, TAU47);
       ctx.fill();
     }
   }
@@ -31685,7 +35827,7 @@ function drawCaveSurfaceD10(ctx, space) {
   const voidFade = ctx.createRadialGradient(w * 0.49, h * 0.5, 80, w * 0.49, h * 0.5, w * 0.64);
   voidFade.addColorStop(0, "#111b18");
   voidFade.addColorStop(0.56, "#0b1311");
-  voidFade.addColorStop(1, DEEP2);
+  voidFade.addColorStop(1, DEEP4);
   ctx.fillStyle = voidFade;
   ctx.fillRect(0, 0, w, h);
   for (const [x, y, rx, ry, seed2] of [[2.2, 5.4, 75, 49, 601], [4.2, 15.8, 91, 44, 607], [10.3, 1.5, 116, 38, 613], [19.3, 2.1, 96, 42, 617], [26.5, 4.2, 74, 54, 619], [25.8, 13.3, 90, 53, 631], [20.5, 17.2, 114, 42, 641], [8.7, 18.2, 104, 38, 643]]) {
@@ -31712,7 +35854,7 @@ function drawCaveSurfaceD10(ctx, space) {
   for (const [x, y, rx, ry, r] of [[6.8, 11.2, 55, 24, -0.2], [16.2, 10.5, 66, 27, 0.18], [23.2, 8.7, 46, 20, -0.12]]) {
     ctx.fillStyle = "rgba(23,48,43,.35)";
     ctx.beginPath();
-    ctx.ellipse(x * t, y * t, rx, ry, r, 0, TAU39);
+    ctx.ellipse(x * t, y * t, rx, ry, r, 0, TAU47);
     ctx.fill();
     ctx.strokeStyle = "rgba(77,104,89,.22)";
     ctx.lineWidth = 3;
@@ -31723,7 +35865,7 @@ function drawCaveSurfaceD10(ctx, space) {
   for (const [x, y, rx, ry, r, c] of [[8.4, 7.1, 74, 22, -0.18, "rgba(93,84,64,.13)"], [11.7, 12.2, 88, 26, 0.12, "rgba(118,102,70,.10)"], [15.2, 8.2, 69, 18, -0.08, "rgba(92,112,92,.10)"], [13.8, 14.1, 57, 17, 0.18, "rgba(132,109,72,.09)"], [23.7, 6.2, 52, 16, -0.13, "rgba(106,118,95,.12)"]]) {
     ctx.fillStyle = c;
     ctx.beginPath();
-    ctx.ellipse(x * t, y * t, rx, ry, r, 0, TAU39);
+    ctx.ellipse(x * t, y * t, rx, ry, r, 0, TAU47);
     ctx.fill();
   }
   const cracks = [[[9.3, 6.1], [10, 6.7], [9.6, 7.4], [10.5, 8]], [[14.7, 10.2], [15.5, 10.8], [15.1, 11.7], [16, 12.3]], [[21.8, 7.2], [22.7, 7.7], [22.3, 8.4]]];
@@ -31735,11 +35877,11 @@ function drawCaveSurfaceD10(ctx, space) {
     ctx.stroke();
   }
   for (let i = 0; i < 58; i++) {
-    const n = hash7(i, 29, 11), x = 3 + n % 2400 / 100, y = 3 + (n >>> 10) % 1500 / 100;
+    const n = hash13(i, 29, 11), x = 3 + n % 2400 / 100, y = 3 + (n >>> 10) % 1500 / 100;
     if (!floorAt(rows, x, y)) continue;
     ctx.fillStyle = i % 4 ? "#596158" : "#77766a";
     ctx.beginPath();
-    ctx.ellipse(x * t, y * t, 1.5 + n % 4, 1 + (n >>> 5) % 3, n % 10 * 0.16, 0, TAU39);
+    ctx.ellipse(x * t, y * t, 1.5 + n % 4, 1 + (n >>> 5) % 3, n % 10 * 0.16, 0, TAU47);
     ctx.fill();
   }
   const shaft = ctx.createLinearGradient(0, h, 0, 12.7 * t);
@@ -31755,28 +35897,28 @@ function drawCaveSurfaceD10(ctx, space) {
   ctx.closePath();
   ctx.fill();
   ctx.restore();
-  const boundary = [];
-  for (let y = 0; y < rows.length; y++) for (let x = 0; x < rows[y].length; x++) if (rows[y][x] === "0" && [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]].some(([dx, dy]) => rows[y + dy]?.[x + dx] === "1")) boundary.push({ x, y });
+  const boundary2 = [];
+  for (let y = 0; y < rows.length; y++) for (let x = 0; x < rows[y].length; x++) if (rows[y][x] === "0" && [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]].some(([dx, dy]) => rows[y + dy]?.[x + dx] === "1")) boundary2.push({ x, y });
   const band = new Path2D();
-  for (const b of boundary) band.roundRect(b.x * t - 4, b.y * t - 4, t + 8, t + 8, 12);
+  for (const b of boundary2) band.roundRect(b.x * t - 4, b.y * t - 4, t + 8, t + 8, 12);
   ctx.fillStyle = "#222e2a";
   ctx.fill(band);
   const faces = [[[[5.5, 4.4], [8.2, 2.8], [14.6, 2.7], [18.1, 4.6], [17.4, 5.5], [9.1, 4.7]], "#3d4b45"], [[[3.1, 7], [4.3, 5.5], [5.1, 6.4], [4.2, 12.3], [6.2, 14.2], [5, 15.1], [3.2, 12.6]], "#34413c"], [[[6.2, 13.4], [8.8, 14.6], [11.2, 13.8], [13, 14.8], [12.2, 15.8], [7.1, 15.8]], "#3b4842"], [[[20.3, 4.8], [22.1, 3.4], [25.3, 3.7], [27, 5.7], [26.7, 9.8], [25.6, 10.9], [25.4, 5.3]], "#3a4842"], [[[19.3, 10], [22, 10.3], [24.7, 11.2], [26.1, 10], [26.7, 11.1], [24.9, 12.1], [21.1, 11.4]], "#303d38"]];
   for (const [points, color27] of faces) poly4(ctx, points.map(([x, y]) => [x * t, y * t]), color27, null);
-  for (const b of boundary) {
-    const n = hash7(b.x, b.y, 3), near = Number(rows[b.y]?.[b.x - 1] === "1") + Number(rows[b.y]?.[b.x + 1] === "1") + Number(rows[b.y - 1]?.[b.x] === "1") + Number(rows[b.y + 1]?.[b.x] === "1");
-    if (hash7(b.x, b.y, 113) % 100 >= 54 && near < 3) continue;
+  for (const b of boundary2) {
+    const n = hash13(b.x, b.y, 3), near = Number(rows[b.y]?.[b.x - 1] === "1") + Number(rows[b.y]?.[b.x + 1] === "1") + Number(rows[b.y - 1]?.[b.x] === "1") + Number(rows[b.y + 1]?.[b.x] === "1");
+    if (hash13(b.x, b.y, 113) % 100 >= 54 && near < 3) continue;
     const cx = (b.x + 0.5) * t + (n % 9 - 4), cy = (b.y + 0.5) * t + ((n >>> 5) % 7 - 3), rx = 22 + n % 11, ry = 17 + (n >>> 8) % 12;
     rock(ctx, cx, cy, rx, ry, n);
     if (n % 5 === 0) {
       ctx.fillStyle = MOSS2;
       ctx.beginPath();
-      ctx.ellipse(cx - rx * 0.18, cy - ry * 0.48, rx * 0.42, ry * 0.17, (n % 7 - 3) * 0.1, 0, TAU39);
+      ctx.ellipse(cx - rx * 0.18, cy - ry * 0.48, rx * 0.42, ry * 0.17, (n % 7 - 3) * 0.1, 0, TAU47);
       ctx.fill();
     }
   }
-  for (const b of boundary) {
-    const n = hash7(b.x, b.y, 91);
+  for (const b of boundary2) {
+    const n = hash13(b.x, b.y, 91);
     if (n % 3) continue;
     ctx.strokeStyle = "rgba(8,14,12,.72)";
     ctx.lineWidth = 3;
@@ -31794,14 +35936,14 @@ function drawCaveBlockerD10(ctx, space, b, t) {
   poly4(ctx, [[x - 3, y + h * 0.3], [x + w * 0.08, y + 4], [x + w * 0.28, y - 5], [x + w * 0.47, y + 3], [x + w * 0.68, y - 4], [x + w * 0.88, y + 5], [x + w + 3, y + h * 0.27], [x + w - 2, y + h + 4], [x + 2, y + h + 5]], ROCK_DARK, OUT2, 2.4);
   const count = Math.max(2, Math.ceil(w / 48));
   for (let i = 0; i < count; i++) {
-    const n = hash7(seed2, i, 4), cx = x + (i + 0.48) * w / count + (n % 13 - 6), cy = y + h * 0.55 + ((n >>> 5) % 11 - 5), rx = w / count * 0.68, ry = h * (0.44 + (n >>> 9) % 14 / 100);
+    const n = hash13(seed2, i, 4), cx = x + (i + 0.48) * w / count + (n % 13 - 6), cy = y + h * 0.55 + ((n >>> 5) % 11 - 5), rx = w / count * 0.68, ry = h * (0.44 + (n >>> 9) % 14 / 100);
     rock(ctx, cx, cy, rx, ry, n);
   }
   ctx.fillStyle = MOSS2;
   for (let i = 0; i < Math.max(1, Math.ceil(w / 95)); i++) {
-    const n = hash7(seed2, i, 22);
+    const n = hash13(seed2, i, 22);
     ctx.beginPath();
-    ctx.ellipse(x + 24 + i * 91 + n % 12, y + 9 + n % 8, 22 + n % 10, 7, (n % 5 - 2) * 0.08, 0, TAU39);
+    ctx.ellipse(x + 24 + i * 91 + n % 12, y + 9 + n % 8, 22 + n % 10, 7, (n % 5 - 2) * 0.08, 0, TAU47);
     ctx.fill();
   }
   ctx.restore();
@@ -31828,7 +35970,7 @@ function drawCaveDecorationShadowD10(ctx, d, t) {
     ctx.restore();
   } else if (d.kind === "cave-trail-stones") trailStones(ctx, x, y);
 }
-function mouth2(ctx, x, y) {
+function mouth3(ctx, x, y) {
   ctx.fillStyle = "#050908";
   ctx.beginPath();
   ctx.moveTo(x - 48, y + 36);
@@ -31852,7 +35994,7 @@ function mouth2(ctx, x, y) {
   ctx.fill();
   ctx.fillStyle = "rgba(22,35,30,.92)";
   ctx.beginPath();
-  ctx.ellipse(x - 2, y + 30, 39, 12, -0.05, 0, TAU39);
+  ctx.ellipse(x - 2, y + 30, 39, 12, -0.05, 0, TAU47);
   ctx.fill();
   rock(ctx, x - 56, y + 26, 34, 21, 101);
   rock(ctx, x + 50, y + 29, 38, 22, 117);
@@ -31860,7 +36002,7 @@ function mouth2(ctx, x, y) {
   ctx.fillStyle = MOSS2;
   for (const [dx, dy, rx, ry, r] of [[-75, -43, 31, 8, -0.2], [-29, -76, 27, 7, 0.08], [31, -77, 34, 9, -0.08], [76, -39, 24, 7, 0.15]]) {
     ctx.beginPath();
-    ctx.ellipse(x + dx, y + dy, rx, ry, r, 0, TAU39);
+    ctx.ellipse(x + dx, y + dy, rx, ry, r, 0, TAU47);
     ctx.fill();
   }
   ctx.strokeStyle = "#4e3524";
@@ -31879,20 +36021,20 @@ function shrub(ctx, x, y, v) {
   for (const [dx, dy, rx, ry] of [[-18, 2, 16, 13], [-3, -9, 20, 17], [16, 0, 16, 14], [4, 7, 18, 13]]) {
     ctx.fillStyle = dark;
     ctx.beginPath();
-    ctx.ellipse(x + dx, y + dy, rx, ry, 0, 0, TAU39);
+    ctx.ellipse(x + dx, y + dy, rx, ry, 0, 0, TAU47);
     ctx.fill();
     ctx.strokeStyle = OUT2;
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.fillStyle = mid;
     ctx.beginPath();
-    ctx.ellipse(x + dx - 3, y + dy - 4, rx * 0.7, ry * 0.48, -0.2, 0, TAU39);
+    ctx.ellipse(x + dx - 3, y + dy - 4, rx * 0.7, ry * 0.48, -0.2, 0, TAU47);
     ctx.fill();
   }
   ctx.fillStyle = light;
   for (const [dx, dy] of [[-14, -5], [-2, -17], [12, -8], [3, 0]]) {
     ctx.beginPath();
-    ctx.ellipse(x + dx, y + dy, 7, 3.5, -0.3, 0, TAU39);
+    ctx.ellipse(x + dx, y + dy, 7, 3.5, -0.3, 0, TAU47);
     ctx.fill();
   }
 }
@@ -31901,10 +36043,10 @@ function mushroomCluster(ctx, x, y, v) {
   shadow(ctx, x, y + 8, 34, 9, 0.3);
   ctx.fillStyle = "rgba(54,91,62,.55)";
   ctx.beginPath();
-  ctx.ellipse(x, y + 5, 31, 8, (v - 1) * 0.08, 0, TAU39);
+  ctx.ellipse(x, y + 5, 31, 8, (v - 1) * 0.08, 0, TAU47);
   ctx.fill();
   for (let i = 0; i < count; i++) {
-    const n = hash7(i, v, 51), dx = -26 + i * (52 / (count - 1)) + (n % 7 - 3), h = 10 + (n >>> 4) % 18, wide = 5 + (n >>> 8) % 8, lean = (n >>> 12) % 9 - 4, tilt = lean * 0.035;
+    const n = hash13(i, v, 51), dx = -26 + i * (52 / (count - 1)) + (n % 7 - 3), h = 10 + (n >>> 4) % 18, wide = 5 + (n >>> 8) % 8, lean = (n >>> 12) % 9 - 4, tilt = lean * 0.035;
     ctx.strokeStyle = OUT2;
     ctx.lineWidth = 3.2 + (n >>> 16) % 3 * 0.45;
     ctx.beginPath();
@@ -31930,11 +36072,11 @@ function mushroomCluster(ctx, x, y, v) {
     ctx.stroke();
     ctx.fillStyle = colors[1];
     ctx.beginPath();
-    ctx.ellipse(-wide * 0.18, -wide * 0.2, wide * 0.5, wide * 0.19, -0.18, 0, TAU39);
+    ctx.ellipse(-wide * 0.18, -wide * 0.2, wide * 0.5, wide * 0.19, -0.18, 0, TAU47);
     ctx.fill();
     ctx.fillStyle = colors[2];
     ctx.beginPath();
-    ctx.arc(-wide * 0.25, -wide * 0.3, 1.2 + n % 2, 0, TAU39);
+    ctx.arc(-wide * 0.25, -wide * 0.3, 1.2 + n % 2, 0, TAU47);
     ctx.fill();
     ctx.restore();
   }
@@ -32060,7 +36202,7 @@ function wallRoots(ctx, x, y) {
   }
   ctx.fillStyle = MOSS2;
   ctx.beginPath();
-  ctx.ellipse(x + 30, y - 31, 24, 6, -0.32, 0, TAU39);
+  ctx.ellipse(x + 30, y - 31, 24, 6, -0.32, 0, TAU47);
   ctx.fill();
   rock(ctx, x - 27, y + 15, 12, 7, 721);
   rock(ctx, x + 10, y + 27, 10, 6, 727);
@@ -32081,15 +36223,15 @@ function remains(ctx, x, y) {
   ctx.stroke();
   ctx.fillStyle = "#d8cfad";
   ctx.beginPath();
-  ctx.ellipse(x - 4, y + 2, 13, 11, -0.2, 0, TAU39);
+  ctx.ellipse(x - 4, y + 2, 13, 11, -0.2, 0, TAU47);
   ctx.fill();
   ctx.strokeStyle = OUT2;
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.fillStyle = "#2a2b25";
   ctx.beginPath();
-  ctx.arc(x - 9, y, 3, 0, TAU39);
-  ctx.arc(x + 1, y - 2, 3, 0, TAU39);
+  ctx.arc(x - 9, y, 3, 0, TAU47);
+  ctx.arc(x + 1, y - 2, 3, 0, TAU47);
   ctx.fill();
   ctx.fillStyle = "#b9b18f";
   ctx.fillRect(x - 8, y + 8, 11, 5);
@@ -32137,7 +36279,7 @@ function rewardNook(ctx, x, y) {
   shadow(ctx, x, y + 18, 76, 22, 0.44);
   ctx.fillStyle = "rgba(8,16,14,.72)";
   ctx.beginPath();
-  ctx.ellipse(x, y - 7, 68, 35, 0, Math.PI, TAU39);
+  ctx.ellipse(x, y - 7, 68, 35, 0, Math.PI, TAU47);
   ctx.fill();
   rock(ctx, x - 55, y - 11, 26, 32, 271);
   rock(ctx, x + 56, y - 14, 30, 35, 283);
@@ -32151,21 +36293,21 @@ function rewardNook(ctx, x, y) {
   ctx.stroke();
   ctx.fillStyle = MOSS2;
   ctx.beginPath();
-  ctx.ellipse(x + 18, y - 50, 35, 7, -0.08, 0, TAU39);
+  ctx.ellipse(x + 18, y - 50, 35, 7, -0.08, 0, TAU47);
   ctx.fill();
   shadow(ctx, x, y + 25, 42, 10, 0.38);
   poly4(ctx, roughShape(x, y + 17, 43, 14, 751, 9), "#435149", OUT2, 2);
   poly4(ctx, roughShape(x - 4, y + 12, 29, 6, 757, 8), "#748176", null);
   ctx.fillStyle = "rgba(122,224,184,.12)";
   ctx.beginPath();
-  ctx.ellipse(x, y + 4, 51, 28, 0, 0, TAU39);
+  ctx.ellipse(x, y + 4, 51, 28, 0, 0, TAU47);
   ctx.fill();
 }
 function caveStairs(ctx, x, y, up) {
   shadow(ctx, x, y + 13, 43, 13, 0.42);
   ctx.fillStyle = up ? "#24322d" : "#070c0b";
   ctx.beginPath();
-  ctx.ellipse(x, y + 3, 38, 25, 0, 0, TAU39);
+  ctx.ellipse(x, y + 3, 38, 25, 0, 0, TAU47);
   ctx.fill();
   ctx.strokeStyle = OUT2;
   ctx.lineWidth = 3;
@@ -32203,7 +36345,7 @@ function caveSlope(ctx, x, y, up, v = 0) {
   shadow(ctx, x, y + 17, 48, 13, 0.38);
   ctx.fillStyle = up ? "#26342f" : "#07100d";
   ctx.beginPath();
-  ctx.ellipse(x, y + 4, 44, 29, 0, 0, TAU39);
+  ctx.ellipse(x, y + 4, 44, 29, 0, 0, TAU47);
   ctx.fill();
   ctx.strokeStyle = OUT2;
   ctx.lineWidth = 3;
@@ -32218,12 +36360,12 @@ function caveSlope(ctx, x, y, up, v = 0) {
     rock(ctx, x + side * 40, y + 4, 15, 23, 811 + v * 13 + side * 7);
     ctx.fillStyle = MOSS2;
     ctx.beginPath();
-    ctx.ellipse(x + side * 38, y - 12, 14, 4, side * 0.14, 0, TAU39);
+    ctx.ellipse(x + side * 38, y - 12, 14, 4, side * 0.14, 0, TAU47);
     ctx.fill();
   }
   ctx.fillStyle = "rgba(121,224,189,.25)";
   ctx.beginPath();
-  ctx.ellipse(x, y + (up ? -18 : 21), 25, 8, 0, 0, TAU39);
+  ctx.ellipse(x, y + (up ? -18 : 21), 25, 8, 0, 0, TAU47);
   ctx.fill();
 }
 function drawCaveDecorationD10(ctx, d, t) {
@@ -32235,7 +36377,7 @@ function drawCaveDecorationD10(ctx, d, t) {
     ctx.translate(-x, -y);
   }
   ctx.lineJoin = "round";
-  if (d.kind === "cave-mouth") mouth2(ctx, x, y);
+  if (d.kind === "cave-mouth") mouth3(ctx, x, y);
   else if (d.kind === "cave-shrub") shrub(ctx, x, y, d.variant ?? 0);
   else if (d.kind === "cave-roots-exterior") roots(ctx, x, y);
   else if (d.kind === "cave-wall-roots") wallRoots(ctx, x, y);
@@ -32252,7 +36394,7 @@ function drawCaveDecorationD10(ctx, d, t) {
     ctx.fillStyle = "#6f9d58";
     for (const [dx, dy, r] of [[-9, -18, -0.4], [8, -4, 0.4], [-1, 12, -0.3], [21, 20, 0.5]]) {
       ctx.beginPath();
-      ctx.ellipse(x + dx, y + dy, 9, 4, r, 0, TAU39);
+      ctx.ellipse(x + dx, y + dy, 9, 4, r, 0, TAU47);
       ctx.fill();
     }
   } else if (d.kind === "cave-grass-tuft") {
@@ -32298,10 +36440,10 @@ function drawCaveInteriorExitD10(ctx, exit) {
   rock(ctx, x + 39, y - 5, 29, 34, 521);
   rock(ctx, x - 8, y - 37, 34, 20, 541);
   rock(ctx, x + 24, y - 31, 25, 19, 557);
-  const glow2 = ctx.createLinearGradient(0, y - 24, 0, y + 25);
-  glow2.addColorStop(0, "rgba(196,223,177,.48)");
-  glow2.addColorStop(1, "rgba(105,142,91,.12)");
-  ctx.fillStyle = glow2;
+  const glow4 = ctx.createLinearGradient(0, y - 24, 0, y + 25);
+  glow4.addColorStop(0, "rgba(196,223,177,.48)");
+  glow4.addColorStop(1, "rgba(105,142,91,.12)");
+  ctx.fillStyle = glow4;
   ctx.beginPath();
   ctx.moveTo(x - 23, y + 20);
   ctx.lineTo(x - 21, y - 5);
@@ -32311,30 +36453,30 @@ function drawCaveInteriorExitD10(ctx, exit) {
   ctx.fill();
   ctx.fillStyle = MOSS2;
   ctx.beginPath();
-  ctx.ellipse(x - 5, y - 46, 34, 7, -0.1, 0, TAU39);
+  ctx.ellipse(x - 5, y - 46, 34, 7, -0.1, 0, TAU47);
   ctx.fill();
   ctx.restore();
 }
 
 // src/client/ruin_art_d11_3.js
-var TAU40 = Math.PI * 2;
-var INK33 = "#17201d";
+var TAU48 = Math.PI * 2;
+var INK40 = "#17201d";
 var VOID = "#09100e";
 var STONE_DARK = "#34413b";
-var STONE3 = "#667268";
+var STONE4 = "#667268";
 var STONE_LIGHT = "#98a08d";
 var MOSS3 = "#4d7545";
 var MOSS_LIGHT2 = "#78985c";
-var hash8 = (x, y, s = 0) => {
+var hash14 = (x, y, s = 0) => {
   let n = (Math.imul((x | 0) + s, 374761393) ^ Math.imul((y | 0) - s, 668265263)) >>> 0;
   n = Math.imul(n ^ n >>> 13, 1274126177) >>> 0;
   return n ^ n >>> 16;
 };
-var poly5 = (ctx, points, fill, stroke2 = INK33, width = 2) => {
+var poly5 = (ctx, points, fill3, stroke2 = INK40, width = 2) => {
   ctx.beginPath();
   points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
   ctx.closePath();
-  ctx.fillStyle = fill;
+  ctx.fillStyle = fill3;
   ctx.fill();
   if (stroke2) {
     ctx.strokeStyle = stroke2;
@@ -32345,20 +36487,20 @@ var poly5 = (ctx, points, fill, stroke2 = INK33, width = 2) => {
 var shadow2 = (ctx, x, y, rx, ry, a = 0.36) => {
   ctx.fillStyle = `rgba(5,9,7,${a})`;
   ctx.beginPath();
-  ctx.ellipse(x, y, rx, ry, 0, 0, TAU40);
+  ctx.ellipse(x, y, rx, ry, 0, 0, TAU48);
   ctx.fill();
 };
 function stone(ctx, x, y, w, h, seed2) {
-  const n = hash8(seed2, w | 0, h | 0), lean = n % 7 - 3;
+  const n = hash14(seed2, w | 0, h | 0), lean = n % 7 - 3;
   shadow2(ctx, x + w * 0.5, y + h * 0.91, w * 0.45, Math.max(4, h * 0.12), 0.3);
-  poly5(ctx, [[x + 2, y + h * 0.22], [x + w * 0.16 + lean, y + 2], [x + w * 0.75, y], [x + w - 2, y + h * 0.2], [x + w - 4, y + h - 2], [x + 4, y + h]], STONE_DARK, INK33, 2);
+  poly5(ctx, [[x + 2, y + h * 0.22], [x + w * 0.16 + lean, y + 2], [x + w * 0.75, y], [x + w - 2, y + h * 0.2], [x + w - 4, y + h - 2], [x + 4, y + h]], STONE_DARK, INK40, 2);
   poly5(ctx, [[x + w * 0.16 + lean, y + 3], [x + w * 0.75, y + 1], [x + w * 0.91, y + h * 0.2], [x + w * 0.31, y + h * 0.28]], STONE_LIGHT, null);
-  poly5(ctx, [[x + 4, y + h * 0.42], [x + w * 0.33, y + h * 0.29], [x + w * 0.9, y + h * 0.22], [x + w - 4, y + h - 3], [x + 4, y + h]], STONE3, null);
+  poly5(ctx, [[x + 4, y + h * 0.42], [x + w * 0.33, y + h * 0.29], [x + w * 0.9, y + h * 0.22], [x + w - 4, y + h - 3], [x + 4, y + h]], STONE4, null);
 }
 function weeds(ctx, x, y, seed2, count = 6) {
   ctx.lineCap = "round";
   for (let i = 0; i < count; i++) {
-    const n = hash8(seed2, i, 29), dx = n % 41 - 20, h = 9 + (n >>> 5) % 15;
+    const n = hash14(seed2, i, 29), dx = n % 41 - 20, h = 9 + (n >>> 5) % 15;
     ctx.strokeStyle = i % 3 ? MOSS3 : MOSS_LIGHT2;
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -32367,10 +36509,10 @@ function weeds(ctx, x, y, seed2, count = 6) {
     ctx.stroke();
   }
 }
-function organicBlob(ctx, x, y, rx, ry, seed2, fill, stroke2 = null, width = 1) {
-  const count = 8 + hash8(seed2, 17, 3) % 4, points = [];
+function organicBlob(ctx, x, y, rx, ry, seed2, fill3, stroke2 = null, width = 1) {
+  const count = 8 + hash14(seed2, 17, 3) % 4, points = [];
   for (let i = 0; i < count; i++) {
-    const a = TAU40 * i / count, n = hash8(seed2, i, 43), radius = 0.7 + n % 29 / 100;
+    const a = TAU48 * i / count, n = hash14(seed2, i, 43), radius = 0.7 + n % 29 / 100;
     points.push([x + Math.cos(a) * rx * radius, y + Math.sin(a) * ry * (0.72 + (n >>> 7) % 35 / 100)]);
   }
   ctx.beginPath();
@@ -32381,7 +36523,7 @@ function organicBlob(ctx, x, y, rx, ry, seed2, fill, stroke2 = null, width = 1) 
     ctx.quadraticCurveTo(p[0], p[1], (p[0] + next[0]) / 2, (p[1] + next[1]) / 2);
   }
   ctx.closePath();
-  ctx.fillStyle = fill;
+  ctx.fillStyle = fill3;
   ctx.fill();
   if (stroke2) {
     ctx.strokeStyle = stroke2;
@@ -32392,19 +36534,19 @@ function organicBlob(ctx, x, y, rx, ry, seed2, fill, stroke2 = null, width = 1) 
 function moss2(ctx, x, y, scale, seed2, spread = 1) {
   ctx.save();
   ctx.lineJoin = "round";
-  const count = 3 + hash8(seed2, 5, 71) % 3;
+  const count = 3 + hash14(seed2, 5, 71) % 3;
   for (let i = 0; i < count; i++) {
-    const n = hash8(seed2, i, 97), dx = (n % 101 - 50) / 50 * scale * 0.78 * spread, dy = ((n >>> 8) % 71 - 35) / 35 * scale * 0.24;
-    organicBlob(ctx, x + dx, y + dy, scale * (0.42 + (n >>> 15) % 23 / 100), scale * (0.16 + (n >>> 20) % 12 / 100), seed2 + i * 31, "#31543a", i === 0 ? INK33 : null, 1.2);
+    const n = hash14(seed2, i, 97), dx = (n % 101 - 50) / 50 * scale * 0.78 * spread, dy = ((n >>> 8) % 71 - 35) / 35 * scale * 0.24;
+    organicBlob(ctx, x + dx, y + dy, scale * (0.42 + (n >>> 15) % 23 / 100), scale * (0.16 + (n >>> 20) % 12 / 100), seed2 + i * 31, "#31543a", i === 0 ? INK40 : null, 1.2);
   }
   for (let i = 0; i < count + 1; i++) {
-    const n = hash8(seed2, i, 137), dx = (n % 101 - 50) / 50 * scale * 0.75 * spread, dy = ((n >>> 9) % 61 - 30) / 30 * scale * 0.21;
+    const n = hash14(seed2, i, 137), dx = (n % 101 - 50) / 50 * scale * 0.75 * spread, dy = ((n >>> 9) % 61 - 30) / 30 * scale * 0.21;
     organicBlob(ctx, x + dx, y + dy, scale * (0.2 + (n >>> 16) % 14 / 100), scale * (0.08 + (n >>> 21) % 9 / 100), seed2 + i * 47 + 9, i % 3 ? MOSS3 : "#638552", null);
   }
   ctx.strokeStyle = "#294a33";
   ctx.lineCap = "round";
   for (let i = 0; i < 3; i++) {
-    const n = hash8(seed2, i, 211), sx = x + (n % 31 - 15) * scale / 35, sy = y + scale * 0.1, side = i % 2 ? -1 : 1;
+    const n = hash14(seed2, i, 211), sx = x + (n % 31 - 15) * scale / 35, sy = y + scale * 0.1, side = i % 2 ? -1 : 1;
     ctx.lineWidth = Math.max(1, scale * 0.045 - i * 0.18);
     ctx.beginPath();
     ctx.moveTo(sx, sy);
@@ -32412,7 +36554,7 @@ function moss2(ctx, x, y, scale, seed2, spread = 1) {
     ctx.stroke();
   }
   for (let i = 0; i < 8; i++) {
-    const n = hash8(seed2, i, 263), px = x + (n % 101 - 50) * scale / 62 * spread, py = y + ((n >>> 8) % 41 - 20) * scale / 75, s = 1 + (n >>> 14) % 3;
+    const n = hash14(seed2, i, 263), px = x + (n % 101 - 50) * scale / 62 * spread, py = y + ((n >>> 8) % 41 - 20) * scale / 75, s = 1 + (n >>> 14) % 3;
     poly5(ctx, [[px, py - s], [px + s, py], [px, py + s], [px - s, py]], i % 3 ? MOSS_LIGHT2 : "#b0aa68", null);
   }
   ctx.restore();
@@ -32426,7 +36568,7 @@ function bentPath(ctx, points) {
   }
   ctx.lineTo(points.at(-1).x, points.at(-1).y);
 }
-function leaf(ctx, x, y, size, angle3, fill) {
+function leaf(ctx, x, y, size, angle3, fill3) {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(angle3);
@@ -32435,9 +36577,9 @@ function leaf(ctx, x, y, size, angle3, fill) {
   ctx.quadraticCurveTo(size * 0.25, -size * 0.62, size, 0);
   ctx.quadraticCurveTo(size * 0.22, size * 0.62, -size * 0.18, 0);
   ctx.closePath();
-  ctx.fillStyle = fill;
+  ctx.fillStyle = fill3;
   ctx.fill();
-  ctx.strokeStyle = INK33;
+  ctx.strokeStyle = INK40;
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.restore();
@@ -32446,9 +36588,9 @@ function vine(ctx, x, y, height, seed2) {
   ctx.save();
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  const side = hash8(seed2, 3, 311) % 2 ? -1 : 1, n1 = hash8(seed2, 5, 317), n2 = hash8(seed2, 7, 331), points = [{ x, y }, { x: x + side * (11 + n1 % 7), y: y - height * 0.27 }, { x: x - side * (8 + n2 % 8), y: y - height * 0.52 }, { x: x + side * (12 + (n1 >>> 7) % 8), y: y - height * 0.76 }, { x: x + side * ((n2 >>> 8) % 9 - 4), y: y - height }];
+  const side = hash14(seed2, 3, 311) % 2 ? -1 : 1, n1 = hash14(seed2, 5, 317), n2 = hash14(seed2, 7, 331), points = [{ x, y }, { x: x + side * (11 + n1 % 7), y: y - height * 0.27 }, { x: x - side * (8 + n2 % 8), y: y - height * 0.52 }, { x: x + side * (12 + (n1 >>> 7) % 8), y: y - height * 0.76 }, { x: x + side * ((n2 >>> 8) % 9 - 4), y: y - height }];
   bentPath(ctx, points);
-  ctx.strokeStyle = INK33;
+  ctx.strokeStyle = INK40;
   ctx.lineWidth = 9;
   ctx.stroke();
   bentPath(ctx, points);
@@ -32459,7 +36601,7 @@ function vine(ctx, x, y, height, seed2) {
   for (const [i, b] of branches.entries()) {
     const end = { x: b.from.x + b.side * b.length, y: b.from.y - 8 - i * 4 }, branch = [b.from, { x: b.from.x + b.side * b.length * 0.55, y: b.from.y - 4 }, end];
     bentPath(ctx, branch);
-    ctx.strokeStyle = INK33;
+    ctx.strokeStyle = INK40;
     ctx.lineWidth = 6;
     ctx.stroke();
     bentPath(ctx, branch);
@@ -32470,7 +36612,7 @@ function vine(ctx, x, y, height, seed2) {
   }
   const leaves = [{ p: points[1], side }, { p: points[2], side: -side }, { p: points[3], side }, { p: points[4], side: -side }];
   for (let i = 0; i < leaves.length; i++) {
-    const row2 = leaves[i], n = hash8(seed2, i, 347), dx = row2.side * (6 + n % 4), dy = -2 - (n >>> 5) % 5;
+    const row2 = leaves[i], n = hash14(seed2, i, 347), dx = row2.side * (6 + n % 4), dy = -2 - (n >>> 5) % 5;
     leaf(ctx, row2.p.x + dx, row2.p.y + dy, 9 + (n >>> 9) % 4, row2.side * (0.48 + (n >>> 13) % 18 / 100), i % 2 ? MOSS_LIGHT2 : MOSS3);
   }
   ctx.restore();
@@ -32479,13 +36621,13 @@ function rootCluster(ctx, x, y, height, seed2, bend = 0, scale = 1) {
   ctx.save();
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  const n1 = hash8(seed2, 1, 401), n2 = hash8(seed2, 2, 409), side = n1 % 2 ? -1 : 1, swing = Math.max(0.9, scale), points = [{ x, y }, { x: x + side * (14 + n1 % 7) * swing + bend * 0.12, y: y + height * 0.28 }, { x: x - side * (16 + n2 % 8) * swing + bend * 0.52, y: y + height * 0.61 }, { x: x + bend, y: y + height }], main = Math.max(9, 17 * scale);
+  const n1 = hash14(seed2, 1, 401), n2 = hash14(seed2, 2, 409), side = n1 % 2 ? -1 : 1, swing = Math.max(0.9, scale), points = [{ x, y }, { x: x + side * (14 + n1 % 7) * swing + bend * 0.12, y: y + height * 0.28 }, { x: x - side * (16 + n2 % 8) * swing + bend * 0.52, y: y + height * 0.61 }, { x: x + bend, y: y + height }], main = Math.max(9, 17 * scale);
   bentPath(ctx, points.map((p) => ({ x: p.x + 3, y: p.y + 3 })));
   ctx.strokeStyle = "rgba(8,13,10,.52)";
   ctx.lineWidth = main + 6;
   ctx.stroke();
   bentPath(ctx, points);
-  ctx.strokeStyle = INK33;
+  ctx.strokeStyle = INK40;
   ctx.lineWidth = main + 4;
   ctx.stroke();
   bentPath(ctx, points);
@@ -32496,7 +36638,7 @@ function rootCluster(ctx, x, y, height, seed2, bend = 0, scale = 1) {
   for (const b of branches) {
     const end = { x: b.from.x + b.side * b.length, y: b.from.y + b.drop }, branch = [b.from, { x: b.from.x + b.side * b.length * 0.58, y: b.from.y + b.drop * 0.28 }, end];
     bentPath(ctx, branch);
-    ctx.strokeStyle = INK33;
+    ctx.strokeStyle = INK40;
     ctx.lineWidth = b.width + 4;
     ctx.stroke();
     bentPath(ctx, branch);
@@ -32520,26 +36662,26 @@ function taperedMass(points, widths, extra = 0, ox = 0, oy = 0) {
   }
   return [...left, ...right.reverse()];
 }
-function roundedMass(ctx, points, fill) {
+function roundedMass(ctx, points, fill3) {
   ctx.beginPath();
   const last = points.at(-1), first = points[0];
   ctx.moveTo((last[0] + first[0]) / 2, (last[1] + first[1]) / 2);
   for (let i = 0; i < points.length; i++) {
-    const point4 = points[i], next = points[(i + 1) % points.length];
-    ctx.quadraticCurveTo(point4[0], point4[1], (point4[0] + next[0]) / 2, (point4[1] + next[1]) / 2);
+    const point9 = points[i], next = points[(i + 1) % points.length];
+    ctx.quadraticCurveTo(point9[0], point9[1], (point9[0] + next[0]) / 2, (point9[1] + next[1]) / 2);
   }
   ctx.closePath();
-  ctx.fillStyle = fill;
+  ctx.fillStyle = fill3;
   ctx.fill();
 }
 function ruinExteriorRootGeometryD11_3_4(x, y, seed2, side) {
-  const n = hash8(seed2, side, 523), j = n % 7 - 3, main = side < 0 ? [{ x: x - 67, y: y + 27 }, { x: x - 89 + j, y: y + 43 }, { x: x - 124, y: y + 52 + j }, { x: x - 157, y: y + 61 + j }] : [{ x: x + 108, y: y + 33 }, { x: x + 124, y: y + 40 + j }, { x: x + 143 + j, y: y + 38 }, { x: x + 160, y: y + 40 + j }], fork = side < 0 ? [main[1], { x: x - 110, y: y + 70 + j }, { x: x - 134 - j, y: y + 86 }] : [main[1], { x: x + 142 + j, y: y + 51 }, { x: x + 160, y: y + 54 - j }];
+  const n = hash14(seed2, side, 523), j = n % 7 - 3, main = side < 0 ? [{ x: x - 67, y: y + 27 }, { x: x - 89 + j, y: y + 43 }, { x: x - 124, y: y + 52 + j }, { x: x - 157, y: y + 61 + j }] : [{ x: x + 108, y: y + 33 }, { x: x + 124, y: y + 40 + j }, { x: x + 143 + j, y: y + 38 }, { x: x + 160, y: y + 40 + j }], fork = side < 0 ? [main[1], { x: x - 110, y: y + 70 + j }, { x: x - 134 - j, y: y + 86 }] : [main[1], { x: x + 142 + j, y: y + 51 }, { x: x + 160, y: y + 54 - j }];
   return Object.freeze([{ points: main, widths: side < 0 ? [18, 16, 9, 2] : [11, 8, 4, 1.5] }, { points: fork, widths: side < 0 ? [9, 5, 1.5] : [5, 2.5, 1] }].map((shape) => Object.freeze({ points: Object.freeze(shape.points.map(Object.freeze)), widths: Object.freeze(shape.widths) })));
 }
 function exteriorRootMass(ctx, x, y, seed2, side) {
   const shapes = ruinExteriorRootGeometryD11_3_4(x, y, seed2, side), main = shapes[0].points;
   roundedMass(ctx, taperedMass(main, shapes[0].widths, 2, 3, 4), "rgba(8,13,10,.42)");
-  for (const shape of shapes) roundedMass(ctx, taperedMass(shape.points, shape.widths, 3), INK33);
+  for (const shape of shapes) roundedMass(ctx, taperedMass(shape.points, shape.widths, 3), INK40);
   for (const shape of shapes) roundedMass(ctx, taperedMass(shape.points, shape.widths), "#72492d");
   const a = main[0], b = main[Math.min(2, main.length - 1)];
   roundedMass(ctx, taperedMass([a, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, b], [4, 3, 1]), "#a66e40");
@@ -32549,7 +36691,7 @@ function exteriorRootFoliage(ctx, x, y, seed2, side) {
   for (const [dx, dy, count, salt] of clusters) {
     shadow2(ctx, x + dx, y + dy + 5, 12 + count * 2, 5, 0.2);
     for (let i = 0; i < count; i++) {
-      const n = hash8(seed2 + salt * 37, i, 571), angle3 = -1.55 + (n % 91 - 45) / 100 + (side < 0 ? -i * 0.18 : i * 0.16), size = 10 + (n >>> 8) % 5, spread = (i - (count - 1) / 2) * 7;
+      const n = hash14(seed2 + salt * 37, i, 571), angle3 = -1.55 + (n % 91 - 45) / 100 + (side < 0 ? -i * 0.18 : i * 0.16), size = 10 + (n >>> 8) % 5, spread = (i - (count - 1) / 2) * 7;
       leaf(ctx, x + dx + spread, y + dy + (n >>> 13) % 5 - 2, size, angle3, i % 3 === 0 ? MOSS_LIGHT2 : MOSS3);
     }
   }
@@ -32562,7 +36704,7 @@ function ruinApproachGeometryD11_3_6(exit, roadAnchor, tileSize = 32) {
       seen.add(key2);
       cells.push(freezeRoadCell({ x, y }));
     }
-  }, line3 = (x1, y1, x2, y2) => {
+  }, line5 = (x1, y1, x2, y2) => {
     let x = x1, y = y1;
     push(x, y);
     while (y !== y2) {
@@ -32575,9 +36717,9 @@ function ruinApproachGeometryD11_3_6(exit, roadAnchor, tileSize = 32) {
     }
   };
   const dy = ay - sy, apronY = sy + (dy === 0 ? 0 : (dy < 0 ? -1 : 1) * Math.min(2, Math.abs(dy)));
-  line3(sx, sy, sx, apronY);
-  line3(sx, apronY, ax, apronY);
-  line3(ax, apronY, ax, ay);
+  line5(sx, sy, sx, apronY);
+  line5(sx, apronY, ax, apronY);
+  line5(ax, apronY, ax, ay);
   return Object.freeze({ anchored: valid, tileSize, start: freezeRoadCell({ x: sx, y: sy }), anchor: freezeRoadCell({ x: ax, y: ay }), cells: Object.freeze(cells), drawCells: Object.freeze((valid ? cells.slice(0, -1) : cells).map(freezeRoadCell)), apron: Object.freeze({ x: exit.x - 20, y: exit.y + 4, width: 40, height: 24 }) });
 }
 function drawRuinApproachD11_3_6(ctx, exit, seed2, roadAnchor, tileSize) {
@@ -32614,10 +36756,10 @@ function pillar(ctx, x, y, variant = 0) {
   stone(ctx, -21, -54, 42, 61, 501 + variant);
   ctx.fillStyle = STONE_DARK;
   ctx.fillRect(-26, -2, 52, 12);
-  ctx.strokeStyle = INK33;
+  ctx.strokeStyle = INK40;
   ctx.lineWidth = 2;
   ctx.strokeRect(-26, -2, 52, 12);
-  poly5(ctx, [[-23, -54], [-15, -67], [8, -64], [20, -51], [8, -44], [-17, -46]], STONE_LIGHT, INK33, 2);
+  poly5(ctx, [[-23, -54], [-15, -67], [8, -64], [20, -51], [8, -44], [-17, -46]], STONE_LIGHT, INK40, 2);
   moss2(ctx, -5, -59, 20, 551 + variant, 0.9);
   ctx.restore();
   weeds(ctx, x, y + 7, variant + 50, 5);
@@ -32634,7 +36776,7 @@ function shrine(ctx, x, y) {
   ctx.beginPath();
   ctx.roundRect(x - 35, y - 53, 70, 45, 7);
   ctx.fill();
-  ctx.strokeStyle = INK33;
+  ctx.strokeStyle = INK40;
   ctx.lineWidth = 3;
   ctx.stroke();
   ctx.fillStyle = "#9d7b43";
@@ -32647,7 +36789,7 @@ function shrine(ctx, x, y) {
   ctx.moveTo(x + 19, y - 42);
   ctx.lineTo(x - 15, y - 15);
   ctx.stroke();
-  ctx.strokeStyle = INK33;
+  ctx.strokeStyle = INK40;
   ctx.lineWidth = 1.5;
   ctx.stroke();
   moss2(ctx, x - 24, y - 44, 17, 733, 0.8);
@@ -32656,7 +36798,7 @@ function perch(ctx, x, y) {
   shadow2(ctx, x, y + 10, 38, 11, 0.34);
   stone(ctx, x - 36, y - 10, 72, 30, 811);
   ctx.fillStyle = "#252d2a";
-  ctx.strokeStyle = INK33;
+  ctx.strokeStyle = INK40;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(x - 23, y - 12);
@@ -32692,7 +36834,7 @@ function rewardAlcove(ctx, x, y) {
   ctx.fill();
   ctx.fillStyle = "rgba(204,221,164,.13)";
   ctx.beginPath();
-  ctx.ellipse(x, y - 1, 36, 28, 0, 0, TAU40);
+  ctx.ellipse(x, y - 1, 36, 28, 0, 0, TAU48);
   ctx.fill();
   vine(ctx, x + 34, y - 9, 44, 913);
 }
@@ -32713,10 +36855,10 @@ function drawRuinSurfaceD11_3(ctx, space) {
   ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = "rgba(111,84,52,.5)";
   ctx.beginPath();
-  ctx.ellipse(w * 0.5, h * 0.61, 244, 139, -0.04, 0, TAU40);
+  ctx.ellipse(w * 0.5, h * 0.61, 244, 139, -0.04, 0, TAU48);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(w * 0.51, h * 0.31, 182, 87, 0.04, 0, TAU40);
+  ctx.ellipse(w * 0.51, h * 0.31, 182, 87, 0.04, 0, TAU48);
   ctx.fill();
   ctx.strokeStyle = "rgba(153,126,79,.24)";
   ctx.lineWidth = 64;
@@ -32727,20 +36869,20 @@ function drawRuinSurfaceD11_3(ctx, space) {
   ctx.stroke();
   for (const [x, y, size, seed2, spread] of [[8.1, 9.9, 49, 1201, 1.55], [15.8, 8.3, 45, 1217, 1.5], [11.8, 4.2, 43, 1231, 1.65], [18.2, 4.8, 37, 1249, 1.35]]) moss2(ctx, x * t, y * t, size, seed2, spread);
   for (let i = 0; i < 42; i++) {
-    const n = hash8(i, 41, 19), x = 3 + n % 1800 / 100, y = 3 + (n >>> 10) % 1250 / 100;
+    const n = hash14(i, 41, 19), x = 3 + n % 1800 / 100, y = 3 + (n >>> 10) % 1250 / 100;
     if (rows[Math.floor(y)]?.[Math.floor(x)] !== "1") continue;
     organicBlob(ctx, x * t, y * t, 5 + n % 10, 2 + (n >>> 4) % 4, n, i % 3 ? "rgba(143,137,105,.28)" : "rgba(36,56,43,.32)", null);
   }
   ctx.strokeStyle = "rgba(25,32,27,.55)";
   ctx.lineWidth = 2;
-  for (const path4 of [[[8.2, 6.2], [9.1, 7], [8.6, 7.8], [9.5, 8.5]], [[14.8, 10.7], [15.5, 11.4], [15.1, 12.1]], [[11.2, 14.2], [12, 13.6], [12.7, 14.3]]]) {
+  for (const path7 of [[[8.2, 6.2], [9.1, 7], [8.6, 7.8], [9.5, 8.5]], [[14.8, 10.7], [15.5, 11.4], [15.1, 12.1]], [[11.2, 14.2], [12, 13.6], [12.7, 14.3]]]) {
     ctx.beginPath();
-    path4.forEach(([x, y], i) => i ? ctx.lineTo(x * t, y * t) : ctx.moveTo(x * t, y * t));
+    path7.forEach(([x, y], i) => i ? ctx.lineTo(x * t, y * t) : ctx.moveTo(x * t, y * t));
     ctx.stroke();
   }
   ctx.restore();
   for (let y = 0; y < rows.length; y++) for (let x = 0; x < rows[y].length; x++) if (rows[y][x] === "0" && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => rows[y + dy]?.[x + dx] === "1")) {
-    const n = hash8(x, y, 77), px = x * t + 2 + n % 5, py = y * t + 3 + (n >>> 4) % 4, south = rows[y + 1]?.[x] === "1";
+    const n = hash14(x, y, 77), px = x * t + 2 + n % 5, py = y * t + 3 + (n >>> 4) % 4, south = rows[y + 1]?.[x] === "1";
     stone(ctx, px, py, t - 4, t - (south ? 1 : 7), n);
     if (n % 4 === 0) moss2(ctx, px + 14, py + 6, 11, n + 1301, 0.82);
   }
@@ -32806,7 +36948,7 @@ function drawRuinExteriorGroundD11_3(ctx, exit, seed2 = 0, roadAnchor = null, ti
   drawRuinApproachD11_3_6(ctx, exit, seed2, roadAnchor, tileSize);
   for (const [dx, dy, w, h, s] of [[-18, 33, 20, 8, 1], [17, 57, 18, 7, 2], [-13, 84, 19, 7, 3], [14, 108, 17, 6, 4]]) stone(ctx, x + dx - w / 2, y + dy - h / 2, w, h, seed2 + 1500 + s);
   ctx.fillStyle = "#59645a";
-  poly5(ctx, [[x - 43, y - 1], [x + 43, y - 1], [x + 35, y + 24], [x - 37, y + 24]], "#59645a", INK33, 2);
+  poly5(ctx, [[x - 43, y - 1], [x + 43, y - 1], [x + 35, y + 24], [x - 37, y + 24]], "#59645a", INK40, 2);
   poly5(ctx, [[x - 37, y + 1], [x + 37, y + 1], [x + 31, y + 8], [x - 32, y + 8]], "#8f9887", null);
   for (const [dx, dy, w, h, s] of [[-84, 51, 25, 15, 1], [77, 55, 26, 16, 2], [-119, 76, 32, 18, 3], [113, 82, 29, 17, 4]]) stone(ctx, x + dx - w / 2, y + dy - h / 2, w, h, seed2 + 1550 + s);
   moss2(ctx, x - 68, y + 72, 17, seed2 + 1567, 1.1);
@@ -32820,7 +36962,7 @@ function drawRuinExteriorRearD11_3(ctx, exit, seed2 = 0) {
   ctx.save();
   ctx.lineJoin = "round";
   shadow2(ctx, x, y + 22, 148, 22, 0.48);
-  poly5(ctx, [[x - 145, y + 18], [x - 145, y - 83], [x - 126, y - 83], [x - 126, y - 121], [x - 91, y - 121], [x - 91, y - 151], [x - 54, y - 151], [x - 54, y - 166], [x - 14, y - 156], [x + 16, y - 174], [x + 49, y - 153], [x + 83, y - 153], [x + 83, y - 126], [x + 118, y - 126], [x + 118, y - 96], [x + 145, y - 96], [x + 145, y + 18]], STONE_DARK, INK33, 3);
+  poly5(ctx, [[x - 145, y + 18], [x - 145, y - 83], [x - 126, y - 83], [x - 126, y - 121], [x - 91, y - 121], [x - 91, y - 151], [x - 54, y - 151], [x - 54, y - 166], [x - 14, y - 156], [x + 16, y - 174], [x + 49, y - 153], [x + 83, y - 153], [x + 83, y - 126], [x + 118, y - 126], [x + 118, y - 96], [x + 145, y - 96], [x + 145, y + 18]], STONE_DARK, INK40, 3);
   const courses = [[-137, -109, 51, 35], [-82, -123, 49, 38], [-30, -136, 47, 34], [20, -137, 45, 35], [69, -122, 47, 36], [119, -91, 23, 35], [-139, -70, 50, 39], [-86, -80, 45, 40], [-38, -91, 41, 35], [7, -96, 43, 33], [54, -84, 47, 41], [105, -56, 36, 39]];
   for (let i = 0; i < courses.length; i++) {
     const [dx, dy, w, h] = courses[i];
@@ -32835,13 +36977,13 @@ function drawRuinExteriorRearD11_3(ctx, exit, seed2 = 0) {
   ctx.lineTo(x + 54, y + 20);
   ctx.closePath();
   ctx.fill();
-  ctx.strokeStyle = INK33;
+  ctx.strokeStyle = INK40;
   ctx.lineWidth = 5;
   ctx.stroke();
-  const glow2 = ctx.createLinearGradient(x, y - 79, x, y + 23);
-  glow2.addColorStop(0, "#09100e");
-  glow2.addColorStop(1, "#243129");
-  ctx.fillStyle = glow2;
+  const glow4 = ctx.createLinearGradient(x, y - 79, x, y + 23);
+  glow4.addColorStop(0, "#09100e");
+  glow4.addColorStop(1, "#243129");
+  ctx.fillStyle = glow4;
   ctx.beginPath();
   ctx.moveTo(x - 42, y + 18);
   ctx.lineTo(x - 38, y - 52);
@@ -33589,24 +37731,24 @@ function createCombatFeedback() {
       if (n.mechanic !== "main" && !(n.mechanic === "hostile" && (n.hostileMelee || n.projectileContact)) && n.mechanic !== n.defenseKind) drawCombatImpact(ctx, n.mechanic === "bash" && n.trigger === "reactive" ? "shieldRiposte" : n.mechanic, n.position.x, n.position.y, n.direction.x, n.direction.y, age, n.critical);
       if (n.defenseKind === "block" || n.defenseKind === "parry") drawCombatImpact(ctx, n.defenseKind, n.position.x, n.position.y, -n.direction.x, -n.direction.y, age);
     }
-    const transform = ctx.getTransform(), point4 = (p) => ({ x: p.x * transform.a + transform.e, y: p.y * transform.d + transform.f }), scale = ctx.canvas.width / (ctx.canvas.clientWidth || ctx.canvas.width), view = { x: 4 * scale, y: 4 * scale, width: ctx.canvas.width - 8 * scale, height: ctx.canvas.height - 8 * scale };
+    const transform = ctx.getTransform(), point9 = (p) => ({ x: p.x * transform.a + transform.e, y: p.y * transform.d + transform.f }), scale = ctx.canvas.width / (ctx.canvas.clientWidth || ctx.canvas.width), view = { x: 4 * scale, y: 4 * scale, width: ctx.canvas.width - 8 * scale, height: ctx.canvas.height - 8 * scale };
     const reserved = [], occupied = [];
     lastLayout = [];
     for (const n of numbers) {
       if (!n.path) continue;
-      const p = point4(n.position), b = n.path.box;
+      const p = point9(n.position), b = n.path.box;
       occupied.push({ x: p.x + b.x, y: p.y + b.y, width: b.width, height: b.height });
     }
     for (const a of Object.values(lastModel?.entitiesById ?? {})) {
       if (!a.alive) continue;
-      const p = point4(a.position);
+      const p = point9(a.position);
       if (p.x < -60 || p.y < -100 || p.x > ctx.canvas.width + 60 || p.y > ctx.canvas.height + 100) continue;
       reserved.push({ x: p.x - 21 * transform.a, y: p.y - 36 * transform.d, width: 42 * transform.a, height: 10 * transform.d });
     }
     for (const e of lastModel?.combatPresentation?.statuses ?? []) {
       const a = lastModel.entitiesById[e.targetId];
       if (!a?.alive) continue;
-      const p = point4(a.position), top = p.y - (49 + (e.lane ?? 0) * 18) * transform.d;
+      const p = point9(a.position), top = p.y - (49 + (e.lane ?? 0) * 18) * transform.d;
       reserved.push({ x: p.x - 34 * transform.a, y: top - 19 * transform.d, width: 68 * transform.a, height: 29 * transform.d });
     }
     lastReserved = reserved;
@@ -33616,7 +37758,7 @@ function createCombatFeedback() {
     ctx.lineJoin = "round";
     for (const n of numbers) {
       if (n.shown === void 0 && time - n.born > HIT_FEEDBACK.placementMs) continue;
-      const p = point4(n.position);
+      const p = point9(n.position);
       if (p.x < 0 || p.x > ctx.canvas.width || p.y < 0 || p.y > ctx.canvas.height) continue;
       const style = combatTextStyle(n), icon = Boolean(n.defenseKind) || n.mechanic !== "main" && n.mechanic !== "hostile", mechanicWidth = icon ? 24 * scale : 0, critWidth = n.critical ? 20 * scale : 0, iconWidth = mechanicWidth + critWidth;
       ctx.font = `800 ${style.maxSize * scale}px system-ui`;
@@ -33836,23 +37978,23 @@ function* prepareEnvironmentLayout(space) {
 }
 
 // src/client/fort_art_d10.js
-var TAU41 = Math.PI * 2;
+var TAU49 = Math.PI * 2;
 var OUT3 = "#17211d";
 var STONE_DARK2 = "#3b4741";
-var STONE4 = "#647067";
+var STONE5 = "#647067";
 var STONE_LIGHT2 = "#929b8b";
 var WOOD_DARK2 = "#2b1b12";
 var WOOD = "#68401f";
 var WOOD_LIGHT2 = "#ad7040";
-var RED = "#74312d";
+var RED2 = "#74312d";
 var BLUE2 = "#2d4d61";
 var CANVAS = "#88704b";
 var CANVAS_LIGHT = "#b49a68";
-var poly6 = (ctx, pts, fill, stroke2 = OUT3, w = 2) => {
+var poly6 = (ctx, pts, fill3, stroke2 = OUT3, w = 2) => {
   ctx.beginPath();
   pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
   ctx.closePath();
-  ctx.fillStyle = fill;
+  ctx.fillStyle = fill3;
   ctx.fill();
   ctx.strokeStyle = stroke2;
   ctx.lineWidth = w;
@@ -33861,7 +38003,7 @@ var poly6 = (ctx, pts, fill, stroke2 = OUT3, w = 2) => {
 var shadow3 = (ctx, x, y, rx, ry) => {
   ctx.fillStyle = "rgba(8,14,11,.40)";
   ctx.beginPath();
-  ctx.ellipse(x, y, rx, ry, 0, 0, TAU41);
+  ctx.ellipse(x, y, rx, ry, 0, 0, TAU49);
   ctx.fill();
 };
 var beam = (ctx, x, y, w, h) => {
@@ -33879,7 +38021,7 @@ function masonry(ctx, x, y, w, h, seed2 = 1) {
   let row2 = 0;
   for (let yy = y + 3; yy < y + h - 4; yy += 15, row2++) for (let xx = x + 4 + (row2 & 1) * 11; xx < x + w - 5; ) {
     const sw = 20 + terrainHash(Math.floor(xx), Math.floor(yy), seed2) % 22;
-    poly6(ctx, [[xx, yy], [Math.min(x + w - 5, xx + sw), yy - 2], [Math.min(x + w - 6, xx + sw - 2), Math.min(y + h - 4, yy + 11)], [xx + 2, Math.min(y + h - 3, yy + 13)]], row2 % 3 === 0 ? STONE_LIGHT2 : STONE4, "#344038", 1);
+    poly6(ctx, [[xx, yy], [Math.min(x + w - 5, xx + sw), yy - 2], [Math.min(x + w - 6, xx + sw - 2), Math.min(y + h - 4, yy + 11)], [xx + 2, Math.min(y + h - 3, yy + 13)]], row2 % 3 === 0 ? STONE_LIGHT2 : STONE5, "#344038", 1);
     xx += sw + 3;
   }
   ctx.fillStyle = "#abb3a0";
@@ -33970,7 +38112,7 @@ function keep(ctx, d, t) {
   beam(ctx, cx - 47, gy + 38, 8, front2 - gy - 43);
   beam(ctx, cx + 39, gy + 38, 8, front2 - gy - 43);
   beam(ctx, cx - 43, gy + 44, 86, 7);
-  standard(ctx, l + 93, front2 - 62, RED, 1);
+  standard(ctx, l + 93, front2 - 62, RED2, 1);
   standard(ctx, r - 93, front2 - 62, BLUE2, -1);
   masonry(ctx, r - 88, back + 12, 30, 61, 857);
   ctx.fillStyle = "#1e2926";
@@ -33984,7 +38126,7 @@ function gatehouse(ctx, d, t) {
     poly6(ctx, [[l - 7, y - 35], [cx, y - 67], [l + 131, y - 35], [l + 118, y - 15], [cx, y - 45], [l + 7, y - 15]], side < 0 ? "#354641" : "#273733", OUT3, 3);
     beam(ctx, l + 12, y - 10, 8, 46);
     beam(ctx, l + 104, y - 10, 8, 46);
-    standard(ctx, cx - side * 43, y - 3, side < 0 ? RED : BLUE2, -side);
+    standard(ctx, cx - side * 43, y - 3, side < 0 ? RED2 : BLUE2, -side);
   }
   beam(ctx, x - 59, y - 38, 118, 15);
   ctx.fillStyle = "#b2753d";
@@ -34028,7 +38170,7 @@ function tent(ctx, d, t) {
     const ridge = y - 42, front2 = y + 20;
     ctx.fillStyle = "rgba(8,12,10,.40)";
     ctx.beginPath();
-    ctx.ellipse(x + 4, front2 + 7, 55, 13, 0, 0, TAU41);
+    ctx.ellipse(x + 4, front2 + 7, 55, 13, 0, 0, TAU49);
     ctx.fill();
     poly6(ctx, [[x - 48, front2], [x - 34, y - 22], [x, ridge], [x, front2]], CANVAS_LIGHT, OUT3, 2.5);
     poly6(ctx, [[x, ridge], [x + 34, y - 22], [x + 48, front2], [x, front2]], CANVAS, OUT3, 2.5);
@@ -34045,7 +38187,7 @@ function tent(ctx, d, t) {
       ctx.stroke();
       ctx.fillStyle = WOOD_LIGHT2;
       ctx.beginPath();
-      ctx.arc(x + side * 58, front2 + 13, 3, 0, TAU41);
+      ctx.arc(x + side * 58, front2 + 13, 3, 0, TAU49);
       ctx.fill();
       ctx.strokeStyle = OUT3;
       ctx.stroke();
@@ -34059,7 +38201,7 @@ function tent(ctx, d, t) {
 }
 function prop(ctx, d, t) {
   const x = d.x * t, y = d.y * t, k = d.kind;
-  if (k === "fort-banner") return standard(ctx, x, y, d.variant % 2 ? BLUE2 : RED, d.variant % 2 ? -1 : 1);
+  if (k === "fort-banner") return standard(ctx, x, y, d.variant % 2 ? BLUE2 : RED2, d.variant % 2 ? -1 : 1);
   if (k === "fort-tent" || k === "fort-lean-to") return tent(ctx, d, t);
   if (k === "fort-watchtower") return watchtower(ctx, d, t);
   if (k === "fort-cart") {
@@ -34076,12 +38218,12 @@ function prop(ctx, d, t) {
     for (const dx of [-25, 13]) {
       ctx.fillStyle = "#2b2821";
       ctx.beginPath();
-      ctx.arc(x + dx, y + 15, 11, 0, TAU41);
+      ctx.arc(x + dx, y + 15, 11, 0, TAU49);
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = WOOD_LIGHT2;
       ctx.beginPath();
-      ctx.arc(x + dx, y + 15, 4, 0, TAU41);
+      ctx.arc(x + dx, y + 15, 4, 0, TAU49);
       ctx.fill();
     }
     return;
@@ -34090,14 +38232,14 @@ function prop(ctx, d, t) {
     masonry(ctx, x - 29, y - 3, 58, 18, 1001);
     ctx.fillStyle = "#13201e";
     ctx.beginPath();
-    ctx.ellipse(x, y - 4, 22, 8, 0, 0, TAU41);
+    ctx.ellipse(x, y - 4, 22, 8, 0, 0, TAU49);
     ctx.fill();
     beam(ctx, x - 28, y - 35, 6, 36);
     beam(ctx, x + 22, y - 35, 6, 36);
     beam(ctx, x - 31, y - 40, 62, 7);
     ctx.fillStyle = WOOD_LIGHT2;
     ctx.beginPath();
-    ctx.arc(x, y - 20, 7, 0, TAU41);
+    ctx.arc(x, y - 20, 7, 0, TAU49);
     ctx.fill();
     ctx.strokeStyle = OUT3;
     ctx.stroke();
@@ -34126,7 +38268,7 @@ function prop(ctx, d, t) {
       ctx.fillRect(x + dx - 11, y - 9, 22, 24);
       ctx.fillStyle = "#a66b38";
       ctx.beginPath();
-      ctx.ellipse(x + dx, y - 9, 11, 6, 0, 0, TAU41);
+      ctx.ellipse(x + dx, y - 9, 11, 6, 0, 0, TAU49);
       ctx.fill();
       ctx.strokeStyle = OUT3;
       ctx.lineWidth = 2;
@@ -34165,14 +38307,14 @@ function prop(ctx, d, t) {
     ctx.stroke();
     ctx.fillStyle = "#655033";
     ctx.beginPath();
-    ctx.ellipse(3, -10, 21, 25, 0, 0, TAU41);
+    ctx.ellipse(3, -10, 21, 25, 0, 0, TAU49);
     ctx.fill();
     ctx.strokeStyle = OUT3;
     ctx.lineWidth = 3;
     ctx.stroke();
     ctx.fillStyle = "#c3a660";
     ctx.beginPath();
-    ctx.ellipse(0, -13, 21, 25, 0, 0, TAU41);
+    ctx.ellipse(0, -13, 21, 25, 0, 0, TAU49);
     ctx.fill();
     ctx.stroke();
     ctx.strokeStyle = "#8d713d";
@@ -34186,19 +38328,19 @@ function prop(ctx, d, t) {
     ctx.strokeStyle = "#574326";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.ellipse(0, -13, 22, 12, 0, 0, TAU41);
+    ctx.ellipse(0, -13, 22, 12, 0, 0, TAU49);
     ctx.stroke();
     ctx.beginPath();
-    ctx.ellipse(0, -13, 22, 19, 0, 0, TAU41);
+    ctx.ellipse(0, -13, 22, 19, 0, 0, TAU49);
     ctx.stroke();
-    ctx.strokeStyle = RED;
+    ctx.strokeStyle = RED2;
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.ellipse(-1, -13, 13, 14, 0.08, 0, TAU41);
+    ctx.ellipse(-1, -13, 13, 14, 0.08, 0, TAU49);
     ctx.stroke();
     ctx.fillStyle = "#b8a15d";
     ctx.beginPath();
-    ctx.ellipse(1, -12, 5, 6, -0.15, 0, TAU41);
+    ctx.ellipse(1, -12, 5, 6, -0.15, 0, TAU49);
     ctx.fill();
     ctx.strokeStyle = "#493928";
     ctx.lineWidth = 2;
@@ -34221,11 +38363,11 @@ function prop(ctx, d, t) {
   }
   if (k === "fort-fire") {
     for (let i = 0; i < 10; i++) {
-      const a = i / 10 * TAU41, sx = x + Math.cos(a) * 21, sy = y + 6 + Math.sin(a) * 7;
+      const a = i / 10 * TAU49, sx = x + Math.cos(a) * 21, sy = y + 6 + Math.sin(a) * 7;
       ctx.save();
       ctx.translate(sx, sy);
       ctx.rotate(a);
-      ctx.fillStyle = i % 3 === 0 ? STONE_LIGHT2 : STONE4;
+      ctx.fillStyle = i % 3 === 0 ? STONE_LIGHT2 : STONE5;
       ctx.beginPath();
       ctx.roundRect(-5.5, -4, 11, 8, 3);
       ctx.fill();
@@ -34255,12 +38397,12 @@ function prop(ctx, d, t) {
     }
     ctx.fillStyle = "#6f1d12";
     ctx.beginPath();
-    ctx.ellipse(x, y + 3, 12, 5, 0, 0, TAU41);
+    ctx.ellipse(x, y + 3, 12, 5, 0, 0, TAU49);
     ctx.fill();
     for (const [dx, dy, r, c] of [[-6, 2, 2.5, "#ff6a18"], [1, 4, 3, "#ffb126"], [7, 1, 2, "#e33b13"], [-1, 0, 1.5, "#fff0a0"]]) {
       ctx.fillStyle = c;
       ctx.beginPath();
-      ctx.arc(x + dx, y + dy, r, 0, TAU41);
+      ctx.arc(x + dx, y + dy, r, 0, TAU49);
       ctx.fill();
     }
     return;
@@ -34282,7 +38424,7 @@ function prop(ctx, d, t) {
     ctx.fillStyle = ["#2b6738", "#397944", "#4e7d42"][d.variant % 3];
     for (const [dx, dy, r] of [[-14, 1, 13], [1, -8, 17], [16, 1, 12]]) {
       ctx.beginPath();
-      ctx.arc(x + dx, y + dy, r, 0, TAU41);
+      ctx.arc(x + dx, y + dy, r, 0, TAU49);
       ctx.fill();
       ctx.strokeStyle = "#173a22";
       ctx.lineWidth = 2;
@@ -34290,7 +38432,7 @@ function prop(ctx, d, t) {
     }
     ctx.fillStyle = "#7fa05d";
     ctx.beginPath();
-    ctx.arc(x - 3, y - 13, 7, 0, TAU41);
+    ctx.arc(x - 3, y - 13, 7, 0, TAU49);
     ctx.fill();
     return;
   }
@@ -34304,7 +38446,7 @@ function prop(ctx, d, t) {
     ctx.fillStyle = "#76a253";
     for (const [dx, dy, a] of [[8, -14, 0.4], [-2, 1, -0.4], [6, 17, 0.6]]) {
       ctx.beginPath();
-      ctx.ellipse(x + dx, y + dy, 8, 4, a, 0, TAU41);
+      ctx.ellipse(x + dx, y + dy, 8, 4, a, 0, TAU49);
       ctx.fill();
     }
     return;
@@ -34324,7 +38466,7 @@ function prop(ctx, d, t) {
     ctx.fillStyle = "#668a4b";
     for (const [dx, dy, rx] of [[-22, 0, 19], [5, -4, 22], [27, 3, 15]]) {
       ctx.beginPath();
-      ctx.ellipse(x + dx, y + dy, rx, 6, 0, 0, TAU41);
+      ctx.ellipse(x + dx, y + dy, rx, 6, 0, 0, TAU49);
       ctx.fill();
     }
   }
@@ -34362,7 +38504,7 @@ function drawFortKeepDoorD10(ctx, exit) {
   ctx.stroke();
   ctx.fillStyle = "#e0b552";
   ctx.beginPath();
-  ctx.arc(x + 10, y - 18, 3, 0, TAU41);
+  ctx.arc(x + 10, y - 18, 3, 0, TAU49);
   ctx.fill();
 }
 
@@ -34450,9 +38592,9 @@ function drawPlannedRuinMasonryTile(ctx, space, b, tx, ty, pilot = null) {
   return obstacleTileVisualId(b, tx, ty, "solid");
 }
 function drawPlannedRuinMasonry(ctx, space, b, bounds2, pilot = null) {
-  const t = space.collision.tileSize, ids = [];
-  for (let ty = Math.max(b.y, Math.floor(bounds2.y / t)); ty < Math.min(b.y + b.height, Math.ceil((bounds2.y + bounds2.height) / t)); ty++) for (let tx = Math.max(b.x, Math.floor(bounds2.x / t)); tx < Math.min(b.x + b.width, Math.ceil((bounds2.x + bounds2.width) / t)); tx++) ids.push(drawPlannedRuinMasonryTile(ctx, space, b, tx, ty, pilot));
-  return ids;
+  const t = space.collision.tileSize, ids2 = [];
+  for (let ty = Math.max(b.y, Math.floor(bounds2.y / t)); ty < Math.min(b.y + b.height, Math.ceil((bounds2.y + bounds2.height) / t)); ty++) for (let tx = Math.max(b.x, Math.floor(bounds2.x / t)); tx < Math.min(b.x + b.width, Math.ceil((bounds2.x + bounds2.width) / t)); tx++) ids2.push(drawPlannedRuinMasonryTile(ctx, space, b, tx, ty, pilot));
+  return ids2;
 }
 function drawPlannedRuinGroundDecoration(ctx, d, t, pilot = null) {
   if (pilot?.ruin?.decoration(ctx, d, t)) return;
@@ -34621,7 +38763,7 @@ function createEnvironmentCache(canvas, { diagnostics = null, prepareDrawing, pr
     emit("buildStart", { id, mode });
     let raster = rasterPool.pop();
     if (!raster && pages.size >= capacity) {
-      const ids = [...pages.keys()].filter((k) => k !== id && !visibleIds.has(k)), victim = ids.find((k) => !preloadIds.has(k) && !recentIds.has(k)) ?? (mode === "sync" ? ids.find((k) => !preloadIds.has(k)) ?? ids[0] : void 0);
+      const ids2 = [...pages.keys()].filter((k) => k !== id && !visibleIds.has(k)), victim = ids2.find((k) => !preloadIds.has(k) && !recentIds.has(k)) ?? (mode === "sync" ? ids2.find((k) => !preloadIds.has(k)) ?? ids2[0] : void 0);
       if (victim !== void 0) {
         raster = pages.get(victim).raster;
         pages.delete(victim);
@@ -34915,9 +39057,9 @@ function createEnvironmentCache(canvas, { diagnostics = null, prepareDrawing, pr
       if (endless ? x - 64 < ox || y - 64 < oy || x + SIZE + 64 > right || y + SIZE + 64 > bottom : x - 64 < Math.max(0, ox) && ox > 0 || y - 64 < Math.max(0, oy) && oy > 0 || x + SIZE + 64 > right && right < xmax || y + SIZE + 64 > bottom && bottom < ymax) continue;
       const entry = pages.get(id), sig = entry?.visual === v ? entry.signature : signature(space, x, y);
       if (entry?.signature === sig) continue;
-      const distance7 = Math.max(0, view.x - x - SIZE, x - view.x - view.width) + Math.max(0, view.y - y - SIZE, y - view.y - view.height);
+      const distance8 = Math.max(0, view.x - x - SIZE, x - view.x - view.width) + Math.max(0, view.y - y - SIZE, y - view.y - view.height);
       const ahead = (x + SIZE / 2 - view.x - view.width / 2) * travelX + (y + SIZE / 2 - view.y - view.height / 2) * travelY;
-      candidates.push({ id, x, y, space, sig, scale: renderScale, distance: distance7 - (ahead > 0 ? SIZE : 0), visualGeneration });
+      candidates.push({ id, x, y, space, sig, scale: renderScale, distance: distance8 - (ahead > 0 ? SIZE : 0), visualGeneration });
     }
     candidates.sort((a, b) => a.distance - b.distance || a.y - b.y || a.x - b.x);
     const urgent = queue.filter((q) => visibleIds.has(q.id)), planned = [];
@@ -34972,15 +39114,15 @@ function createEnvironmentCache(canvas, { diagnostics = null, prepareDrawing, pr
 }
 
 // src/client/environment_presentation.js
-var TAU42 = Math.PI * 2;
+var TAU50 = Math.PI * 2;
 function nearestRoadAnchor(space, exit, radius = 5) {
   const t = space.collision.tileSize, v = space.visual, ox = v.originTile?.x ?? 0, oy = v.originTile?.y ?? 0, tx = Math.floor(exit.x / t), ty = Math.floor(exit.y / t), nearest = (type) => {
-    let best = null, distance7 = Infinity;
+    let best = null, distance8 = Infinity;
     for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) {
       if (v.terrain[ty + dy - oy]?.[tx + dx - ox] !== type) continue;
       const d = dx * dx + dy * dy;
-      if (d < distance7) {
-        distance7 = d;
+      if (d < distance8) {
+        distance8 = d;
         best = { x: (tx + dx + 0.5) * t, y: (ty + dy + 0.5) * t };
       }
     }
@@ -34988,11 +39130,11 @@ function nearestRoadAnchor(space, exit, radius = 5) {
   };
   return nearest("r") ?? nearest("p");
 }
-function polygon18(ctx, points, fill, stroke2 = "#162e27") {
+function polygon23(ctx, points, fill3, stroke2 = "#162e27") {
   ctx.beginPath();
   points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
   ctx.closePath();
-  ctx.fillStyle = fill;
+  ctx.fillStyle = fill3;
   ctx.fill();
   ctx.strokeStyle = stroke2;
   ctx.lineWidth = 1.5;
@@ -35008,8 +39150,8 @@ function building(ctx, b, tile) {
   ctx.lineWidth = 4;
   ctx.strokeRect(x + 4, y + h * 0.5, w - 8, h * 0.5 - 5);
   const blue = b.detail === "Vault" || b.detail === "Watch House";
-  polygon18(ctx, [[x + 2, y + h * 0.53], [x + 2, y + 13], [x + w * 0.48, y + 2], [x + w - 2, y + 13], [x + w - 2, y + h * 0.53]], blue ? "#304a81" : "#a44229", "#211c26");
-  polygon18(ctx, [[x + 3, y + 13], [x + w * 0.48, y + 3], [x + w * 0.48, y + h * 0.43], [x + 3, y + h * 0.53]], blue ? "#5078b2" : "#dc7540", "#332137");
+  polygon23(ctx, [[x + 2, y + h * 0.53], [x + 2, y + 13], [x + w * 0.48, y + 2], [x + w - 2, y + 13], [x + w - 2, y + h * 0.53]], blue ? "#304a81" : "#a44229", "#211c26");
+  polygon23(ctx, [[x + 3, y + 13], [x + w * 0.48, y + 3], [x + w * 0.48, y + h * 0.43], [x + 3, y + h * 0.53]], blue ? "#5078b2" : "#dc7540", "#332137");
   ctx.strokeStyle = blue ? "#90b6d9" : "#ffb567";
   ctx.lineWidth = 1;
   for (let i = 23; i < h * 0.5; i += 12) {
@@ -35062,8 +39204,8 @@ function drawGrassGround(ctx, bounds2, seed2, offset2 = { x: 0, y: 0 }, biomeAt 
       const along = -15 + i * 5 + (n >>> i * 3 % 24 & 3), cross = 3 + (n >>> (i * 4 + 1) % 24 & 7), toward2 = i % 2 === 0 ? a : b;
       ctx.fillStyle = palette(toward2)[1 + i % 2];
       ctx.beginPath();
-      if (vertical) ctx.ellipse(x + (toward2 === a ? cross : -cross), y + along, 6 + (n + i) % 6, 4 + (n >>> i) % 5, (i - 2.5) * 0.1, 0, TAU42);
-      else ctx.ellipse(x + along, y + (toward2 === a ? cross : -cross), 4 + (n >>> i) % 5, 6 + (n + i) % 6, (i - 2.5) * 0.1, 0, TAU42);
+      if (vertical) ctx.ellipse(x + (toward2 === a ? cross : -cross), y + along, 6 + (n + i) % 6, 4 + (n >>> i) % 5, (i - 2.5) * 0.1, 0, TAU50);
+      else ctx.ellipse(x + along, y + (toward2 === a ? cross : -cross), 4 + (n >>> i) % 5, 6 + (n + i) % 6, (i - 2.5) * 0.1, 0, TAU50);
       ctx.fill();
     }
   };
@@ -35082,7 +39224,7 @@ function drawGrassGround(ctx, bounds2, seed2, offset2 = { x: 0, y: 0 }, biomeAt 
       ctx.fillStyle = palette(biomeAt(cx, cy) ?? "w")[n % 2 ? 1 : 2];
       ctx.beginPath();
       const points = Array.from({ length: 10 }, (_, i) => {
-        const angle3 = i * TAU42 / 10, r = 0.78 + terrainHash(gx + i, gy, seed2 + 71) % 24 / 100;
+        const angle3 = i * TAU50 / 10, r = 0.78 + terrainHash(gx + i, gy, seed2 + 71) % 24 / 100;
         return [cx + Math.cos(angle3) * rx * r, cy + Math.sin(angle3) * ry * r];
       });
       const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
@@ -35094,7 +39236,7 @@ function drawGrassGround(ctx, bounds2, seed2, offset2 = { x: 0, y: 0 }, biomeAt 
         ctx.fillStyle = n % 2 ? "#536b39" : "#6f6134";
         ctx.globalAlpha = 0.32;
         ctx.beginPath();
-        ctx.ellipse(cx - rx * 0.18, cy + ry * 0.08, rx * 0.38, ry * 0.22, (n % 7 - 3) * 0.08, 0, TAU42);
+        ctx.ellipse(cx - rx * 0.18, cy + ry * 0.08, rx * 0.38, ry * 0.22, (n % 7 - 3) * 0.08, 0, TAU50);
         ctx.fill();
         ctx.globalAlpha = 1;
       }
@@ -35204,7 +39346,7 @@ function* prepareEnvironmentDrawing(ctx, space, viewport = null, layout = create
           if (biome === "r") {
             ctx.fillStyle = n % 2 ? "#b5a675" : "#504f45";
             ctx.beginPath();
-            ctx.ellipse(px + dx, py + dy, 2 + n % 3, 1.3, 0, 0, TAU42);
+            ctx.ellipse(px + dx, py + dy, 2 + n % 3, 1.3, 0, 0, TAU50);
             ctx.fill();
             paintedDecorations++;
             if (n % 7 === 0) drawGrass(ctx, px + dx - 5, py + dy + 3, n);
@@ -35268,7 +39410,7 @@ function* prepareEnvironmentDrawing(ctx, space, viewport = null, layout = create
     if (!pilot?.treeShadow?.(ctx, space, x, y, size, n)) {
       ctx.fillStyle = tree.biome === "marsh" ? "#183f34" : "#214c2f";
       ctx.beginPath();
-      ctx.ellipse(x + size * 0.5, y + size * 0.68, size * 0.4, size * 0.24, -0.12, 0, TAU42);
+      ctx.ellipse(x + size * 0.5, y + size * 0.68, size * 0.4, size * 0.24, -0.12, 0, TAU50);
       ctx.fill();
     }
     if (tree.biome === "marsh") drawReeds(ctx, x + size * 0.24, y + size * 0.83, n);
@@ -35327,7 +39469,7 @@ function* prepareEnvironmentDrawing(ctx, space, viewport = null, layout = create
         ctx.fill();
         ctx.fillStyle = "#26382d";
         ctx.beginPath();
-        ctx.ellipse(x2, y2 + 30, 28, 8, 0, 0, TAU42);
+        ctx.ellipse(x2, y2 + 30, 28, 8, 0, 0, TAU50);
         ctx.fill();
         for (const side of [-1, 1]) {
           ctx.fillStyle = "#4c5751";
@@ -35355,7 +39497,7 @@ function* prepareEnvironmentDrawing(ctx, space, viewport = null, layout = create
         ctx.fillStyle = "#66a34f";
         for (const [dx, dy] of [[-24, -18], [-17, -23], [22, -22], [16, -15]]) {
           ctx.beginPath();
-          ctx.ellipse(x2 + dx, y2 + dy, 5, 3, (n % 5 - 2) * 0.08, 0, TAU42);
+          ctx.ellipse(x2 + dx, y2 + dy, 5, 3, (n % 5 - 2) * 0.08, 0, TAU50);
           ctx.fill();
         }
         ctx.fillStyle = "#e8dba6";
@@ -35433,7 +39575,7 @@ function* prepareEnvironmentDrawing(ctx, space, viewport = null, layout = create
     ctx.strokeStyle = "#dfc18a";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(exit.x, exit.y, 19, 0, TAU42);
+    ctx.arc(exit.x, exit.y, 19, 0, TAU50);
     ctx.stroke();
     ctx.fillStyle = "#e6d2a0";
     ctx.font = "bold 15px Georgia";
@@ -35473,7 +39615,7 @@ function drawEnvironmentMarkers(ctx, space) {
     ctx.strokeStyle = "#d4bc7a";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(marker.x, marker.y, 22, 0, TAU42);
+    ctx.arc(marker.x, marker.y, 22, 0, TAU50);
     ctx.stroke();
     ctx.font = "11px Georgia";
     ctx.fillStyle = "#eadca5";
@@ -35567,7 +39709,7 @@ function drawRequiredObstacleVisual(ctx, space, b, tx, ty, pilot = null) {
     const { x, y, size } = b.naturalClusterId ? naturalMarshPose(n, tx, ty, t) : { x: tx * t - 8 + (n % 3 - 1), y: ty * t - 15 + ((n >>> 4) % 3 - 1), size: t + 16 };
     ctx.fillStyle = "#183f34";
     ctx.beginPath();
-    ctx.ellipse(x + size * 0.5, y + size * 0.68, size * 0.4, size * 0.24, -0.12, 0, TAU42);
+    ctx.ellipse(x + size * 0.5, y + size * 0.68, size * 0.4, size * 0.24, -0.12, 0, TAU50);
     ctx.fill();
     drawReeds(ctx, x + size * 0.24, y + size * 0.83, n);
     drawCanopy(ctx, x, y, size, n);
@@ -35681,17 +39823,17 @@ function createEnvironmentCache2(canvas, { authoredArt = null, ...options } = {}
 }
 
 // src/client/aegis_mimic_presentation_v2.js
-var TAU43 = Math.PI * 2;
-var clamp23 = (v) => Math.max(0, Math.min(1, v));
+var TAU51 = Math.PI * 2;
+var clamp30 = (v) => Math.max(0, Math.min(1, v));
 function drawAttachedAegisMimic(c, actor, tick, flash = false) {
   const m = actor.aegisMimic;
   if (!m || m.stage === "detached" || !actor.alive) return false;
-  const profile = creaturePresentationForRenderV3("mimic_shield"), f = profile.painterFrame, landing = m.stage === "landing", lift = landing ? 24 * (1 - clamp23((tick - m.detachedTick) / 30)) : 24;
+  const profile = creaturePresentationForRenderV3("mimic_shield"), f = profile.painterFrame, landing = m.stage === "landing", lift = landing ? 24 * (1 - clamp30((tick - m.detachedTick) / 30)) : 24;
   c.save();
   c.translate(actor.position.x, actor.position.y);
   c.fillStyle = "#0c142b44";
   c.beginPath();
-  c.ellipse(0, 8, 13, 5, 0, 0, TAU43);
+  c.ellipse(0, 8, 13, 5, 0, 0, TAU51);
   c.fill();
   c.translate(0, -lift);
   c.save();
@@ -35699,7 +39841,7 @@ function drawAttachedAegisMimic(c, actor, tick, flash = false) {
   c.scale(profile.visualScale, profile.visualScale);
   drawMimicShieldV4(c, { x: f.x, y: f.y, w: f.width, h: f.height, flashTimer: flash ? 1 : 0, familyAttack: null, aegisDormant: m.stage === "orbiting" }, tick * 1e3 / 60, actor.visualSeed ?? 17);
   c.restore();
-  const ratio = clamp23(actor.hp.m / Math.max(1e-12, actor.maxHp.m));
+  const ratio = clamp30(actor.hp.m / Math.max(1e-12, actor.maxHp.m));
   c.fillStyle = "#11151a";
   c.fillRect(-14, -31, 28, 5);
   c.fillStyle = m.stage === "recalling" ? "#f2c678" : "#70e5e6";
@@ -35730,14 +39872,14 @@ function drawAegisMimicTethers(c, model, tick) {
 }
 
 // src/client/boss_presentation_aegis_v1.js
-var TAU44 = Math.PI * 2;
-var INK34 = "#11151a";
-var CYAN2 = "#65e6ec";
-var LIGHT3 = "#b1fcf0";
+var TAU52 = Math.PI * 2;
+var INK41 = "#11151a";
+var CYAN3 = "#65e6ec";
+var LIGHT7 = "#b1fcf0";
 var BLUE3 = "#298eaa";
-var STONE5 = "#405469";
-var DARK4 = "#233346";
-var clamp24 = (v) => Math.max(0, Math.min(1, v));
+var STONE6 = "#405469";
+var DARK7 = "#233346";
+var clamp31 = (v) => Math.max(0, Math.min(1, v));
 function plate3(c, points, color27, outline = true) {
   c.beginPath();
   c.moveTo(...points[0]);
@@ -35746,7 +39888,7 @@ function plate3(c, points, color27, outline = true) {
   c.fillStyle = color27;
   c.fill();
   if (outline) {
-    c.strokeStyle = INK34;
+    c.strokeStyle = INK41;
     c.lineWidth = 1.26;
     c.lineJoin = "round";
     c.stroke();
@@ -35755,7 +39897,7 @@ function plate3(c, points, color27, outline = true) {
 function hex(c, r) {
   const points = [];
   for (let i = 0; i < 6; i++) {
-    const a = i * TAU44 / 6 - Math.PI / 6;
+    const a = i * TAU52 / 6 - Math.PI / 6;
     points.push([Math.cos(a) * r, Math.sin(a) * r]);
   }
   return points;
@@ -35764,7 +39906,7 @@ function rune(c, x, y, scale = 1) {
   c.save();
   c.translate(x, y);
   c.scale(scale, scale);
-  c.strokeStyle = CYAN2;
+  c.strokeStyle = CYAN3;
   c.lineWidth = 1.15;
   c.lineCap = "square";
   c.beginPath();
@@ -35782,11 +39924,11 @@ function shield2(c, x, y, r, spin, flash = false) {
   c.save();
   c.translate(x, y);
   c.rotate(spin);
-  plate3(c, hex(c, r), flash ? LIGHT3 : STONE5);
+  plate3(c, hex(c, r), flash ? LIGHT7 : STONE6);
   plate3(c, [[0, -r], ...[0, 1, 2].map((i) => hex(c, r)[i]), [0, 0]], "#6d8798", false);
-  plate3(c, hex(c, r * 0.72), DARK4);
-  plate3(c, [[-r * 0.42, 0], [0, -r * 0.48], [r * 0.42, 0], [0, r * 0.48]], flash ? "#f2ffed" : CYAN2);
-  c.strokeStyle = LIGHT3;
+  plate3(c, hex(c, r * 0.72), DARK7);
+  plate3(c, [[-r * 0.42, 0], [0, -r * 0.48], [r * 0.42, 0], [0, r * 0.48]], flash ? "#f2ffed" : CYAN3);
+  c.strokeStyle = LIGHT7;
   c.lineWidth = 1;
   c.beginPath();
   c.moveTo(-r * 0.2, -r * 0.04);
@@ -35795,7 +39937,7 @@ function shield2(c, x, y, r, spin, flash = false) {
   c.stroke();
   c.restore();
 }
-function chains(c, t) {
+function chains2(c, t) {
   for (const side of [-1, 1]) {
     const wave = Math.sin(t * 0.047 + side * 1.5) * 5;
     for (let i = 0; i < 13; i++) {
@@ -35803,12 +39945,12 @@ function chains(c, t) {
       c.save();
       c.translate(x, y);
       c.rotate(side * 0.18 + Math.cos(t * 0.047 + side) * q * 0.14);
-      c.strokeStyle = INK34;
+      c.strokeStyle = INK41;
       c.lineWidth = 3.8;
       c.beginPath();
-      c.ellipse(0, 0, i % 2 ? 1.7 : 2.3, 3.7, 0, 0, TAU44);
+      c.ellipse(0, 0, i % 2 ? 1.7 : 2.3, 3.7, 0, 0, TAU52);
       c.stroke();
-      c.strokeStyle = i % 4 === 1 ? CYAN2 : "#718b9d";
+      c.strokeStyle = i % 4 === 1 ? CYAN3 : "#718b9d";
       c.lineWidth = 1.3;
       c.stroke();
       c.restore();
@@ -35828,7 +39970,7 @@ function tower(c, b, t, front2, flash) {
   c.scale(towerWidth, 1);
   if (b.mimicEncounter) {
     plate3(c, [[-3, -44], [3, -44], [4, 27], [0, 38], [-4, 27]], "#304758");
-    c.strokeStyle = CYAN2;
+    c.strokeStyle = CYAN3;
     c.lineWidth = 1.2;
     c.beginPath();
     c.moveTo(0, -40);
@@ -35845,24 +39987,24 @@ function tower(c, b, t, front2, flash) {
     c.restore();
     return;
   }
-  const polygon19 = [[-22, -39], [0, -46], [22, -39], [25, 24], [0, 43], [-25, 24]];
-  plate3(c, polygon19, flash ? LIGHT3 : STONE5);
+  const polygon24 = [[-22, -39], [0, -46], [22, -39], [25, 24], [0, 43], [-25, 24]];
+  plate3(c, polygon24, flash ? LIGHT7 : STONE6);
   plate3(c, [[-22, -39], [0, -46], [0, 43], [-25, 24]], "#617c8c", false);
-  plate3(c, [[0, -46], [22, -39], [25, 24], [0, 43]], DARK4, false);
+  plate3(c, [[0, -46], [22, -39], [25, 24], [0, 43]], DARK7, false);
   plate3(c, [[-15, -32], [0, -37], [15, -32], [17, 20], [0, 32], [-17, 20]], "#263f51");
-  plate3(c, [[-3, -27], [3, -27], [3, -6], [12, -6], [12, 0], [3, 0], [3, 22], [-3, 22], [-3, 0], [-12, 0], [-12, -6], [-3, -6]], dazed ? "#4c7c90" : CYAN2);
+  plate3(c, [[-3, -27], [3, -27], [3, -6], [12, -6], [12, 0], [3, 0], [3, 22], [-3, 22], [-3, 0], [-12, 0], [-12, -6], [-3, -6]], dazed ? "#4c7c90" : CYAN3);
   plate3(c, [[-22, -17], [22, -17], [23, -10], [-23, -10]], "#869eaa");
   plate3(c, [[-24, 16], [24, 16], [24, 22], [-24, 22]], "#536c80");
   for (let i = 0; i < 3; i++) {
     const x2 = (i - 1) * 10;
-    plate3(c, [[x2 - 4, -34], [x2 + 4, -34], [x2 + 4, -27], [x2 - 4, -27]], survivors.includes(i) ? CYAN2 : "#11151a");
+    plate3(c, [[x2 - 4, -34], [x2 + 4, -34], [x2 + 4, -27], [x2 - 4, -27]], survivors.includes(i) ? CYAN3 : "#11151a");
   }
   rune(c, 0, -22, 0.65);
-  c.strokeStyle = INK34;
+  c.strokeStyle = INK41;
   c.lineWidth = 1.26 / s;
   c.beginPath();
-  c.moveTo(...polygon19[0]);
-  for (const p of polygon19.slice(1)) c.lineTo(...p);
+  c.moveTo(...polygon24[0]);
+  for (const p of polygon24.slice(1)) c.lineTo(...p);
   c.closePath();
   c.stroke();
   c.restore();
@@ -35872,37 +40014,37 @@ function drawAegisGoliath(c, actor, tick, flash = false) {
   if (b?.bossDefinitionId !== "aegis_goliath") return false;
   c.save();
   c.translate(actor.position.x, actor.position.y);
-  const death = actor.alive ? 0 : clamp24((actor.deathAge ?? 0) / 36), hover = Math.sin(tick * 0.075) * 3.8;
+  const death = actor.alive ? 0 : clamp31((actor.deathAge ?? 0) / 36), hover = Math.sin(tick * 0.075) * 3.8;
   c.globalAlpha = 1 - death * 0.85;
   c.fillStyle = "#10192555";
   c.beginPath();
-  c.ellipse(0, 9, 37 + hover * 0.35, 15 + hover * 0.1, 0, 0, TAU44);
+  c.ellipse(0, 9, 37 + hover * 0.35, 15 + hover * 0.1, 0, 0, TAU52);
   c.fill();
-  const pending = b.pendingAction, p = pending ? clamp24((tick - pending.startedTick) / (pending.resolvesTick - pending.startedTick)) : 0;
+  const pending = b.pendingAction, p = pending ? clamp31((tick - pending.startedTick) / (pending.resolvesTick - pending.startedTick)) : 0;
   const enraged = b.mimicEncounter && b.mimicEncounter.enragedTick !== null, pulse = 1 + Math.sin(tick * (enraged ? 0.21 : 0.11)) * (enraged ? 0.12 : 0.06) + (b.actionState === "recalling" ? 0.18 : 0);
   const impactAge = tick - (b.lastAction?.resolvedTick ?? -100), slamDrop = b.lastAction?.ability === "magnetic_pull" && impactAge >= 0 && impactAge < 18 ? Math.sin(impactAge / 18 * Math.PI) * 10 : 0;
   c.translate(0, -30 + hover + death * 16 + slamDrop - (pending?.ability === "magnetic_pull" ? p * 5 : 0));
   if (b.phase === 1 && !b.mimicEncounter) for (let i = 0; i < 3; i++) {
-    const a = tick / 60 + i * TAU44 / 3;
+    const a = tick / 60 + i * TAU52 / 3;
     if (Math.sin(a) < 0) shield2(c, Math.cos(a) * 55, Math.sin(a) * 16 - 3, 14, tick / 80 + i * 0.2, flash);
   }
   tower(c, b, tick, false, flash);
-  chains(c, tick);
+  chains2(c, tick);
   const body4 = [[0, -24], [20, -22], [26, -2], [0, 28], [-26, -2], [-20, -22]];
-  plate3(c, body4, flash ? LIGHT3 : STONE5);
-  plate3(c, [[0, -24], [-20, -22], [-26, -2], [-4, -8]], flash ? LIGHT3 : "#698695", false);
-  plate3(c, [[0, -24], [20, -22], [26, -2], [4, -8]], flash ? LIGHT3 : "#35485c", false);
-  plate3(c, [[-26, -2], [0, 28], [0, 9], [-4, -8]], flash ? LIGHT3 : "#344557", false);
-  plate3(c, [[26, -2], [0, 28], [0, 9], [4, -8]], flash ? LIGHT3 : "#1b2b3d", false);
-  plate3(c, [[0, -18], [12, -6], [0, 12], [-12, -6]], INK34);
+  plate3(c, body4, flash ? LIGHT7 : STONE6);
+  plate3(c, [[0, -24], [-20, -22], [-26, -2], [-4, -8]], flash ? LIGHT7 : "#698695", false);
+  plate3(c, [[0, -24], [20, -22], [26, -2], [4, -8]], flash ? LIGHT7 : "#35485c", false);
+  plate3(c, [[-26, -2], [0, 28], [0, 9], [-4, -8]], flash ? LIGHT7 : "#344557", false);
+  plate3(c, [[26, -2], [0, 28], [0, 9], [4, -8]], flash ? LIGHT7 : "#1b2b3d", false);
+  plate3(c, [[0, -18], [12, -6], [0, 12], [-12, -6]], INK41);
   c.save();
   c.translate(0, -4);
   c.scale(pulse, pulse);
-  plate3(c, [[0, -10], [7, -3], [4, 6], [0, 10], [-4, 6], [-7, -3]], flash ? "#ffffff" : b.mimicEncounter?.enragedTick !== null && b.mimicEncounter ? "#ff995b" : CYAN2);
+  plate3(c, [[0, -10], [7, -3], [4, 6], [0, 10], [-4, 6], [-7, -3]], flash ? "#ffffff" : b.mimicEncounter?.enragedTick !== null && b.mimicEncounter ? "#ff995b" : CYAN3);
   plate3(c, [[0, -10], [0, 10], [-4, 6], [-7, -3]], b.mimicEncounter?.enragedTick !== null && b.mimicEncounter ? "#ffe5a2" : "#a8fff3", false);
   plate3(c, [[0, -7], [3, -2], [0, 5], [-3, -2]], "#eafffa", false);
   c.restore();
-  c.strokeStyle = CYAN2;
+  c.strokeStyle = CYAN3;
   c.lineWidth = 1.4;
   c.lineCap = "round";
   c.beginPath();
@@ -35919,18 +40061,18 @@ function drawAegisGoliath(c, actor, tick, flash = false) {
     c.lineWidth = 1.5;
     c.globalAlpha = 0.5 + p * 0.4;
     c.beginPath();
-    c.arc(0, -4, 15 + Math.sin(tick * 0.2) * 2, 0, TAU44);
+    c.arc(0, -4, 15 + Math.sin(tick * 0.2) * 2, 0, TAU52);
     c.stroke();
     c.globalAlpha = 1 - death * 0.85;
   }
   if (b.phase === 1 && !b.mimicEncounter) for (let i = 0; i < 3; i++) {
-    const a = tick / 60 + i * TAU44 / 3;
+    const a = tick / 60 + i * TAU52 / 3;
     if (Math.sin(a) >= 0) shield2(c, Math.cos(a) * 55, Math.sin(a) * 16 - 3, 14, tick / 80 + i * 0.2, flash);
   }
   tower(c, b, tick, true, flash);
   if (b.actionState === "dazed") {
     for (let i = 0; i < 3; i++) {
-      const a = tick * 0.09 + i * TAU44 / 3;
+      const a = tick * 0.09 + i * TAU52 / 3;
       plate3(c, [[0, -3], [1, -1], [3, 0], [1, 1], [0, 3], [-1, 1], [-3, 0], [-1, -1]].map(([x, y]) => [x + Math.cos(a) * 20, y - 71 + Math.sin(a) * 5]), "#fff0a6");
     }
   }
@@ -35943,7 +40085,7 @@ function drawAegisProjectiles(c, model, tick) {
     c.translate(p.position.x, p.position.y);
     c.fillStyle = "#111b2a44";
     c.beginPath();
-    c.ellipse(0, 7, 10, 4, 0, 0, TAU44);
+    c.ellipse(0, 7, 10, 4, 0, 0, TAU52);
     c.fill();
     const n = Math.hypot(p.velocity.x, p.velocity.y) || 1;
     c.strokeStyle = "#65e6ec88";
@@ -35959,7 +40101,7 @@ function drawAegisProjectiles(c, model, tick) {
 function drawAegisBossHud(c, canvas, model) {
   const actor = Object.values(model.entitiesById).find((a) => a.alive && a.boss?.bossDefinitionId === "aegis_goliath");
   if (!actor) return false;
-  const width = Math.min(340, canvas.width - 32), x = (canvas.width - width) / 2, y = 12, ratio = clamp24(actor.hp?.m !== void 0 ? actor.hp.m / Math.max(1e-12, actor.maxHp.m) : presentCombat(actor.hp) / Math.max(1, presentCombat(actor.maxHp))), b = actor.boss;
+  const width = Math.min(340, canvas.width - 32), x = (canvas.width - width) / 2, y = 12, ratio = clamp31(actor.hp?.m !== void 0 ? actor.hp.m / Math.max(1e-12, actor.maxHp.m) : presentCombat(actor.hp) / Math.max(1, presentCombat(actor.maxHp))), b = actor.boss;
   c.save();
   c.fillStyle = "#101827e8";
   c.fillRect(x, y, width, 42);
@@ -35979,12 +40121,12 @@ function drawAegisBossHud(c, canvas, model) {
   const names = { magnetic_pull: "MAGNETIC PULL \u2192 SLAM", boomerang_shield: "RETURNING SHIELDS", shield_bash: "SHIELD BASH" };
   c.fillText(b.actionState === "recalling" ? "RECALLING MIMICS \xB7 FINISH THE WOUNDED" : b.mimicEncounter && b.mimicEncounter.enragedTick !== null ? b.pendingAction ? "ENRAGED \xB7 " + names[b.pendingAction.ability] : "ENRAGED \xB7 CORE EXPOSED" : b.actionState === "dazed" ? "DAZED \xB7 SHIELD DOWN" : b.pendingAction ? names[b.pendingAction.ability] : b.phase === 2 ? "TOWER SHIELD \xB7 FLANK TO STRIKE" : "ORBITAL AEGIS", canvas.width / 2, y + 37);
   if (b.actionState === "recalling" && b.mimicEncounter) {
-    const p = clamp24((model.tick - b.mimicEncounter.recallStartedTick) / 120);
+    const p = clamp31((model.tick - b.mimicEncounter.recallStartedTick) / 120);
     c.fillStyle = "#ffc67b";
     c.fillRect(x + 10, y + 40, (width - 20) * p, 2);
   }
   if (b.mimicEncounter && b.mimicEncounter.fusedOrdinals.length) {
-    const ratio2 = clamp24(presentCombat(b.mimicEncounter.towerHp) / Math.max(1, presentCombat(b.mimicEncounter.towerMaxHp)));
+    const ratio2 = clamp31(presentCombat(b.mimicEncounter.towerHp) / Math.max(1, presentCombat(b.mimicEncounter.towerMaxHp)));
     c.fillStyle = "#101827";
     c.fillRect(x, y + 43, width, 17);
     c.fillStyle = "#9fe6e4";
@@ -36199,28 +40341,29 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
     depthItems.push(...bossPolishDepthItems(bossPolishView, model.tick, viewport));
     drawBrimstoneGround(ctx, brimstoneView, model.tick);
     drawRecoveredBossGroundV1(ctx, model, model.tick);
+    depthItems.push(...archivedBossDepthItems(model, model.tick, viewport));
     depthItems.push(...brimstoneEffectDepthItems(brimstoneView, model.tick, viewport));
     drawAegisMimicTethers(ctx, model, model.tick);
     groundItems.draw(ctx, model, time, viewport, equipmentArt);
     for (const shot of model.hostileProjectiles ?? []) depthItems.push(depthItem({ id: "hostile-shot/" + shot.id, anchorX: shot.position.x, anchorY: shot.position.y + 4.5, draw: (ctx2) => drawOrdinaryHostileProjectile(ctx2, shot, model.tick) }));
     const liveBolts = new Set((model.bolts ?? []).map((b) => b.id));
     for (const id of boltOrigins.keys()) if (!liveBolts.has(id)) boltOrigins.delete(id);
-    for (const bolt of model.bolts ?? []) {
-      const source2 = model.entitiesById[bolt.sourceId], pose = heroPoses[bolt.sourceId];
-      if (!boltOrigins.has(bolt.id) && source2 && pose) {
+    for (const bolt2 of model.bolts ?? []) {
+      const source2 = model.entitiesById[bolt2.sourceId], pose = heroPoses[bolt2.sourceId];
+      if (!boltOrigins.has(bolt2.id) && source2 && pose) {
         const focus = tomeFocusPosition(source2, pose.facing, time, pose.primary, model.tick);
-        boltOrigins.set(bolt.id, { x: focus.x - bolt.position.x, y: focus.y - bolt.position.y, frames: bolt.frames });
+        boltOrigins.set(bolt2.id, { x: focus.x - bolt2.position.x, y: focus.y - bolt2.position.y, frames: bolt2.frames });
       }
-      const offset2 = boltOrigins.get(bolt.id), weight2 = offset2 ? Math.max(0, 1 - (offset2.frames - bolt.frames) / 5) : 0;
+      const offset2 = boltOrigins.get(bolt2.id), weight2 = offset2 ? Math.max(0, 1 - (offset2.frames - bolt2.frames) / 5) : 0;
       ctx.save();
-      const drawBolt = bolt.delivery === "fire" ? drawFireProjectile : (ctx2, p, time2) => drawElementProjectile(ctx2, p, time2, bolt.delivery);
-      drawBolt(ctx, { x: bolt.position.x + (offset2?.x ?? 0) * weight2, y: bolt.position.y + (offset2?.y ?? 0) * weight2, vx: bolt.direction.x, vy: bolt.direction.y }, time);
+      const drawBolt = bolt2.delivery === "fire" ? drawFireProjectile : (ctx2, p, time2) => drawElementProjectile(ctx2, p, time2, bolt2.delivery);
+      drawBolt(ctx, { x: bolt2.position.x + (offset2?.x ?? 0) * weight2, y: bolt2.position.y + (offset2?.y ?? 0) * weight2, vx: bolt2.direction.x, vy: bolt2.direction.y }, time);
       ctx.restore();
     }
     drawBerserkerTransfersD12_4H_A(ctx, model, model.tick);
     lastRenderedEntities = 0;
     for (const [id, drawn] of Object.entries(model.entitiesById)) {
-      const margin2 = ["aegis_goliath", "overlord_iron_vault"].includes(drawn.boss?.bossDefinitionId) ? 128 : 64;
+      const margin2 = ["aegis_goliath", "overlord_iron_vault", "corrosive_abomination", "void_overseer"].includes(drawn.boss?.bossDefinitionId) ? 152 : 64;
       if (seamless && (drawn.position.x < viewport.x - margin2 || drawn.position.y < viewport.y - margin2 || drawn.position.x > viewport.x + viewport.width + margin2 || drawn.position.y > viewport.y + viewport.height + margin2)) continue;
       lastRenderedEntities++;
       const reaction = drawn.alive ? feedback.reaction(id, time) : null;
@@ -36354,7 +40497,7 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
         renderedEntities: lastRenderedEntities
       } : {}
     }),
-    hit: (point4, model) => prompt.hit(point4.x, point4.y, spaceKey(model), layout, ctx),
+    hit: (point9, model) => prompt.hit(point9.x, point9.y, spaceKey(model), layout, ctx),
     replaceContext: () => {
       invalidate("context-restored");
       ctx = canvas.getContext("2d");
@@ -36531,9 +40674,9 @@ function createWorldInput({ canvas, environment, renderer, profile, adapter, rea
     );
     if (joystick) return send(joystick.dx / 44, joystick.dy / 44, model);
     if (cursor) {
-      const actor = selectedActor(model), dx = cursor.x - actor.position.x, dy = cursor.y - actor.position.y, distance7 = Math.hypot(dx, dy);
-      if (distance7 <= 4) return send(0, 0, model);
-      return send(dx / distance7, dy / distance7, model);
+      const actor = selectedActor(model), dx = cursor.x - actor.position.x, dy = cursor.y - actor.position.y, distance8 = Math.hypot(dx, dy);
+      if (distance8 <= 4) return send(0, 0, model);
+      return send(dx / distance8, dy / distance8, model);
     }
     send(0, 0, model);
   }
@@ -36557,11 +40700,11 @@ function createWorldInput({ canvas, environment, renderer, profile, adapter, rea
       lastIntent = "0,0";
     }
   }
-  function point4(event) {
+  function point9(event) {
     const rect2 = canvas.getBoundingClientRect();
     return { x: (event.clientX - rect2.left) * canvas.width / rect2.width, y: (event.clientY - rect2.top) * canvas.height / rect2.height };
   }
-  function action(exitId) {
+  function action2(exitId) {
     if (isBlocked() || !exitId || !selectedActor(readModel()).alive) return false;
     clear2();
     try {
@@ -36603,9 +40746,9 @@ function createWorldInput({ canvas, environment, renderer, profile, adapter, rea
     if (isBlocked() || event.button !== 0 || !selectedActor(readModel()).alive) return;
     event.preventDefault();
     suppressedUntil = now2() + 800;
-    const p = point4(event), model = readModel(), exitId = renderer.hit(p, model);
+    const p = point9(event), model = readModel(), exitId = renderer.hit(p, model);
     if (exitId) {
-      action(exitId);
+      action2(exitId);
       actionOwners.add(event.pointerId);
       try {
         canvas.setPointerCapture(event.pointerId);
@@ -36628,7 +40771,7 @@ function createWorldInput({ canvas, environment, renderer, profile, adapter, rea
   });
   listen(canvas, "pointermove", (event) => {
     if (movementOwner !== event.pointerId) return;
-    const p = point4(event);
+    const p = point9(event);
     if (joystick) {
       const dx = p.x - joystick.x, dy = p.y - joystick.y, factor = Math.max(1, Math.hypot(dx, dy) / 44);
       Object.assign(joystick, { dx: dx / factor, dy: dy / factor });
@@ -36649,7 +40792,7 @@ function createWorldInput({ canvas, environment, renderer, profile, adapter, rea
   });
   listen(canvas, "click", (event) => {
     event.preventDefault();
-    if (now2() > suppressedUntil) action(renderer.hit(point4(event), readModel()));
+    if (now2() > suppressedUntil) action2(renderer.hit(point9(event), readModel()));
   });
   listen(environment, "blur", () => clear2());
   listen(environment.document, "visibilitychange", () => {
@@ -36666,7 +40809,7 @@ function createWorldInput({ canvas, environment, renderer, profile, adapter, rea
   return Object.freeze({
     refresh,
     clear: clear2,
-    activate: action,
+    activate: action2,
     destroy: () => {
       clear2();
       listeners.forEach((remove) => remove());
@@ -36685,7 +40828,7 @@ function createWorldInput({ canvas, environment, renderer, profile, adapter, rea
 var EMPTY = Object.freeze({ refresh() {
 }, busy: () => false, destroy() {
 } });
-var distance6 = (value) => value === null ? "\u2014" : `${Math.round(value / 32)} tiles`;
+var distance7 = (value) => value === null ? "\u2014" : `${Math.round(value / 32)} tiles`;
 var position = (value) => value ? `chunk ${value.chunkX},${value.chunkY} \xB7 (${value.localX.toFixed(1)}, ${value.localY.toFixed(1)})` : "\u2014";
 function createSiteNavigatorD12_4C({ document: doc, port, enabled = false, releaseInput = () => {
 } }) {
@@ -36723,7 +40866,7 @@ function createSiteNavigatorD12_4C({ document: doc, port, enabled = false, relea
       output.textContent = "Authority capability unavailable.";
       return;
     }
-    if (site) output.innerHTML = `<strong>${site.label}</strong><br>${site.siteId}<br>${site.familyId ?? site.packageId ?? "historical"}${site.tier ? ` \xB7 ${site.tier}` : ""}${site.floorCount ? ` \xB7 ${site.floorCount} floor${site.floorCount === 1 ? "" : "s"}` : ""}${site.reviewEncounter ? ` \xB7 ${site.reviewEncounter.toUpperCase()} REVIEW \xB7 FLOOR ${site.reviewFloor}` : ""}${site.runEpisode ? ` \xB7 episode ${site.runEpisode} ${site.runStatus}` : ""}${site.finale ? `<br>Finale: ${site.finale.sizeTier.toUpperCase()} \xB7 ${(site.finale.variantId ?? site.finale.finaleClass).replaceAll("-", " ").toUpperCase()} \xB7 ${site.finale.bindingStatus}<br>${site.finale.variantId === "boss-with-elites" ? `Boss ${site.finale.bossDefinitionId} \xB7 elite ${site.finale.eliteFamily} \xB7 affix ${site.finale.eliteAffixId}<br>First materialized episode ${site.finale.firstMaterializedEpisode} \xB7 reward ${site.finale.rewardBalanceStatus?.toUpperCase() ?? "UNBOUND"}<br>` : ""}${site.finale.eliteAffixId && site.finale.variantId !== "boss-with-elites" ? `Affix ${site.finale.eliteAffixId.replaceAll("_", " ").toUpperCase()} \xB7 elite ${site.finale.eliteFamily} \xB7 escort ${site.finale.escortFamily}<br>` : ""}Floor ${site.finale.finalFloorIndex + 1} (${site.finale.finalFloorId}) \xB7 ${site.finale.chamberId}${site.finale.bindingStatus === "BOUND" ? ` \xB7 episode ${site.finale.currentEpisodeMaterialized ? "MATERIALIZED" : "PENDING RESET"}` : ""}` : ""}<br>${position(site.approachAnchor)} \xB7 ${distance6(site.distance)}<br>${site.bound ? "bound" : "unbound"} \xB7 ${site.reserved ? "reserved" : "historical"} \xB7 ${site.completed ? "completed" : "uncompleted"} \xB7 ${site.resident ? "resident" : "cold"}${site.reset && !site.reset.eligible ? `<br>Reset unavailable: ${site.reset.reasons.join(", ")}` : ""}${message ? `<br><span class="${message.startsWith("Error") ? "site-nav-error" : ""}">${message}</span>` : ""}`;
+    if (site) output.innerHTML = `<strong>${site.label}</strong><br>${site.siteId}<br>${site.familyId ?? site.packageId ?? "historical"}${site.tier ? ` \xB7 ${site.tier}` : ""}${site.floorCount ? ` \xB7 ${site.floorCount} floor${site.floorCount === 1 ? "" : "s"}` : ""}${site.reviewEncounter ? ` \xB7 ${site.reviewEncounter.toUpperCase()} REVIEW \xB7 FLOOR ${site.reviewFloor}` : ""}${site.runEpisode ? ` \xB7 episode ${site.runEpisode} ${site.runStatus}` : ""}${site.finale ? `<br>Finale: ${site.finale.sizeTier.toUpperCase()} \xB7 ${(site.finale.variantId ?? site.finale.finaleClass).replaceAll("-", " ").toUpperCase()} \xB7 ${site.finale.bindingStatus}<br>${site.finale.variantId === "boss-with-elites" ? `Boss ${site.finale.bossDefinitionId} \xB7 elite ${site.finale.eliteFamily} \xB7 affix ${site.finale.eliteAffixId}<br>First materialized episode ${site.finale.firstMaterializedEpisode} \xB7 reward ${site.finale.rewardBalanceStatus?.toUpperCase() ?? "UNBOUND"}<br>` : ""}${site.finale.eliteAffixId && site.finale.variantId !== "boss-with-elites" ? `Affix ${site.finale.eliteAffixId.replaceAll("_", " ").toUpperCase()} \xB7 elite ${site.finale.eliteFamily} \xB7 escort ${site.finale.escortFamily}<br>` : ""}Floor ${site.finale.finalFloorIndex + 1} (${site.finale.finalFloorId}) \xB7 ${site.finale.chamberId}${site.finale.bindingStatus === "BOUND" ? ` \xB7 episode ${site.finale.currentEpisodeMaterialized ? "MATERIALIZED" : "PENDING RESET"}` : ""}` : ""}<br>${position(site.approachAnchor)} \xB7 ${distance7(site.distance)}<br>${site.bound ? "bound" : "unbound"} \xB7 ${site.reserved ? "reserved" : "historical"} \xB7 ${site.completed ? "completed" : "uncompleted"} \xB7 ${site.resident ? "resident" : "cold"}${site.reset && !site.reset.eligible ? `<br>Reset unavailable: ${site.reset.reasons.join(", ")}` : ""}${message ? `<br><span class="${message.startsWith("Error") ? "site-nav-error" : ""}">${message}</span>` : ""}`;
     else output.textContent = `No authoritative navigable site matches ${filter.options[filter.selectedIndex].text}.`;
     const d = nav.diagnostics, why = Object.entries(d.rejectedByReason ?? {}).map(([k, v]) => `${k}: ${v}`).join(", ") || "none";
     valid.textContent = `Valid ${filter.options[filter.selectedIndex].text}: ${list.map((row2) => row2.label).join(" \xB7 ") || "none"}`;
@@ -37022,10 +41165,10 @@ function mountPlayableClient({ port, environment, nextCommandToken, capabilities
     }
     subweaponHud.refresh(model);
     primary?.refresh(model);
-    const participant = model.playersById[model.localPlayerId], progress = participant.progression;
+    const participant = model.playersById[model.localPlayerId], progress5 = participant.progression;
     const levelNotice = doc.getElementById("world-level-up");
     const painted = performanceProbe ? performanceProbe.measure("rendererTotal", () => renderer.render(model, time, input)) : renderer.render(model, time, input);
-    const displayProgress = painted.xpDisplay ?? progress;
+    const displayProgress = painted.xpDisplay ?? progress5;
     if (displayProgress) {
       const identity2 = `${model.context.campaignId}/${model.localPlayerId}`;
       if (observedProgression?.identity === identity2 && progressionBigInt(displayProgress.level) > progressionBigInt(observedProgression.level)) {
@@ -37056,13 +41199,13 @@ function mountPlayableClient({ port, environment, nextCommandToken, capabilities
       const hero = model.entitiesById[model.playersById[model.localPlayerId].entityId];
       const progressHud = doc.getElementById("world-progression");
       if (progressHud) {
-        progressHud.hidden = !progress;
-        if (progress) {
+        progressHud.hidden = !progress5;
+        if (progress5) {
           setText(doc.getElementById("world-level"), `Lv ${progressionText(displayProgress.level)}`);
           setText(doc.getElementById("world-xp"), displayProgress.capped ? "MAX" : `${progressionText(displayProgress.current)}/${progressionText(displayProgress.required)} XP`);
-          const bar = doc.getElementById("world-xp-bar"), value = displayProgress.value ?? (progress.capped ? 100 : 100 * integerRatio(integerWire(progress.current), integerWire(progress.required)));
+          const bar = doc.getElementById("world-xp-bar"), value = displayProgress.value ?? (progress5.capped ? 100 : 100 * integerRatio(integerWire(progress5.current), integerWire(progress5.required)));
           if (bar.value !== value) bar.value = value;
-          bar.setAttribute("aria-label", progress.capped ? "Maximum level" : `Level ${progressionText(progress.level)}: ${progressionText(progress.current)} of ${progressionText(progress.required)} XP`);
+          bar.setAttribute("aria-label", progress5.capped ? "Maximum level" : `Level ${progressionText(progress5.level)}: ${progressionText(progress5.current)} of ${progressionText(progress5.required)} XP`);
           progressHud.title = `Max HP ${formatLarge(participant.stats.maxHp)} \xB7 Attack ${formatLarge(participant.stats.attack)} \xB7 Defense ${formatLarge(participant.stats.defense)}`;
         }
       }
@@ -37088,7 +41231,7 @@ function mountPlayableClient({ port, environment, nextCommandToken, capabilities
       cameraZoom: String(painted.camera.zoom),
       phase: model.persistence.phase,
       primary: JSON.stringify(model.primary?.actorsById[model.playersById[model.localPlayerId].entityId] ?? null),
-      progression: JSON.stringify(progress ?? null),
+      progression: JSON.stringify(progress5 ?? null),
       entities: JSON.stringify(model.entitiesById),
       encounter: JSON.stringify(model.encounter ?? null),
       spaceId: model.space.spaceId,
@@ -37202,13 +41345,13 @@ function createLocalLaunchPolicy({ launcherStore, url, launcherKey = WORLD_LOCAL
     return Object.freeze({ source: remembered ? "remembered" : "fresh", resume: remembered });
   }
   function remember({ campaignId, playerId }) {
-    const record = launcherReference({ version: 1, campaignId, controllerId: playerId });
+    const record2 = launcherReference({ version: 1, campaignId, controllerId: playerId });
     if (!launcherStore) return false;
     try {
       launcherStore.setItem(launcherKey, JSON.stringify({
         version: WORLD_LOCAL_LAUNCHER_VERSION,
-        campaignId: record.campaignId,
-        controllerId: record.playerId
+        campaignId: record2.campaignId,
+        controllerId: record2.playerId
       }));
     } catch (error) {
       throw new Error("World launcher storage unavailable", { cause: error });
@@ -37259,7 +41402,7 @@ function createBrowserPerformanceProbe({ now: now2, enabled, initiallyRecording 
     values.push(value);
     if (values.length > WINDOW) values.shift();
   };
-  function record(name, duration) {
+  function record2(name, duration) {
     if (!recording) return;
     const at2 = now2(), metric = metrics.get(name) ?? { count: 0, totalMs: 0, maxMs: 0, totalOver33Ms: 0, totalOver50Ms: 0, totalOver100Ms: 0, recent: [], intervals: [], lastAt: null };
     if (metric.lastAt !== null) push(metric.intervals, at2 - metric.lastAt);
@@ -37279,14 +41422,14 @@ function createBrowserPerformanceProbe({ now: now2, enabled, initiallyRecording 
     try {
       return operation();
     } finally {
-      record(name, now2() - start2);
+      record2(name, now2() - start2);
     }
   }
   function frame(time) {
     if (!recording) return;
     if (lastFrameTime !== null) {
       const interval = time - lastFrameTime;
-      record("frameInterval", interval);
+      record2("frameInterval", interval);
     }
     lastFrameTime = time;
   }
@@ -37353,7 +41496,7 @@ function createBrowserPerformanceProbe({ now: now2, enabled, initiallyRecording 
       gauges: Object.freeze({ ...gauges })
     });
   }
-  return Object.freeze({ measure, record, frame, sample, setGauge, start, stop: stop2, isRecording: () => recording, snapshot });
+  return Object.freeze({ measure, record: record2, frame, sample, setGauge, start, stop: stop2, isRecording: () => recording, snapshot });
 }
 
 // src/client/diagnostic_download_d9.js
@@ -37401,7 +41544,7 @@ function createDiagnosticDownloadD9({ environment, document, runtimeId, readPayl
 }
 
 // src/client/activity_save_bridge.js
-function createActivitySaveBridge(worker, { record = () => {
+function createActivitySaveBridge(worker, { record: record2 = () => {
 }, now: now2 = null, expectedDatabaseName = null } = {}) {
   let sequence = 0, pending = null, failed = false, ready = false;
   const post = (packet) => {
@@ -37410,7 +41553,7 @@ function createActivitySaveBridge(worker, { record = () => {
     try {
       return worker.postMessage(packet);
     } finally {
-      record("saveWorkerHandoff", now2() - start);
+      record2("saveWorkerHandoff", now2() - start);
     }
   };
   worker.onmessage = ({ data }) => {
@@ -37430,7 +41573,7 @@ function createActivitySaveBridge(worker, { record = () => {
     if (!pending || data.id !== pending.id) return;
     const request = pending;
     pending = null;
-    for (const entry of data.timings ?? []) record(entry.name, entry.ms);
+    for (const entry of data.timings ?? []) record2(entry.name, entry.ms);
     if (data.error) request.reject(new Error(data.error));
     else request.resolve(data.result);
   };
@@ -37458,7 +41601,7 @@ function createActivitySaveBridge(worker, { record = () => {
 }
 
 // src/client/world_worker_bridge_d9.js
-function createWorldWorkerBridgeD9(worker, { record = () => {
+function createWorldWorkerBridgeD9(worker, { record: record2 = () => {
 }, diagnostics = false, now: now2 = () => performance.now(), expectedDatabaseName = null } = {}) {
   const queue = [], requestDiagnostics = {}, requestCounts = {};
   let active = null, ready = false, closed = false, sequence = 0;
@@ -37474,7 +41617,7 @@ function createWorldWorkerBridgeD9(worker, { record = () => {
     try {
       const at2 = now2();
       worker.postMessage(active.packet);
-      record("worker.postMessage", now2() - at2);
+      record2("worker.postMessage", now2() - at2);
     } catch (e) {
       fail(e);
     }
@@ -37493,8 +41636,8 @@ function createWorldWorkerBridgeD9(worker, { record = () => {
     const job = active;
     active = null;
     for (const t of data.timings ?? []) {
-      record(t.name, t.ms);
-      if (t.name === "worldWorkerTotal") record("worker." + job.packet.kind.replace("world.", ""), t.ms);
+      record2(t.name, t.ms);
+      if (t.name === "worldWorkerTotal") record2("worker." + job.packet.kind.replace("world.", ""), t.ms);
     }
     if (data.error) {
       const error = new Error(data.error);
@@ -37515,7 +41658,7 @@ function createWorldWorkerBridgeD9(worker, { record = () => {
       for (const [key2, value] of Object.entries(request)) fields[key2] = encoder.encode(JSON.stringify(value)).byteLength;
       const bytes = encoder.encode(JSON.stringify(request)).byteLength;
       requestDiagnostics[kind] = { bytes, fields, at: at2, sample: requestCounts[kind] };
-      record("worker.requestInspect", now2() - at2);
+      record2("worker.requestInspect", now2() - at2);
     }
     return new Promise((resolve, reject) => {
       queue.push({ packet: { id: ++sequence, kind, request }, resolve, reject });
@@ -37596,12 +41739,12 @@ function revealNavigationD9(state) {
     for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) {
       if (dx * dx + dy * dy > radius * radius) continue;
       const x = tx + BigInt(dx), y = ty + BigInt(dy), cx = floorDiv(x, 32n), cy = floorDiv(y, 26n), lx = Number(x - cx * 32n), ly = Number(y - cy * 26n), chunkX = addressWire(cx), chunkY = addressWire(cy);
-      const chunk = chunks.get(chunkX + "," + chunkY);
+      const chunk2 = chunks.get(chunkX + "," + chunkY);
       let tile, biome = "o", region = null;
-      if (chunk) {
-        tile = chunk.visual.terrain[ly][lx];
-        biome = chunk.visual.biomes?.[ly]?.[lx] ?? { woodland: "w", "rocky-uplands": "r", marsh: "m" }[chunk.region.biome];
-        region = chunk.region;
+      if (chunk2) {
+        tile = chunk2.visual.terrain[ly][lx];
+        biome = chunk2.visual.biomes?.[ly]?.[lx] ?? { woodland: "w", "rocky-uplands": "r", marsh: "m" }[chunk2.region.biome];
+        region = chunk2.region;
       } else if (originChunks.has(chunkX + "," + chunkY) && x >= 0n && y >= 0n && x < BigInt(origin.visual.terrain[0].length) && y < BigInt(origin.visual.terrain.length)) {
         tile = origin.visual.terrain[Number(y)][Number(x)];
         if (tile === "v") continue;
@@ -37620,11 +41763,11 @@ function revealNavigationD9(state) {
         row2 = old2 ? { ...old2, tiles: old2.tiles.split(""), markers: [...old2.markers] } : { playerId: p.playerId, spaceInstanceId: state.overworldInstanceId, chunkX, chunkY, tiles: Array(832).fill("?"), region: copyWire(region), markers: [] };
         edits.set(id, row2);
       }
-      row2.tiles[ly * 32 + lx] = ["planned-world-shoreline-v2", "planned-world-water-v3"].includes(w.plannedWorld?.version) && chunk?.visual.route?.mapFeatures?.[ly]?.[lx] !== "?" && chunk?.visual.route?.mapFeatures?.[ly]?.[lx] ? chunk.visual.route.mapFeatures[ly][lx] : !["planned-world-shoreline-v2", "planned-world-water-v3"].includes(w.plannedWorld?.version) && ["p", "r", "H", "V"].includes(tile) ? "p" : w.plannedWorld && ["O", "W", "L"].includes(tile) ? tile : biome;
+      row2.tiles[ly * 32 + lx] = ["planned-world-shoreline-v2", "planned-world-water-v3"].includes(w.plannedWorld?.version) && chunk2?.visual.route?.mapFeatures?.[ly]?.[lx] !== "?" && chunk2?.visual.route?.mapFeatures?.[ly]?.[lx] ? chunk2.visual.route.mapFeatures[ly][lx] : !["planned-world-shoreline-v2", "planned-world-water-v3"].includes(w.plannedWorld?.version) && ["p", "r", "H", "V"].includes(tile) ? "p" : w.plannedWorld && ["O", "W", "L"].includes(tile) ? tile : biome;
       const chunkKey = chunkX + "," + chunkY;
       let nearby = markCache.get(chunkKey);
       if (!nearby) {
-        nearby = chunk ? chunk.sites.flatMap((s) => {
+        nearby = chunk2 ? chunk2.sites.flatMap((s) => {
           const truth = siteTruth.byId[s.siteId];
           return truth?.navigable ? [{ id: s.siteId, label: truth.bound ? truth.label : "Unidentified Woodland Site", kind: "site", x: s.entrance.localX, y: s.entrance.localY }] : [];
         }) : manifest.sites.flatMap((s) => siteTruth.byId[s.locationId]?.navigable ? [{ id: s.locationId, label: s.properName ?? s.label, kind: "site", x: s.position.x - Number(cx) * 1024, y: s.position.y - Number(cy) * 832 }] : []).concat(manifest.settlements.flatMap((s) => siteTruth.byId[s.settlementId]?.navigable ? [{ id: s.settlementId, label: s.label, kind: "settlement", x: manifest.start.position.x - Number(cx) * 1024, y: manifest.start.position.y - Number(cy) * 832 }] : []));
@@ -37798,7 +41941,7 @@ function createPagedWorldAuthorityD9({ initialState, publication, task, measure 
 // src/shared/contracts/world_patch_d9.js
 var same8 = (a, b) => canonicalStringify(a) === canonicalStringify(b);
 var transferRoots = ["d9World", "entitiesById", "groupsById", "encounterEconomy", "spacesByInstanceId", "playersById", "hostileCombat"];
-var revisionGuardedBulkPath = (path4) => path4[0] === "d9World" && path4[1] === "runtime" && ["chunks", "groups", "resources"].includes(path4[2]) || path4[0] === "spacesByInstanceId" && path4.at(-2) === "collision" && path4.at(-1) === "pages";
+var revisionGuardedBulkPath = (path7) => path7[0] === "d9World" && path7[1] === "runtime" && ["chunks", "groups", "resources"].includes(path7[2]) || path7[0] === "spacesByInstanceId" && path7.at(-2) === "collision" && path7.at(-1) === "pages";
 function applyWorldTransferPatchD9(state, patch) {
   closedRecord(patch, ["version", "campaignId", "runtimeRevision", "frames", "revisions", "releasedGroupIds", "placements", "coldGroups", "changes"]);
   requireContract(patch.version === "world-transfer-patch-d9-v1" && patch.campaignId === state.campaign.campaignId && patch.runtimeRevision === state.d9World.runtime.revision && same8(patch.frames, state.d9World.runtime.frames), "World transfer campaign/frame changed during preparation");
@@ -37809,11 +41952,11 @@ function applyWorldTransferPatchD9(state, patch) {
     closedRecord(placement, ["groupId", "anchor", "positions", "renewal"]);
     requireContract(placement.positions.length === 2 || hasWorldCombat(state) && placement.positions.length >= 6 && placement.positions.length <= 12, "Prepared placement composition changed");
     const participants = Object.values(state.playersById).map((p) => state.entitiesById[p.entityId]).filter((a) => a.residency.spaceInstanceId === state.overworldInstanceId).map((a) => ({ alive: a.alive, position: localFramePositionD9(a.position, state.d9World.runtime.frames) }));
-    const distance7 = (a, b) => {
+    const distance8 = (a, b) => {
       const q = relativeWorldPosition(a, b, 4);
       return q ? Math.hypot(q.x - b.localX, q.y - b.localY) : Infinity;
     };
-    requireContract(participants.some((p) => p.alive && distance7(p.position, placement.anchor) <= D9_PROFILE.prepareRadius) && placement.positions.every((q) => participants.every((p) => distance7(q, p.position) >= D9_PROFILE.placementSafetyRadius)), "Participant approach/safe placement changed");
+    requireContract(participants.some((p) => p.alive && distance8(p.position, placement.anchor) <= D9_PROFILE.prepareRadius) && placement.positions.every((q) => participants.every((p) => distance8(q, p.position) >= D9_PROFILE.placementSafetyRadius)), "Participant approach/safe placement changed");
   }
   const targets = [];
   for (const change of patch.changes) {
@@ -37835,14 +41978,14 @@ function applyWorldTransferPatchD9(state, patch) {
     const proposal = { ...state, entitiesById: { ...state.entitiesById }, spacesByInstanceId: { ...state.spacesByInstanceId } };
     for (const change of geometryChanges) {
       let parent = proposal;
-      const path4 = change.path;
-      for (const key2 of path4.slice(0, -1)) {
+      const path7 = change.path;
+      for (const key2 of path7.slice(0, -1)) {
         if (parent[key2] === void 0) break;
         parent[key2] = Array.isArray(parent[key2]) ? [...parent[key2]] : { ...parent[key2] };
         parent = parent[key2];
       }
-      if (change.after.exists) parent[path4.at(-1)] = change.after.value;
-      else delete parent[path4.at(-1)];
+      if (change.after.exists) parent[path7.at(-1)] = change.after.value;
+      else delete parent[path7.at(-1)];
     }
     const oldPages = state.spacesByInstanceId[state.overworldInstanceId].collision.pages, newPages = proposal.spacesByInstanceId[state.overworldInstanceId].collision.pages;
     const retained = new Set(newPages.map((p) => p.chunkX + "," + p.chunkY)), released = oldPages.filter((p) => !retained.has(p.chunkX + "," + p.chunkY));
@@ -37883,15 +42026,15 @@ function applyWorldTransferPatchD9(state, patch) {
 }
 
 // src/shared/generation/site_discovery_d9.js
-function overlayFunctionalSiteBootstrapD9(chunk, plan) {
+function overlayFunctionalSiteBootstrapD9(chunk2, plan) {
   const site = plan?.bootstrap;
-  if (!site || site.entrance.chunkX !== chunk.chunkX || site.entrance.chunkY !== chunk.chunkY) return chunk;
-  const existing = chunk.sites.find((value) => value.siteId === site.siteId);
+  if (!site || site.entrance.chunkX !== chunk2.chunkX || site.entrance.chunkY !== chunk2.chunkY) return chunk2;
+  const existing = chunk2.sites.find((value) => value.siteId === site.siteId);
   if (existing) {
     requireContract(JSON.stringify(existing) === JSON.stringify(site), "Bootstrap socket identity collision");
-    return chunk;
+    return chunk2;
   }
-  return freezeWire({ ...copyWire(chunk), sites: [...copyWire(chunk.sites), copyWire(site)].sort((a, b) => a.siteId.localeCompare(b.siteId)) });
+  return freezeWire({ ...copyWire(chunk2), sites: [...copyWire(chunk2.sites), copyWire(site)].sort((a, b) => a.siteId.localeCompare(b.siteId)) });
 }
 
 // src/shared/generation/woodland_ruin_exterior_d11_3_2.js
@@ -37909,23 +42052,23 @@ var ROWS = [
 ];
 var LEFT = -4;
 var TOP = -4;
-function overlayWoodlandRuinExteriorD11_3_2(chunk, bootstrap) {
+function overlayWoodlandRuinExteriorD11_3_2(chunk2, bootstrap) {
   const site = bootstrap?.bootstrap ?? bootstrap?.guaranteedCandidate ?? bootstrap;
-  if (!site?.entrance || site.entrance.chunkX !== chunk.chunkX || site.entrance.chunkY !== chunk.chunkY) return chunk;
+  if (!site?.entrance || site.entrance.chunkX !== chunk2.chunkX || site.entrance.chunkY !== chunk2.chunkY) return chunk2;
   const ex = Math.floor(site.entrance.localX / T3), ey = Math.floor(site.entrance.localY / T3);
   requireContract(ex + LEFT >= 0 && ex + LEFT + 9 <= 32 && ey + TOP >= 0 && ey + TOP + 8 <= 26, "Ruin exterior crosses page boundary");
-  const collision = chunk.collision.tiles.map((r) => [...r]), terrain = chunk.visual.terrain.map((r) => [...r]), biomes = chunk.visual.biomes.map((r) => [...r]), centerline = chunk.visual.route.centerline.map((r) => [...r]), clearance = chunk.visual.route.clearance.map((r) => [...r]);
+  const collision = chunk2.collision.tiles.map((r) => [...r]), terrain = chunk2.visual.terrain.map((r) => [...r]), biomes = chunk2.visual.biomes.map((r) => [...r]), centerline = chunk2.visual.route.centerline.map((r) => [...r]), clearance = chunk2.visual.route.clearance.map((r) => [...r]);
   for (let ry = 0; ry < ROWS.length; ry++) for (let rx = 0; rx < ROWS[ry].length; rx++) {
-    const x = ex + LEFT + rx, y = ey + TOP + ry, walk = ROWS[ry][rx] === "1", path4 = walk && x === ex;
+    const x = ex + LEFT + rx, y = ey + TOP + ry, walk = ROWS[ry][rx] === "1", path7 = walk && x === ex;
     collision[y][x] = walk ? "1" : "0";
-    terrain[y][x] = path4 ? "p" : "g";
+    terrain[y][x] = path7 ? "p" : "g";
     biomes[y][x] = "w";
-    centerline[y][x] = path4 ? "1" : "0";
+    centerline[y][x] = path7 ? "1" : "0";
     clearance[y][x] = walk ? "1" : "0";
   }
   const owns = (x, y) => x >= ex + LEFT && x < ex + LEFT + 9 && y >= ey + TOP && y < ey + TOP + 8;
   const intersects5 = (b) => b.x < ex + LEFT + 9 && b.x + b.width > ex + LEFT && b.y < ey + TOP + 8 && b.y + b.height > ey + TOP;
-  const blockers = chunk.visual.blockers.filter((b) => !intersects5(b));
+  const blockers = chunk2.visual.blockers.filter((b) => !intersects5(b));
   for (const b of [
     { x: ex - 4, y: ey - 4, width: 9, height: 2, detail: "rear-mass" },
     { x: ex - 4, y: ey - 2, width: 3, height: 3, detail: "left-shoulder" },
@@ -37935,8 +42078,8 @@ function overlayWoodlandRuinExteriorD11_3_2(chunk, bootstrap) {
     { x: ex - 4, y: ey + 3, width: 1, height: 1, detail: "left-root" },
     { x: ex + 4, y: ey + 3, width: 1, height: 1, detail: "right-root" }
   ]) blockers.push({ id: `ruin:${site.siteId}:${b.detail}`, ...b, kind: "ruin-exterior-masonry" });
-  const decorations = (chunk.visual.decorations ?? []).filter((d) => !owns(Math.floor(d.x), Math.floor(d.y))), anchors = chunk.anchors.filter((a) => !owns(Math.floor(a.position.x / T3), Math.floor(a.position.y / T3))), sites = chunk.sites.filter((s) => s.siteId === site.siteId || !owns(Math.floor(s.entrance.localX / T3), Math.floor(s.entrance.localY / T3)));
-  return freezeWire({ ...copyWire(chunk), collision: { ...copyWire(chunk.collision), tiles: collision.map((r) => r.join("")) }, visual: { ...copyWire(chunk.visual), terrain: terrain.map((r) => r.join("")), biomes: biomes.map((r) => r.join("")), blockers, decorations, route: { centerline: centerline.map((r) => r.join("")), clearance: clearance.map((r) => r.join("")) } }, anchors, sites, ruinExterior: { version: WOODLAND_RUIN_EXTERIOR_D11_3_2, siteId: site.siteId, entranceTile: { x: ex, y: ey }, mask: [...ROWS] } });
+  const decorations = (chunk2.visual.decorations ?? []).filter((d) => !owns(Math.floor(d.x), Math.floor(d.y))), anchors = chunk2.anchors.filter((a) => !owns(Math.floor(a.position.x / T3), Math.floor(a.position.y / T3))), sites = chunk2.sites.filter((s) => s.siteId === site.siteId || !owns(Math.floor(s.entrance.localX / T3), Math.floor(s.entrance.localY / T3)));
+  return freezeWire({ ...copyWire(chunk2), collision: { ...copyWire(chunk2.collision), tiles: collision.map((r) => r.join("")) }, visual: { ...copyWire(chunk2.visual), terrain: terrain.map((r) => r.join("")), biomes: biomes.map((r) => r.join("")), blockers, decorations, route: { centerline: centerline.map((r) => r.join("")), clearance: clearance.map((r) => r.join("")) } }, anchors, sites, ruinExterior: { version: WOODLAND_RUIN_EXTERIOR_D11_3_2, siteId: site.siteId, entranceTile: { x: ex, y: ey }, mask: [...ROWS] } });
 }
 
 // src/host/world_residency_d9.js
@@ -37964,7 +42107,7 @@ function actorFootprintPinsD9(s) {
   }
   return pinned;
 }
-function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap = null, ruinSocket = null, fortParcel = null, caveParcel = null, caveParcels = [], record = () => {
+function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap = null, ruinSocket = null, fortParcel = null, caveParcel = null, caveParcels = [], record: record2 = () => {
 }, measure = (_name, fn) => fn(), now: now2 = () => Date.now() }) {
   const LIVE_HANDOFF_CHUNKS = 2, LIVE_EVICT_CHUNKS = 2, parcelKeys = fortParcel?.pages.map((p) => chunkAddressKey(p.chunkX, p.chunkY)) ?? [];
   const prepared = /* @__PURE__ */ new Map(), evaluatedCaveRegions = new Set(caveParcels.filter((p) => p.version === WOODLAND_CAVE_FAMILY_PARCEL_D12_2).map((p) => p.regionKey));
@@ -37977,7 +42120,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
     retries++;
     progressState = "retrying";
     progressDetail = "stale-worker-geometry";
-    record("world.residencyRetry", { reason: "stale-worker-geometry" });
+    record2("world.residencyRetry", { reason: "stale-worker-geometry" });
     return true;
   };
   const capture = (kind) => authority.captureStreamState ? authority.captureStreamState(kind) : measure("streamCapture", () => borrow((s) => captureWorldStreamStateD9(s, kind)));
@@ -38019,10 +42162,10 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
         return r.regionX + "," + r.regionY;
       })), existingParcels = reservations.flatMap((r) => r.parcel?.tileX !== void 0 ? [copyWire(r.parcel)] : r.socket ? [{ tileX: String(BigInt(r.socket.entrance.chunkX) * 32n + BigInt(Math.floor(r.socket.entrance.localX / 32)) - 6n), tileY: String(BigInt(r.socket.entrance.chunkY) * 26n + BigInt(Math.floor(r.socket.entrance.localY / 32)) - 5n), width: 12, height: 10 }] : []);
       for (const window of [wanted, preload]) if (parcelKeys.some((k) => window.has(k))) {
-        const distance7 = Math.min(...parcelKeys.map((k) => window.get(k)?.distance ?? Infinity));
+        const distance8 = Math.min(...parcelKeys.map((k) => window.get(k)?.distance ?? Infinity));
         for (const p of fortParcel.pages) {
           const k = chunkAddressKey(p.chunkX, p.chunkY);
-          if (!window.has(k)) window.set(k, { chunkX: p.chunkX, chunkY: p.chunkY, distance: distance7 });
+          if (!window.has(k)) window.set(k, { chunkX: p.chunkX, chunkY: p.chunkY, distance: distance8 });
         }
       }
       return { plannedWorld: w.plannedWorld ?? null, navigation: w.navigation.pending.length, tick: s.tick, deadlines: w.deadlineIndex, ground, groundKey, seed: s.campaign.seed.seedHex, origin, players, resident, pinned, approach, encounterKey, wanted, preload, regionKeys, familyParcels, existingParcels, reviewPreparing: Boolean(destinationTarget) };
@@ -38046,7 +42189,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
   async function generate(address2, v) {
     const key2 = chunkAddressKey(address2.chunkX, address2.chunkY);
     if (prepared.has(key2) || v.resident.has(key2)) return;
-    const generatedChunk = await worker.generate({ seed: v.seed, chunkX: address2.chunkX, chunkY: address2.chunkY, profile: D9_PROFILE.version, origin: v.origin, ...v.plannedWorld ? { plannedWorld: v.plannedWorld } : {} }), historical = overlayWoodlandCaveParcelD10(overlayWoodlandFortParcelD10(overlayWoodlandRuinExteriorD11_3_2(overlayFunctionalSiteBootstrapD9(generatedChunk, siteBootstrap), ruinSocket ?? siteBootstrap), fortParcel), caveParcel), legacy = overlayWoodlandCaveFamilyParcelsD12(historical, v.familyParcels.filter((parcel) => ![WOODLAND_CAVE_FAMILY_PARCEL_D12_1, WOODLAND_CAVE_FAMILY_PARCEL_D12_2, PLANNED_CAVE_PARCEL].includes(parcel.version))), modern = overlayWoodlandCaveFamilyParcelsD12_1(legacy, v.familyParcels.filter((parcel) => parcel.version === WOODLAND_CAVE_FAMILY_PARCEL_D12_1)), chunk = overlayWoodlandCaveFamilyParcelsD12_2(modern, v.familyParcels.filter((parcel) => parcel.version === WOODLAND_CAVE_FAMILY_PARCEL_D12_2));
+    const generatedChunk = await worker.generate({ seed: v.seed, chunkX: address2.chunkX, chunkY: address2.chunkY, profile: D9_PROFILE.version, origin: v.origin, ...v.plannedWorld ? { plannedWorld: v.plannedWorld } : {} }), historical = overlayWoodlandCaveParcelD10(overlayWoodlandFortParcelD10(overlayWoodlandRuinExteriorD11_3_2(overlayFunctionalSiteBootstrapD9(generatedChunk, siteBootstrap), ruinSocket ?? siteBootstrap), fortParcel), caveParcel), legacy = overlayWoodlandCaveFamilyParcelsD12(historical, v.familyParcels.filter((parcel) => ![WOODLAND_CAVE_FAMILY_PARCEL_D12_1, WOODLAND_CAVE_FAMILY_PARCEL_D12_2, PLANNED_CAVE_PARCEL].includes(parcel.version))), modern = overlayWoodlandCaveFamilyParcelsD12_1(legacy, v.familyParcels.filter((parcel) => parcel.version === WOODLAND_CAVE_FAMILY_PARCEL_D12_1)), chunk2 = overlayWoodlandCaveFamilyParcelsD12_2(modern, v.familyParcels.filter((parcel) => parcel.version === WOODLAND_CAVE_FAMILY_PARCEL_D12_2));
     generated++;
     const current = observedView();
     if (closed || !current.preload.has(key2) || current.resident.has(key2)) {
@@ -38054,7 +42197,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
       return;
     }
     requireContract(prepared.size < D9_RUNTIME_POLICY.preparedChunks, "World prepared terrain bound");
-    prepared.set(key2, chunk);
+    prepared.set(key2, chunk2);
   }
   async function prepareLocalEncounters(v) {
     const requestedKey = v.encounterKey;
@@ -38154,7 +42297,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
           prepared.clear();
           progressState = "region-reserved";
           progressDetail = regional;
-          record("world.caveRegionReserved", { regionKey: regional, count: plan.parcels.length });
+          record2("world.caveRegionReserved", { regionKey: regional, count: plan.parcels.length });
           return false;
         }
       }
@@ -38271,7 +42414,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
           progressState = "admitted";
           progressDetail = admit.map((c) => chunkAddressKey(c.chunkX, c.chunkY)).join("|");
         }
-        record("world.residencyApplied", { admitted: admit.length, released: release.length });
+        record2("world.residencyApplied", { admitted: admit.length, released: release.length });
       } else if (v.ground && v.groundKey !== lastGroundKey && worker.prepareGround && pageBuffer.resources().dirtyPages <= D9_RUNTIME_POLICY.flushPages) {
         const stagedPages = pageBuffer.capture(), result = await worker.prepareGround({ state: capture("ground"), stagedPages });
         if (closed) return false;
@@ -38300,7 +42443,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
           try {
             await worker.collect();
           } catch (e) {
-            record("world.maintenanceError", { message: e.message });
+            record2("world.maintenanceError", { message: e.message });
           }
           lastCollectTick = v.tick;
         }
@@ -38321,7 +42464,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
       }
       if (staleWorkerGeometry(e)) return false;
       error = e;
-      record("world.residencyError", { message: e.message, code: e.code ?? null });
+      record2("world.residencyError", { message: e.message, code: e.code ?? null });
       return false;
     } finally {
       busy = false;
@@ -38540,7 +42683,7 @@ function createWorldPageBufferD9({ readPage, sha256, limit = D9_RUNTIME_POLICY.d
 async function prepareD9OriginMigration(state, { sha256 }) {
   validateActivityState(state);
   requireContract(!state.d9World, "World already migrated");
-  const m = manifestForState(state), collision = compileBoundOverworld(state).collision, hash9 = bytesToHex(await hashBytes(utf8(canonicalStringify(m)), sha256)), overlay = originEgress(m, collision, economicResources(state, m));
+  const m = manifestForState(state), collision = compileBoundOverworld(state).collision, hash15 = bytesToHex(await hashBytes(utf8(canonicalStringify(m)), sha256)), overlay = originEgress(m, collision, economicResources(state, m));
   const positions = {};
   for (const a of Object.values(state.entitiesById)) if (a.residency.spaceInstanceId === state.overworldInstanceId) positions[a.entityId] = legacyWorldPosition(a.position);
   const next = copyWire(state);
@@ -38555,7 +42698,7 @@ async function prepareD9OriginMigration(state, { sha256 }) {
     aliases[id] = { chunkX: String(ch.origin.x / D9_PROFILE.chunkWidth), chunkY: String(ch.origin.y / D9_PROFILE.chunkHeight) };
   }
   const frames = [{ id: 0, chunkX: "0", chunkY: "0", offsetX: 0, offsetY: 0, playerIds: [], originBounds: { width: m.dimensions.width / D9_PROFILE.chunkWidth, height: m.dimensions.height / D9_PROFILE.chunkHeight } }];
-  next.d9World = { version: D9_ROOT_VERSION, profile: copyWire(D9_PROFILE), origin: { manifestHash: hash9, width: m.dimensions.width, height: m.dimensions.height, chunkAliases: aliases, egress: copyWire(overlay), resources: copyWire(economicResources(state, m)) }, positions, frame: { chunkX: "0", chunkY: "0" }, regionIndex: null, discoveryIndex: null, deadlineIndex: null, migration: { version: "origin-migration-d9-v1", tick: state.tick, sourceSaveRevision: state.campaign.saveRevision }, runtime: { revision: 0, frames: copyWire(frames), chunks: [], groups: [], resources: [] }, episodes: {}, functionalSitesById: {}, siteReservationsById: {} };
+  next.d9World = { version: D9_ROOT_VERSION, profile: copyWire(D9_PROFILE), origin: { manifestHash: hash15, width: m.dimensions.width, height: m.dimensions.height, chunkAliases: aliases, egress: copyWire(overlay), resources: copyWire(economicResources(state, m)) }, positions, frame: { chunkX: "0", chunkY: "0" }, regionIndex: null, discoveryIndex: null, deadlineIndex: null, migration: { version: "origin-migration-d9-v1", tick: state.tick, sourceSaveRevision: state.campaign.saveRevision }, runtime: { revision: 0, frames: copyWire(frames), chunks: [], groups: [], resources: [] }, episodes: {}, functionalSitesById: {}, siteReservationsById: {} };
   next.spacesByInstanceId[next.overworldInstanceId].collision = { version: D9_COLLISION_VERSION, tileSize: 32, width: 20480, height: 3328, origin: copyWire(applyOriginEgress(collision, overlay)), frames: copyWire(frames), pages: [] };
   next.d9World.runtimePolicy = D9_RUNTIME_POLICY.version;
   next.d9World.navigation = emptyNavigationD9();
@@ -38574,7 +42717,7 @@ async function prepareD9OriginMigration(state, { sha256 }) {
     }
     next.d9World.navigation.pending.push(...rows.values());
   }
-  next.d9World.content = historicalSiteContentD9(m, hash9);
+  next.d9World.content = historicalSiteContentD9(m, hash15);
   next.d9World.paging = emptyWorldPagingD9(next.session.playerIds);
   next.d9World.ownershipIndex = null;
   next.d9World.groundIndex = null;
@@ -38586,14 +42729,14 @@ async function prepareD9OriginMigration(state, { sha256 }) {
 var keyFor2 = (domain, id, sha256) => pageDigest({ version: "site-content-index-d9-v1", domain, id }, sha256);
 function activationState(state, site, playerId, kind) {
   requireContract(["entry", "content-activation"].includes(kind), "Geography/discovery cannot bind content");
-  const player = state.playersById[playerId], actor = state.entitiesById[player?.entityId], point4 = projectToLocalFrameD9(site.entrance, state.d9World.runtime.frames);
-  requireContract(actor?.alive && actor.residency.spaceInstanceId === state.overworldInstanceId && point4, "Site binding requires a living local participant");
-  const distance7 = Math.hypot(actor.position.x - point4.x, actor.position.y - point4.y);
-  requireContract(distance7 <= SITE_INTERACTION_RADIUS, "Site activation out of reach");
-  const collision = state.spacesByInstanceId[state.overworldInstanceId].collision, steps = Math.max(1, Math.ceil(distance7 / 4));
+  const player = state.playersById[playerId], actor = state.entitiesById[player?.entityId], point9 = projectToLocalFrameD9(site.entrance, state.d9World.runtime.frames);
+  requireContract(actor?.alive && actor.residency.spaceInstanceId === state.overworldInstanceId && point9, "Site binding requires a living local participant");
+  const distance8 = Math.hypot(actor.position.x - point9.x, actor.position.y - point9.y);
+  requireContract(distance8 <= SITE_INTERACTION_RADIUS, "Site activation out of reach");
+  const collision = state.spacesByInstanceId[state.overworldInstanceId].collision, steps = Math.max(1, Math.ceil(distance8 / 4));
   for (let i = 0; i <= steps; i++) {
     const f = i / steps;
-    requireContract(!collidesWithTiles(collision, actor.position.x + (point4.x - actor.position.x) * f, actor.position.y + (point4.y - actor.position.y) * f, actor.hullRadius), "Site activation blocked");
+    requireContract(!collidesWithTiles(collision, actor.position.x + (point9.x - actor.position.x) * f, actor.position.y + (point9.y - actor.position.y) * f, actor.hullRadius), "Site activation blocked");
   }
   return canonicalStringify({ tick: state.tick, playerId, actor });
 }
@@ -38749,33 +42892,33 @@ function physicalSiteIdentityD13C(site) {
 }
 var finaleKeys = /* @__PURE__ */ new Set([SMALL_CAVE_FINALE_LEADER_KEY_D13D_B, SMALL_CAVE_FINALE_ESCORT_KEY_D13D_B]);
 function pendingFinaleIdentityD13D_B(state, currentSite, nextSite) {
-  const record = state.campaign.siteFinaleReservationsById?.[currentSite.siteId], deployment = state.campaign.siteFinaleDeploymentsById?.[currentSite.siteId], episode = resolveSiteRunEpisodeD13B(state, currentSite.siteId), members = record?.encounterBinding?.members;
-  if (record?.version !== SITE_FINALE_RESERVATION_D13D_B || record.siteId !== currentSite.siteId || record.sizeTier !== "small" || currentSite.sizeTier !== "small" || record.finalFloorIndex !== currentSite.floors.length - 1 || deployment?.version !== SITE_FINALE_DEPLOYMENT_D13D_B || deployment.siteId !== currentSite.siteId || deployment.reservationId !== record.reservationId || !episode || deployment.firstMaterializedEpisode !== episode.episode + 1 || !Array.isArray(members) || members.length !== 2) return false;
+  const record2 = state.campaign.siteFinaleReservationsById?.[currentSite.siteId], deployment = state.campaign.siteFinaleDeploymentsById?.[currentSite.siteId], episode = resolveSiteRunEpisodeD13B(state, currentSite.siteId), members = record2?.encounterBinding?.members;
+  if (record2?.version !== SITE_FINALE_RESERVATION_D13D_B || record2.siteId !== currentSite.siteId || record2.sizeTier !== "small" || currentSite.sizeTier !== "small" || record2.finalFloorIndex !== currentSite.floors.length - 1 || deployment?.version !== SITE_FINALE_DEPLOYMENT_D13D_B || deployment.siteId !== currentSite.siteId || deployment.reservationId !== record2.reservationId || !episode || deployment.firstMaterializedEpisode !== episode.episode + 1 || !Array.isArray(members) || members.length !== 2) return false;
   if (members[0].memberKey !== SMALL_CAVE_FINALE_LEADER_KEY_D13D_B || members[1].memberKey !== SMALL_CAVE_FINALE_ESCORT_KEY_D13D_B || currentSite.floors.some((floor) => floor.encounter.members.some((member) => finaleKeys.has(member.memberKey)))) return false;
-  const expected = physicalSiteIdentityD13C(currentSite), finalFloor = expected.floors[record.finalFloorIndex], keys = expected.encounterProvenance?.floorMemberKeys?.[record.finalFloorId];
-  if (!finalFloor || finalFloor.floorId !== record.finalFloorId || !Array.isArray(keys) || !same9(keys, finalFloor.encounter.members.map((member) => member.memberKey))) return false;
+  const expected = physicalSiteIdentityD13C(currentSite), finalFloor = expected.floors[record2.finalFloorIndex], keys = expected.encounterProvenance?.floorMemberKeys?.[record2.finalFloorId];
+  if (!finalFloor || finalFloor.floorId !== record2.finalFloorId || !Array.isArray(keys) || !same9(keys, finalFloor.encounter.members.map((member) => member.memberKey))) return false;
   finalFloor.encounter.members.push(...copyWire(members));
   keys.push(...members.map((member) => member.memberKey));
   return same9(expected, physicalSiteIdentityD13C(nextSite));
 }
 var standardFinaleKeys = /* @__PURE__ */ new Set([STANDARD_CAVE_FINALE_BOSS_KEY_D13D_D, ...STANDARD_CAVE_FINALE_COCOON_KEYS_D13D_D]);
 function pendingStandardFinaleIdentityD13D_D(state, currentSite, nextSite) {
-  const record = state.campaign.siteFinaleReservationsById?.[currentSite.siteId], deployment = state.campaign.siteFinaleDeploymentsById?.[currentSite.siteId], episode = resolveSiteRunEpisodeD13B(state, currentSite.siteId), members = record?.encounterBinding?.members;
-  if (record?.version !== SITE_FINALE_RESERVATION_D13D_E || record.siteId !== currentSite.siteId || record.sizeTier !== "standard" || currentSite.sizeTier !== "standard" || record.rewardBinding?.version !== STANDARD_CAVE_FINALE_REWARD_D13D_E || record.finalFloorIndex !== currentSite.floors.length - 1 || deployment?.version !== SITE_FINALE_DEPLOYMENT_D13D_D || deployment.siteId !== currentSite.siteId || deployment.reservationId !== record.reservationId || !episode || deployment.firstMaterializedEpisode !== episode.episode + 1 || !Array.isArray(members) || members.length !== 4) return false;
+  const record2 = state.campaign.siteFinaleReservationsById?.[currentSite.siteId], deployment = state.campaign.siteFinaleDeploymentsById?.[currentSite.siteId], episode = resolveSiteRunEpisodeD13B(state, currentSite.siteId), members = record2?.encounterBinding?.members;
+  if (record2?.version !== SITE_FINALE_RESERVATION_D13D_E || record2.siteId !== currentSite.siteId || record2.sizeTier !== "standard" || currentSite.sizeTier !== "standard" || record2.rewardBinding?.version !== STANDARD_CAVE_FINALE_REWARD_D13D_E || record2.finalFloorIndex !== currentSite.floors.length - 1 || deployment?.version !== SITE_FINALE_DEPLOYMENT_D13D_D || deployment.siteId !== currentSite.siteId || deployment.reservationId !== record2.reservationId || !episode || deployment.firstMaterializedEpisode !== episode.episode + 1 || !Array.isArray(members) || members.length !== 4) return false;
   if (members[0].memberKey !== STANDARD_CAVE_FINALE_BOSS_KEY_D13D_D || !same9(members.slice(1).map((member) => member.memberKey), STANDARD_CAVE_FINALE_COCOON_KEYS_D13D_D) || currentSite.floors.some((floor) => floor.encounter.members.some((member) => standardFinaleKeys.has(member.memberKey)))) return false;
-  const expected = physicalSiteIdentityD13C(currentSite), finalFloor = expected.floors[record.finalFloorIndex], keys = expected.encounterProvenance?.floorMemberKeys?.[record.finalFloorId];
-  if (!finalFloor || finalFloor.floorId !== record.finalFloorId || !Array.isArray(keys) || !same9(keys, finalFloor.encounter.members.map((member) => member.memberKey))) return false;
+  const expected = physicalSiteIdentityD13C(currentSite), finalFloor = expected.floors[record2.finalFloorIndex], keys = expected.encounterProvenance?.floorMemberKeys?.[record2.finalFloorId];
+  if (!finalFloor || finalFloor.floorId !== record2.finalFloorId || !Array.isArray(keys) || !same9(keys, finalFloor.encounter.members.map((member) => member.memberKey))) return false;
   finalFloor.encounter.members = copyWire(members);
-  expected.encounterProvenance.floorMemberKeys[record.finalFloorId] = members.map((member) => member.memberKey);
+  expected.encounterProvenance.floorMemberKeys[record2.finalFloorId] = members.map((member) => member.memberKey);
   return same9(expected, physicalSiteIdentityD13C(nextSite));
 }
 function pendingLargeFinaleIdentityD13D_F(state, currentSite, nextSite) {
-  const record = state.campaign.siteFinaleReservationsById?.[currentSite.siteId], deployment = state.campaign.siteFinaleDeploymentsById?.[currentSite.siteId], episode = resolveSiteRunEpisodeD13B(state, currentSite.siteId);
-  if (record?.version !== SITE_FINALE_RESERVATION_D13D_G || currentSite.sizeTier !== "large" || record.rewardBinding?.balanceStatus !== "provisional" || deployment?.version !== SITE_FINALE_DEPLOYMENT_D13D_F || deployment.siteId !== currentSite.siteId || deployment.reservationId !== record.reservationId || !episode || deployment.firstMaterializedEpisode !== episode.episode + 1 || !same9(record, deriveWoodlandCaveFinaleReservationD13D_G(currentSite)) || currentSite.floors.some((f) => f.encounter.members.some((m) => String(m.memberKey).startsWith("finale:")))) return false;
-  const expected = physicalSiteIdentityD13C(currentSite), floor = expected.floors[record.finalFloorIndex], keys = expected.encounterProvenance.floorMemberKeys[record.finalFloorId];
+  const record2 = state.campaign.siteFinaleReservationsById?.[currentSite.siteId], deployment = state.campaign.siteFinaleDeploymentsById?.[currentSite.siteId], episode = resolveSiteRunEpisodeD13B(state, currentSite.siteId);
+  if (record2?.version !== SITE_FINALE_RESERVATION_D13D_G || currentSite.sizeTier !== "large" || record2.rewardBinding?.balanceStatus !== "provisional" || deployment?.version !== SITE_FINALE_DEPLOYMENT_D13D_F || deployment.siteId !== currentSite.siteId || deployment.reservationId !== record2.reservationId || !episode || deployment.firstMaterializedEpisode !== episode.episode + 1 || !same9(record2, deriveWoodlandCaveFinaleReservationD13D_G(currentSite)) || currentSite.floors.some((f) => f.encounter.members.some((m) => String(m.memberKey).startsWith("finale:")))) return false;
+  const expected = physicalSiteIdentityD13C(currentSite), floor = expected.floors[record2.finalFloorIndex], keys = expected.encounterProvenance.floorMemberKeys[record2.finalFloorId];
   if (!same9(keys, floor.encounter.members.map((m) => m.memberKey))) return false;
-  floor.encounter.members = copyWire(record.encounterBinding.members);
-  expected.encounterProvenance.floorMemberKeys[record.finalFloorId] = record.encounterBinding.members.map((m) => m.memberKey);
+  floor.encounter.members = copyWire(record2.encounterBinding.members);
+  expected.encounterProvenance.floorMemberKeys[record2.finalFloorId] = record2.encounterBinding.members.map((m) => m.memberKey);
   return same9(expected, physicalSiteIdentityD13C(nextSite));
 }
 function siteResetIdentityMatchesD13C(state, currentSite, nextSite) {
@@ -38886,8 +43029,8 @@ function projectFunctionalSiteClueD9(model, clueSearch) {
   const tile = { x: BigInt(position2.chunkX) * 32n + BigInt(Math.floor(position2.localX / 32)), y: BigInt(position2.chunkY) * 26n + BigInt(Math.floor(position2.localY / 32)) }, score = (clue2) => {
     const x = BigInt(clue2.target.chunkX) * 32n + BigInt(Math.floor(clue2.target.localX / 32)), y = BigInt(clue2.target.chunkY) * 26n + BigInt(Math.floor(clue2.target.localY / 32));
     return (x > tile.x ? x - tile.x : tile.x - x) + (y > tile.y ? y - tile.y : tile.y - y);
-  }, clue = [...valid].sort((a, b) => Number(score(a) - score(b)) || a.side.localeCompare(b.side))[0], direction3 = clueBearing(position2, clue.target), egress = model.space.overworld.egresses.find((value) => value.side === clue.side), projected = clue.trailheadTarget ? projectToLocalFrameD9(clue.trailheadTarget, model.navigation.frames) : null, trailLabel = clue.trailLabel ?? (clue.label ? "Fort road" : "Woodland trail");
-  return Object.freeze({ version: clueSearch.version, siteId: clue.siteId, direction: direction3, distanceTiles: clue.distanceTiles, side: clue.side, label: `${clue.label ?? "Unidentified Woodland Site"} \xB7 ${direction3}`, trailhead: projected ? Object.freeze({ x: projected.x, y: projected.y, side: clue.side, direction: direction3, trailLabel }) : egress ? Object.freeze({ x: egress.x, y: egress.y, side: egress.side, direction: direction3, trailLabel }) : null });
+  }, clue = [...valid].sort((a, b) => Number(score(a) - score(b)) || a.side.localeCompare(b.side))[0], direction3 = clueBearing(position2, clue.target), egress = model.space.overworld.egresses.find((value) => value.side === clue.side), projected2 = clue.trailheadTarget ? projectToLocalFrameD9(clue.trailheadTarget, model.navigation.frames) : null, trailLabel = clue.trailLabel ?? (clue.label ? "Fort road" : "Woodland trail");
+  return Object.freeze({ version: clueSearch.version, siteId: clue.siteId, direction: direction3, distanceTiles: clue.distanceTiles, side: clue.side, label: `${clue.label ?? "Unidentified Woodland Site"} \xB7 ${direction3}`, trailhead: projected2 ? Object.freeze({ x: projected2.x, y: projected2.y, side: clue.side, direction: direction3, trailLabel }) : egress ? Object.freeze({ x: egress.x, y: egress.y, side: egress.side, direction: direction3, trailLabel }) : null });
 }
 function createFunctionalSiteCluePortD10({ clientPort, plannedBootstrap, fortClue, ruinSiteId }) {
   let clueSource = null, clueModel = null;
@@ -39265,21 +43408,21 @@ async function createLocalEndlessSessionD9(options) {
     }));
   };
   const navigatorRevealDistance = (s) => revealRadiusD9(resolvePlayerStats(s.playersById[localPlayerId]).attributes?.int ?? 5) * D9_PROFILE.tileSize;
-  const directionFromEntrance = (record, base) => {
-    const entrance = record.entrance, dx = Number(BigInt(base.chunkX) - BigInt(entrance.chunkX)) * D9_PROFILE.chunkWidth + base.localX - entrance.localX, dy = Number(BigInt(base.chunkY) - BigInt(entrance.chunkY)) * D9_PROFILE.chunkHeight + base.localY - entrance.localY, length = Math.hypot(dx, dy);
+  const directionFromEntrance = (record2, base) => {
+    const entrance = record2.entrance, dx = Number(BigInt(base.chunkX) - BigInt(entrance.chunkX)) * D9_PROFILE.chunkWidth + base.localX - entrance.localX, dy = Number(BigInt(base.chunkY) - BigInt(entrance.chunkY)) * D9_PROFILE.chunkHeight + base.localY - entrance.localY, length = Math.hypot(dx, dy);
     return length > 1 ? { x: dx / length, y: dy / length } : { x: 0, y: 1 };
   };
-  const preparationTarget = (record, preferred = null) => authority.withAuthority((a) => a.withAuthorityState((s) => {
+  const preparationTarget = (record2, preferred = null) => authority.withAuthority((a) => a.withAuthorityState((s) => {
     if (preferred) return copyWire(preferred.position);
-    const away = directionFromEntrance(record, record.approachAnchor), minimum = navigatorRevealDistance(s) + D9_PROFILE.tileSize / 2, distance7 = Math.ceil(minimum / D9_PROFILE.tileSize) * D9_PROFILE.tileSize;
-    return normalizeWorldPosition({ ...record.entrance, localX: record.entrance.localX + away.x * distance7, localY: record.entrance.localY + away.y * distance7 });
+    const away = directionFromEntrance(record2, record2.approachAnchor), minimum = navigatorRevealDistance(s) + D9_PROFILE.tileSize / 2, distance8 = Math.ceil(minimum / D9_PROFILE.tileSize) * D9_PROFILE.tileSize;
+    return normalizeWorldPosition({ ...record2.entrance, localX: record2.entrance.localX + away.x * distance8, localY: record2.entrance.localY + away.y * distance8 });
   }));
   const connectedApproach = (collision, from, to, radius) => {
     const size = collision.tileSize, start = { x: Math.floor(from.x / size), y: Math.floor(from.y / size) }, queue = [start], seen = /* @__PURE__ */ new Set([start.x + "," + start.y]), limit = 32;
     for (let index = 0; index < queue.length && index < 4096; index++) {
-      const cell = queue[index], point4 = { x: (cell.x + 0.5) * size, y: (cell.y + 0.5) * size };
-      if (collidesWithTiles(collision, point4.x, point4.y, radius)) continue;
-      if (Math.hypot(point4.x - to.x, point4.y - to.y) <= SITE_INTERACTION_RADIUS - D9_PROFILE.tileSize / 2) return true;
+      const cell = queue[index], point9 = { x: (cell.x + 0.5) * size, y: (cell.y + 0.5) * size };
+      if (collidesWithTiles(collision, point9.x, point9.y, radius)) continue;
+      if (Math.hypot(point9.x - to.x, point9.y - to.y) <= SITE_INTERACTION_RADIUS - D9_PROFILE.tileSize / 2) return true;
       for (const [dx, dy] of [[0, -1], [-1, 0], [1, 0], [0, 1]]) {
         const x = cell.x + dx, y = cell.y + dy, key2 = x + "," + y;
         if (seen.has(key2) || Math.abs(x - start.x) + Math.abs(y - start.y) > limit) continue;
@@ -39289,9 +43432,9 @@ async function createLocalEndlessSessionD9(options) {
     }
     return false;
   };
-  const landingFor = (record, preferred = null, preparedTarget = null) => authority.withReadyAuthority((a) => a.withAuthorityState((s) => {
-    const player = s.playersById[localPlayerId], actor = s.entitiesById[player.entityId], entrance = record.entrance, base = preferred?.position ?? preparedTarget ?? record.approachAnchor, away = directionFromEntrance(record, base), side = { x: -away.y, y: away.x }, starts = preferred ? [{ x: 0, y: 0 }] : [{ x: 0, y: 0 }, { x: away.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize }, { x: side.x * D9_PROFILE.tileSize, y: side.y * D9_PROFILE.tileSize }, { x: -side.x * D9_PROFILE.tileSize, y: -side.y * D9_PROFILE.tileSize }, { x: away.x * D9_PROFILE.tileSize + side.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize + side.y * D9_PROFILE.tileSize }, { x: away.x * D9_PROFILE.tileSize - side.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize - side.y * D9_PROFILE.tileSize }], offsets = starts.concat(Array.from({ length: 4 }, (_, ring) => {
-      const d = D9_PROFILE.tileSize * (ring + 2);
+  const landingFor = (record2, preferred = null, preparedTarget = null) => authority.withReadyAuthority((a) => a.withAuthorityState((s) => {
+    const player = s.playersById[localPlayerId], actor = s.entitiesById[player.entityId], entrance = record2.entrance, base = preferred?.position ?? preparedTarget ?? record2.approachAnchor, away = directionFromEntrance(record2, base), side = { x: -away.y, y: away.x }, starts = preferred ? [{ x: 0, y: 0 }] : [{ x: 0, y: 0 }, { x: away.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize }, { x: side.x * D9_PROFILE.tileSize, y: side.y * D9_PROFILE.tileSize }, { x: -side.x * D9_PROFILE.tileSize, y: -side.y * D9_PROFILE.tileSize }, { x: away.x * D9_PROFILE.tileSize + side.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize + side.y * D9_PROFILE.tileSize }, { x: away.x * D9_PROFILE.tileSize - side.x * D9_PROFILE.tileSize, y: away.y * D9_PROFILE.tileSize - side.y * D9_PROFILE.tileSize }], offsets = starts.concat(Array.from({ length: 4 }, (_, ring2) => {
+      const d = D9_PROFILE.tileSize * (ring2 + 2);
       return [{ x: away.x * d, y: away.y * d }, { x: side.x * d, y: side.y * d }, { x: -side.x * d, y: -side.y * d }];
     }).flat()), collision = s.spacesByInstanceId[s.overworldInstanceId].collision, revealDistance = navigatorRevealDistance(s);
     const rejected = { unprojected: 0, insideReveal: 0, blockedLanding: 0, blockedApproach: 0 };
@@ -39301,8 +43444,8 @@ async function createLocalEndlessSessionD9(options) {
         rejected.unprojected++;
         continue;
       }
-      const distance7 = Math.hypot(local4.x - entry.x, local4.y - entry.y);
-      if (!preferred && (distance7 <= revealDistance || distance7 <= SITE_INTERACTION_RADIUS)) {
+      const distance8 = Math.hypot(local4.x - entry.x, local4.y - entry.y);
+      if (!preferred && (distance8 <= revealDistance || distance8 <= SITE_INTERACTION_RADIUS)) {
         rejected.insideReveal++;
         continue;
       }
@@ -39315,9 +43458,9 @@ async function createLocalEndlessSessionD9(options) {
         continue;
       }
       const face2 = { x: entry.x - local4.x, y: entry.y - local4.y };
-      return { world, local: { x: local4.x, y: local4.y }, facing: preferred?.facing ?? face2, revealDistance, distance: distance7 };
+      return { world, local: { x: local4.x, y: local4.y }, facing: preferred?.facing ?? face2, revealDistance, distance: distance8 };
     }
-    throw new Error("No walkable exterior landing is available for " + record.label + " (" + Object.entries(rejected).map(([key2, value]) => key2 + "=" + value).join(", ") + ")");
+    throw new Error("No walkable exterior landing is available for " + record2.label + " (" + Object.entries(rejected).map(([key2, value]) => key2 + "=" + value).join(", ") + ")");
   }));
   const siteNavigator = async (request) => {
     requireContract(siteNavigatorEnabled, "Developer Site Navigator capability unavailable");
@@ -39326,21 +43469,21 @@ async function createLocalEndlessSessionD9(options) {
     if (navigatorBusy) return { status: "busy" };
     navigatorBusy = true;
     try {
-      let record, preferred = null;
+      let record2, preferred = null;
       if (returning) {
         requireContract(navigatorPrevious, "No previous exterior position");
         preferred = navigatorPrevious;
-        record = { siteId: "return", label: "Previous position", navigable: true, eligible: true, reserved: true, historical: true, entrance: navigatorPrevious.position, approachAnchor: navigatorPrevious.position };
+        record2 = { siteId: "return", label: "Previous position", navigable: true, eligible: true, reserved: true, historical: true, entrance: navigatorPrevious.position, approachAnchor: navigatorPrevious.position };
       } else {
-        record = authority.withAuthority((a) => a.withAuthorityState((s) => resolveSiteTruthD12_4C(s, { includeRejected: true }).byId[request.siteId] ?? null));
-        requireContract(record, "Unknown Site Navigator target");
-        requireContract(record.navigable && record.eligible && (record.bound || record.reserved || record.historical), "Site Navigator target is not authoritative and eligible");
+        record2 = authority.withAuthority((a) => a.withAuthorityState((s) => resolveSiteTruthD12_4C(s, { includeRejected: true }).byId[request.siteId] ?? null));
+        requireContract(record2, "Unknown Site Navigator target");
+        requireContract(record2.navigable && record2.eligible && (record2.bound || record2.reserved || record2.historical), "Site Navigator target is not authoritative and eligible");
       }
       if (resetting) {
         await stream.settled();
         requireContract(!functionalCommands.busy(), "Site transition is active");
-        const gateway = authority.readGateway(), transitioningPlayerIds = transitioningPlayersForSiteD13C(gateway, record.siteId), snapshot = authority.withAuthority((a) => a.withAuthorityState(copyWire)), plan = await prepareSiteResetD13C(snapshot, record.siteId, { sha256, transitioningPlayerIds });
-        const liveTransitions = transitioningPlayersForSiteD13C(authority.readGateway(), record.siteId), result2 = authority.withReadyAuthority((a) => {
+        const gateway = authority.readGateway(), transitioningPlayerIds = transitioningPlayersForSiteD13C(gateway, record2.siteId), snapshot = authority.withAuthority((a) => a.withAuthorityState(copyWire)), plan = await prepareSiteResetD13C(snapshot, record2.siteId, { sha256, transitioningPlayerIds });
+        const liveTransitions = transitioningPlayersForSiteD13C(authority.readGateway(), record2.siteId), result2 = authority.withReadyAuthority((a) => {
           let receipt;
           a.withAuthorityState((s) => {
             receipt = commitSiteResetD13C(s, plan, { transitioningPlayerIds: liveTransitions });
@@ -39357,12 +43500,12 @@ async function createLocalEndlessSessionD9(options) {
         return { position: localFramePositionD9(actor.position, s.d9World.runtime.frames), facing: copyWire(s.primary.actorsById[actor.entityId].facing) };
       }));
       await stream.settled();
-      const target = preparationTarget(record, preferred);
-      await stream.prepareReviewPosition(target, preferred ? [{ chunkX: preferred.position.chunkX, chunkY: preferred.position.chunkY }] : record.requiredChunks);
-      const landing = landingFor(record, preferred, target), result = authority.developerRelocateToWorld(localPlayerId, landing.local, landing.facing);
+      const target = preparationTarget(record2, preferred);
+      await stream.prepareReviewPosition(target, preferred ? [{ chunkX: preferred.position.chunkX, chunkY: preferred.position.chunkY }] : record2.requiredChunks);
+      const landing = landingFor(record2, preferred, target), result = authority.developerRelocateToWorld(localPlayerId, landing.local, landing.facing);
       if (!returning && !navigatorPrevious) navigatorPrevious = before;
       if (returning) navigatorPrevious = null;
-      return { ...result, siteId: record.siteId, landing: copyWire(landing.world), distanceFromEntrance: landing.distance, revealDistance: landing.revealDistance };
+      return { ...result, siteId: record2.siteId, landing: copyWire(landing.world), distanceFromEntrance: landing.distance, revealDistance: landing.revealDistance };
     } finally {
       stream.finishReviewPosition();
       navigatorBusy = false;
