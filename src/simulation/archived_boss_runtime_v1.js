@@ -5,14 +5,14 @@ import {combatInteger,compareCombat,multiplyCombat,subtractCombat,minCombat} fro
 import {integerBigInt} from '../shared/contracts/integer_domain.js';
 import {copyWire} from '../shared/contracts/wire.js';
 import {archivedCombatProfile} from '../shared/content/archived_boss_fight_profiles_v1.js';
-import {range,segmentDistance,sweptPathClear,originalCinderRushEndpoint,originalArenaRing,onOriginalRing} from './archived_boss_attack_geometry_v1.js';
+import {range,segmentDistance,sweptPathClear,originalCinderRushEndpoint,originalArenaRing,onOriginalRing,originalFireCone} from './archived_boss_attack_geometry_v1.js';
 
 const rounded=(hp,n,d)=>combatInteger(multiplyCombat(hp,n,d),'round');
 const within=(a,b,r)=>range(a,b)<=r;
 const point=p=>({x:p.x,y:p.y});
 const roll=(seed,n,salt=0)=>{let v=(seed^Math.imul(n+1,0x9e3779b1)^salt)>>>0;v=Math.imul(v^(v>>>16),0x85ebca6b)>>>0;v=Math.imul(v^(v>>>13),0xc2b2ae35)>>>0;return ((v^(v>>>16))>>>0)/4294967296;};
 
-export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awaken}){
+export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awaken,effect}){
  const cfg=b=>b.archive?archivedCombatProfile(b.bossDefinitionId):null;
  const targetsIn=(b,all)=>all.filter(t=>t?.alive&&t.residency?.spaceInstanceId===b.spaceInstanceId);
  const damagePacket=(a,t,amount,mechanic,metadata={})=> {
@@ -168,6 +168,38 @@ export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awak
    damagePacket(a,t,requested,'hooktail_void',{sourceActionSequence:b.abilitySequence,nonLethal:true});
   }
  }
+ function resolveOriginal(b,a,targets,ability,pos,c){
+  if(!b.archive)return false;
+  const kind=b.bossDefinitionId,conf=cfg(b);
+  const locked=targetsIn(b,targets),hits=[];
+  if(ability==='fire_charge'&&kind==='cinderhart')return beginRush(b,a,pos,c);
+  if(ability==='spore_storm'&&kind==='corrosive_abomination'){
+   startSpores(b,a,c);
+  }else if(ability==='corrosive_slam'&&kind==='corrosive_abomination'){
+   for(const t of locked)if(within(t.position,pos,64+(t.hullRadius??9))&&damagePacket(a,t,rounded(a.attackDamage,18,10),'corrosive_slam',{sourceActionSequence:b.abilitySequence}))hits.push(t.entityId);
+  }else if(ability==='time_field'&&kind==='chronos_arbitrator'){
+   pool(b,pos,'time',conf.timeField.radius,conf.timeField.lifetimeTicks);
+  }else if(ability==='chronos_slam'&&kind==='chronos_arbitrator'){
+   for(const t of locked)if(within(t.position,pos,64+(t.hullRadius??9))&&damagePacket(a,t,rounded(a.attackDamage,18,10),'chronos_slam',{sourceActionSequence:b.abilitySequence}))hits.push(t.entityId);
+  }else if(ability==='prism_collapse'&&kind==='nexus_overseer'){
+   for(const t of locked)if(within(t.position,pos,conf.cage.radius+(t.hullRadius??9))&&damagePacket(a,t,rounded(a.attackDamage,18,10),'nexus_prism_collapse',{sourceActionSequence:b.abilitySequence}))hits.push(t.entityId);
+  }else if(ability==='control_glitch'&&kind==='nexus_overseer'){
+   for(const t of locked)if(within(t.position,pos,conf.glitch.radius+(t.hullRadius??9))){effect(b,t,'control_glitch',conf.glitch.durationTicks,1);hits.push(t.entityId);}
+  }else if(ability==='scarlet_fire'&&kind==='hooktail'){
+   for(const t of locked)if(originalFireCone(a.position,pos,t.position,conf.fire.range,conf.fire.halfAngle,t.hullRadius??9)
+     &&sweptPathClear(c,a.position,t.position,3)&&damagePacket(a,t,rounded(a.attackDamage,155,100),'hooktail_scarlet_fire',{sourceActionSequence:b.abilitySequence}))hits.push(t.entityId);
+  }else if(ability==='hooked_tail'&&kind==='hooktail'){
+   for(const t of locked)if(within(t.position,pos,64+(t.hullRadius??9))&&damagePacket(a,t,rounded(a.attackDamage,18,10),'hooktail_slam',{sourceActionSequence:b.abilitySequence}))hits.push(t.entityId);
+  }else if(ability==='arena_collapse'&&kind==='hooktail'){
+   collapseRing(b,a,c);
+  }else if(ability==='singularity'&&kind==='void_overseer'){
+   for(const t of locked)if(within(t.position,a.position,conf.singularity.radius+(t.hullRadius??9))
+    &&damagePacket(a,t,rounded(a.attackDamage,195,100),'void_singularity',{sourceActionSequence:b.abilitySequence}))hits.push(t.entityId);
+  }else return false;
+  b.lastAction={ability,resolvedTick:state.tick,targetPosition:point(pos),hitEntityIds:hits};
+  clear(b);b.actionState='idle';b.nextActionTick=state.tick+110;
+  return true;
+ }
  function tick(b,a,all,c){
   if(!b.archive||!cfg(b))return false;
   if(b.bossDefinitionId==='corrosive_abomination'){spillCorrosive(b,a,c);tickAcid(b,a,all,c);tickSpores(b,a,all,c);tickPoison(b,a,all);}
@@ -175,5 +207,5 @@ export function createArchivedBossFightRuntime(state,{pool,damage,hit,clear,awak
   if(['corrosive_abomination','void_overseer'].includes(b.bossDefinitionId))tickContact(b,a,all);
   return b.bossDefinitionId==='cinderhart'&&advanceRush(b,a,all,c);
  }
- return Object.freeze({tick,beginRush,startSpores,collapseRing});
+ return Object.freeze({tick,resolveOriginal,beginRush,startSpores,collapseRing});
 }
