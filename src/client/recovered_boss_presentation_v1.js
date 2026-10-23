@@ -2,7 +2,7 @@
 // Rendering follows authoritative phase/tick records; it never decides damage or targeting.
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
 import {hasArchivedBossPainter,drawArchivedBossActor,drawArchivedBossSummon,drawArchivedBossGround,drawArchivedBossHud} from './boss_archive_world_adapter_v1.js';
-import {hasTreasuryBossPainter,drawTreasuryBossV2,drawTreasuryBossGroundV2} from './boss_presentation_treasury_v2.js';
+import {hasTreasuryBossPainter,drawTreasuryBossV2,drawTreasuryBossGroundV2} from './boss_original_treasury_world_adapter_v1.js';
 const TAU=Math.PI*2;
 const circle=(c,x,y,r,fill,stroke=null,width=1)=>{c.beginPath();c.arc(x,y,r,0,TAU);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}};
 const poly=(c,pts,fill,stroke='#101925',w=2)=>{c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=w;c.stroke();}};
