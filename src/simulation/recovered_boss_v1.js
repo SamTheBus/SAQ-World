@@ -290,7 +290,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    // Rabbits hop independently even while their stag is rushing.
    if(b.bossDefinitionId==='cinderhart')advanceBunnies(b,c);
    if(archived.tick(b,a,targets,c))continue;
-   if(b.bossDefinitionId==='nexus_overseer')advanceHolograms(b,targets,c);
+   if(b.bossDefinitionId==='nexus_overseer'&&!b.archive)advanceHolograms(b,targets,c);
    if(b.bossDefinitionId==='corrosive_abomination'){
     for(let step=b.chunkStep+1;step<=12;step++){
      if(compareCombat(a.hp,multiplyCombat(a.maxHp,100-step*8,100))>0)break;
