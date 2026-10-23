@@ -33,6 +33,12 @@ jobs:
           node --check src/client/boss_presentation_corrosive_shedding_v2.js
           node --check src/client/boss_presentation_void_overseer_v1.js
           node --test checks/archived-boss-visuals.test.mjs
+          node --check src/client/boss_archive_world_extended_v1.js
+          node --check src/client/boss_presentation_chronos_arbitrator_v1.js
+          node --check src/client/boss_presentation_nexus_overseer_v1.js
+          node --check src/client/boss_presentation_hooktail_v1.js
+          node --check src/client/boss_presentation_cinderhart_v1.js
+          node --test checks/archived-boss-extended.test.mjs
       - name: Verify all eight real seeded boss site bindings and save contracts
         run: node --test checks/recovered-boss-v1.test.mjs
       - name: Replay eight boss fights for 1050 ticks with persisted state validation
