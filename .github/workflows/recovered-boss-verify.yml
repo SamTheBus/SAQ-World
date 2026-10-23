@@ -1,7 +1,7 @@
 name: Verify recovered bosses (isolated)
 on:
   push:
-    branches: [boss-restoration-20261023]
+    branches: [boss-restoration-20261023, boss-original-visuals-20261023]
   workflow_dispatch:
 
 permissions:
@@ -26,6 +26,13 @@ jobs:
           node --check src/client/recovered_boss_presentation_v1.js
           node --check src/shared/content/ruin_family_runtime_v1.js
           node --check src/shared/content/fort_family_runtime_v1.js
+      - name: Verify recovered original Corrosive and Void Canvas renderers
+        run: |
+          node --check src/client/boss_archive_world_adapter_v1.js
+          node --check src/client/boss_presentation_corrosive_v1.js
+          node --check src/client/boss_presentation_corrosive_shedding_v2.js
+          node --check src/client/boss_presentation_void_overseer_v1.js
+          node --test checks/archived-boss-visuals.test.mjs
       - name: Verify all eight real seeded boss site bindings and save contracts
         run: node --test checks/recovered-boss-v1.test.mjs
       - name: Replay eight boss fights for 1050 ticks with persisted state validation
