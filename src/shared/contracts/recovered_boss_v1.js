@@ -16,7 +16,7 @@ export async function createRecoveredBossV1({kind,campaignSeed,siteId,floorId,gr
  const bossId='boss:'+digest;
  const summons=addMembers.slice(0,spec.adds).map((member,i)=>({
   version:RECOVERED_SUMMON_VERSION,entityId:member.entityId,bossId,groupId,ordinal:i,homePosition:copyWire(member.position),
-  kind:kind==='nexus_overseer'?'hologram':i%3===2?'slag':'slime',
+  kind:kind==='nexus_overseer'?'hologram':kind==='cinderhart'?'bunny':'slime',
   stage:'dormant',activatedTick:null,hatchTick:null,defeatedTick:null
  }));
  const boss={
@@ -56,8 +56,8 @@ export function validateRecoveredBossV1(state,id,b){
  else check(b.dazedUntilTick===null,'Recovered boss stale daze');
  if(b.shieldBrokenTick!==null)safeInteger(b.shieldBrokenTick,b.activatedTick,state.tick);
  if(!actor.alive)check(b.actionState==='defeated','Recovered boss not retired'); else check(b.actionState!=='defeated','Recovered boss defeated while alive');
- check(Array.isArray(b.pools)&&b.pools.length<=20&&point(b.lastTrailPosition),'Recovered boss hazard budget invalid');
- for(const p of b.pools){closedRecord(p,['id','kind','position','radius','createdTick','expiresTick','nextDamageTick']);check(typeof p.id==='string'&&p.id.startsWith(b.bossId+':pool:')&&['acid','slag','fire','void','time','collapse','molten','gold'].includes(p.kind)&&point(p.position)&&Number.isFinite(p.radius)&&p.radius>=8&&p.radius<=300,'Recovered boss pool invalid');safeInteger(p.createdTick,b.activatedTick,state.tick);safeInteger(p.expiresTick,state.tick+1,p.createdTick+600);safeInteger(p.nextDamageTick,p.createdTick,p.expiresTick);}
+ check(Array.isArray(b.pools)&&b.pools.length<=(b.bossDefinitionId==='cinderhart'?64:20)&&point(b.lastTrailPosition),'Recovered boss hazard budget invalid');
+ for(const p of b.pools){closedRecord(p,['id','kind','position','radius','createdTick','expiresTick','nextDamageTick']);check(typeof p.id==='string'&&p.id.startsWith(b.bossId+':pool:')&&['acid','slag','fire','void','time','collapse','molten','gold','prism'].includes(p.kind)&&point(p.position)&&Number.isFinite(p.radius)&&p.radius>=8&&p.radius<=300,'Recovered boss pool invalid');safeInteger(p.createdTick,b.activatedTick,state.tick);safeInteger(p.expiresTick,state.tick+1,p.createdTick+600);safeInteger(p.nextDamageTick,p.createdTick,p.expiresTick);}
  for(const [key,s] of Object.entries(b.statusesByEntityId)){closedRecord(s,['kind','startedTick','expiresTick','movementMultiplier']);check(state.entitiesById[key]?.team==='party'&&['time_slow','control_glitch','lasso'].includes(s.kind)&&s.movementMultiplier>0&&s.movementMultiplier<=1,'Recovered boss status invalid');safeInteger(s.startedTick,b.activatedTick,state.tick);safeInteger(s.expiresTick,state.tick+1,s.startedTick+600);}
  if(b.lastAction!==null){closedRecord(b.lastAction,['ability','resolvedTick','targetPosition','hitEntityIds']);check((Object.hasOwn(spec.attacks,b.lastAction.ability)||b.lastAction.ability==='strike')&&point(b.lastAction.targetPosition)&&Array.isArray(b.lastAction.hitEntityIds)&&b.lastAction.hitEntityIds.every(key=>state.entitiesById[key]?.team==='party'),'Recovered boss history invalid');safeInteger(b.lastAction.resolvedTick,b.activatedTick,state.tick);}
  return b;
@@ -67,7 +67,7 @@ export function validateRecoveredSummonV1(state,id,s,b){
  closedRecord(s,['version','entityId','bossId','groupId','ordinal','homePosition','kind','stage','activatedTick','hatchTick','defeatedTick']);
  const a=state.entitiesById[id],g=state.groupsById[s.groupId];
  check(s.version===RECOVERED_SUMMON_VERSION&&s.entityId===id&&b?.bossId===s.bossId&&b.summonEntityIds[s.ordinal]===id&&s.groupId===b.groupId&&
-  a?.team==='hostile'&&g?.entityIds.includes(id)&&point(s.homePosition)&&['slime','slag','hologram'].includes(s.kind)&&['dormant','hatched','defeated'].includes(s.stage),'Recovered boss add invalid');
+  a?.team==='hostile'&&g?.entityIds.includes(id)&&point(s.homePosition)&&['slime','slag','hologram','bunny'].includes(s.kind)&&['dormant','hatched','defeated'].includes(s.stage),'Recovered boss add invalid');
  if(s.stage==='dormant')check(a.alive&&s.activatedTick===null&&s.hatchTick===null&&s.defeatedTick===null,'Dormant recovered add invalid');
  else {safeInteger(s.activatedTick,b.activatedTick,state.tick);check(s.hatchTick===s.activatedTick,'Recovered boss add activation invalid');
   if(s.stage==='hatched')check(a.alive&&s.defeatedTick===null,'Defeated active add');else {check(!a.alive,'Living defeated add');safeInteger(s.defeatedTick,s.activatedTick,state.tick);}}

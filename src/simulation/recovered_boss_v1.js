@@ -1,5 +1,6 @@
 import {combatInteger,compareCombat,multiplyCombat,addCombat,minCombat,subtractCombat} from '../shared/contracts/combat_amount.js';
 import {copyWire} from '../shared/contracts/wire.js';
+import {integerBigInt} from '../shared/contracts/integer_domain.js';
 import {recoveredBossRecord} from '../shared/contracts/recovered_boss_v1.js';
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
 import {collidesWithTiles} from '../shared/rules/world_geometry.js';
@@ -30,13 +31,13 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  const players=a=>Object.values(state.playersById).filter(p=>p.connectionStatus==='connected').map(p=>state.entitiesById[p.entityId]).filter(t=>t?.alive&&t.residency.spaceInstanceId===a.residency.spaceInstanceId&&eligible(a,t)).sort((x,y)=>x.entityId.localeCompare(y.entityId));
  const bossesForPlayer=id=>records().filter(b=>b.statusesByEntityId[id]?.expiresTick>state.tick);
  function pool(b,position,kind,radius,lifetime){
-  if(b.pools.length>=20)b.pools.shift();
+  if(b.pools.length>=(b.bossDefinitionId==='cinderhart'?64:20))b.pools.shift();
   const id=b.bossId+':pool:'+state.tick+':'+b.pools.length+':'+b.abilitySequence;
   b.pools.push({id,kind,position:copyWire(position),radius,createdTick:state.tick,expiresTick:state.tick+lifetime,nextDamageTick:state.tick+45});
  }
  function effect(b,target,kind,duration,multiplier=1){
   const previous=b.statusesByEntityId[target.entityId];
-  b.statusesByEntityId[target.entityId]={kind,startedTick:previous?.kind===kind?previous.startedTick:state.tick,
+  b.statusesByEntityId[target.entityId]={kind,startedTick:state.tick,
    expiresTick:Math.max(previous?.kind===kind?previous.expiresTick:0,state.tick+duration),movementMultiplier:multiplier};
  }
  function hit(a,t,b,ability,scale=10){
@@ -52,6 +53,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    const s=summon(id),a=state.entitiesById[id];
    if(s?.stage!=='dormant'||!a?.alive)continue;
    s.stage='hatched';s.activatedTick=state.tick;s.hatchTick=state.tick;
+   if(b.bossDefinitionId==='corrosive_abomination'&&b.phase===2&&b.chunkStep%3===0&&b.summonEntityIds.filter(id=>summon(id)?.kind==='slag').length<2)s.kind='slag';
    a.attackTimer=0;
    awakened++;stats.summons++;
   }
@@ -76,6 +78,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   if(b.phase!==1||compareCombat(a.hp,multiplyCombat(a.maxHp,cutoff,10))>0)return;
   b.phase=2;b.phaseTwoTriggered=true;stats.phaseTwos++;
   if(b.bossDefinitionId==='nexus_overseer')awaken(b,2);
+  if(b.bossDefinitionId==='cinderhart')awaken(b,2);
   if(b.bossDefinitionId==='chronos_arbitrator'){
    b.nextActionTick=state.tick;
   }
@@ -89,7 +92,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   if(id==='gilded_vault_keeper')return b.phase===2&&r<.32?'taxation':r<.64?'vault_crush':'gold_fall';
   if(id==='marcus')return b.phase===2&&r<.23?'molten_shield':r<.49?'coin_barrage':r<.76?'gold_rush':'gilded_lasso';
   if(id==='hooktail')return b.phase===2&&r<.4?'arena_collapse':r<.75?'scarlet_fire':'hooked_tail';
-  if(id==='cinderhart')return r<.58?'fire_charge':'landing_fire';
+  if(id==='cinderhart')return b.summonEntityIds.some(id=>summon(id)?.stage==='dormant')?'warren_call':'fire_charge';
   return null;
  }
  function beginAbility(b,a,target,ability){
@@ -97,9 +100,9 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   b.actionState='telegraphing';b.abilitySequence++;b.activeAbility=ability;b.targetEntityId=target.entityId;
   b.targetPosition=copyWire(target.position);b.telegraphStartedTick=state.tick;b.resolvesTick=state.tick+cfg[ability];
   a.movementIntent={x:0,y:0};stats.casts++;
-  if(ability==='chronos_rewind'){b.chunkStep=1;b.shieldMaxHp=combatInteger(multiplyCombat(a.maxHp,15,100),'round').m===0?'1':String(Math.max(1,Math.floor(Number(multiplyCombat(a.maxHp,15,100).n)/Number(multiplyCombat(a.maxHp,15,100).d))));b.shieldHp=b.shieldMaxHp;}
+  if(ability==='chronos_rewind'){b.chunkStep=1;b.shieldMaxHp=String((integerBigInt(a.maxHp)*15n+99n)/100n);b.shieldHp=b.shieldMaxHp;}
   if(['taxation','molten_shield'].includes(ability)){
-   const frac=multiplyCombat(a.maxHp,12,100);b.shieldMaxHp=String(Math.max(1,Math.ceil(Number(frac.n)/Number(frac.d))));b.shieldHp=b.shieldMaxHp;
+   b.shieldMaxHp=String((integerBigInt(a.maxHp)*12n+99n)/100n);b.shieldHp=b.shieldMaxHp;
   }
  }
  function daze(b,ticks=210){
@@ -109,7 +112,9 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  function resolve(b,a,targets){
   const ability=b.activeAbility,pos=copyWire(b.targetPosition),collision=state.spacesByInstanceId[b.spaceInstanceId].collision;
   const hits=[],dmg=centerDamage(ability),radius=attackRadius(ability);
-  if(ability==='chronos_rewind'){
+  if(ability==='warren_call'){
+   awaken(b,b.phase===2?5:3);
+  }else if(ability==='chronos_rewind'){
    const restore=combatInteger(multiplyCombat(a.maxHp,2,10),'round');
    a.hp=combatInteger(minCombat(a.maxHp,addCombat(a.hp,restore)),'round');
   } else if(ability==='taxation'){
@@ -140,17 +145,20 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   if(ability==='time_field')pool(b,pos,'time',105,420);
   if(ability==='singularity')pool(b,pos,'void',93,90);
   if(ability==='gold_fall')for(let i=0;i<3;i++)pool(b,{x:pos.x+Math.cos(i*2*Math.PI/3)*62,y:pos.y+Math.sin(i*2*Math.PI/3)*62},'gold',22,180);
-  if(ability==='prism_collapse')pool(b,pos,'void',90,180);
+  if(ability==='prism_collapse')pool(b,pos,'prism',120,180);
   if(ability==='gold_rush')pool(b,a.position,'molten',45,180);
   if(ability==='scarlet_fire')for(let i=0;i<3;i++){const v=direction(a.position,pos);pool(b,{x:a.position.x+v.x*(40+i*32),y:a.position.y+v.y*(40+i*32)},'fire',28,180);}
   if(ability==='arena_collapse'){b.collapseStep=Math.min(7,b.collapseStep+1);pool(b,b.homePosition,'collapse',205-b.collapseStep*26,600);}
   if(ability==='fire_charge'){
+   // Swept collision-checked charge: connected fire patches last 180 ticks.
    const v=direction(a.position,pos);
-   for(let i=1;i<=5;i++)pool(b,{x:a.position.x+v.x*i*23,y:a.position.y+v.y*i*23},'fire',20,180);
-   const destination={x:a.position.x+v.x*114,y:a.position.y+v.y*114};
-   if(collisionFree(collision,destination,a.hullRadius))a.position=destination;
+   for(let i=0;i<13;i++){
+    const prior=copyWire(a.position);
+    moveAegisAffectedActor(collision,a,{x:v.x*17,y:v.y*17});
+    if(dist(a.position,prior)<1)break;
+    pool(b,copyWire(a.position),'fire',19,180);
+   }
   }
-  if(ability==='landing_fire')pool(b,pos,'fire',75,300);
   b.lastAction={ability,resolvedTick:state.tick,targetPosition:pos,hitEntityIds:hits};clear(b);
   b.shieldHp='0';b.shieldMaxHp='0';b.actionState='idle';b.nextActionTick=state.tick+(b.phase===2?90:120);
  }
@@ -164,11 +172,32 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    if(state.tick<p.nextDamageTick)continue;
    p.nextDamageTick=Math.min(p.expiresTick,state.tick+45);
    if(p.kind==='time')continue;
+   const effectiveRadius=p.kind==='prism'?p.radius*(1-.64*Math.min(1,(state.tick-p.createdTick)/(p.expiresTick-p.createdTick))):p.radius;
    for(const t of targets){
     const d=dist(t.position,p.position);
-    const inside=p.kind==='collapse'?Math.abs(d-p.radius)<20:d<p.radius+t.hullRadius*.3;
+    const inside=p.kind==='collapse'||p.kind==='prism'?Math.abs(d-effectiveRadius)<20:d<effectiveRadius+t.hullRadius*.3;
     if(inside&&lineFree(c,p.position,t.position)){if(hit(a,t,b,p.kind,4))stats.poolHits++;}
    }
+  }
+ }
+ function advanceBunnies(b,c){
+  for(const id of b.summonEntityIds){
+   const s=summon(id),a=state.entitiesById[id];
+   if(s?.kind!=='bunny'||s.stage!=='hatched'||!a?.alive)continue;
+   const age=state.tick-s.activatedTick,period=b.phase===2?36:46,flight=b.phase===2?24:28;
+   if(age<=0)continue;
+   const cycle=Math.floor(age/period),time=age%period,theta=roll(b.selectionSeed,cycle+11+s.ordinal*131,0xc1dece55)*Math.PI*2;
+   const stride=55+roll(b.selectionSeed,cycle+11+s.ordinal*131,0xc1dece56)*20;
+   if(time<flight){moveAegisAffectedActor(c,a,{x:Math.cos(theta)*stride/flight,y:Math.sin(theta)*stride/flight});}
+   else if(time===flight)pool(b,copyWire(a.position),'fire',18,300);
+  }
+ }
+ function advanceHolograms(b,targets,c){
+  for(const id of b.summonEntityIds){
+   const s=summon(id),a=state.entitiesById[id];
+   if(s?.kind!=='hologram'||s.stage!=='hatched'||!a?.alive||state.tick%90!==s.ordinal*17)continue;
+   const target=[...targets].sort((x,y)=>dist(x.position,a.position)-dist(y.position,a.position)||x.entityId.localeCompare(y.entityId))[0];
+   if(target&&dist(target.position,a.position)<260&&lineFree(c,a.position,target.position))hit(a,target,b,'hologram_shot',6);
   }
  }
  function advance(){
@@ -178,6 +207,8 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    const targets=players(a);updatePools(b,a,targets,c);
    for(const[id,s]of Object.entries(b.statusesByEntityId))if(state.tick>=s.expiresTick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
    enterPhaseTwo(b,a);
+   if(b.bossDefinitionId==='cinderhart')advanceBunnies(b,c);
+   if(b.bossDefinitionId==='nexus_overseer')advanceHolograms(b,targets,c);
    if(b.bossDefinitionId==='corrosive_abomination'){
     for(let step=b.chunkStep+1;step<=12;step++){
      if(compareCombat(a.hp,multiplyCombat(a.maxHp,100-step*8,100))>0)break;
@@ -189,8 +220,8 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    if(b.actionState==='dazed')continue;
    if(b.actionState==='telegraphing'){
     if(b.activeAbility==='singularity')for(const t of targets){
-     const d=dist(t.position,a.position);if(d<230&&d>17&&lineFree(c,t.position,a.position)){
-      const v=direction(t.position,a.position);moveAegisAffectedActor(c,t,{x:v.x*1.8,y:v.y*1.8});
+     const d=dist(t.position,a.position);if(d>10&&lineFree(c,t.position,a.position)){
+      const v=direction(t.position,a.position),force=Math.min(4.8,4500/(d*d+400));moveAegisAffectedActor(c,t,{x:v.x*force,y:v.y*force});
      }
     }
     if(state.tick>=b.resolvesTick)resolve(b,a,targets);
@@ -209,10 +240,10 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   for(const[id,s] of Object.entries(b.statusesByEntityId))if(s.expiresTick<=state.tick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
  }}
  function reconcile(){for(const b of records())sync(b,state.entitiesById[b.entityId]);beginTick();}
- function frozen(id){const s=summon(id);if(s)return s.stage==='dormant';const b=record(id);return Boolean(b&&['telegraphing','dazed','defeated'].includes(b.actionState));}
+ function frozen(id){const s=summon(id);if(s)return s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram';const b=record(id);return Boolean(b&&['telegraphing','dazed','defeated'].includes(b.actionState));}
  function movementMultiplier(id){
   const b=record(id);if(b)return b.actionState==='dazed'?0:b.phase===2?1.2:.8;
-  const s=summon(id);if(s&&s.stage==='dormant')return 0;
+  const s=summon(id);if(s&&(s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram'))return 0;
   let value=1;
   for(const boss of bossesForPlayer(id))value=Math.min(value,boss.statusesByEntityId[id].movementMultiplier);
   return value;
@@ -221,7 +252,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   const b=record(target.entityId);if(!b)return null;
   if(b.bossDefinitionId==='nexus_overseer'&&b.phase===2&&b.summonEntityIds.some(id=>state.entitiesById[id]?.alive&&summon(id)?.stage==='hatched'))return {damage:combatInteger(0),shielded:true};
   if(BigInt(b.shieldHp)>0n){
-   const left=BigInt(b.shieldHp)-BigInt(Math.ceil(Number(damage?.m??0)*Math.pow(10,Number(damage?.e??0))));
+   const left=BigInt(b.shieldHp)-integerBigInt(combatInteger(damage));
    if(left<=0n){daze(b,b.bossDefinitionId==='gilded_vault_keeper'?210:210);return {damage:combatInteger(0),shielded:true};}
    b.shieldHp=String(left);return {damage:combatInteger(0),shielded:true};
   }

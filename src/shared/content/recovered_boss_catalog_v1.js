@@ -17,8 +17,8 @@ export const RECOVERED_BOSSES = Object.freeze({
     attacks:Object.freeze({coin_barrage:75,gold_rush:65,gilded_lasso:65,molten_shield:210})}),
   hooktail: Object.freeze({id:'hooktail',label:'HOOKTAIL',site:'repeatable-slot:ruin:desert:standard:056',family:'ruin',biome:'desert',color:'#ef5b57',secondary:'#63283a',adds:0,
     attacks:Object.freeze({scarlet_fire:90,hooked_tail:70,arena_collapse:100})}),
-  cinderhart: Object.freeze({id:'cinderhart',label:'CINDERHART',site:'repeatable-slot:ruin:woodland:standard:054',family:'ruin',biome:'woodland',color:'#ff983e',secondary:'#432b25',adds:0,
-    attacks:Object.freeze({fire_charge:75,landing_fire:90})})
+  cinderhart: Object.freeze({id:'cinderhart',label:'CINDERHART',site:'repeatable-slot:ruin:woodland:standard:054',family:'ruin',biome:'woodland',color:'#ff983e',secondary:'#432b25',adds:5,
+    attacks:Object.freeze({warren_call:60,fire_charge:54})})
 });
 export const RECOVERED_BOSS_IDS = Object.freeze(Object.keys(RECOVERED_BOSSES));
 const BY_SITE = new Map(Object.values(RECOVERED_BOSSES).map(row => [row.site,row]));
