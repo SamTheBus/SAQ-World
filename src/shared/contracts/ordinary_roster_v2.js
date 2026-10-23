@@ -26,7 +26,7 @@ const cyber=['neon_spider','wireframe_orb','cyber_wraith'];
 function contextFor(s,g){
  const site=Object.values(s.d9World.functionalSitesById).find(site=>site.floors?.some(f=>f.groupId===g.groupId)),floor=site?.floors.find(f=>f.groupId===g.groupId);
  if(site&&isWildernessStarterSiteV3(site))return null; // V3 starter site unchanged.
- const prior=recordFor(s,g),newRecipe=!prior||isWildernessEcologyRosterV3_5(prior.poolKey);
+ const prior=recordFor(s,g.groupId),newRecipe=!prior||isWildernessEcologyRosterV3_5(prior.poolKey);
  if(newRecipe&&usesWildernessFairnessV3_2(s)){
   let ecology=null,members=null;
   if(floor){
