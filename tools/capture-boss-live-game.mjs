@@ -153,9 +153,23 @@ try{
    if(!selected){captureResults.push({boss:bossId,result:'reservation-not-found'});continue;}
    try{
     console.log('NEXT_BOSS_START',bossId,selected.siteId);
-    const back=await page.evaluate(siteId=>window.__SAQ_CAPTURE__.returnToWorld(siteId),currentSiteId);
-    console.log('BOSS_RETURN_TO_WORLD',bossId,JSON.stringify(back));
-    await page.waitForTimeout(320);
+    const heroBefore=await page.evaluate(()=>{
+      const s=window.__SAQ_CAPTURE__.session;
+      return s.authority.withAuthority(a=>a.withAuthorityState(state=>{
+        const pid=s.clientPort.getReadModel().localPlayerId,p=state.playersById[pid],hero=state.entitiesById[p.entityId];
+        return {alive:hero.alive,inOverworld:hero.residency.spaceInstanceId===state.overworldInstanceId,Hp:hero.hp};
+      }));
+    });
+    console.log('BOSS_NEXT_HERO_STATUS',bossId,JSON.stringify(heroBefore));
+    if(!heroBefore.alive){
+      const respawned=await page.evaluate(async()=>await window.__SAQ_CAPTURE__.respawn());
+      console.log('BOSS_NATIVE_RESPAWN',bossId,JSON.stringify(respawned));
+      await page.waitForTimeout(350);
+    }else if(!heroBefore.inOverworld){
+      const back=await page.evaluate(siteId=>window.__SAQ_CAPTURE__.returnToWorld(siteId),currentSiteId);
+      console.log('BOSS_RETURN_TO_WORLD',bossId,JSON.stringify(back));
+      await page.waitForTimeout(320);
+    }
     const moved=await page.evaluate(async siteId=>
       await window.__SAQ_CAPTURE__.session.clientPort.siteNavigator({action:'teleport',siteId}),selected.siteId);
     console.log('BOSS_NAVIGATOR_TRAVEL',bossId,moved.status);
