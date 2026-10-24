@@ -16,7 +16,7 @@ const server=createServer(async(req,res)=>{
  }catch(error){res.writeHead(404);res.end(String(error));}
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const url='http://127.0.0.1:'+server.address().port+'/?bossCapture=1&profile=1&evidence=1&devTools=1&activityNew=1';
+const url='http://127.0.0.1:'+server.address().port+'/?bossCapture=1&profile=1&evidence=1&devTools=1&activityNew=1&activityCase=F';
 const errors=[];let browser;
 try{
  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
@@ -97,6 +97,28 @@ try{
   },chosen.siteId);
   console.log('REAL_SITE_AFTER_TRAVEL',JSON.stringify(state).slice(0,18000));
   await fs.writeFile(path.join(output,'real-site-after-travel.json'),JSON.stringify(state,null,2));
+  const door=await page.evaluate(id=>window.__SAQ_CAPTURE__.toDoor(id),chosen.siteId);
+  console.log('WORLD_BOSS_DOOR',JSON.stringify(door));
+  await page.waitForTimeout(600);
+  const entranceResult=await page.evaluate(async id=>await window.__SAQ_CAPTURE__.enter(id),chosen.siteId);
+  console.log('WORLD_BOSS_NATIVE_ENTER',JSON.stringify(entranceResult));
+  await page.waitForTimeout(900);
+  const final=await page.evaluate(id=>window.__SAQ_CAPTURE__.finalBoss(id),chosen.siteId);
+  console.log('WORLD_BOSS_REAL_FINAL_CHAMBER',JSON.stringify(final));
+  await page.waitForTimeout(350);
+  const witness=await page.evaluate(()=>{
+    const {session}=window.__SAQ_CAPTURE__,m=session.clientPort.getReadModel(),
+      actors=Object.values(m.entitiesById??{}).filter(a=>a.boss?.bossDefinitionId);
+    return {tick:m.tick,space:m.space?.label,spaceInstanceId:m.context?.spaceInstanceId,
+     bosses:actors.map(a=>({id:a.boss.bossDefinitionId,x:a.position.x,y:a.position.y,hp:a.hp,phase:a.boss.phase})),
+     hero:m.entitiesById?.[m.playersById?.[m.localPlayerId]?.entityId]?.position,
+     canvasShown:document.getElementById('world-view')?.getBoundingClientRect().toJSON()};
+  });
+  if(!witness.bosses?.length)throw Error('No actual boss actor in rendered world projection');
+  console.log('WORLD_BOSS_REAL_IN_GAME_CAPTURE',JSON.stringify(witness));
+  await fs.writeFile(path.join(output,'boss-void-live-evidence.json'),JSON.stringify({...witness,final},null,2));
+  await page.locator('#world-view').screenshot({path:path.join(output,'VOID-OVERSEER-ACTUAL-WORLD-GAME.png')});
+  console.log('WORLD_BOSS_SCREENSHOT',path.join(output,'VOID-OVERSEER-ACTUAL-WORLD-GAME.png'));
  }
  if(data.nav.sites?.length) {
   const targets=data.nav.sites.filter(s=>/boss|ruin|fort|crypt/i.test(s.label+' '+s.siteType));
