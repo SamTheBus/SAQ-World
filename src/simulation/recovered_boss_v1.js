@@ -72,7 +72,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  function sync(b,a){
   if(!a?.alive||a.residency.spaceInstanceId!==b.spaceInstanceId||a.residency.residencyRevision!==b.sourceResidencyRevision){
    if(b.actionState!=='defeated'){clear(b);b.actionState='defeated';}
-   b.pools=[];b.coinShots=[];if(b.bossDefinitionId==='marcus')b.goldRush=null;b.statusesByEntityId={};if(b.archive){b.archive.charge=null;b.archive.sporesById={};b.archive.poisonByEntityId={};}
+   b.pools=[];b.coinShots=[];if(b.bossDefinitionId==='marcus')b.goldRush=null;b.statusesByEntityId={};if(b.archive){b.archive.charge=null;b.archive.sporesById={};b.archive.poisonByEntityId={};b.archive.shedEvents=[];}
    for(const id of b.summonEntityIds){
     const s=summon(id),m=state.entitiesById[id];if(!s||!m)continue;
     if(s.stage==='dormant'&&m.alive){m.alive=false;m.hp=combatInteger(0);s.stage='defeated';s.activatedTick=state.tick;s.hatchTick=state.tick;s.defeatedTick=state.tick;}
@@ -345,7 +345,19 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    if(b.bossDefinitionId==='corrosive_abomination'){
     for(let step=b.chunkStep+1;step<=12;step++){
      if(compareCombat(a.hp,multiplyCombat(a.maxHp,100-step*8,100))>0)break;
-     b.chunkStep=step;awaken(b,1);
+     b.chunkStep=step;
+     const dormant=b.archive?b.summonEntityIds.find(id=>summon(id)?.stage==='dormant'):null;
+     awaken(b,1);
+     if(b.archive&&dormant&&summon(dormant)?.stage==='hatched'){
+      const landing=state.entitiesById[dormant]?.position??a.position,d=dist(a.position,landing)||1;
+      const direction={x:(landing.x-a.position.x)/d,y:(landing.y-a.position.y)/d};
+      const event={id:b.bossId+':shed:'+step,createdTick:state.tick,damageSequence:step,
+       bodyOriginPosition:copyWire(a.position),
+       originPosition:{x:a.position.x+direction.x*26,y:a.position.y+direction.y*26},
+       direction,spawnedMinionIds:[dormant],chunkCount:1};
+      b.archive.shedEvents??=[];b.archive.shedEvents.push(event);
+      b.archive.shedEvents=b.archive.shedEvents.slice(-6);
+     }
      if(!b.archive)pool(b,a.position,step%3===0?'slag':'acid',step%3===0?28:20,step%3===0?240:180);
     }
     if(!b.archive&&state.tick%24===0&&dist(a.position,b.lastTrailPosition)>12){pool(b,a.position,'acid',19,480);b.lastTrailPosition=copyWire(a.position);}
@@ -371,11 +383,20 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  function beginTick(){for(const b of records()){
   b.pools=b.pools.filter(p=>p.expiresTick>state.tick);
   b.coinShots=(b.coinShots??[]).filter(p=>p.expiresTick>state.tick);
-  if(b.archive)for(const[id,p]of Object.entries(b.archive.sporesById))if(state.tick>=p.expiresTick)delete b.archive.sporesById[id];
+  if(b.archive){
+   for(const[id,p]of Object.entries(b.archive.sporesById))if(state.tick>=p.expiresTick)delete b.archive.sporesById[id];
+   if(b.archive.shedEvents)b.archive.shedEvents=b.archive.shedEvents.filter(event=>state.tick-event.createdTick<40);
+  }
   for(const[id,s] of Object.entries(b.statusesByEntityId))if(s.expiresTick<=state.tick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
  }}
  function reconcile(){for(const b of records())sync(b,state.entitiesById[b.entityId]);beginTick();}
- function frozen(id){const s=summon(id);if(s)return s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram';const b=record(id);return Boolean(b&&['telegraphing','rushing','dashing','dazed','defeated'].includes(b.actionState));}
+ function frozen(id){const s=summon(id);if(s){
+   if(s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram')return true;
+   const owner=records().find(b=>b.bossId===s.bossId);
+   if(owner?.bossDefinitionId==='corrosive_abomination'&&
+      ['slime','slag'].includes(s.kind)&&s.stage==='hatched'&&state.tick-s.activatedTick<30)return true;
+   return false;
+  }const b=record(id);return Boolean(b&&['telegraphing','rushing','dashing','dazed','defeated'].includes(b.actionState));}
  function movementMultiplier(id){
   const b=record(id);if(b)return b.actionState==='dazed'||b.actionState==='rushing'||b.actionState==='dashing'?0:b.phase===2?1.2:.8;
   const s=summon(id);if(s&&(s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram'))return 0;
