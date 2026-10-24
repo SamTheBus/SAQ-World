@@ -182,7 +182,17 @@ try{
       document.documentElement.dataset.spacePreparing==='false'&&
       Object.values(model?.entitiesById??{}).some(a=>a.boss?.bossDefinitionId===id);
     },bossId,{timeout:90000});
-    await isolated.waitForTimeout(1050);
+    await isolated.waitForTimeout(300);
+    let painted=null;
+    for(let attempt=0;attempt<6;attempt++){
+      painted=await isolated.evaluate(()=>window.__SAQ_CAPTURE__.paintNow());
+      console.log('BOSS_FORCE_REAL_CANVAS_PAINT',bossId,attempt,JSON.stringify(painted));
+      if(painted.canvasSpace===painted.modelSpace)break;
+      await isolated.waitForTimeout(190);
+    }
+    if(!painted||painted.canvasSpace!==painted.modelSpace)
+      throw Error('Real World Canvas did not yet render the final floor: '+JSON.stringify(painted));
+    await isolated.waitForTimeout(90);
     const evidence=await isolated.evaluate(()=>{
      const model=window.__SAQ_CAPTURE__.session.clientPort.getReadModel();
      return {tick:model.tick,space:model.space?.label,spaceInstanceId:model.context?.spaceInstanceId,
