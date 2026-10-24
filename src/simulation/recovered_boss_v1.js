@@ -5,9 +5,10 @@ import {recoveredBossRecord} from '../shared/contracts/recovered_boss_v1.js';
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
 import {gildedGoldFallTargets} from '../shared/content/original_gilded_gold_fall_v1.js';
 import {originalNexusAbilityChoice} from '../shared/content/original_nexus_ability_v1.js';
+import {originalMarcusDashNodes,MARCUS_GOLD_RUSH_LEG_TICKS,MARCUS_GOLD_RUSH_TOTAL_TICKS} from '../shared/content/original_marcus_gold_rush_v1.js';
 import {archivedCombatProfile} from '../shared/content/archived_boss_fight_profiles_v1.js';
 import {createArchivedBossFightRuntime} from './archived_boss_runtime_v1.js';
-import {originalFireCone,onOriginalRing} from './archived_boss_attack_geometry_v1.js';
+import {originalFireCone,onOriginalRing,sweptPathClear} from './archived_boss_attack_geometry_v1.js';
 import {collidesWithTiles} from '../shared/rules/world_geometry.js';
 import {moveAegisAffectedActor} from './aegis_goliath_v1.js';
 
@@ -71,7 +72,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
  function sync(b,a){
   if(!a?.alive||a.residency.spaceInstanceId!==b.spaceInstanceId||a.residency.residencyRevision!==b.sourceResidencyRevision){
    if(b.actionState!=='defeated'){clear(b);b.actionState='defeated';}
-   b.pools=[];b.coinShots=[];b.statusesByEntityId={};if(b.archive){b.archive.charge=null;b.archive.sporesById={};b.archive.poisonByEntityId={};}
+   b.pools=[];b.coinShots=[];if(b.bossDefinitionId==='marcus')b.goldRush=null;b.statusesByEntityId={};if(b.archive){b.archive.charge=null;b.archive.sporesById={};b.archive.poisonByEntityId={};}
    for(const id of b.summonEntityIds){
     const s=summon(id),m=state.entitiesById[id];if(!s||!m)continue;
     if(s.stage==='dormant'&&m.alive){m.alive=false;m.hp=combatInteger(0);s.stage='defeated';s.activatedTick=state.tick;s.hatchTick=state.tick;s.defeatedTick=state.tick;}
@@ -181,6 +182,46 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   }
   b.coinShots=b.coinShots.filter(p=>!p.expired&&state.tick<p.expiresTick);
  }
+
+ function beginGoldRush(b,a,target){
+  const origin=copyWire(a.position);
+  b.goldRush={startedTick:state.tick,endsTick:state.tick+MARCUS_GOLD_RUSH_TOTAL_TICKS,
+   originPosition:origin,targetPosition:copyWire(target),
+   nodes:originalMarcusDashNodes(origin,target),legIndex:0,
+   legFrom:copyWire(origin),hitEntityIds:[]};
+  clear(b);b.actionState='dashing';
+  b.nextActionTick=state.tick+MARCUS_GOLD_RUSH_TOTAL_TICKS+100;
+ }
+ function advanceGoldRush(b,a,targets,c){
+  const rush=b.goldRush;
+  if(!rush)return;
+  const elapsed=state.tick-rush.startedTick;
+  if(elapsed<1)return;
+  const stage=Math.min(2,Math.floor((elapsed-1)/MARCUS_GOLD_RUSH_LEG_TICKS));
+  if(stage!==rush.legIndex){rush.legIndex=stage;rush.legFrom=copyWire(a.position);}
+  const q=Math.min(1,((elapsed-1)%MARCUS_GOLD_RUSH_LEG_TICKS+1)/MARCUS_GOLD_RUSH_LEG_TICKS);
+  const goal=rush.nodes[stage];
+  const next={x:rush.legFrom.x+(goal.x-rush.legFrom.x)*q,
+   y:rush.legFrom.y+(goal.y-rush.legFrom.y)*q};
+  // Check the full swept boss hull on every movement tick. Blocked routes
+  // stop at the wall but still produce a defensive retreat opening.
+  if(sweptPathClear(c,a.position,next,a.hullRadius))a.position=next;
+  if(elapsed%MARCUS_GOLD_RUSH_LEG_TICKS===0){
+   pool(b,copyWire(a.position),'molten',12,300);
+   const damage=combatInteger(multiplyCombat(a.attackDamage,135,100),'round');
+   for(const t of targets){
+    if(!t?.alive||dist(a.position,t.position)>42+(t.hullRadius??9)||
+       !lineFree(c,a.position,t.position)||!lineClear(a,t))continue;
+    const result=applyDirectDamage(a,t,damage,'recovered_gold_rush',{sourceActionSequence:b.abilitySequence});
+    if(result!==undefined&&result!==false){rush.hitEntityIds.push(t.entityId);stats.hits++;}
+   }
+  }
+  if(elapsed>=MARCUS_GOLD_RUSH_TOTAL_TICKS){
+   b.lastAction={ability:'gold_rush',resolvedTick:state.tick,
+    targetPosition:copyWire(rush.targetPosition),hitEntityIds:[...rush.hitEntityIds]};
+   b.goldRush=null;b.actionState='idle';b.nextActionTick=state.tick+100;
+  }
+ }
  function daze(b,ticks=210){
   clear(b);b.shieldHp='0';b.actionState='dazed';b.dazedUntilTick=state.tick+ticks;
   b.shieldBrokenTick=state.tick;b.nextActionTick=b.dazedUntilTick;stats.interrupts++;
@@ -203,12 +244,10 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   } else if(ability==='molten_shield'){
    pool(b,a.position,'molten',55,240);
   } else if(ability==='gold_rush'){
-   const directionTo=direction(a.position,pos);
-   for(let i=0;i<3;i++){
-    moveAegisAffectedActor(collision,a,{x:directionTo.x*56,y:directionTo.y*56});
-    pool(b,a.position,'molten',43,180);
-    for(const t of targets)if(dist(a.position,t.position)<44&&lineFree(collision,a.position,t.position)&&hit(a,t,b,ability,14))hits.push(t.entityId);
-   }
+   // Three separately visible, collision-checked legs. No teleporting through
+   // the whole original Gold Rush path in a single authority tick.
+   beginGoldRush(b,a,pos);
+   return;
   } else {
    for(const t of targets){
     const d=dist(t.position,ability==='corrosive_slam'||ability==='chronos_slam'||ability==='prism_slam'||ability==='hooked_tail'||ability==='inversion'?a.position:pos);
@@ -301,6 +340,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
    // Rabbits hop independently even while their stag is rushing.
    if(b.bossDefinitionId==='cinderhart')advanceBunnies(b,c);
    if(archived.tick(b,a,targets,c))continue;
+   if(b.actionState==='dashing'){advanceGoldRush(b,a,targets,c);continue;}
    if(b.bossDefinitionId==='nexus_overseer'&&!b.archive)advanceHolograms(b,targets,c);
    if(b.bossDefinitionId==='corrosive_abomination'){
     for(let step=b.chunkStep+1;step<=12;step++){
@@ -335,9 +375,9 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   for(const[id,s] of Object.entries(b.statusesByEntityId))if(s.expiresTick<=state.tick||!state.entitiesById[id]?.alive)delete b.statusesByEntityId[id];
  }}
  function reconcile(){for(const b of records())sync(b,state.entitiesById[b.entityId]);beginTick();}
- function frozen(id){const s=summon(id);if(s)return s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram';const b=record(id);return Boolean(b&&['telegraphing','rushing','dazed','defeated'].includes(b.actionState));}
+ function frozen(id){const s=summon(id);if(s)return s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram';const b=record(id);return Boolean(b&&['telegraphing','rushing','dashing','dazed','defeated'].includes(b.actionState));}
  function movementMultiplier(id){
-  const b=record(id);if(b)return b.actionState==='dazed'||b.actionState==='rushing'?0:b.phase===2?1.2:.8;
+  const b=record(id);if(b)return b.actionState==='dazed'||b.actionState==='rushing'||b.actionState==='dashing'?0:b.phase===2?1.2:.8;
   const s=summon(id);if(s&&(s.stage==='dormant'||s.kind==='bunny'||s.kind==='hologram'))return 0;
   let value=1;
   for(const boss of bossesForPlayer(id))value=Math.min(value,boss.statusesByEntityId[id].movementMultiplier);
