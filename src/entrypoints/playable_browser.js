@@ -164,6 +164,7 @@ export async function startWorldClient(environment) {
         a.withReadyAuthority(engine=>engine.relocateForFixture(target.entityId,target.spaceId,target.position));
         return target;
       },
+      respawn(){return devAdapter.issue('player.respawn',{});},
       enter(siteId){return devAdapter.issue('site.transition',{siteId,direction:'enter'});},
       finalBoss(siteId){
         const a=session.authority,pid=session.clientPort.getReadModel().localPlayerId;
