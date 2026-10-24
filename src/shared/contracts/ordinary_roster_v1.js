@@ -29,7 +29,7 @@ const poolFor=(biome,family,tier)=>{
 function contextFor(s,g){
  const m=origin(s),site=Object.values(s.d9World.functionalSitesById).find(site=>site.floors?.some(f=>f.groupId===g.groupId)),floor=site?.floors.find(f=>f.groupId===g.groupId);
  if(floor){
-  const family=site.familyId?.split(':').at(-1)??site.siteKind?.replace('procedural-',''),starter=starterWildernessPoolV3(site),prior=recordFor(s,g),
+  const family=site.familyId?.split(':').at(-1)??site.siteKind?.replace('procedural-',''),starter=starterWildernessPoolV3(site),prior=recordFor(s,g.groupId),
    newRecipe=!prior||isWildernessEcologyRosterV3_5(prior.poolKey),
    ecology=!starter&&newRecipe&&usesWildernessFairnessV3_2(s)?wildernessSiteEcologyV3_5(site,site.floors.indexOf(floor)):null,
    pool=starter??ecology?.v1??poolFor(site.socket.region.biome,family,site.sizeTier),
@@ -42,7 +42,7 @@ function contextFor(s,g){
   return {pool,members:definition.members,protected:new Set(original.members.map(m=>m.entityId)),floor:false};
  }
  const definition=s.d9World.runtime.groups.find(d=>d.groupId===g.groupId);if(!definition)return null;
- const episode=s.d9World.episodes[g.groupId],chunk=s.d9World.runtime.chunks.find(c=>c.chunkX===episode?.geography.chunkX&&c.chunkY===episode?.geography.chunkY),prior=recordFor(s,g),
+ const episode=s.d9World.episodes[g.groupId],chunk=s.d9World.runtime.chunks.find(c=>c.chunkX===episode?.geography.chunkX&&c.chunkY===episode?.geography.chunkY),prior=recordFor(s,g.groupId),
   newRecipe=!prior||isWildernessEcologyRosterV3_5(prior.poolKey),
   ecology=newRecipe&&usesWildernessFairnessV3_2(s)?wildernessSurfaceEcologyV3_5(chunk?.region.biome):null,
   pool=ecology?.v1??poolFor(chunk?.region.biome??'woodland',null,null);
