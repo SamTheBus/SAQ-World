@@ -246,6 +246,20 @@ export async function startWorldClient(environment) {
   client = mountPlayableClient({ port: clientPort, environment, nextCommandToken: nextToken, performanceProbe,environmentArt,readRuntimeDiagnostics:()=>session.resources?.()??null,readSaveStatus:()=>session.gateStatus?.()??null,
     evidenceMode:evidenceRequested,evidenceIntervalMs:artV2?100:0,developerMode:siteNavigatorRequested,
     capabilities: { coarsePointer: environment.matchMedia("(pointer: coarse)").matches, touchPoints: environment.navigator.maxTouchPoints } });
+  if(environment.__SAQ_CAPTURE__){
+    const capture=environment.__SAQ_CAPTURE__;
+    environment.__SAQ_CAPTURE__=Object.freeze({...capture,paintNow(){
+      // The save gate may stall authority ticks immediately after a native
+      // site transition. Advance ONLY the real Canvas presentation through
+      // its space-preparation phases; never advance combat or forge state.
+      const baseline=environment.performance.now();
+      for(let i=0;i<5;i++)client.render(baseline+i*17);
+      const canvas=environment.document.getElementById('world-view');
+      return {canvasSpace:canvas?.dataset.space??null,modelSpace:session.clientPort.getReadModel().space?.label,
+        tick:canvas?.dataset.tick??null,cameraX:canvas?.dataset.cameraX??null,
+        cameraY:canvas?.dataset.cameraY??null};
+    }});
+  }
   if(environmentArt){const group=environment.document.createElement('details');group.id='authored-art-review';group.open=true;const summary=environment.document.createElement('summary');summary.textContent='Authored art pilot · comparison';group.append(summary);const status=environment.document.createElement('p');
    const sync=()=>{status.textContent='Mode: '+environmentArt.mode()+'. Same collision and camera. The Small Woodland trial uses sparser canopy presentation over the same blocking thickets; V2 remains on other compatible terrain in '+plannedReview.asset.assetId+'. Other biome kits and interior art remain deferred.';for(const b of group.querySelectorAll('button[data-art-mode]'))b.setAttribute('aria-pressed',String(b.dataset.artMode===environmentArt.mode()));};
    const setMode=async value=>{client.releaseInput();await environmentArt.setMode(value);client.invalidateArt();sync();};
