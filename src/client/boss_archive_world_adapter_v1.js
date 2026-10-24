@@ -21,7 +21,7 @@ function archivalActor(actor){
   lastAction:record(boss.lastAction),
   facingAngle:Math.atan2((boss.pendingAction?.targetPosition?.y??boss.lastAction?.targetPosition?.y??actor.position.y+1)-actor.position.y,
    (boss.pendingAction?.targetPosition?.x??boss.lastAction?.targetPosition?.x??actor.position.x)-actor.position.x),
-  recentRuptures:boss.recentRuptures??[]
+  recentRuptures:boss.archive?.shedEvents??boss.recentRuptures??[]
  }};
 }
 export function drawArchivedBossActor(c,actor,tick,flash=false){
@@ -45,13 +45,19 @@ export function archivedBossArtModel(model,tick){
  const pools=(h.recoveredPools??[]).filter(q=>hasArchivedBossPainter(q.bossDefinitionId));
  const acid=(pools.filter(q=>corrosive(q.bossDefinitionId)&&['acid','slag'].includes(q.kind))).map(q=>({...q}));
  const minions=all.filter(a=>a.alive&&['slime','slag'].includes(a.bossSummon?.kind)&&byBossId.has(a.bossSummon.bossId)).map(a=>{
-  const b=a.bossSummon,created=b.activatedTick??tick;
-  return {id:a.entityId,sourceEntityId:byBossId.get(b.bossId).entityId,bossId:b.bossId,
-   position:{...a.position},landingPosition:{...a.position},originPosition:{...a.position},
-   enemyFamily:b.kind==='slag'?'slag_slime':'slime',stage:'active',
-   spawnedTick:created,landsTick:created,activatesTick:created,
+  const b=a.bossSummon,created=b.activatedTick??tick,owner=byBossId.get(b.bossId);
+  const event=owner.boss.archive?.shedEvents?.find(e=>e.spawnedMinionIds.includes(a.entityId));
+  const age=tick-created,stage=age<18?'airborne':age<30?'coalescing':'active';
+  const origin=event?.originPosition??owner.position,landing=a.position;
+  const progress=Math.max(0,Math.min(1,age/18));
+  const visual=stage==='airborne'?
+   {x:origin.x+(landing.x-origin.x)*progress,y:origin.y+(landing.y-origin.y)*progress}:{...landing};
+  return {id:a.entityId,sourceEntityId:owner.entityId,bossId:b.bossId,
+   position:visual,landingPosition:{...landing},originPosition:{...origin},
+   enemyFamily:b.kind==='slag'?'slag_slime':'slime',stage,
+   spawnedTick:created,landsTick:created+18,activatesTick:created+30,volleyOrdinal:b.ordinal,
    hp:a.hp,maxHp:a.maxHp,movedLastTick:a.movedLastTick,visualSeed:a.visualSeed,
-   meleePhase:a.meleePhase, facingAngle:0, lastDamagedTick:a.lastDamagedTick};
+   meleePhase:a.meleePhase,facingAngle:0,lastDamagedTick:a.lastDamagedTick};
  });
  // Continuous acid ribbon derived from actual authority patches, preserving the
  // approved V2 bank painter instead of opaque overlapping pool circles.
@@ -93,7 +99,8 @@ export function archivedBossArtModel(model,tick){
  }
  const archivedHazards={...h,
   corrosivePools:acid,corrosiveTrails:originalTrails,corrosiveMinions:minions,corrosiveTelegraphs:cTele,corrosiveImpacts:cImpacts,
-  corrosiveSpores:(h.recoveredSpores??[]).filter(p=>corrosive(p.bossDefinitionId)).map(s=>({...s,stage:'drifting',radius:12})),corrosiveSheds:[],
+  corrosiveSpores:(h.recoveredSpores??[]).filter(p=>corrosive(p.bossDefinitionId)).map(s=>({...s,stage:'drifting',radius:12})),
+  corrosiveSheds:bosses.filter(b=>corrosive(b.boss.bossDefinitionId)).flatMap(b=>b.boss.archive?.shedEvents??[]),
   voidTelegraphs:vTele,voidImpacts:vImpacts};
  cacheView={...model,entitiesById:bodyById,bossHazards:archivedHazards};
  return cacheView;
