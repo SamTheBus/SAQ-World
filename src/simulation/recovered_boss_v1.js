@@ -4,6 +4,7 @@ import {integerBigInt} from '../shared/contracts/integer_domain.js';
 import {recoveredBossRecord} from '../shared/contracts/recovered_boss_v1.js';
 import {recoveredBossForId} from '../shared/content/recovered_boss_catalog_v1.js';
 import {gildedGoldFallTargets} from '../shared/content/original_gilded_gold_fall_v1.js';
+import {originalNexusAbilityChoice} from '../shared/content/original_nexus_ability_v1.js';
 import {archivedCombatProfile} from '../shared/content/archived_boss_fight_profiles_v1.js';
 import {createArchivedBossFightRuntime} from './archived_boss_runtime_v1.js';
 import {originalFireCone,onOriginalRing} from './archived_boss_attack_geometry_v1.js';
@@ -109,7 +110,7 @@ export function createRecoveredBossCombatV1(state,{applyDirectDamage,eligible=()
   }
   if(id==='void_overseer')return r<.48?'eye_lance':'singularity';
   if(id==='chronos_arbitrator')return b.phase===2&&b.chunkStep===0?'chronos_rewind':r<.5?'chronos_slam':'time_field';
-  if(id==='nexus_overseer')return r<.35?'control_glitch':r<.74?'prism_collapse':'prism_slam';
+  if(id==='nexus_overseer')return b.archive?originalNexusAbilityChoice(b.selectionSeed,b.abilitySequence,dist(a.position,target.position)):r<.35?'control_glitch':r<.74?'prism_collapse':'prism_slam';
   if(id==='gilded_vault_keeper')return b.phase===2&&r<.32?'taxation':r<.64?'vault_crush':'gold_fall';
   if(id==='marcus')return b.phase===2&&r<.23?'molten_shield':r<.48?'coin_barrage':r<.71?'gold_rush':r<.86?'inversion':'gilded_lasso';
   if(id==='hooktail'){
