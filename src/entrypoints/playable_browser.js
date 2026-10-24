@@ -146,6 +146,24 @@ export async function startWorldClient(environment) {
         }));
         return a.developerRelocateToWorld(session.clientPort.getReadModel().localPlayerId,target,{x:0,y:1});
       },
+      returnToWorld(siteId){
+        const a=session.authority;
+        const target=a.withAuthority(engine=>engine.withAuthorityState(s=>{
+          const actor=s.entitiesById[s.playersById[session.clientPort.getReadModel().localPlayerId].entityId];
+          const entry=s.d9World.siteReservationsById[siteId]?.socket?.entrance;
+          if(!entry)throw Error('Cannot return: missing saved boss entrance');
+          const pos=projectToLocalFrameD9(entry,s.d9World.runtime.frames);
+          if(!pos)throw Error('Cannot return: old entrance left the active local frame');
+          const collision=s.spacesByInstanceId[s.overworldInstanceId].collision;
+          for(const [dx,dy]of [[0,0],[32,0],[-32,0],[0,32],[0,-32],[48,0],[-48,0],[0,48],[0,-48]]){
+            const p={x:pos.x+dx,y:pos.y+dy};
+            if(!collidesWithTiles(collision,p.x,p.y,actor.hullRadius))return {entityId:actor.entityId,spaceId:s.overworldInstanceId,position:p};
+          }
+          throw Error('Cannot return: no collision-safe exterior tile');
+        }));
+        a.withReadyAuthority(engine=>engine.relocateForFixture(target.entityId,target.spaceId,target.position));
+        return target;
+      },
       enter(siteId){return devAdapter.issue('site.transition',{siteId,direction:'enter'});},
       finalBoss(siteId){
         const a=session.authority,pid=session.clientPort.getReadModel().localPlayerId;
