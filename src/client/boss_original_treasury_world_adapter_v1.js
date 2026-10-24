@@ -55,7 +55,7 @@ let memoModel=null,memoTick=null,memoArt=null;
 function project(model,tick){
  if(model===memoModel&&tick===memoTick)return memoArt;
  memoModel=model;memoTick=tick;
- const entities=Object.values(model.entitiesById??{}),bosses=entities.filter(a=>a.alive&&hasTreasuryBossPainter(a.boss?.bossDefinitionId));
+ const entities=Object.entries(model.entitiesById??{}).map(([entityId,actor])=>({...actor,entityId})),bosses=entities.filter(a=>a.alive&&hasTreasuryBossPainter(a.boss?.bossDefinitionId));
  if(!bosses.length)return memoArt=null;
  const artActors=Object.fromEntries(entities.map(a=>[a.entityId,originalActor(a,tick)]));
  const h=model.bossHazards??{},tele=h.recoveredTelegraphs??[],pools=h.recoveredPools??[];
