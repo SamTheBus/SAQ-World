@@ -16,6 +16,9 @@ import {createActivitySaveBridge} from '../client/activity_save_bridge.js';
 import {createWorldWorkerBridgeD9} from '../client/world_worker_bridge_d9.js';
 import {createLocalEndlessSessionD9} from '../host/local_endless_session_d9.js';
 import {coordinateWorldViewport} from '../client/viewport_shell.js';
+import {projectToLocalFrameD9} from '../shared/contracts/local_world_frames_d9.js';
+import {collidesWithTiles} from '../shared/rules/world_geometry.js';
+import {createClientCommandAdapter} from '../client/command_adapter.js';
 
 function launcherCapability(environment) {
   try { return environment.localStorage; }
@@ -120,7 +123,51 @@ export async function startWorldClient(environment) {
   // into the public main deployment; it exposes real live game authority
   // only on the test runner's loopback address.
   if(location.searchParams.get('bossCapture')==='1'&&['127.0.0.1','localhost'].includes(location.hostname)){
-    environment.__SAQ_CAPTURE__=Object.freeze({session,read:()=>session.clientPort.getDeveloperReadModel?.()??session.clientPort.getReadModel()});
+    const devAdapter=createClientCommandAdapter({port:session.clientPort,nextCommandToken:nextToken});
+    environment.__SAQ_CAPTURE__=Object.freeze({
+      session,read:()=>session.clientPort.getDeveloperReadModel?.()??session.clientPort.getReadModel(),
+      // The real authority's native site admission still creates the actual
+      // dungeon floor. The test hook only skips the long walk to its doorway.
+      toDoor(siteId){
+        const a=session.authority;
+        const target=a.withAuthority(engine=>engine.withAuthorityState(s=>{
+          const entry=s.d9World.siteReservationsById[siteId]?.socket?.entrance;
+          if(!entry)throw Error('Unknown reserved entrance '+siteId);
+          const pos=projectToLocalFrameD9(entry,s.d9World.runtime.frames);
+          if(!pos)throw Error('Entrance not streamed into local frame');
+          const hero=s.entitiesById[s.playersById[session.clientPort.getReadModel().localPlayerId].entityId];
+          const collision=s.spacesByInstanceId[s.overworldInstanceId].collision;
+          for(const [dx,dy] of [[0,0],[32,0],[-32,0],[0,32],[0,-32],[32,32],[-32,-32],[48,0],[-48,0]]){
+            const q={x:pos.x+dx,y:pos.y+dy};
+            if(Math.hypot(dx,dy)>64||collidesWithTiles(collision,q.x,q.y,hero.hullRadius))continue;
+            return q;
+          }
+          throw Error('No safe entrance tile within 64px');
+        }));
+        return a.developerRelocateToWorld(session.clientPort.getReadModel().localPlayerId,target,{x:0,y:1});
+      },
+      enter(siteId){return devAdapter.issue('site.transition',{siteId,direction:'enter'});},
+      finalBoss(siteId){
+        const a=session.authority,pid=session.clientPort.getReadModel().localPlayerId;
+        const target=a.withAuthority(engine=>engine.withAuthorityState(s=>{
+          const site=s.d9World.functionalSitesById[siteId];if(!site?.floors?.length)throw Error('Site not activated');
+          const floor=site.floors.at(-1);
+          const bossId=floor.enemyIds.find(id=>s.bossCombat?.bossesByEntityId?.[id]);
+          if(!bossId)throw Error('No native boss in final floor '+siteId);
+          const boss=s.entitiesById[bossId],heroId=s.playersById[pid].entityId,c=s.spacesByInstanceId[floor.spaceInstanceId].collision,
+            hero=s.entitiesById[heroId];
+          for(const [dx,dy]of [[-132,48],[130,48],[-105,-80],[105,-80],[0,130],[0,-130],[-96,96],[96,96],[-64,0],[64,0]]){
+            const p={x:boss.position.x+dx,y:boss.position.y+dy};
+            if(!collidesWithTiles(c,p.x,p.y,hero.hullRadius))
+              return {heroId,spaceId:floor.spaceInstanceId,position:p,bossId,bossLabel:boss.bossDefinitionId,bossPosition:boss.position,
+                floorIndex:floor.index};
+          }
+          throw Error('Boss arena has no capture-safe player placement');
+        }));
+        a.withReadyAuthority(engine=>engine.relocateForFixture(target.heroId,target.spaceId,target.position));
+        return target;
+      }
+    });
   }
   startupLoading?.stage(4, 'Verifying game resources…');
   const gameplayPort=Object.freeze({...session.clientPort,getReadModel:()=>session.clientPort.getReadModel({includeDeveloper:false})});
