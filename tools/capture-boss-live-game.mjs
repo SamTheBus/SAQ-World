@@ -105,14 +105,29 @@ try{
   await page.waitForTimeout(900);
   const final=await page.evaluate(id=>window.__SAQ_CAPTURE__.finalBoss(id),chosen.siteId);
   console.log('WORLD_BOSS_REAL_FINAL_CHAMBER',JSON.stringify(final));
-  await page.waitForTimeout(350);
+  // The native host waits for interior ground preparation after a test-only
+  // floor relocation. Screenshot only once the game's own loading overlay is
+  // gone and its actual final-floor frame has had time to be painted.
+  await page.waitForFunction(()=>{
+    const gate=document.getElementById('world-space-loading');
+    const capture=window.__SAQ_CAPTURE__;
+    const model=capture?.session.clientPort.getReadModel();
+    return gate?.hidden===true&&gate?.style.display==='none'&&
+      document.documentElement.dataset.spacePreparing==='false'&&
+      model?.space?.label?.includes('Floor 4/4');
+  },null,{timeout:90000});
+  await page.waitForTimeout(750);
   const witness=await page.evaluate(()=>{
     const {session}=window.__SAQ_CAPTURE__,m=session.clientPort.getReadModel(),
       actors=Object.values(m.entitiesById??{}).filter(a=>a.boss?.bossDefinitionId);
     return {tick:m.tick,space:m.space?.label,spaceInstanceId:m.context?.spaceInstanceId,
      bosses:actors.map(a=>({id:a.boss.bossDefinitionId,x:a.position.x,y:a.position.y,hp:a.hp,phase:a.boss.phase})),
      hero:m.entitiesById?.[m.playersById?.[m.localPlayerId]?.entityId]?.position,
-     canvasShown:document.getElementById('world-view')?.getBoundingClientRect().toJSON()};
+     canvasShown:document.getElementById('world-view')?.getBoundingClientRect().toJSON(),
+     readyGate:{hidden:document.getElementById('world-space-loading')?.hidden,
+       style:document.getElementById('world-space-loading')?.style.display,
+       dataset:document.documentElement.dataset.spacePreparing,
+       gameText:document.getElementById('world-status')?.textContent}};
   });
   if(!witness.bosses?.length)throw Error('No actual boss actor in rendered world projection');
   console.log('WORLD_BOSS_REAL_IN_GAME_CAPTURE',JSON.stringify(witness));
