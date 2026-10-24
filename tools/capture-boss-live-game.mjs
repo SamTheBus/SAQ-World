@@ -53,6 +53,51 @@ try{
  await fs.writeFile(path.join(output,'world-diagnostics.json'),JSON.stringify({...data,errors},null,2));
  await page.locator('#world-view').screenshot({path:path.join(output,'real-game-initial-world.png')});
  console.log('REAL_GAME_SCREENSHOT',path.join(output,'real-game-initial-world.png'));
+
+ // Follow actual persistent site reservations to their real runtime encounters.
+ const bossSiteMap=await page.evaluate(()=>{
+  const a=window.__SAQ_CAPTURE__.session.authority;
+  const reservations=a.withAuthority(x=>x.withAuthorityState(s=>Object.entries(s.d9World.siteReservationsById).map(([siteId,r])=>({
+   siteId,reservationId:r.socket?.provenance?.reservationId??null,siteLabel:r.socket?.label??null,packageId:r.packageId,tier:r.parcel?.tier??null
+  }))));
+  const ids=['repeatable-slot:ruin:wetland:standard:033','repeatable-slot:ruin:frostland:deep:01',
+   'repeatable-slot:ruin:upland:standard:049','repeatable-slot:ruin:tropical:standard:037',
+   'repeatable-slot:crypt:upland:standard:01','repeatable-slot:fort:grassland:standard:040',
+   'repeatable-slot:ruin:desert:standard:056','repeatable-slot:ruin:woodland:standard:054'];
+  return reservations.filter(r=>ids.includes(r.reservationId));
+ });
+ console.log('BOSS_REAL_SITE_MAP',JSON.stringify(bossSiteMap));
+ await fs.writeFile(path.join(output,'boss-site-map.json'),JSON.stringify(bossSiteMap,null,2));
+ // Void uses an existing Deep Frostland Ruin, provisioned by the real world
+ // streaming system; do not fabricate the arena or draw an illustrative mock.
+ const chosen=bossSiteMap.find(x=>x.reservationId==='repeatable-slot:ruin:frostland:deep:01')??bossSiteMap[0];
+ if(chosen){
+  console.log('TRAVEL_TO_BOSS',JSON.stringify(chosen));
+  const moved=await page.evaluate(async id=>{
+   const p=window.__SAQ_CAPTURE__.session.clientPort;
+   return await p.siteNavigator({action:'teleport',siteId:id});
+  },chosen.siteId);
+  console.log('REAL_GAME_SITE_TRAVEL',JSON.stringify(moved));
+  await page.waitForTimeout(2000);
+  await page.locator('#world-view').screenshot({path:path.join(output,'real-game-boss-entrance.png')});
+  const state=await page.evaluate(siteId=>{
+   const {session}=window.__SAQ_CAPTURE__;
+   return session.authority.withAuthority(a=>a.withAuthorityState(s=>{
+    const p=Object.values(s.playersById)[0],hero=s.entitiesById[p.entityId];
+    const site=s.d9World?.functionalSitesById?.[siteId];
+    return {tick:s.tick,hero:{entityId:hero.entityId,position:hero.position,residency:hero.residency},
+     siteExists:Boolean(site),site:site?{siteId:site.siteId,floors:site.floors?.map(f=>({
+       index:f.index,spaceInstanceId:f.spaceInstanceId,groupId:f.groupId,entrance:f.entrance,enemyIds:f.enemyIds?.slice(0,8),
+       transitions:f.transitions,rooms:f.graph?.rooms?.slice(0,6)}))}:null,
+     activeBosses:Object.values(s.bossCombat?.bossesByEntityId??{}).map(b=>({id:b.bossDefinitionId,entityId:b.entityId,spaceInstanceId:b.spaceInstanceId,siteId:b.siteId,position:s.entitiesById[b.entityId]?.position})).slice(0,20),
+     reservation:s.d9World.siteReservationsById[siteId]?{entrance:s.d9World.siteReservationsById[siteId].socket?.entrance,
+       packageId:s.d9World.siteReservationsById[siteId].packageId}:null
+    };
+   }));
+  },chosen.siteId);
+  console.log('REAL_SITE_AFTER_TRAVEL',JSON.stringify(state).slice(0,18000));
+  await fs.writeFile(path.join(output,'real-site-after-travel.json'),JSON.stringify(state,null,2));
+ }
  if(data.nav.sites?.length) {
   const targets=data.nav.sites.filter(s=>/boss|ruin|fort|crypt/i.test(s.label+' '+s.siteType));
   console.log('SITE_NAV_TARGETS',JSON.stringify(targets.slice(0,25)).slice(0,7000));
