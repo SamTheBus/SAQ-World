@@ -7,7 +7,7 @@ import {archivedCombatProfile,ARCHIVED_FIGHT_PROFILE_VERSION} from '../content/a
 
 export const RECOVERED_SUMMON_VERSION='recovered-boss-summon-v1';
 const point=p=>Boolean(p&&Number.isFinite(p.x)&&Number.isFinite(p.y));
-const states=['idle','telegraphing','dazed','defeated','rushing'];
+const states=['idle','telegraphing','dazed','defeated','rushing','dashing'];
 export const recoveredBossRecord=b=>b?.version===RECOVERED_BOSS_VERSION&&Boolean(recoveredBossForId(b.bossDefinitionId));
 
 export async function createRecoveredBossV1({kind,campaignSeed,siteId,floorId,groupId,roomId,entityId,homePosition,activatedTick,spaceInstanceId,sourceResidencyRevision,addMembers=[]},{sha256}) {
@@ -27,7 +27,7 @@ export async function createRecoveredBossV1({kind,campaignSeed,siteId,floorId,gr
   telegraphStartedTick:null,resolvesTick:null,nextActionTick:activatedTick+60,abilitySequence:0,
   selectionSeed:parseInt(digest.slice(0,8),16)>>>0,
   shieldHp:'0',shieldMaxHp:'0',dazedUntilTick:null,shieldBrokenTick:null,
-  summonEntityIds:summons.map(s=>s.entityId),chunkStep:0,collapseStep:0,stolenGold:'0',coinShots:[],
+  summonEntityIds:summons.map(s=>s.entityId),chunkStep:0,collapseStep:0,stolenGold:'0',coinShots:[],...(kind==='marcus'?{goldRush:null}:{}),
   pools:[],statusesByEntityId:{},lastTrailPosition:copyWire(homePosition),lastAction:null,
   ...(archivedCombatProfile(kind)?{archive:{version:ARCHIVED_FIGHT_PROFILE_VERSION,charge:null,sporesById:{},poisonByEntityId:{},contactByEntityId:{},nexusShotsById:{},nextWarrenTick:activatedTick+60,sludgeSequence:0,collapsedRings:[]}}:{})
  };
@@ -38,7 +38,7 @@ export function validateRecoveredBossV1(state,id,b){
  closedRecord(b,['version','bossId','bossDefinitionId','entityId','siteId','floorId','groupId','roomId','homePosition','activatedTick',
   'spaceInstanceId','sourceResidencyRevision','phase','phase2Triggered','actionState','activeAbility','targetEntityId','targetPosition',
   'telegraphStartedTick','resolvesTick','nextActionTick','abilitySequence','selectionSeed','shieldHp','shieldMaxHp','dazedUntilTick',
-  'shieldBrokenTick','summonEntityIds','chunkStep','collapseStep','stolenGold','pools','statusesByEntityId','lastTrailPosition','lastAction'],['coinShots','archive']);
+  'shieldBrokenTick','summonEntityIds','chunkStep','collapseStep','stolenGold','pools','statusesByEntityId','lastTrailPosition','lastAction'],['coinShots','archive','goldRush']);
  const spec=recoveredBossForId(b.bossDefinitionId),actor=state.entitiesById[id],group=state.groupsById[b.groupId],c=state.spacesByInstanceId[b.spaceInstanceId]?.collision;
  check(spec&&b.version===RECOVERED_BOSS_VERSION&&b.entityId===id&&/^boss:[a-f0-9]{32}$/.test(b.bossId)&&actor?.team==='hostile'&&
   actor.contentDefinitionId===ARACHNID_TREANT_PROFILE.contentDefinitionId&&group?.entityIds.includes(id)&&group.siteId===b.siteId&&
@@ -55,6 +55,20 @@ export function validateRecoveredBossV1(state,id,b){
   safeInteger(b.resolvesTick,b.telegraphStartedTick+(b.archive?archivedCombatProfile(b.bossDefinitionId).attack[b.activeAbility]:spec.attacks[b.activeAbility]),b.telegraphStartedTick+(b.archive?archivedCombatProfile(b.bossDefinitionId).attack[b.activeAbility]:spec.attacks[b.activeAbility]));
  }else check(b.activeAbility===null&&b.targetEntityId===null&&b.targetPosition===null&&b.telegraphStartedTick===null&&b.resolvesTick===null,'Recovered boss stale telegraph');
  if(b.actionState==='rushing')check(b.bossDefinitionId==='cinderhart'&&b.archive?.charge,'Archived Cinderhart rush missing');
+ if(b.goldRush!==undefined){
+  check(b.bossDefinitionId==='marcus','Only Marcus can have Gold Rush state');
+  const r=b.goldRush;
+  if(r){
+   closedRecord(r,['startedTick','endsTick','originPosition','targetPosition','nodes','legIndex','legFrom','hitEntityIds']);
+   safeInteger(r.startedTick,b.activatedTick,state.tick);
+   check(r.endsTick===r.startedTick+18&&state.tick<=r.endsTick&&point(r.originPosition)&&point(r.targetPosition)&&point(r.legFrom)&&
+    Array.isArray(r.nodes)&&r.nodes.length===3&&r.nodes.every(point),'Invalid saved Gold Rush route');
+   safeInteger(r.legIndex,0,2);
+   check(Array.isArray(r.hitEntityIds)&&r.hitEntityIds.length<=12&&r.hitEntityIds.every(id=>state.entitiesById[id]?.team==='party'),'Invalid Gold Rush hit record');
+   check(b.actionState==='dashing','Gold Rush route without active dashing');
+  }
+ }
+ if(b.actionState==='dashing')check(b.bossDefinitionId==='marcus'&&b.goldRush,'Missing Marcus Gold Rush path');
  if(b.actionState==='dazed')safeInteger(b.dazedUntilTick,state.tick+1,state.tick+300);
  else check(b.dazedUntilTick===null,'Recovered boss stale daze');
  if(b.shieldBrokenTick!==null)safeInteger(b.shieldBrokenTick,b.activatedTick,state.tick);
@@ -141,7 +155,7 @@ export function projectRecoveredBossV1(b,state){
  return freezeWire({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,label:spec.label,phase:b.phase,actionState:b.actionState,selectionSeed:b.selectionSeed,abilitySequence:b.abilitySequence,
   shieldActive:BigInt(b.shieldHp)>0n,shieldHp:b.shieldHp,shieldMaxHp:b.shieldMaxHp,shieldBrokenTick:b.shieldBrokenTick,
   dazedUntilTick:b.dazedUntilTick,collapseStep:b.collapseStep,chunkStep:b.chunkStep,stolenGold:b.stolenGold,
-  coinShots:copyWire(b.coinShots??[]),archive:b.archive?{charge:copyWire(b.archive.charge),sporesById:copyWire(b.archive.sporesById),poisonByEntityId:copyWire(b.archive.poisonByEntityId),collapsedRings:copyWire(b.archive.collapsedRings),nexusShotsById:copyWire(b.archive.nexusShotsById??{})}:null,
+  coinShots:copyWire(b.coinShots??[]),goldRush:copyWire(b.goldRush??null),archive:b.archive?{charge:copyWire(b.archive.charge),sporesById:copyWire(b.archive.sporesById),poisonByEntityId:copyWire(b.archive.poisonByEntityId),collapsedRings:copyWire(b.archive.collapsedRings),nexusShotsById:copyWire(b.archive.nexusShotsById??{})}:null,
   minions:b.summonEntityIds.map(id=>{const m=state.bossCombat.summonsByEntityId[id];return {entityId:id,kind:m.kind,stage:m.stage,position:copyWire(state.entitiesById[id].position)};}),
   lastAction:copyWire(b.lastAction),pendingAction:b.actionState==='telegraphing'?
   {ability:b.activeAbility,targetEntityId:b.targetEntityId,targetPosition:copyWire(b.targetPosition),startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick}:null});
