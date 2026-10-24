@@ -178,7 +178,7 @@ export async function startWorldClient(environment) {
           for(const [dx,dy]of [[-132,48],[130,48],[-105,-80],[105,-80],[0,130],[0,-130],[-96,96],[96,96],[-64,0],[64,0]]){
             const p={x:boss.position.x+dx,y:boss.position.y+dy};
             if(!collidesWithTiles(c,p.x,p.y,hero.hullRadius))
-              return {heroId,spaceId:floor.spaceInstanceId,position:p,bossId,bossLabel:boss.bossDefinitionId,bossPosition:boss.position,
+              return {heroId,spaceId:floor.spaceInstanceId,position:p,bossId,bossLabel:s.bossCombat.bossesByEntityId[bossId].bossDefinitionId,bossPosition:boss.position,
                 floorIndex:floor.index};
           }
           throw Error('Boss arena has no capture-safe player placement');
