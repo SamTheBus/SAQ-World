@@ -4,6 +4,7 @@
 import {drawMarcusTheOutlaw,drawMarcusGround,marcusDepthItems} from './boss_presentation_marcus_the_outlaw_v1.js';
 import {drawGildedVaultKeeper,drawGildedGround,gildedDepthItems} from './boss_presentation_gilded_vault_keeper_v1.js';
 import {gildedGoldFallTargets} from '../shared/content/original_gilded_gold_fall_v1.js';
+import {originalMarcusDashNodes} from '../shared/content/original_marcus_gold_rush_v1.js';
 
 const marcus=id=>id==='marcus';
 const gilded=id=>id==='gilded_vault_keeper';
@@ -18,10 +19,8 @@ const copyAction=(id,action,actor)=>action?{
  position:action.position??action.targetPosition??point(actor.position),
  sequence:action.sequence??actor.boss?.abilitySequence??0,
  ...(marcus(id)&&action.ability==='gold_rush'?{
-  targets:[1,2,3].map(n=>{
-   const target=action.targetPosition??actor.position,dx=target.x-actor.position.x,dy=target.y-actor.position.y,d=Math.hypot(dx,dy)||1;
-   return {x:actor.position.x+(dx/d)*56*n,y:actor.position.y+(dy/d)*56*n};
-  })
+  dashNodes:action.dashNodes??originalMarcusDashNodes(action.originPosition??actor.position,action.targetPosition??actor.position),
+  targets:action.dashNodes??originalMarcusDashNodes(action.originPosition??actor.position,action.targetPosition??actor.position)
  }:{})
 }:null;
 const referencePoint=a=>a.boss?.pendingAction?.targetPosition??a.boss?.lastAction?.targetPosition??{x:a.position.x+1,y:a.position.y};
@@ -45,7 +44,10 @@ function originalActor(actor,tick){
  const aim=referencePoint(actor),b=actor.boss;
  const ward=channel(actor,tick);
  return {...actor,boss:{...b,bossDefinitionId:marcus(id)?'marcus_the_outlaw':'gilded_vault_keeper',
-  pendingAction:copyAction(id,b.pendingAction,actor),lastAction:copyAction(id,b.lastAction,actor),
+  pendingAction:copyAction(id,b.pendingAction??(marcus(id)&&b.goldRush?{
+   ability:'gold_rush',startedTick:b.goldRush.startedTick,resolvesTick:b.goldRush.endsTick,
+   targetPosition:b.goldRush.targetPosition,originPosition:b.goldRush.originPosition,dashNodes:b.goldRush.nodes
+  }:null),actor),lastAction:copyAction(id,b.lastAction,actor),
   facingAngle:Math.atan2(aim.y-actor.position.y,aim.x-actor.position.x),
   ...(marcus(id)?{moltenShield:ward}:{taxation:ward}),
   dazeStartedTick:b.shieldBrokenTick??null,dazeEndsTick:b.dazedUntilTick??null,
@@ -77,6 +79,13 @@ function project(model,tick){
     base.targets=gildedGoldFallTargets(row.selectionSeed??b.selectionSeed??0,row.sequence,target);
    }
    if(marcus(id))hazards.marcusTelegraphs.push(base);else hazards.gildedTelegraphs.push(base);
+  }
+  if(marcus(id)&&b.goldRush){
+   const dash=b.goldRush;
+   hazards.marcusTelegraphs.push({id:b.bossId+':rush:'+dash.startedTick,bossId:b.bossId,sourceEntityId:actor.entityId,
+    ability:'gold_rush_dash',startedTick:dash.startedTick,resolvesTick:dash.endsTick,
+    position:point(dash.targetPosition),targetPosition:point(dash.targetPosition),originPosition:point(dash.originPosition),
+    dashNodes:dash.nodes.map(point)});
   }
   if(last&&tick-last.resolvedTick>=0&&tick-last.resolvedTick<40){
    const base={...last,bossId:b.bossId,sourceEntityId:actor.entityId,position:last.position??last.targetPosition,
