@@ -29,7 +29,7 @@ export async function createRecoveredBossV1({kind,campaignSeed,siteId,floorId,gr
   shieldHp:'0',shieldMaxHp:'0',dazedUntilTick:null,shieldBrokenTick:null,
   summonEntityIds:summons.map(s=>s.entityId),chunkStep:0,collapseStep:0,stolenGold:'0',coinShots:[],...(kind==='marcus'?{goldRush:null}:{}),
   pools:[],statusesByEntityId:{},lastTrailPosition:copyWire(homePosition),lastAction:null,
-  ...(archivedCombatProfile(kind)?{archive:{version:ARCHIVED_FIGHT_PROFILE_VERSION,charge:null,sporesById:{},poisonByEntityId:{},contactByEntityId:{},nexusShotsById:{},nextWarrenTick:activatedTick+60,sludgeSequence:0,collapsedRings:[]}}:{})
+  ...(archivedCombatProfile(kind)?{archive:{version:ARCHIVED_FIGHT_PROFILE_VERSION,charge:null,sporesById:{},poisonByEntityId:{},contactByEntityId:{},nexusShotsById:{},shedEvents:[],nextWarrenTick:activatedTick+60,sludgeSequence:0,collapsedRings:[]}}:{})
  };
  return freezeWire({boss,summons});
 }
@@ -81,9 +81,22 @@ export function validateRecoveredBossV1(state,id,b){
  }
  if(b.archive!==undefined){
   const archive=b.archive;
-  closedRecord(archive,['version','charge','sporesById','poisonByEntityId','contactByEntityId','nextWarrenTick','sludgeSequence','collapsedRings'],['nexusShotsById']);
+  closedRecord(archive,['version','charge','sporesById','poisonByEntityId','contactByEntityId','nextWarrenTick','sludgeSequence','collapsedRings'],['nexusShotsById','shedEvents']);
   check(Boolean(archivedCombatProfile(b.bossDefinitionId))&&archive.version===ARCHIVED_FIGHT_PROFILE_VERSION,'Archived boss profile mismatch');
   safeInteger(archive.nextWarrenTick,0,state.tick+1200);safeInteger(archive.sludgeSequence,0);
+  check(Array.isArray(archive.shedEvents??[])&&(archive.shedEvents??[]).length<=6 &&
+   (!(archive.shedEvents?.length)||b.bossDefinitionId==='corrosive_abomination'),'Invalid Corrosive shedding event budget');
+  for(const event of archive.shedEvents??[]){
+   closedRecord(event,['id','createdTick','damageSequence','bodyOriginPosition','originPosition','direction','spawnedMinionIds','chunkCount']);
+   check(typeof event.id==='string'&&event.id===b.bossId+':shed:'+event.damageSequence&&
+    point(event.bodyOriginPosition)&&point(event.originPosition)&&point(event.direction)&&
+    Math.abs(Math.hypot(event.direction.x,event.direction.y)-1)<.001,'Invalid Corrosive rupture direction');
+   safeInteger(event.createdTick,b.activatedTick,state.tick);
+   check(state.tick-event.createdTick<40,'Expired Corrosive rupture');
+   safeInteger(event.damageSequence,1,16);
+   check(Array.isArray(event.spawnedMinionIds)&&event.spawnedMinionIds.length===1&&event.chunkCount===1&&
+    b.summonEntityIds.includes(event.spawnedMinionIds[0]),'Invalid real shed minion binding');
+  }
   check(Array.isArray(archive.collapsedRings)&&archive.collapsedRings.length<=7&&(!archive.collapsedRings.length||b.bossDefinitionId==='hooktail'),'Archived collapse ledger invalid');
   for(const r of archive.collapsedRings){
    closedRecord(r,['index','createdTick','minColumn','maxColumn','minRow','maxRow','tileSize','tiles']);
@@ -155,7 +168,7 @@ export function projectRecoveredBossV1(b,state){
  return freezeWire({bossId:b.bossId,bossDefinitionId:b.bossDefinitionId,label:spec.label,phase:b.phase,actionState:b.actionState,selectionSeed:b.selectionSeed,abilitySequence:b.abilitySequence,
   shieldActive:BigInt(b.shieldHp)>0n,shieldHp:b.shieldHp,shieldMaxHp:b.shieldMaxHp,shieldBrokenTick:b.shieldBrokenTick,
   dazedUntilTick:b.dazedUntilTick,collapseStep:b.collapseStep,chunkStep:b.chunkStep,stolenGold:b.stolenGold,
-  coinShots:copyWire(b.coinShots??[]),goldRush:copyWire(b.goldRush??null),archive:b.archive?{charge:copyWire(b.archive.charge),sporesById:copyWire(b.archive.sporesById),poisonByEntityId:copyWire(b.archive.poisonByEntityId),collapsedRings:copyWire(b.archive.collapsedRings),nexusShotsById:copyWire(b.archive.nexusShotsById??{})}:null,
+  coinShots:copyWire(b.coinShots??[]),goldRush:copyWire(b.goldRush??null),archive:b.archive?{charge:copyWire(b.archive.charge),sporesById:copyWire(b.archive.sporesById),poisonByEntityId:copyWire(b.archive.poisonByEntityId),collapsedRings:copyWire(b.archive.collapsedRings),nexusShotsById:copyWire(b.archive.nexusShotsById??{}),shedEvents:copyWire(b.archive.shedEvents??[])}:null,
   minions:b.summonEntityIds.map(id=>{const m=state.bossCombat.summonsByEntityId[id];return {entityId:id,kind:m.kind,stage:m.stage,position:copyWire(state.entitiesById[id].position)};}),
   lastAction:copyWire(b.lastAction),pendingAction:b.actionState==='telegraphing'?
   {ability:b.activeAbility,targetEntityId:b.targetEntityId,targetPosition:copyWire(b.targetPosition),startedTick:b.telegraphStartedTick,resolvesTick:b.resolvesTick}:null});
