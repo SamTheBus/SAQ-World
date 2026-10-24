@@ -141,11 +141,6 @@ try{
   // storage context and character. Otherwise a high-level boss can kill the
   // previous hero and prevent the next site's developer navigator from running.
   const otherBosses=[
-   ['NEXUS-OVERSEER','repeatable-slot:ruin:tropical:standard:037','nexus_overseer'],
-   ['CORROSIVE-ABOMINATION','repeatable-slot:ruin:wetland:standard:033','corrosive_abomination'],
-   ['CHRONOS-ARBITRATOR','repeatable-slot:ruin:upland:standard:049','chronos_arbitrator'],
-   ['HOOKTAIL','repeatable-slot:ruin:desert:standard:056','hooktail'],
-   ['CINDERHART','repeatable-slot:ruin:woodland:standard:054','cinderhart'],
    ['MARCUS-THE-OUTLAW','repeatable-slot:fort:grassland:standard:040','marcus'],
    ['GILDED-VAULT-KEEPER','repeatable-slot:crypt:upland:standard:01','gilded_vault_keeper']
   ];
@@ -187,13 +182,24 @@ try{
       document.documentElement.dataset.spacePreparing==='false'&&
       Object.values(model?.entitiesById??{}).some(a=>a.boss?.bossDefinitionId===id);
     },bossId,{timeout:90000});
-    await isolated.waitForTimeout(400);
+    await isolated.waitForTimeout(1050);
     const evidence=await isolated.evaluate(()=>{
      const model=window.__SAQ_CAPTURE__.session.clientPort.getReadModel();
      return {tick:model.tick,space:model.space?.label,spaceInstanceId:model.context?.spaceInstanceId,
       bosses:Object.values(model.entitiesById??{}).filter(a=>a.boss?.bossDefinitionId)
        .map(a=>({id:a.boss.bossDefinitionId,position:a.position,phase:a.boss.phase,alive:a.alive})),
-      renderReady:document.getElementById('world-space-loading')?.hidden===true};
+      renderReady:document.getElementById('world-space-loading')?.hidden===true,
+      hero:model.entitiesById?.[model.playersById?.[model.localPlayerId]?.entityId]??null,
+      canvasEvidence:{
+       space:document.getElementById('world-view')?.dataset.space,
+       tick:document.getElementById('world-view')?.dataset.tick,
+       x:document.getElementById('world-view')?.dataset.x,
+       y:document.getElementById('world-view')?.dataset.y,
+       cameraX:document.getElementById('world-view')?.dataset.cameraX,
+       cameraY:document.getElementById('world-view')?.dataset.cameraY,
+       entities:JSON.parse(document.getElementById('world-view')?.dataset.entities??'{}')?
+         Object.keys(JSON.parse(document.getElementById('world-view')?.dataset.entities??'{}')):[]
+      }};
     });
     if(!evidence.bosses.some(a=>a.id===bossId&&a.alive))throw Error('Target boss absent/dead in rendered native game');
     const filename=label+'-ACTUAL-WORLD-GAME.png';
