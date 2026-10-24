@@ -116,6 +116,12 @@ export async function startWorldClient(environment) {
       startNew:async()=>{await forget();cleanAndReload(environment,policy);},reset});
     return null;
   }
+  // Isolated local screenshot harness. This developer branch is never packaged
+  // into the public main deployment; it exposes real live game authority
+  // only on the test runner's loopback address.
+  if(location.searchParams.get('bossCapture')==='1'&&['127.0.0.1','localhost'].includes(location.hostname)){
+    environment.__SAQ_CAPTURE__=Object.freeze({session,read:()=>session.clientPort.getDeveloperReadModel?.()??session.clientPort.getReadModel()});
+  }
   startupLoading?.stage(4, 'Verifying game resources…');
   const gameplayPort=Object.freeze({...session.clientPort,getReadModel:()=>session.clientPort.getReadModel({includeDeveloper:false})});
   const clientPort=performanceProbe?Object.freeze({ ...gameplayPort,
