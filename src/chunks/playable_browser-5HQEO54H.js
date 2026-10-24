@@ -612,7 +612,7 @@ import {
   worldLevelGapMultiplier,
   worldOrdinaryMeleeProfile,
   worldPointForArea
-} from "./chunk-HCG6U27T.js";
+} from "./chunk-455RXGKR.js";
 
 // src/client/browser_loop_health.js
 var BROWSER_LOOP_HEALTH_VERSION = "browser-loop-health-ruin-freeze-v1";
@@ -4320,8 +4320,8 @@ for (let i = 0; i < unit.length; i++) for (let j = i + 1; j < unit.length; j++) 
 var WIREFRAME_ORB_EDGES_V4 = Object.freeze(pairs);
 var color12 = (flash, hex2) => flash ? "#fff" : hex2;
 function verticesAt(time, seed2) {
-  const yaw = time / 1800 + seed2 % 13 * 0.17, pitch = time / 2400 + seed2 % 11 * 0.13, roll5 = Math.sin(time / 2800 + seed2 % 7) * 0.16;
-  const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch), cr = Math.cos(roll5), sr = Math.sin(roll5);
+  const yaw = time / 1800 + seed2 % 13 * 0.17, pitch = time / 2400 + seed2 % 11 * 0.13, roll6 = Math.sin(time / 2800 + seed2 % 7) * 0.16;
+  const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch), cr = Math.cos(roll6), sr = Math.sin(roll6);
   return unit.map(([x, y, z]) => {
     const x1 = x * cy + z * sy, z1 = -x * sy + z * cy, y2 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
     const x3 = x1 * cr - y2 * sr, y3 = x1 * sr + y2 * cr, perspective = 1 + z2 / 8;
@@ -18803,6 +18803,35 @@ function gildedGoldFallTargets(seed2, sequence, target) {
   });
 }
 
+// src/shared/content/original_nexus_ability_v1.js
+var roll4 = (seed2, sequence, salt) => {
+  let value = (seed2 ^ Math.imul(sequence + 1, 2654435761) ^ salt) >>> 0;
+  value = Math.imul(value ^ value >>> 16, 2246822507) >>> 0;
+  value = Math.imul(value ^ value >>> 13, 3266489909) >>> 0;
+  return ((value ^ value >>> 16) >>> 0) / 4294967296;
+};
+function originalNexusAbilityChoice(seed2, sequence, distance8) {
+  if (!Number.isInteger(seed2) || seed2 < 0 || seed2 > 4294967295 || !Number.isSafeInteger(sequence) || sequence < 0 || !Number.isFinite(distance8) || distance8 < 0)
+    throw new TypeError("Invalid Nexus ability seed, sequence or distance");
+  const choice = roll4(seed2, sequence, 2722868949) < 0.5 ? "prism_collapse" : "control_glitch";
+  return distance8 < 64 && roll4(seed2, sequence, 1374496523) < 0.8 ? "prism_collapse" : choice;
+}
+
+// src/shared/content/original_marcus_gold_rush_v1.js
+var MARCUS_GOLD_RUSH_LEG_TICKS = 6;
+var MARCUS_GOLD_RUSH_LEGS = 3;
+var MARCUS_GOLD_RUSH_TOTAL_TICKS = MARCUS_GOLD_RUSH_LEGS * MARCUS_GOLD_RUSH_LEG_TICKS;
+function originalMarcusDashNodes(origin, target) {
+  if (![origin?.x, origin?.y, target?.x, target?.y].every(Number.isFinite)) throw new TypeError("Invalid Marcus Gold Rush points");
+  const dx = target.x - origin.x, dy = target.y - origin.y, angle3 = Math.atan2(dy, dx), distance8 = Math.hypot(dx, dy);
+  const near = Math.min(distance8 * 0.35, 70), far = Math.min(distance8 * 0.7, 140);
+  return [
+    { x: origin.x + Math.cos(angle3 - 0.6) * near, y: origin.y + Math.sin(angle3 - 0.6) * near },
+    { x: origin.x + Math.cos(angle3 + 0.6) * far, y: origin.y + Math.sin(angle3 + 0.6) * far },
+    { x: target.x, y: target.y }
+  ];
+}
+
 // src/simulation/archived_boss_attack_geometry_v1.js
 var clip = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 var range = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -19198,7 +19227,7 @@ var direction = (a, b) => {
   const d = dist2(a, b) || 1;
   return { x: (b.x - a.x) / d, y: (b.y - a.y) / d };
 };
-var roll4 = (seed2, seq, salt = 0) => {
+var roll5 = (seed2, seq, salt = 0) => {
   let v = (seed2 ^ Math.imul(seq + 1, 2654435761) ^ salt) >>> 0;
   v = Math.imul(v ^ v >>> 16, 2246822507) >>> 0;
   v = Math.imul(v ^ v >>> 13, 3266489909) >>> 0;
@@ -19337,11 +19366,13 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
       }
       b.pools = [];
       b.coinShots = [];
+      if (b.bossDefinitionId === "marcus") b.goldRush = null;
       b.statusesByEntityId = {};
       if (b.archive) {
         b.archive.charge = null;
         b.archive.sporesById = {};
         b.archive.poisonByEntityId = {};
+        b.archive.shedEvents = [];
       }
       for (const id of b.summonEntityIds) {
         const s = summon(id), m = state.entitiesById[id];
@@ -19387,24 +19418,24 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
     }
   }
   function choose(b, a, target) {
-    const id = b.bossDefinitionId, n = b.abilitySequence + 1, r = roll4(b.selectionSeed, n, 1374496523);
+    const id = b.bossDefinitionId, n = b.abilitySequence + 1, r = roll5(b.selectionSeed, n, 1374496523);
     if (id === "corrosive_abomination") {
       if (b.archive) {
-        const seq = b.abilitySequence, choice = b.phase === 2 && roll4(b.selectionSeed, seq, 2722868949) >= 0.5 ? "spore_storm" : "corrosive_slam";
-        return dist2(a.position, target.position) < 64 && roll4(b.selectionSeed, seq, 1374496523) < 0.8 ? "corrosive_slam" : choice;
+        const seq = b.abilitySequence, choice = b.phase === 2 && roll5(b.selectionSeed, seq, 2722868949) >= 0.5 ? "spore_storm" : "corrosive_slam";
+        return dist2(a.position, target.position) < 64 && roll5(b.selectionSeed, seq, 1374496523) < 0.8 ? "corrosive_slam" : choice;
       }
       return b.phase === 2 && r < 0.5 ? "spore_storm" : r < 0.82 ? "corrosive_slam" : "acid_spill";
     }
     if (id === "void_overseer") return r < 0.48 ? "eye_lance" : "singularity";
     if (id === "chronos_arbitrator") return b.phase === 2 && b.chunkStep === 0 ? "chronos_rewind" : r < 0.5 ? "chronos_slam" : "time_field";
-    if (id === "nexus_overseer") return r < 0.35 ? "control_glitch" : r < 0.74 ? "prism_collapse" : "prism_slam";
+    if (id === "nexus_overseer") return b.archive ? originalNexusAbilityChoice(b.selectionSeed, b.abilitySequence, dist2(a.position, target.position)) : r < 0.35 ? "control_glitch" : r < 0.74 ? "prism_collapse" : "prism_slam";
     if (id === "gilded_vault_keeper") return b.phase === 2 && r < 0.32 ? "taxation" : r < 0.64 ? "vault_crush" : "gold_fall";
     if (id === "marcus") return b.phase === 2 && r < 0.23 ? "molten_shield" : r < 0.48 ? "coin_barrage" : r < 0.71 ? "gold_rush" : r < 0.86 ? "inversion" : "gilded_lasso";
     if (id === "hooktail") {
       if (b.archive) {
         const pool2 = b.phase === 2 ? ["hooked_tail", "scarlet_fire", "arena_collapse"] : ["hooked_tail", "scarlet_fire"];
-        const chosen = pool2[Math.floor(roll4(b.selectionSeed, b.abilitySequence, 568840981) * pool2.length)];
-        return dist2(a.position, target.position) < 64 && roll4(b.selectionSeed, b.abilitySequence, 3366196011) < 0.8 ? "hooked_tail" : chosen;
+        const chosen = pool2[Math.floor(roll5(b.selectionSeed, b.abilitySequence, 568840981) * pool2.length)];
+        return dist2(a.position, target.position) < 64 && roll5(b.selectionSeed, b.abilitySequence, 3366196011) < 0.8 ? "hooked_tail" : chosen;
       }
       return b.phase === 2 && r < 0.4 ? "arena_collapse" : r < 0.75 ? "scarlet_fire" : "hooked_tail";
     }
@@ -19505,6 +19536,63 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
     }
     b.coinShots = b.coinShots.filter((p) => !p.expired && state.tick < p.expiresTick);
   }
+  function beginGoldRush(b, a, target) {
+    const origin = copyWire(a.position);
+    b.goldRush = {
+      startedTick: state.tick,
+      endsTick: state.tick + MARCUS_GOLD_RUSH_TOTAL_TICKS,
+      originPosition: origin,
+      targetPosition: copyWire(target),
+      nodes: originalMarcusDashNodes(origin, target),
+      legIndex: 0,
+      legFrom: copyWire(origin),
+      hitEntityIds: []
+    };
+    clear(b);
+    b.actionState = "dashing";
+    b.nextActionTick = state.tick + MARCUS_GOLD_RUSH_TOTAL_TICKS + 100;
+  }
+  function advanceGoldRush(b, a, targets, c) {
+    const rush = b.goldRush;
+    if (!rush) return;
+    const elapsed = state.tick - rush.startedTick;
+    if (elapsed < 1) return;
+    const stage2 = Math.min(2, Math.floor((elapsed - 1) / MARCUS_GOLD_RUSH_LEG_TICKS));
+    if (stage2 !== rush.legIndex) {
+      rush.legIndex = stage2;
+      rush.legFrom = copyWire(a.position);
+    }
+    const q = Math.min(1, ((elapsed - 1) % MARCUS_GOLD_RUSH_LEG_TICKS + 1) / MARCUS_GOLD_RUSH_LEG_TICKS);
+    const goal = rush.nodes[stage2];
+    const next = {
+      x: rush.legFrom.x + (goal.x - rush.legFrom.x) * q,
+      y: rush.legFrom.y + (goal.y - rush.legFrom.y) * q
+    };
+    if (sweptPathClear(c, a.position, next, a.hullRadius)) a.position = next;
+    if (elapsed % MARCUS_GOLD_RUSH_LEG_TICKS === 0) {
+      pool(b, copyWire(a.position), "molten", 12, 300);
+      const damage = combatInteger(multiplyCombat(a.attackDamage, 135, 100), "round");
+      for (const t of targets) {
+        if (!t?.alive || dist2(a.position, t.position) > 42 + (t.hullRadius ?? 9) || !lineFree(c, a.position, t.position) || !lineClear(a, t)) continue;
+        const result = applyDirectDamage(a, t, damage, "recovered_gold_rush", { sourceActionSequence: b.abilitySequence });
+        if (result !== void 0 && result !== false) {
+          rush.hitEntityIds.push(t.entityId);
+          stats.hits++;
+        }
+      }
+    }
+    if (elapsed >= MARCUS_GOLD_RUSH_TOTAL_TICKS) {
+      b.lastAction = {
+        ability: "gold_rush",
+        resolvedTick: state.tick,
+        targetPosition: copyWire(rush.targetPosition),
+        hitEntityIds: [...rush.hitEntityIds]
+      };
+      b.goldRush = null;
+      b.actionState = "idle";
+      b.nextActionTick = state.tick + 100;
+    }
+  }
   function daze(b, ticks = 210) {
     clear(b);
     b.shieldHp = "0";
@@ -19531,12 +19619,8 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
     } else if (ability === "molten_shield") {
       pool(b, a.position, "molten", 55, 240);
     } else if (ability === "gold_rush") {
-      const directionTo = direction(a.position, pos);
-      for (let i = 0; i < 3; i++) {
-        moveAegisAffectedActor(collision, a, { x: directionTo.x * 56, y: directionTo.y * 56 });
-        pool(b, a.position, "molten", 43, 180);
-        for (const t of targets) if (dist2(a.position, t.position) < 44 && lineFree(collision, a.position, t.position) && hit(a, t, b, ability, 14)) hits.push(t.entityId);
-      }
+      beginGoldRush(b, a, pos);
+      return;
     } else {
       for (const t of targets) {
         const d = dist2(t.position, ability === "corrosive_slam" || ability === "chronos_slam" || ability === "prism_slam" || ability === "hooked_tail" || ability === "inversion" ? a.position : pos);
@@ -19562,7 +19646,7 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
       }
     }
     if (ability === "spore_storm") for (let i = 0; i < 3; i++) {
-      const angle3 = i * 2 * Math.PI / 3 + roll4(b.selectionSeed, b.abilitySequence, i) * 0.35;
+      const angle3 = i * 2 * Math.PI / 3 + roll5(b.selectionSeed, b.abilitySequence, i) * 0.35;
       pool(b, { x: pos.x + Math.cos(angle3) * 43, y: pos.y + Math.sin(angle3) * 43 }, "acid", 27, 240);
     }
     if (ability === "acid_spill") pool(b, pos, "acid", 54, 480);
@@ -19623,8 +19707,8 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
       if (s?.kind !== "bunny" || s.stage !== "hatched" || !a?.alive) continue;
       const age = state.tick - s.activatedTick, period = b.phase === 2 ? 36 : 46, flight = b.phase === 2 ? 24 : 28;
       if (age <= 0) continue;
-      const cycle = Math.floor(age / period), time = age % period, theta = roll4(b.selectionSeed, cycle + 11 + s.ordinal * 131, 3252604501) * Math.PI * 2;
-      const stride = 55 + roll4(b.selectionSeed, cycle + 11 + s.ordinal * 131, 3252604502) * 20;
+      const cycle = Math.floor(age / period), time = age % period, theta = roll5(b.selectionSeed, cycle + 11 + s.ordinal * 131, 3252604501) * Math.PI * 2;
+      const stride = 55 + roll5(b.selectionSeed, cycle + 11 + s.ordinal * 131, 3252604502) * 20;
       if (time < flight) {
         moveAegisAffectedActor(c, a, { x: Math.cos(theta) * stride / flight, y: Math.sin(theta) * stride / flight });
       } else if (time === flight) pool(b, copyWire(a.position), "fire", 18, 300);
@@ -19651,12 +19735,34 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
       enterPhaseTwo(b, a);
       if (b.bossDefinitionId === "cinderhart") advanceBunnies(b, c);
       if (archived.tick(b, a, targets, c)) continue;
+      if (b.actionState === "dashing") {
+        advanceGoldRush(b, a, targets, c);
+        continue;
+      }
       if (b.bossDefinitionId === "nexus_overseer" && !b.archive) advanceHolograms(b, targets, c);
       if (b.bossDefinitionId === "corrosive_abomination") {
         for (let step = b.chunkStep + 1; step <= 12; step++) {
           if (compareCombat(a.hp, multiplyCombat(a.maxHp, 100 - step * 8, 100)) > 0) break;
           b.chunkStep = step;
+          const dormant = b.archive ? b.summonEntityIds.find((id) => summon(id)?.stage === "dormant") : null;
           awaken(b, 1);
+          if (b.archive && dormant && summon(dormant)?.stage === "hatched") {
+            const landing = state.entitiesById[dormant]?.position ?? a.position, d = dist2(a.position, landing) || 1;
+            const direction3 = { x: (landing.x - a.position.x) / d, y: (landing.y - a.position.y) / d };
+            const event = {
+              id: b.bossId + ":shed:" + step,
+              createdTick: state.tick,
+              damageSequence: step,
+              bodyOriginPosition: copyWire(a.position),
+              originPosition: { x: a.position.x + direction3.x * 26, y: a.position.y + direction3.y * 26 },
+              direction: direction3,
+              spawnedMinionIds: [dormant],
+              chunkCount: 1
+            };
+            b.archive.shedEvents ??= [];
+            b.archive.shedEvents.push(event);
+            b.archive.shedEvents = b.archive.shedEvents.slice(-6);
+          }
           if (!b.archive) pool(b, a.position, step % 3 === 0 ? "slag" : "acid", step % 3 === 0 ? 28 : 20, step % 3 === 0 ? 240 : 180);
         }
         if (!b.archive && state.tick % 24 === 0 && dist2(a.position, b.lastTrailPosition) > 12) {
@@ -19691,6 +19797,7 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
       b.coinShots = (b.coinShots ?? []).filter((p) => p.expiresTick > state.tick);
       if (b.archive) {
         for (const [id, p] of Object.entries(b.archive.sporesById)) if (state.tick >= p.expiresTick) delete b.archive.sporesById[id];
+        if (b.archive.shedEvents) b.archive.shedEvents = b.archive.shedEvents.filter((event) => state.tick - event.createdTick < 40);
       }
       for (const [id, s] of Object.entries(b.statusesByEntityId)) if (s.expiresTick <= state.tick || !state.entitiesById[id]?.alive) delete b.statusesByEntityId[id];
     }
@@ -19701,13 +19808,18 @@ function createRecoveredBossCombatV1(state, { applyDirectDamage, eligible: eligi
   }
   function frozen(id) {
     const s = summon(id);
-    if (s) return s.stage === "dormant" || s.kind === "bunny" || s.kind === "hologram";
+    if (s) {
+      if (s.stage === "dormant" || s.kind === "bunny" || s.kind === "hologram") return true;
+      const owner = records().find((b2) => b2.bossId === s.bossId);
+      if (owner?.bossDefinitionId === "corrosive_abomination" && ["slime", "slag"].includes(s.kind) && s.stage === "hatched" && state.tick - s.activatedTick < 30) return true;
+      return false;
+    }
     const b = record2(id);
-    return Boolean(b && ["telegraphing", "rushing", "dazed", "defeated"].includes(b.actionState));
+    return Boolean(b && ["telegraphing", "rushing", "dashing", "dazed", "defeated"].includes(b.actionState));
   }
   function movementMultiplier(id) {
     const b = record2(id);
-    if (b) return b.actionState === "dazed" || b.actionState === "rushing" ? 0 : b.phase === 2 ? 1.2 : 0.8;
+    if (b) return b.actionState === "dazed" || b.actionState === "rushing" || b.actionState === "dashing" ? 0 : b.phase === 2 ? 1.2 : 0.8;
     const s = summon(id);
     if (s && (s.stage === "dormant" || s.kind === "bunny" || s.kind === "hologram")) return 0;
     let value = 1;
@@ -20146,13 +20258,13 @@ function createActivitySimulation(initialState, { measure = (_name, fn) => fn(),
     }
     if (source2.team === "party" && !resolvedComponent) {
       if (levelGap && levelGap.outgoing.n !== levelGap.outgoing.d) raw = multiplyCombat(raw, levelGap.outgoing.n, levelGap.outgoing.d);
-      const transient = playerFor(source2.entityId)?.d8?.transient, forced = !sourceSubweaponSuppressed && mechanic === "main" && transient?.retaliatoryReady === true, combat = state.subweaponCombat.actors[source2.entityId], roll5 = state.d9World ? { rng: combat.rng } : combat;
+      const transient = playerFor(source2.entityId)?.d8?.transient, forced = !sourceSubweaponSuppressed && mechanic === "main" && transient?.retaliatoryReady === true, combat = state.subweaponCombat.actors[source2.entityId], roll6 = state.d9World ? { rng: combat.rng } : combat;
       if (forced) {
         if (state.d9World) pendingForcedTransient = transient;
         else transient.retaliatoryReady = false;
       }
-      const packet = criticalDamagePacket(roll5, progression.resolvedStats(source2.entityId), raw, mechanic, forced);
-      if (state.d9World) pendingPlayerRng = roll5.rng;
+      const packet = criticalDamagePacket(roll6, progression.resolvedStats(source2.entityId), raw, mechanic, forced);
+      if (state.d9World) pendingPlayerRng = roll6.rng;
       raw = packet.damage;
       critical = packet.critical;
     } else if (source2.team !== "party" && !periodic) mechanic = "hostile";
@@ -30819,7 +30931,7 @@ function archivalActor(actor) {
       (boss.pendingAction?.targetPosition?.y ?? boss.lastAction?.targetPosition?.y ?? actor.position.y + 1) - actor.position.y,
       (boss.pendingAction?.targetPosition?.x ?? boss.lastAction?.targetPosition?.x ?? actor.position.x) - actor.position.x
     ),
-    recentRuptures: boss.recentRuptures ?? []
+    recentRuptures: boss.archive?.shedEvents ?? boss.recentRuptures ?? []
   } };
 }
 function drawArchivedBossActor(c, actor, tick, flash = false) {
@@ -30847,19 +30959,25 @@ function archivedBossArtModel(model, tick) {
   const pools = (h.recoveredPools ?? []).filter((q) => hasArchivedBossPainter(q.bossDefinitionId));
   const acid = pools.filter((q) => corrosive(q.bossDefinitionId) && ["acid", "slag"].includes(q.kind)).map((q) => ({ ...q }));
   const minions = all.filter((a) => a.alive && ["slime", "slag"].includes(a.bossSummon?.kind) && byBossId.has(a.bossSummon.bossId)).map((a) => {
-    const b = a.bossSummon, created = b.activatedTick ?? tick;
+    const b = a.bossSummon, created = b.activatedTick ?? tick, owner = byBossId.get(b.bossId);
+    const event = owner.boss.archive?.shedEvents?.find((e) => e.spawnedMinionIds.includes(a.entityId));
+    const age = tick - created, stage2 = age < 18 ? "airborne" : age < 30 ? "coalescing" : "active";
+    const origin = event?.originPosition ?? owner.position, landing = a.position;
+    const progress7 = Math.max(0, Math.min(1, age / 18));
+    const visual = stage2 === "airborne" ? { x: origin.x + (landing.x - origin.x) * progress7, y: origin.y + (landing.y - origin.y) * progress7 } : { ...landing };
     return {
       id: a.entityId,
-      sourceEntityId: byBossId.get(b.bossId).entityId,
+      sourceEntityId: owner.entityId,
       bossId: b.bossId,
-      position: { ...a.position },
-      landingPosition: { ...a.position },
-      originPosition: { ...a.position },
+      position: visual,
+      landingPosition: { ...landing },
+      originPosition: { ...origin },
       enemyFamily: b.kind === "slag" ? "slag_slime" : "slime",
-      stage: "active",
+      stage: stage2,
       spawnedTick: created,
-      landsTick: created,
-      activatesTick: created,
+      landsTick: created + 18,
+      activatesTick: created + 30,
+      volleyOrdinal: b.ordinal,
       hp: a.hp,
       maxHp: a.maxHp,
       movedLastTick: a.movedLastTick,
@@ -30934,7 +31052,7 @@ function archivedBossArtModel(model, tick) {
     corrosiveTelegraphs: cTele,
     corrosiveImpacts: cImpacts,
     corrosiveSpores: (h.recoveredSpores ?? []).filter((p) => corrosive(p.bossDefinitionId)).map((s) => ({ ...s, stage: "drifting", radius: 12 })),
-    corrosiveSheds: [],
+    corrosiveSheds: bosses.filter((b) => corrosive(b.boss.bossDefinitionId)).flatMap((b) => b.boss.archive?.shedEvents ?? []),
     voidTelegraphs: vTele,
     voidImpacts: vImpacts
   };
@@ -32550,10 +32668,8 @@ var copyAction = (id, action2, actor) => action2 ? {
   position: action2.position ?? action2.targetPosition ?? point10(actor.position),
   sequence: action2.sequence ?? actor.boss?.abilitySequence ?? 0,
   ...marcus(id) && action2.ability === "gold_rush" ? {
-    targets: [1, 2, 3].map((n) => {
-      const target = action2.targetPosition ?? actor.position, dx = target.x - actor.position.x, dy = target.y - actor.position.y, d = Math.hypot(dx, dy) || 1;
-      return { x: actor.position.x + dx / d * 56 * n, y: actor.position.y + dy / d * 56 * n };
-    })
+    dashNodes: action2.dashNodes ?? originalMarcusDashNodes(action2.originPosition ?? actor.position, action2.targetPosition ?? actor.position),
+    targets: action2.dashNodes ?? originalMarcusDashNodes(action2.originPosition ?? actor.position, action2.targetPosition ?? actor.position)
   } : {}
 } : null;
 var referencePoint = (a) => a.boss?.pendingAction?.targetPosition ?? a.boss?.lastAction?.targetPosition ?? { x: a.position.x + 1, y: a.position.y };
@@ -32591,7 +32707,14 @@ function originalActor2(actor, tick) {
   return { ...actor, boss: {
     ...b,
     bossDefinitionId: marcus(id) ? "marcus_the_outlaw" : "gilded_vault_keeper",
-    pendingAction: copyAction(id, b.pendingAction, actor),
+    pendingAction: copyAction(id, b.pendingAction ?? (marcus(id) && b.goldRush ? {
+      ability: "gold_rush",
+      startedTick: b.goldRush.startedTick,
+      resolvesTick: b.goldRush.endsTick,
+      targetPosition: b.goldRush.targetPosition,
+      originPosition: b.goldRush.originPosition,
+      dashNodes: b.goldRush.nodes
+    } : null), actor),
     lastAction: copyAction(id, b.lastAction, actor),
     facingAngle: Math.atan2(aim2.y - actor.position.y, aim2.x - actor.position.x),
     ...marcus(id) ? { moltenShield: ward } : { taxation: ward },
@@ -32606,7 +32729,7 @@ function project(model, tick) {
   if (model === memoModel && tick === memoTick) return memoArt;
   memoModel = model;
   memoTick = tick;
-  const entities = Object.values(model.entitiesById ?? {}), bosses = entities.filter((a) => a.alive && hasTreasuryBossPainter(a.boss?.bossDefinitionId));
+  const entities = Object.entries(model.entitiesById ?? {}).map(([entityId2, actor]) => ({ ...actor, entityId: entityId2 })), bosses = entities.filter((a) => a.alive && hasTreasuryBossPainter(a.boss?.bossDefinitionId));
   if (!bosses.length) return memoArt = null;
   const artActors = Object.fromEntries(entities.map((a) => [a.entityId, originalActor2(a, tick)]));
   const h = model.bossHazards ?? {}, tele = h.recoveredTelegraphs ?? [], pools = h.recoveredPools ?? [];
@@ -32646,6 +32769,21 @@ function project(model, tick) {
       }
       if (marcus(id)) hazards.marcusTelegraphs.push(base);
       else hazards.gildedTelegraphs.push(base);
+    }
+    if (marcus(id) && b.goldRush) {
+      const dash = b.goldRush;
+      hazards.marcusTelegraphs.push({
+        id: b.bossId + ":rush:" + dash.startedTick,
+        bossId: b.bossId,
+        sourceEntityId: actor.entityId,
+        ability: "gold_rush_dash",
+        startedTick: dash.startedTick,
+        resolvesTick: dash.endsTick,
+        position: point10(dash.targetPosition),
+        targetPosition: point10(dash.targetPosition),
+        originPosition: point10(dash.originPosition),
+        dashNodes: dash.nodes.map(point10)
+      });
     }
     if (last && tick - last.resolvedTick >= 0 && tick - last.resolvedTick < 40) {
       const base = {

@@ -7744,7 +7744,7 @@ function archivedCombatProfile(kind) {
 // src/shared/contracts/recovered_boss_v1.js
 var RECOVERED_SUMMON_VERSION = "recovered-boss-summon-v1";
 var point2 = (p) => Boolean(p && Number.isFinite(p.x) && Number.isFinite(p.y));
-var states = ["idle", "telegraphing", "dazed", "defeated", "rushing"];
+var states = ["idle", "telegraphing", "dazed", "defeated", "rushing", "dashing"];
 var recoveredBossRecord = (b) => b?.version === RECOVERED_BOSS_VERSION && Boolean(recoveredBossForId(b.bossDefinitionId));
 async function createRecoveredBossV1({ kind, campaignSeed, siteId, floorId, groupId, roomId, entityId, homePosition, activatedTick, spaceInstanceId, sourceResidencyRevision, addMembers = [] }, { sha256 }) {
   const spec = recoveredBossForId(kind);
@@ -7797,11 +7797,12 @@ async function createRecoveredBossV1({ kind, campaignSeed, siteId, floorId, grou
     collapseStep: 0,
     stolenGold: "0",
     coinShots: [],
+    ...kind === "marcus" ? { goldRush: null } : {},
     pools: [],
     statusesByEntityId: {},
     lastTrailPosition: copyWire(homePosition),
     lastAction: null,
-    ...archivedCombatProfile(kind) ? { archive: { version: ARCHIVED_FIGHT_PROFILE_VERSION, charge: null, sporesById: {}, poisonByEntityId: {}, contactByEntityId: {}, nexusShotsById: {}, nextWarrenTick: activatedTick + 60, sludgeSequence: 0, collapsedRings: [] } } : {}
+    ...archivedCombatProfile(kind) ? { archive: { version: ARCHIVED_FIGHT_PROFILE_VERSION, charge: null, sporesById: {}, poisonByEntityId: {}, contactByEntityId: {}, nexusShotsById: {}, shedEvents: [], nextWarrenTick: activatedTick + 60, sludgeSequence: 0, collapsedRings: [] } } : {}
   };
   return freezeWire({ boss, summons });
 }
@@ -7842,7 +7843,7 @@ function validateRecoveredBossV1(state, id, b) {
     "statusesByEntityId",
     "lastTrailPosition",
     "lastAction"
-  ], ["coinShots", "archive"]);
+  ], ["coinShots", "archive", "goldRush"]);
   const spec = recoveredBossForId(b.bossDefinitionId), actor = state.entitiesById[id], group = state.groupsById[b.groupId], c = state.spacesByInstanceId[b.spaceInstanceId]?.collision;
   requireContract(spec && b.version === RECOVERED_BOSS_VERSION && b.entityId === id && /^boss:[a-f0-9]{32}$/.test(b.bossId) && actor?.team === "hostile" && actor.contentDefinitionId === ARACHNID_TREANT_PROFILE.contentDefinitionId && group?.entityIds.includes(id) && group.siteId === b.siteId && actor.residency.spaceInstanceId === b.spaceInstanceId && actor.residency.residencyRevision === b.sourceResidencyRevision && c && point2(b.homePosition) && !collidesWithTiles(c, b.homePosition.x, b.homePosition.y, ARACHNID_TREANT_PROFILE.hullRadius), "Recovered boss identity invalid");
   requireContract([1, 2].includes(b.phase) && b.phase2Triggered === (b.phase === 2) && states.includes(b.actionState), "Recovered boss phase invalid");
@@ -7860,6 +7861,19 @@ function validateRecoveredBossV1(state, id, b) {
     safeInteger(b.resolvesTick, b.telegraphStartedTick + (b.archive ? archivedCombatProfile(b.bossDefinitionId).attack[b.activeAbility] : spec.attacks[b.activeAbility]), b.telegraphStartedTick + (b.archive ? archivedCombatProfile(b.bossDefinitionId).attack[b.activeAbility] : spec.attacks[b.activeAbility]));
   } else requireContract(b.activeAbility === null && b.targetEntityId === null && b.targetPosition === null && b.telegraphStartedTick === null && b.resolvesTick === null, "Recovered boss stale telegraph");
   if (b.actionState === "rushing") requireContract(b.bossDefinitionId === "cinderhart" && b.archive?.charge, "Archived Cinderhart rush missing");
+  if (b.goldRush !== void 0) {
+    requireContract(b.bossDefinitionId === "marcus", "Only Marcus can have Gold Rush state");
+    const r = b.goldRush;
+    if (r) {
+      closedRecord(r, ["startedTick", "endsTick", "originPosition", "targetPosition", "nodes", "legIndex", "legFrom", "hitEntityIds"]);
+      safeInteger(r.startedTick, b.activatedTick, state.tick);
+      requireContract(r.endsTick === r.startedTick + 18 && state.tick <= r.endsTick && point2(r.originPosition) && point2(r.targetPosition) && point2(r.legFrom) && Array.isArray(r.nodes) && r.nodes.length === 3 && r.nodes.every(point2), "Invalid saved Gold Rush route");
+      safeInteger(r.legIndex, 0, 2);
+      requireContract(Array.isArray(r.hitEntityIds) && r.hitEntityIds.length <= 12 && r.hitEntityIds.every((id2) => state.entitiesById[id2]?.team === "party"), "Invalid Gold Rush hit record");
+      requireContract(b.actionState === "dashing", "Gold Rush route without active dashing");
+    }
+  }
+  if (b.actionState === "dashing") requireContract(b.bossDefinitionId === "marcus" && b.goldRush, "Missing Marcus Gold Rush path");
   if (b.actionState === "dazed") safeInteger(b.dazedUntilTick, state.tick + 1, state.tick + 300);
   else requireContract(b.dazedUntilTick === null, "Recovered boss stale daze");
   if (b.shieldBrokenTick !== null) safeInteger(b.shieldBrokenTick, b.activatedTick, state.tick);
@@ -7878,10 +7892,19 @@ function validateRecoveredBossV1(state, id, b) {
   }
   if (b.archive !== void 0) {
     const archive = b.archive;
-    closedRecord(archive, ["version", "charge", "sporesById", "poisonByEntityId", "contactByEntityId", "nextWarrenTick", "sludgeSequence", "collapsedRings"], ["nexusShotsById"]);
+    closedRecord(archive, ["version", "charge", "sporesById", "poisonByEntityId", "contactByEntityId", "nextWarrenTick", "sludgeSequence", "collapsedRings"], ["nexusShotsById", "shedEvents"]);
     requireContract(Boolean(archivedCombatProfile(b.bossDefinitionId)) && archive.version === ARCHIVED_FIGHT_PROFILE_VERSION, "Archived boss profile mismatch");
     safeInteger(archive.nextWarrenTick, 0, state.tick + 1200);
     safeInteger(archive.sludgeSequence, 0);
+    requireContract(Array.isArray(archive.shedEvents ?? []) && (archive.shedEvents ?? []).length <= 6 && (!archive.shedEvents?.length || b.bossDefinitionId === "corrosive_abomination"), "Invalid Corrosive shedding event budget");
+    for (const event of archive.shedEvents ?? []) {
+      closedRecord(event, ["id", "createdTick", "damageSequence", "bodyOriginPosition", "originPosition", "direction", "spawnedMinionIds", "chunkCount"]);
+      requireContract(typeof event.id === "string" && event.id === b.bossId + ":shed:" + event.damageSequence && point2(event.bodyOriginPosition) && point2(event.originPosition) && point2(event.direction) && Math.abs(Math.hypot(event.direction.x, event.direction.y) - 1) < 1e-3, "Invalid Corrosive rupture direction");
+      safeInteger(event.createdTick, b.activatedTick, state.tick);
+      requireContract(state.tick - event.createdTick < 40, "Expired Corrosive rupture");
+      safeInteger(event.damageSequence, 1, 16);
+      requireContract(Array.isArray(event.spawnedMinionIds) && event.spawnedMinionIds.length === 1 && event.chunkCount === 1 && b.summonEntityIds.includes(event.spawnedMinionIds[0]), "Invalid real shed minion binding");
+    }
     requireContract(Array.isArray(archive.collapsedRings) && archive.collapsedRings.length <= 7 && (!archive.collapsedRings.length || b.bossDefinitionId === "hooktail"), "Archived collapse ledger invalid");
     for (const r of archive.collapsedRings) {
       closedRecord(r, ["index", "createdTick", "minColumn", "maxColumn", "minRow", "maxRow", "tileSize", "tiles"]);
@@ -7992,7 +8015,8 @@ function projectRecoveredBossV1(b, state) {
     chunkStep: b.chunkStep,
     stolenGold: b.stolenGold,
     coinShots: copyWire(b.coinShots ?? []),
-    archive: b.archive ? { charge: copyWire(b.archive.charge), sporesById: copyWire(b.archive.sporesById), poisonByEntityId: copyWire(b.archive.poisonByEntityId), collapsedRings: copyWire(b.archive.collapsedRings), nexusShotsById: copyWire(b.archive.nexusShotsById ?? {}) } : null,
+    goldRush: copyWire(b.goldRush ?? null),
+    archive: b.archive ? { charge: copyWire(b.archive.charge), sporesById: copyWire(b.archive.sporesById), poisonByEntityId: copyWire(b.archive.poisonByEntityId), collapsedRings: copyWire(b.archive.collapsedRings), nexusShotsById: copyWire(b.archive.nexusShotsById ?? {}), shedEvents: copyWire(b.archive.shedEvents ?? []) } : null,
     minions: b.summonEntityIds.map((id) => {
       const m = state.bossCombat.summonsByEntityId[id];
       return { entityId: id, kind: m.kind, stage: m.stage, position: copyWire(state.entitiesById[id].position) };
