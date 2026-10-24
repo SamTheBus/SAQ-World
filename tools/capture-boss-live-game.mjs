@@ -136,6 +136,10 @@ try{
   console.log('WORLD_BOSS_SCREENSHOT',path.join(output,'VOID-OVERSEER-ACTUAL-WORLD-GAME.png'));
   // Every following image is another native dungeon activation + native
   // final-floor boss, using the actual World combat renderer and HUD.
+  await page.close();
+  // Each boss gets its own clean, fully authoritative World campaign, browser
+  // storage context and character. Otherwise a high-level boss can kill the
+  // previous hero and prevent the next site's developer navigator from running.
   const otherBosses=[
    ['NEXUS-OVERSEER','repeatable-slot:ruin:tropical:standard:037','nexus_overseer'],
    ['CORROSIVE-ABOMINATION','repeatable-slot:ruin:wetland:standard:033','corrosive_abomination'],
@@ -145,80 +149,63 @@ try{
    ['MARCUS-THE-OUTLAW','repeatable-slot:fort:grassland:standard:040','marcus'],
    ['GILDED-VAULT-KEEPER','repeatable-slot:crypt:upland:standard:01','gilded_vault_keeper']
   ];
-  let currentSiteId=chosen.siteId;
   const captureResults=[{boss:'void_overseer',result:'captured',siteId:chosen.siteId}];
-  page.setDefaultTimeout(120000);
   for(const [label,reservation,bossId]of otherBosses){
-   const selected=bossSiteMap.find(x=>x.reservationId===reservation);
-   if(!selected){captureResults.push({boss:bossId,result:'reservation-not-found'});continue;}
+   const isolated=await browser.newPage({viewport:{width:1440,height:980},deviceScaleFactor:1});
+   isolated.setDefaultTimeout(110000);
    try{
-    console.log('NEXT_BOSS_START',bossId,selected.siteId);
-    const heroBefore=await page.evaluate(()=>{
-      const s=window.__SAQ_CAPTURE__.session;
-      return s.authority.withAuthority(a=>a.withAuthorityState(state=>{
-        const pid=s.clientPort.getReadModel().localPlayerId,p=state.playersById[pid],hero=state.entitiesById[p.entityId];
-        return {alive:hero.alive,inOverworld:hero.residency.spaceInstanceId===state.overworldInstanceId,Hp:hero.hp};
-      }));
+    console.log('BOSS_CAPTURE_NEW_WORLD_START',bossId);
+    await isolated.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
+    await isolated.waitForFunction(()=>{
+     const loading=document.getElementById('saq-startup-scene'),recovery=document.getElementById('startup-recovery'),attack=document.getElementById('primary-attack');
+     return window.__SAQ_CAPTURE__&&loading?.hidden===true&&recovery?.hidden===true&&attack&&!attack.hidden;
+    },null,{timeout:180000});
+    await isolated.waitForTimeout(450);
+    const site=await isolated.evaluate(reservation=>{
+     const s=window.__SAQ_CAPTURE__.session;
+     return s.authority.withAuthority(a=>a.withAuthorityState(state=>{
+      const row=Object.values(state.d9World.siteReservationsById??{}).find(r=>r.socket?.provenance?.reservationId===reservation);
+      return row?{siteId:row.siteId,reservationId:row.socket.provenance.reservationId}:null;
+     }));
+    },reservation);
+    if(!site)throw Error('Original boss reservation not present in new world '+reservation);
+    console.log('BOSS_NATIVE_SITE_FOUND',bossId,site.siteId);
+    const moved=await isolated.evaluate(async id=>window.__SAQ_CAPTURE__.session.clientPort.siteNavigator({action:'teleport',siteId:id}),site.siteId);
+    if(moved?.status!=='relocated')throw Error('Navigator failed '+JSON.stringify(moved));
+    await isolated.waitForTimeout(200);
+    const door=await isolated.evaluate(id=>window.__SAQ_CAPTURE__.toDoor(id),site.siteId);
+    if(door?.status!=='relocated')throw Error('Native approach failed '+JSON.stringify(door));
+    await isolated.waitForTimeout(100);
+    const entered=await isolated.evaluate(async id=>await window.__SAQ_CAPTURE__.enter(id),site.siteId);
+    if(entered?.status!=='admitted'&&entered?.status!=='alreadyApplied')throw Error('Native dungeon entry not admitted '+JSON.stringify(entered));
+    await isolated.waitForTimeout(350);
+    const destination=await isolated.evaluate(id=>window.__SAQ_CAPTURE__.finalBoss(id),site.siteId);
+    if(destination.bossLabel!==bossId)throw Error('Wrong real boss: '+destination.bossLabel);
+    await isolated.waitForFunction(id=>{
+     const model=window.__SAQ_CAPTURE__?.session.clientPort.getReadModel(),gate=document.getElementById('world-space-loading');
+     return gate?.hidden===true&&gate.style.display==='none'&&
+      document.documentElement.dataset.spacePreparing==='false'&&
+      Object.values(model?.entitiesById??{}).some(a=>a.boss?.bossDefinitionId===id);
+    },bossId,{timeout:90000});
+    await isolated.waitForTimeout(400);
+    const evidence=await isolated.evaluate(()=>{
+     const model=window.__SAQ_CAPTURE__.session.clientPort.getReadModel();
+     return {tick:model.tick,space:model.space?.label,spaceInstanceId:model.context?.spaceInstanceId,
+      bosses:Object.values(model.entitiesById??{}).filter(a=>a.boss?.bossDefinitionId)
+       .map(a=>({id:a.boss.bossDefinitionId,position:a.position,phase:a.boss.phase,alive:a.alive})),
+      renderReady:document.getElementById('world-space-loading')?.hidden===true};
     });
-    console.log('BOSS_NEXT_HERO_STATUS',bossId,JSON.stringify(heroBefore));
-    if(!heroBefore.alive){
-      const respawned=await page.evaluate(async()=>await window.__SAQ_CAPTURE__.respawn());
-      console.log('BOSS_NATIVE_RESPAWN',bossId,JSON.stringify(respawned));
-      await page.waitForTimeout(350);
-    }else if(!heroBefore.inOverworld){
-      const back=await page.evaluate(siteId=>window.__SAQ_CAPTURE__.returnToWorld(siteId),currentSiteId);
-      console.log('BOSS_RETURN_TO_WORLD',bossId,JSON.stringify(back));
-      await page.waitForTimeout(320);
-    }
-    const moved=await page.evaluate(async siteId=>
-      await window.__SAQ_CAPTURE__.session.clientPort.siteNavigator({action:'teleport',siteId}),selected.siteId);
-    console.log('BOSS_NAVIGATOR_TRAVEL',bossId,moved.status);
-    await page.waitForTimeout(350);
-    const door=await page.evaluate(siteId=>window.__SAQ_CAPTURE__.toDoor(siteId),selected.siteId);
-    console.log('BOSS_TO_ENTRANCE',bossId,door.status);
-    await page.waitForTimeout(100);
-    const admitted=await page.evaluate(async siteId=>await window.__SAQ_CAPTURE__.enter(siteId),selected.siteId);
-    console.log('BOSS_NATIVE_ADMISSION',bossId,admitted.status);
-    await page.waitForTimeout(700);
-    const final=await page.evaluate(siteId=>window.__SAQ_CAPTURE__.finalBoss(siteId),selected.siteId);
-    console.log('BOSS_FINAL_CHAMBER',bossId,JSON.stringify(final));
-    await page.waitForFunction(id=>{
-      const gate=document.getElementById('world-space-loading');
-      const model=window.__SAQ_CAPTURE__?.session.clientPort.getReadModel();
-      return gate?.hidden===true&&gate.style.display==='none'&&document.documentElement.dataset.spacePreparing==='false'&&
-        Object.values(model?.entitiesById??{}).some(a=>a.boss?.bossDefinitionId===id)&&
-        model.space?.label?.includes('Floor');
-    },bossId,{timeout:100000});
-    await page.waitForTimeout(440);
-    const evidence=await page.evaluate(()=>{
-      const model=window.__SAQ_CAPTURE__.session.clientPort.getReadModel();
-      return {tick:model.tick,site:model.space?.label,spaceInstanceId:model.context?.spaceInstanceId,
-        bosses:Object.values(model.entitiesById??{}).filter(a=>a.boss?.bossDefinitionId)
-          .map(a=>({id:a.boss.bossDefinitionId,position:a.position,phase:a.boss.phase,alive:a.alive}))};
-    });
-    if(!evidence.bosses.some(x=>x.id===bossId))throw Error('Wrong real boss in room');
+    if(!evidence.bosses.some(a=>a.id===bossId&&a.alive))throw Error('Target boss absent/dead in rendered native game');
     const filename=label+'-ACTUAL-WORLD-GAME.png';
-    await page.locator('#world-view').screenshot({path:path.join(output,filename)});
-    await fs.writeFile(path.join(output,label+'-evidence.json'),JSON.stringify({evidence,final,admitted},null,2));
+    await isolated.locator('#world-view').screenshot({path:path.join(output,filename)});
+    await fs.writeFile(path.join(output,label+'-evidence.json'),JSON.stringify({evidence,destination,site},null,2));
     console.log('BOSS_ACTUAL_IN_GAME_SCREENSHOT',bossId,filename,JSON.stringify(evidence));
-    currentSiteId=selected.siteId;
-    captureResults.push({boss:bossId,result:'captured',siteId:currentSiteId,filename,evidence});
+    captureResults.push({boss:bossId,result:'captured',siteId:site.siteId,filename});
    }catch(error){
-    console.log('BOSS_CAPTURE_WARNING',bossId,String(error.stack??error).slice(0,1800));
+    console.log('BOSS_CAPTURE_WARNING',bossId,String(error.stack??error).slice(0,1500));
     await fs.writeFile(path.join(output,label+'-error.txt'),String(error.stack??error));
-    captureResults.push({boss:bossId,result:'capture-failed',siteId:selected.siteId,error:String(error.message??error)});
-    // Make a safe recovery attempt for the next boss; do not claim a missing screenshot.
-    try{
-      const fallback=await page.evaluate(()=>{
-       const s=window.__SAQ_CAPTURE__.session, m=s.clientPort.getReadModel();
-       return {context:m.context?.spaceInstanceId,world:s.authority.withAuthority(a=>a.withAuthorityState(state=>state.overworldInstanceId))};
-      });
-      if(fallback.context!==fallback.world){
-       await page.evaluate(siteId=>window.__SAQ_CAPTURE__.returnToWorld(siteId),selected.siteId);
-       currentSiteId=selected.siteId;
-      }
-    }catch{break;}
-   }
+    captureResults.push({boss:bossId,result:'failed',error:String(error.message??error)});
+   }finally{await isolated.close();}
   }
   await fs.writeFile(path.join(output,'boss-capture-index.json'),JSON.stringify(captureResults,null,2));
   console.log('BOSS_CAPTURE_FINAL_ROSTER',JSON.stringify(captureResults.map(x=>({boss:x.boss,result:x.result}))));
