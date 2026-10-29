@@ -144,6 +144,7 @@ import {
   PLANNED_RUIN_VERSION,
   PLANNED_WORLD_VERSION,
   PLAYER_INVENTORY_VERSION,
+  POTION_BELT_POLICY,
   RARITY_COLORS,
   RARITY_NAMES,
   RESONANCE_SETS,
@@ -394,6 +395,7 @@ import {
   fundForgeReview,
   gearHash,
   generateOrdinaryPopulation,
+  grantPotions,
   groundCoverageStatusD9,
   groundGear,
   groundOccupancyWindowD9,
@@ -510,6 +512,12 @@ import {
   populationPointAllowed,
   populationRegionAt,
   positiveProgression,
+  potionCapacity,
+  potionCooldownTicks,
+  potionCount,
+  potionDropCount,
+  potionHealPercent,
+  potionUpgrade,
   prepareEpisodeReward,
   prepareProgressionChange,
   presentCombat,
@@ -694,7 +702,7 @@ import {
   worldLevelGapMultiplier,
   worldOrdinaryMeleeProfile,
   worldPointForArea
-} from "./chunk-FTMNRNHM.js";
+} from "./chunk-4XZNGA5C.js";
 
 // src/client/authority_clock.js
 var AUTHORITY_CLOCK_PERIOD_MS = 1e3 / 60;
@@ -1043,16 +1051,16 @@ function createActorMotionPresentationV1({ collisionProbe = null, now: now2 = ()
       if (discontinuity) snaps++;
     }
   }
-  function safe(model, id, actor, points) {
-    if (!collisionProbe || !points || points.length > P.maximumProbePoints) return false;
+  function safe(model, id, actor, points2) {
+    if (!collisionProbe || !points2 || points2.length > P.maximumProbePoints) return false;
     const at3 = now2();
     let result = false;
     try {
-      result = collisionProbe({ entityId: id, tick: model.tick, context: model.context, frameKey: actorMotionFrameKey(model), canonical: actor.position, hullRadius: actor.hullRadius, points }) === true;
+      result = collisionProbe({ entityId: id, tick: model.tick, context: model.context, frameKey: actorMotionFrameKey(model), canonical: actor.position, hullRadius: actor.hullRadius, points: points2 }) === true;
     } finally {
       const ms = Math.max(0, now2() - at3);
       probeCalls++;
-      probePoints += points.length;
+      probePoints += points2.length;
       probeTotalMs += ms;
       probeMaxMs = Math.max(probeMaxMs, ms);
     }
@@ -3952,11 +3960,11 @@ function bodyPath(c, { cx: x, cy: y, rx, ry }) {
   c.quadraticCurveTo(x - rx * 0.99, y + ry * 0.89, x - rx * 0.97, y + ry * 0.4);
   c.closePath();
 }
-function plate(c, q, points, fill4) {
+function plate(c, q, points2, fill4) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(q.cx + points[0][0] * q.rx, q.cy + points[0][1] * q.ry);
-  for (const [x, y] of points.slice(1)) c.lineTo(q.cx + x * q.rx, q.cy + y * q.ry);
+  c.moveTo(q.cx + points2[0][0] * q.rx, q.cy + points2[0][1] * q.ry);
+  for (const [x, y] of points2.slice(1)) c.lineTo(q.cx + x * q.rx, q.cy + y * q.ry);
   c.closePath();
   c.fill();
 }
@@ -4136,10 +4144,10 @@ var LIGHT = "#718096";
 var DARK = "#303d50";
 var BLUE = "#38bdf8";
 var color = (flash, hex2) => flash ? "#fff" : hex2;
-function polygon(c, points, fill4) {
+function polygon(c, points2, fill4) {
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fillStyle = fill4;
   c.fill();
@@ -4401,11 +4409,11 @@ function cursedBladeMotionV4(m, time, seed2) {
   const transform = (px, py) => ({ x: x + Math.cos(angle3) * px - Math.sin(angle3) * py, y: y + Math.sin(angle3) * px + Math.cos(angle3) * py });
   return { x, y, angle: angle3, weight: weight2, strike: strike2, wisps, tip: transform(0, -TIP), guard: transform(0, 14), pommel: transform(0, 28), transform };
 }
-function polygon2(c, points, fill4, outline2 = true) {
+function polygon2(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -4593,11 +4601,11 @@ function animatedArmorMotionV4(m, time, seed2) {
     helmetFollow: -shift * 0.35 + Math.sin(time / 260 + seed2 % 9) * 0.35 * (1 - walk) * (1 - weight2)
   };
 }
-function polygon3(c, points, fill4, outline2 = true) {
+function polygon3(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -4854,11 +4862,11 @@ function gargoyleMotionV4(m, time, seed2) {
     wings: [-1, 1].map((side) => (Math.sin(time / 180 + side) * 1.2 + Math.sin(step + side) * walk * 2) * (1 - weight2) + mix4(-4, 7, strike2) * weight2)
   };
 }
-function polygon4(c, points, fill4, outline2 = true) {
+function polygon4(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -5742,10 +5750,10 @@ function voidCrawlerPoseV4(actor, pose, tick) {
   };
   return { ...a, body: body4, anchor: { x: body4.x, y: body4.y } };
 }
-function polygon5(c, points, fill4, outline2 = true) {
+function polygon5(c, points2, fill4, outline2 = true) {
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fillStyle = fill4;
   c.fill();
@@ -5911,11 +5919,11 @@ function gildedScuttlerLegsV4(time, seed2, walk = 0) {
   }
   return legs2;
 }
-function path(c, points, fill4, outline2 = true) {
+function path(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -6128,12 +6136,12 @@ function mimicShieldFaceV4(time, seed2, pose = null) {
   }
   return { blink, opening, center: center2, angle: angle3, width, outline: outline2, teeth };
 }
-function polygon6(c, points, fill4, outline2 = true) {
+function polygon6(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
-  c.lineTo(...points[0]);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
+  c.lineTo(...points2[0]);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -7247,11 +7255,11 @@ var INK14 = "#11151a";
 var LINE13 = 1.26 / 0.78;
 var color13 = (flash, hex2) => flash ? "#fff" : hex2;
 var clamp11 = (x) => Math.max(0, Math.min(1, x));
-function polygon7(c, points, fill4, outline2 = false) {
+function polygon7(c, points2, fill4, outline2 = false) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -7379,11 +7387,11 @@ var TAU19 = Math.PI * 2;
 var INK15 = "#11151a";
 var LINE14 = 1.26 / 0.9;
 var color14 = (flash, hex2) => flash ? "#fff" : hex2;
-function plate2(c, points, fill4, outline2 = true) {
+function plate2(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -8337,10 +8345,10 @@ function frostWyrmlingMotionV4(m, time) {
   const muzzle = { x: mouth4.x + u.x, y: mouth4.y + u.y };
   return { segments, neckSegments, root, head: head12, mouth: mouth4, muzzle, weight: weight2 };
 }
-function polygon8(c, points, fill4, outline2 = true) {
+function polygon8(c, points2, fill4, outline2 = true) {
   c.beginPath();
-  c.moveTo(points[0].x, points[0].y);
-  for (const p of points.slice(1)) c.lineTo(p.x, p.y);
+  c.moveTo(points2[0].x, points2[0].y);
+  for (const p of points2.slice(1)) c.lineTo(p.x, p.y);
   c.closePath();
   c.fillStyle = fill4;
   c.fill();
@@ -8350,18 +8358,18 @@ function polygon8(c, points, fill4, outline2 = true) {
     c.stroke();
   }
 }
-function crystal(c, points, flash) {
-  polygon8(c, points, color17(flash, "#81ecec"), false);
+function crystal(c, points2, flash) {
+  polygon8(c, points2, color17(flash, "#81ecec"), false);
   if (!flash) {
-    const center2 = { x: (points[0].x + points[points.length - 1].x) / 2, y: (points[0].y + points[points.length - 1].y) / 2 };
-    polygon8(c, [points[1], points[2], center2], "#3b9fca", false);
-    polygon8(c, [points[0], points[1], center2], "#d2ffff", false);
+    const center2 = { x: (points2[0].x + points2[points2.length - 1].x) / 2, y: (points2[0].y + points2[points2.length - 1].y) / 2 };
+    polygon8(c, [points2[1], points2[2], center2], "#3b9fca", false);
+    polygon8(c, [points2[0], points2[1], center2], "#d2ffff", false);
   }
   c.strokeStyle = INK19;
   c.lineWidth = LINE17;
   c.beginPath();
-  c.moveTo(points[0].x, points[0].y);
-  for (const p of points.slice(1)) c.lineTo(p.x, p.y);
+  c.moveTo(points2[0].x, points2[0].y);
+  for (const p of points2.slice(1)) c.lineTo(p.x, p.y);
   c.closePath();
   c.stroke();
 }
@@ -8538,11 +8546,11 @@ function corrodedGolemMotionV4(m, time, seed2 = 0) {
   });
   return { x, y, hands, weight: weight2, strike: strike2, pulse: 0.85 + Math.sin(time / 220 + seed2 % 11) * 0.15 };
 }
-function polygon9(c, points, fill4, outline2 = true) {
+function polygon9(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -8681,11 +8689,11 @@ function marshGhostMotionV4(m, time, seed2 = 0) {
     }))
   };
 }
-function polygon10(c, points, fill4, outline2 = true) {
+function polygon10(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -8988,11 +8996,11 @@ var smooth12 = (v) => {
   return p * p * (3 - 2 * p);
 };
 var color21 = (flash, hex2) => flash ? "#fff" : hex2;
-function polygon11(c, points, fill4, outline2 = true) {
+function polygon11(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -9097,11 +9105,11 @@ function magmaElementalMotionV4(m, time) {
   const cast = m.rangedPose, heat = cast ? cast.phase === "windup" ? cast.charge : 1 - smooth13(cast.progress) : 0;
   return { cx: m.x + m.w / 2, cy: m.y + m.h / 2, heat, flicker: Math.sin(time / 60) * 3 };
 }
-function polygon12(c, points, fill4) {
+function polygon12(c, points2, fill4) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
 }
@@ -9275,11 +9283,11 @@ function hellBatMotionV4(m, time) {
   const flap = Math.sin(time / 85), attackFlap = mix11(0.95, -0.65, strike2);
   return { cx, cy, head: head12, nose, mouthAngle, weight: weight2, strike: strike2, flap: mix11(flap, attackFlap, weight2), gape: weight2 * (1 - strike2) * 0.48 };
 }
-function polygon13(c, points, fill4, outline2 = true) {
+function polygon13(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -9476,11 +9484,11 @@ function lavaSerpentMotionV4(m, time, seed2) {
   const segments = Array.from({ length: 6 }, (_, i) => ({ x: cx + i * 5.5 - i * 0.6 * weight2 * (1 - strike2), y: cy + wave(i), radius: 6.5 - i * 0.7 }));
   return { root, head: head12, nose, segments, weight: weight2, strike: strike2, castHeat: action2?.ranged ? weight2 : 0, heat: 0.92 + Math.sin(time / 220 + seed2 % 11) * 0.08 };
 }
-function polygon14(c, points, fill4, outline2 = true) {
+function polygon14(c, points2, fill4, outline2 = true) {
   c.fillStyle = fill4;
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fill();
   if (outline2) {
@@ -13297,7 +13305,7 @@ async function createWoodlandForestArtV1(env, review, prior) {
   }
   function tree(c, s, x, y, size, n, info, focus) {
     if (!active(s, x + size * 0.5, y + size * 0.78)) return prior.tree(c, s, x, y, size, n, info);
-    const small = info?.forestRole === "sapling", species = n % 10 < 4 ? 0 : n % 10 < 8 ? 1 : n % 10 === 8 ? 2 : 3, p = small ? sapling : crowns[species], height = size * (small ? 1.05 : 1.7), width = height * p.width / p.height, cx = x + size * 0.5, ground = y + size * 0.94, occludes = focus && Math.abs(focus.x - cx) < width * 0.42 && focus.y > ground - height * 0.84 && focus.y < ground - 10;
+    const small = info?.forestRole === "sapling", species = n % 10 < 4 ? 0 : n % 10 < 8 ? 1 : n % 10 === 8 ? 2 : 3, p = small ? sapling : crowns[species], height = size * (small ? 1.05 : 1.7), width = height * p.width / p.height, cx = x + size * 0.5, ground = y + size * 0.94, occludes = (Array.isArray(focus) ? focus : focus ? [focus] : []).some((f) => Math.abs(f.x - cx) < width * 0.42 && f.y > ground - height * 0.84 && f.y < ground - 10);
     stamp2(c, p, cx, ground, width, Boolean(n & 1), occludes ? 0.38 : 1);
     draws[small ? "sapling" : "tree"]++;
     return true;
@@ -13425,10 +13433,10 @@ function routeContoursV2(at3, bounds2, seed2, o = { x: 0, y: 0 }) {
     }
     if (last === start && path9.length >= 4) loops.push(path9);
   }
-  const grassLoops = loops.map((points) => {
+  const grassLoops = loops.map((points2) => {
     const out = [];
-    for (let i = 0; i < points.length - 1; i++) {
-      const p = points[i], q = points[i + 1], dx = q[0] - p[0], dy = q[1] - p[1], length = Math.hypot(dx, dy);
+    for (let i = 0; i < points2.length - 1; i++) {
+      const p = points2[i], q = points2[i + 1], dx = q[0] - p[0], dy = q[1] - p[1], length = Math.hypot(dx, dy);
       out.push(p);
       if (length < 2) continue;
       const mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2, n = terrainHash(Math.round((mx + o.x) * 2), Math.round((my + o.y) * 2), seed2 + 773);
@@ -13447,9 +13455,9 @@ function routeContoursV2(at3, bounds2, seed2, o = { x: 0, y: 0 }) {
   return { loops: grassLoops, samples: cols * rows, segments: edges.length };
 }
 function traceRouteContoursV2(c, loops) {
-  for (const points of loops) {
-    c.moveTo(...points[0]);
-    for (let i = 1; i < points.length; i++) c.lineTo(...points[i]);
+  for (const points2 of loops) {
+    c.moveTo(...points2[0]);
+    for (let i = 1; i < points2.length; i++) c.lineTo(...points2[i]);
     c.closePath();
   }
 }
@@ -13533,10 +13541,10 @@ function drawStyledRoutes(c, space, bounds2, at3, material = null) {
         g.fillRect(px, py, PAGE, PAGE);
       }
       g.restore();
-      for (const points of contours.loops) {
-        const p = points.find(([x, y]) => ["r", "p"].includes(at3(Math.floor(x / 32), Math.floor(y / 32)))) ?? points[0], palette = routePalette(v.biomes?.[Math.floor(p[1] / 32) - oy]?.[Math.floor(p[0] / 32) - ox]);
+      for (const points2 of contours.loops) {
+        const p = points2.find(([x, y]) => ["r", "p"].includes(at3(Math.floor(x / 32), Math.floor(y / 32)))) ?? points2[0], palette = routePalette(v.biomes?.[Math.floor(p[1] / 32) - oy]?.[Math.floor(p[0] / 32) - ox]);
         g.beginPath();
-        traceRouteContoursV2(g, [points]);
+        traceRouteContoursV2(g, [points2]);
         g.lineWidth = 1.05;
         g.strokeStyle = palette.verge[0];
         g.stroke();
@@ -14434,8 +14442,8 @@ var materials = /* @__PURE__ */ new Map();
 var put = (x, y, type) => {
   if (x >= 0 && y >= 0 && x < 64 && y < 52 && materials.get(x + "," + y) !== "r") materials.set(x + "," + y, type);
 };
-for (const [points, width] of VILLAGE_TEMPLATE_V1.streets) for (let i = 1; i < points.length; i++) {
-  const [ax, ay] = points[i - 1], [bx, by] = points[i], dx = bx - ax, dy = by - ay, d = dx * dx + dy * dy;
+for (const [points2, width] of VILLAGE_TEMPLATE_V1.streets) for (let i = 1; i < points2.length; i++) {
+  const [ax, ay] = points2[i - 1], [bx, by] = points2[i], dx = bx - ax, dy = by - ay, d = dx * dx + dy * dy;
   for (let y = Math.floor(Math.min(ay, by) - width); y <= Math.ceil(Math.max(ay, by) + width); y++) for (let x = Math.floor(Math.min(ax, bx) - width); x <= Math.ceil(Math.max(ax, bx) + width); x++) {
     const f = d ? Math.max(0, Math.min(1, ((x + 0.5 - ax) * dx + (y + 0.5 - ay) * dy) / d)) : 0;
     if (Math.hypot(x + 0.5 - ax - f * dx, y + 0.5 - ay - f * dy) <= width / 2) put(x, y, "r");
@@ -15709,7 +15717,7 @@ function sporeTriangleV2(s, id) {
   if (prior && !prior.layout && prior.revision === runtime.revision) return null;
   if (!d) return null;
   const event = SPORE_EVENTS.find((e) => e.ordinal === s.d9World.episodes[id]?.geography.anchorOrdinal), clearing = event && runtime.frames?.length ? projectToLocalFrameD9(tileAddress(event.x, event.y), runtime.frames) : null;
-  const points = d.members.map((m) => m.position), xs = points.map((p) => p.x), ys = points.map((p) => p.y), memberBounds = { left: Math.min(...xs) - 32, right: Math.max(...xs) + 32, top: Math.min(...ys) - 32, bottom: Math.max(...ys) + 32 }, memberCenter = { x: (memberBounds.left + memberBounds.right) / 2, y: (memberBounds.top + memberBounds.bottom) / 2 }, bounds2 = clearing ? { left: Math.min(clearing.x - 192, memberBounds.left), right: Math.max(clearing.x + 192, memberBounds.right), top: Math.min(clearing.y - 192, memberBounds.top), bottom: Math.max(clearing.y + 192, memberBounds.bottom) } : memberBounds, centers = clearing ? [clearing, memberCenter] : [memberCenter];
+  const points2 = d.members.map((m) => m.position), xs = points2.map((p) => p.x), ys = points2.map((p) => p.y), memberBounds = { left: Math.min(...xs) - 32, right: Math.max(...xs) + 32, top: Math.min(...ys) - 32, bottom: Math.max(...ys) + 32 }, memberCenter = { x: (memberBounds.left + memberBounds.right) / 2, y: (memberBounds.top + memberBounds.bottom) / 2 }, bounds2 = clearing ? { left: Math.min(clearing.x - 192, memberBounds.left), right: Math.max(clearing.x + 192, memberBounds.right), top: Math.min(clearing.y - 192, memberBounds.top), bottom: Math.max(clearing.y + 192, memberBounds.bottom) } : memberBounds, centers = clearing ? [clearing, memberCenter] : [memberCenter];
   const offsets = [];
   for (let y = -2; y <= 2; y++) for (let x = -2; x <= 2; x++) offsets.push([x * 32, y * 32]);
   offsets.sort((a, b) => a[0] * a[0] + a[1] * a[1] - b[0] * b[0] - b[1] * b[1] || a[1] - b[1] || a[0] - b[0]);
@@ -15755,8 +15763,8 @@ function initialSporePodsV2(s, id) {
 function podPositionV2(s, id, n, fallback) {
   const r = s.d9World?.worldEvents?.records[id];
   if (n === 3 && isSporeV2(r)) {
-    const points = r.pods.map((p) => projectToLocalFrameD9(p.position, s.d9World.runtime.frames));
-    return points.every(Boolean) ? { x: points.reduce((v, p) => v + p.x, 0) / 3, y: points.reduce((v, p) => v + p.y, 0) / 3 } : fallback;
+    const points2 = r.pods.map((p) => projectToLocalFrameD9(p.position, s.d9World.runtime.frames));
+    return points2.every(Boolean) ? { x: points2.reduce((v, p) => v + p.x, 0) / 3, y: points2.reduce((v, p) => v + p.y, 0) / 3 } : fallback;
   }
   if (isSporeV2(r)) return projectToLocalFrameD9(r.pods[n].position, s.d9World.runtime.frames) ?? fallback;
   if (!r) {
@@ -18878,22 +18886,22 @@ function freePoint(collision, desired, radius = 10, allowed = () => true) {
   return best;
 }
 function proofAnchors(state) {
-  const c = state.spacesByInstanceId[state.overworldInstanceId].collision, m = manifestForState(state), points = [copyWire(m.start.position)];
+  const c = state.spacesByInstanceId[state.overworldInstanceId].collision, m = manifestForState(state), points2 = [copyWire(m.start.position)];
   for (let n = 1; n < 4; n++) {
     let best = null, score = -1;
     for (let y = 1; y < c.height; y += 3) for (let x = 1; x < c.width; x += 3) {
       const p = { x: (x + 0.5) * c.tileSize, y: (y + 0.5) * c.tileSize };
       if (collidesWithTiles(c, p.x, p.y, 10) || !areaAtWorldPosition(m, p)) continue;
-      const d = Math.min(...points.map((q) => Math.hypot(p.x - q.x, p.y - q.y)));
+      const d = Math.min(...points2.map((q) => Math.hypot(p.x - q.x, p.y - q.y)));
       if (d > score) {
         score = d;
         best = p;
       }
     }
     requireContract(best, "Missing split proof anchor");
-    points.push(best);
+    points2.push(best);
   }
-  return points;
+  return points2;
 }
 async function createActivityFixture({ sha256, nextToken, campaignSeed, proofCase = "A", hostilesPerGroup = 6, populationEnabled = false, sitesEnabled = false }) {
   requireContract(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"].includes(proofCase) && Number.isInteger(hostilesPerGroup) && hostilesPerGroup >= 1 && hostilesPerGroup <= 10, "Invalid activity fixture");
@@ -19575,10 +19583,10 @@ function createActivityProgression(state, manifest, measure) {
   };
   for (const [id, p] of playersByEntity) transientKeys.set(id, transientKey(p));
   const counters = { awards: 0, recipients: 0, levelUps: 0, statRefreshes: stats.size, threatSnapshots: 0 };
-  function freezeGroup(group, radius, trigger = "activation", points = null) {
+  function freezeGroup(group, radius, trigger = "activation", points2 = null) {
     if (!group.threatReady || group.cleared) return;
     const live = group.entityIds.map((id) => state.entitiesById[id]).filter((a) => a.alive);
-    const eligible2 = eligibleNearbyParticipants(state, group.spaceInstanceId, points ?? live.map((a) => a.position), radius);
+    const eligible2 = eligibleNearbyParticipants(state, group.spaceInstanceId, points2 ?? live.map((a) => a.position), radius);
     if (!eligible2.length) return;
     measure("threatSnapshot", () => {
       const episode = state.d9World?.episodes[group.groupId];
@@ -19639,6 +19647,7 @@ function createActivityProgression(state, manifest, measure) {
       for (const row2 of rows) {
         const { player, next, d8, resolved } = row2;
         applyEpisodeReward(state, player, row2.inventoryPlan);
+        grantPotions(player, potionDropCount(state, player, target));
         markEarning(state, manifest, player);
         player.progression = copyWire(next);
         if (d8) player.d8 = d8;
@@ -20495,9 +20504,9 @@ function createSpatialIndex(cellSize = 256) {
     }
     keysById.delete(id);
   }
-  function insert(id, instance, points) {
+  function insert(id, instance, points2) {
     remove(id);
-    const keys2 = new Set(points.map((p) => key2(instance, Math.floor(p.x / cellSize), Math.floor(p.y / cellSize))));
+    const keys2 = new Set(points2.map((p) => key2(instance, Math.floor(p.x / cellSize), Math.floor(p.y / cellSize))));
     for (const k of keys2) {
       if (!cells.has(k)) cells.set(k, /* @__PURE__ */ new Set());
       cells.get(k).add(id);
@@ -21723,16 +21732,16 @@ function createBrimstoneCombat(state, { applyDirectDamage, eligible: eligible2 =
     return true;
   }
   function ventPositions(b, a, t, c) {
-    const points = [];
+    const points2 = [];
     for (let i = 0; i < 2; i++) {
       const angle3 = roll(b.selectionSeed, b.abilitySequence, i + 17537) * Math.PI * 2, length = 40 + roll(b.selectionSeed, b.abilitySequence, i + 3892) * 40, desired = { x: t.position.x + Math.cos(angle3) * length, y: t.position.y + Math.sin(angle3) * length }, candidates = [desired];
       const tile = c.tileSize, cx = Math.floor(t.position.x / tile), cy = Math.floor(t.position.y / tile);
       for (let y = cy - 3; y <= cy + 3; y++) for (let x = cx - 3; x <= cx + 3; x++) candidates.push({ x: (x + 0.5) * tile, y: (y + 0.5) * tile });
-      const p = candidates.filter((p2) => dist(p2, t.position) <= 96 && !collidesWithTiles(c, p2.x, p2.y, 12) && brimstoneLineClear(c, a.position, p2) && points.every((q) => dist(q, p2) >= 40)).sort((x, y) => dist(x, desired) - dist(y, desired) || x.y - y.y || x.x - y.x)[0];
+      const p = candidates.filter((p2) => dist(p2, t.position) <= 96 && !collidesWithTiles(c, p2.x, p2.y, 12) && brimstoneLineClear(c, a.position, p2) && points2.every((q) => dist(q, p2) >= 40)).sort((x, y) => dist(x, desired) - dist(y, desired) || x.y - y.y || x.x - y.x)[0];
       if (!p) return [];
-      points.push(p);
+      points2.push(p);
     }
-    return points;
+    return points2;
   }
   function damage(a, t, n, mechanic, sequence) {
     return applyDirectDamage(a, t, combatInteger(multiplyCombat(a.attackDamage, n, 10), "round"), mechanic, { sourceActionSequence: sequence });
@@ -24080,6 +24089,10 @@ function createActivitySimulation(initialState, { measure = (_name, fn) => fn(),
   function advanceOneTick() {
     return measure("simulation", () => {
       state.tick = safeInteger(state.tick + 1, 1);
+      if (state.d9World && state.tick % POTION_BELT_POLICY.refillIntervalTicks === 0) for (const p of Object.values(state.playersById)) {
+        const a = state.entitiesById[p.entityId];
+        if (a?.alive && a.residency.spaceInstanceId === state.overworldInstanceId && (isStarterVillageSafe(state, a.position) || isWorldPointSafe(manifest, a.position))) grantPotions(p, POTION_BELT_POLICY.maxCapacityUpgrades + POTION_BELT_POLICY.baseCharges);
+      }
       expireWildernessCrowdGrace(state);
       for (const [id, until] of Object.entries(state.siteExitProtectionByEntityId ?? {})) if (state.tick >= until) delete state.siteExitProtectionByEntityId[id];
       eliteCombat.beginTick();
@@ -24983,9 +24996,9 @@ function projectWorldTerrainD9(state, compiled, { x, y, width = 88, height = 88 
 
 // src/host/combat_presentation_projection.js
 function projectCombatPresentation(state, visibleIds) {
-  const ids3 = new Set(visibleIds), lanes = /* @__PURE__ */ new Map();
+  const ids3 = new Set(visibleIds), lanes2 = /* @__PURE__ */ new Map();
   const mastery = Object.values(state.subweaponCombat.mastery ?? {});
-  return { masteryHazards: mastery.flatMap((b) => Object.values(b.hazards)).filter((e) => ids3.has(e.sourceId)).map((e) => ({ position: { ...e.position }, radius: e.radius, expiresTick: e.expiresTick })), masteryRazors: mastery.flatMap((b) => Object.values(b.razors)).filter((e) => ids3.has(e.sourceId)).map((e) => ({ position: { ...e.position }, direction: { ...e.direction } })), statuses: [...Object.values(state.subweaponCombat.effects), ...mastery.flatMap((b) => [...Object.values(b.poisons).map((e) => ({ ...e, id: e.sourceId + "/" + e.id, kind: "poison" })), ...Object.values(b.statuses).map((e) => ({ ...e, id: e.sourceId + "/" + e.id, stacks: e.rank, nextTick: e.expiresTick, appliedTick: e.expiresTick - (e.kind === "expose" ? 300 : e.kind === "slow" ? 240 : 90) }))]), ...Object.values(state.subweaponCombat.controls ?? {}).map((e) => ({ ...e, kind: e.phase, nextTick: e.expiresTick }))].filter((e) => ids3.has(e.targetId) && e.expiresTick > state.tick).map((e) => ({ lane: (lanes.set(e.targetId, (lanes.get(e.targetId) ?? -1) + 1), lanes.get(e.targetId)), id: e.id, sourceId: e.sourceId, targetId: e.targetId, kind: e.kind, stacks: e.stacks, expiresTick: e.expiresTick, nextTick: e.nextTick, durationFrames: ["bleed", "poison"].includes(e.kind) ? 600 : e.kind === "burn" ? 240 : e.expiresTick - e.appliedTick })), families: Object.fromEntries(Object.entries(state.subweaponCombat.actors).filter(([id]) => ids3.has(id)).map(([id, c]) => [id, { mastery: (() => {
+  return { masteryHazards: mastery.flatMap((b) => Object.values(b.hazards)).filter((e) => ids3.has(e.sourceId)).map((e) => ({ position: { ...e.position }, radius: e.radius, expiresTick: e.expiresTick })), masteryRazors: mastery.flatMap((b) => Object.values(b.razors)).filter((e) => ids3.has(e.sourceId)).map((e) => ({ position: { ...e.position }, direction: { ...e.direction } })), statuses: [...Object.values(state.subweaponCombat.effects), ...mastery.flatMap((b) => [...Object.values(b.poisons).map((e) => ({ ...e, id: e.sourceId + "/" + e.id, kind: "poison" })), ...Object.values(b.statuses).map((e) => ({ ...e, id: e.sourceId + "/" + e.id, stacks: e.rank, nextTick: e.expiresTick, appliedTick: e.expiresTick - (e.kind === "expose" ? 300 : e.kind === "slow" ? 240 : 90) }))]), ...Object.values(state.subweaponCombat.controls ?? {}).map((e) => ({ ...e, kind: e.phase, nextTick: e.expiresTick }))].filter((e) => ids3.has(e.targetId) && e.expiresTick > state.tick).map((e) => ({ lane: (lanes2.set(e.targetId, (lanes2.get(e.targetId) ?? -1) + 1), lanes2.get(e.targetId)), id: e.id, sourceId: e.sourceId, targetId: e.targetId, kind: e.kind, stacks: e.stacks, expiresTick: e.expiresTick, nextTick: e.nextTick, durationFrames: ["bleed", "poison"].includes(e.kind) ? 600 : e.kind === "burn" ? 240 : e.expiresTick - e.appliedTick })), families: Object.fromEntries(Object.entries(state.subweaponCombat.actors).filter(([id]) => ids3.has(id)).map(([id, c]) => [id, { mastery: (() => {
     const p = Object.values(state.playersById).find((p2) => p2.entityId === id), d = p?.d8, t = d?.transient;
     return t ? { pulseBlocks: t.pulseBlocks, syphon: finiteNodeRank(d, "tome_arcane_syphon") > 0, earthBreaker: finiteNodeRank(d, "shield_earth_breaker_bash") > 0, singularity: finiteNodeRank(d, "tome_keystone_singularity") > 0, anchor: t.lastAnchor, fortitudeStacks: t.fortitudeStacks, retaliatoryReady: t.retaliatoryReady, colossus: t.colossusTicks > 0, shadowStep: t.shadowStepTicks > 0, syphonStacks: t.syphonStacks, weavingStacks: t.weavingStacks } : null;
   })(), element: Object.values(state.playersById).find((p) => p.entityId === id)?.inventory.itemsById[Object.values(state.playersById).find((p) => p.entityId === id)?.inventory.equipped.subweapon]?.generated?.definition.spellType ?? "fire", guard: c.guard ? { ...c.guard, integrity: presentCombat(c.guard.integrity), direction: { ...c.guard.direction } } : null, pressure: c.pressure, dash: { ...c.dash }, delivery: { ...c.delivery } }])) };
@@ -25357,6 +25370,10 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
   let safeRegions = null;
   const playerViews = /* @__PURE__ */ new Map(), creatureFacingViews = /* @__PURE__ */ new Map();
   let eventKey = null, eventView = null;
+  const SITE_TRUTH_REFRESH_TICKS = 15;
+  let siteTruthState = null, siteTruthKey = null, siteTruthTick = -Infinity, siteTruthView = null;
+  const SLOW_REFRESH_TICKS = 15;
+  let slowViewKey = null, slowViewState = null, slowView = /* @__PURE__ */ new Map();
   function getReadModel() {
     return authority.withAuthority((engine) => engine.withAuthorityState((state) => {
       const status2 = authority.getStatus(), version = engine.version(), key2 = `${version}/${status2.phase}/${status2.confirmedSaveRevision}`;
@@ -25365,7 +25382,17 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
         const player = state.playersById[localPlayerId];
         requireContract(player, "Missing local controller");
         const local5 = state.entitiesById[player.entityId], ctx = actorContext(state, local5.entityId), space = state.spacesByInstanceId[ctx.spaceInstanceId], m = manifestForState(state);
-        const serviceNpcs = projectedServiceNpcs(state, player);
+        const slowKey = `${ctx.spaceInstanceId}/${Math.floor(local5.position.x / 16)},${Math.floor(local5.position.y / 16)}/${local5.alive}/${player.inventory?.revision}/${state.d9World?.runtime.revision ?? 0}/${Math.floor(state.tick / SLOW_REFRESH_TICKS)}`;
+        if (slowKey !== slowViewKey || state !== slowViewState) {
+          slowView = /* @__PURE__ */ new Map();
+          slowViewKey = slowKey;
+          slowViewState = state;
+        }
+        const slowCached = (name, fn) => {
+          if (!slowView.has(name)) slowView.set(name, fn());
+          return slowView.get(name);
+        };
+        const serviceNpcs = slowCached("serviceNpcs", () => projectedServiceNpcs(state, player));
         const tavernBinding = campaignTavernBinding(state), tavernFloor2 = tavernBinding ? floorForSpace(tavernBinding, ctx.spaceInstanceId) : null;
         const functional = functionalSiteForSpaceD12(state, ctx.spaceInstanceId), inFunctional = Boolean(functional), functionalFloor = functional ? functionalSiteFloorForSpaceD12(functional, ctx.spaceInstanceId) : null, inOverworld = ctx.spaceInstanceId === state.overworldInstanceId, c = space.collision, interior2 = inFunctional ? isGeneratedInteriorFamily(functional) ? { siteId: functional.siteId, contentHash: functional.instanceHash + "/" + functionalFloor.floorId, visual: functionalFloor.visual, decorations: functionalFloor.visual.decorations, entrance: functionalFloor.entrance, groupId: functionalFloor.groupId } : functional.interior : m.siteInteriors?.find((d2) => state.campaign.sitesById[d2.siteId].spaceInstanceId === ctx.spaceInstanceId), site = inFunctional ? functional : m.sites.find((s) => s.locationId === interior2?.siteId);
         if (!compiled) {
@@ -25409,11 +25436,11 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
           inventoryKey = invKey;
         }
         const loot = groundGear(player).filter((r) => r.definitionId && !r.claimed && r.spaceInstanceId === ctx.spaceInstanceId && Math.hypot(r.position.x - local5.position.x, r.position.y - local5.position.y) <= 900).map((r) => ({ sourceEntityId: r.sourceEntityId, itemId: `item:${player.playerId}:${r.sourceEntityId}`, position: { ...r.position }, definitionId: r.definitionId, ...r.generated ? { generated: r.generated } : {}, ...r.workshop ? { workshop: r.workshop } : {}, canPickUp: canPickUp(state, player, r.sourceEntityId, playersById[localPlayerId].stats.pickupRadius) })).sort((a, b) => Math.hypot(a.position.x - local5.position.x, a.position.y - local5.position.y) - Math.hypot(b.position.x - local5.position.x, b.position.y - local5.position.y) || a.sourceEntityId.localeCompare(b.sourceEntityId));
-        const resources = economicResources(state, m, localPlayerId, ctx.spaceInstanceId).filter((r) => r.spaceInstanceId === ctx.spaceInstanceId && Math.hypot(r.position.x - local5.position.x, r.position.y - local5.position.y) <= 900).flatMap((r) => {
+        const resources = slowCached("resources", () => economicResources(state, m, localPlayerId, ctx.spaceInstanceId).filter((r) => r.spaceInstanceId === ctx.spaceInstanceId && Math.hypot(r.position.x - local5.position.x, r.position.y - local5.position.y) <= 900).flatMap((r) => {
           const bossCompletion = projectBrimstoneCompletionChest(state, r) ?? projectAegisCompletionChest(state, r) ?? projectArachnidTreantCompletionChestD12_5B(state, r) ?? projectStandardCaveBossCompletionChestD13D_E(state, r), finaleCompletion = projectSmallCaveFinaleCompletionChestD13D_C(state, r) ?? projectLargeCaveFinaleCompletionChestD13D_G(state, r), completion = bossCompletion ?? finaleCompletion;
           if (completion && !completion.visible) return [];
           return [{ ...r, ...bossCompletion ? { bossCompletion } : {}, ...finaleCompletion ? { finaleCompletion } : {}, canUse: canUseResource(state, m, player, { groupId: r.groupId, episode: r.episode, ordinal: r.ordinal, inventoryRevision: player.inventory.revision }) }];
-        });
+        }));
         const hostileHazards = projectHostileHazardsD12_4J(state, ctx.spaceInstanceId), bossHazards = projectBossHazardsD12_5A(state, ctx.spaceInstanceId);
         const visible3 = engine.nearby(local5, 900).filter((a) => !eventActorDormant(state, a.entityId) && bossActorTargetableD12_5A(state, a.entityId));
         for (const defeated of Object.values(state.entitiesById)) if (!defeated.alive && defeated.ai?.defeatedTick !== void 0 && state.tick - defeated.ai.defeatedTick <= 36 && defeated.residency.spaceInstanceId === ctx.spaceInstanceId && Math.hypot(defeated.position.x - local5.position.x, defeated.position.y - local5.position.y) <= 900 && !visible3.some((a) => a.entityId === defeated.entityId)) visible3.push(defeated);
@@ -25454,7 +25481,14 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
           eventKey = nextEventKey;
         }
         const events = eventView;
-        const place = inOverworld ? semanticPlaceAtWorldPosition(m, local5.position) : null, area = inOverworld ? areaAtWorldPosition(m, local5.position) : null, d = state.campaign.overworld.discovery, siteTruth = state.d9World ? presentationSiteTruth(state) : null;
+        const place = inOverworld ? semanticPlaceAtWorldPosition(m, local5.position) : null, area = inOverworld ? areaAtWorldPosition(m, local5.position) : null, d = state.campaign.overworld.discovery, truthKey = state.d9World ? `${state.d9World.runtime.revision}/${ctx.spaceInstanceId}/${d.discoveredSiteIds.length}` : null;
+        if (state.d9World && (state !== siteTruthState || truthKey !== siteTruthKey || state.tick - siteTruthTick >= SITE_TRUTH_REFRESH_TICKS || state.tick < siteTruthTick)) {
+          siteTruthView = presentationSiteTruth(state);
+          siteTruthState = state;
+          siteTruthKey = truthKey;
+          siteTruthTick = state.tick;
+        }
+        const siteTruth = state.d9World ? siteTruthView : null;
         const exits = (m.siteInteriors ?? []).filter((d2) => inOverworld || d2 === interior2).map((d2) => {
           const semantic = m.sites.find((s) => s.locationId === d2.siteId), direction3 = inOverworld ? "enter" : "exit", anchor = inOverworld ? semantic.position : d2.entrance, payload = { siteId: d2.siteId, direction: direction3 };
           return {
@@ -25468,7 +25502,7 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
           };
         });
         if (state.d9World) {
-          exits.push(...trailNoteExits(state, local5));
+          exits.push(...slowCached("trailNotes", () => trailNoteExits(state, local5)));
           for (const e of projectWorldEvents(state, local5)) if (e.status === "dormant") exits.push({ exitId: "event:" + e.groupId, eventAction: { groupId: e.groupId }, x: (e.interactionPosition ?? e.position).x, y: (e.interactionPosition ?? e.position).y, radius: 96, available: e.canActivate, label: e.activeCount >= 4 ? "Four events active \u2014 finish one first" : (e.kind === "hollow" ? "Investigate " : "Disturb ") + e.label });
           if (inFunctional) {
             if (isGeneratedInteriorFamily(functional)) {
@@ -25500,8 +25534,8 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
             }
           }
         }
-        const station = nearbyForge(state, player);
-        exits.push(...campaignTavernExits(state, local5), ...ferryExits(state, local5));
+        const station = slowCached("forge", () => nearbyForge(state, player));
+        exits.push(...slowCached("tavernFerry", () => [...campaignTavernExits(state, local5), ...ferryExits(state, local5)]));
         if (inOverworld) for (const s of state.campaign.forgeStations?.stations ?? []) exits.push({ exitId: s.stationId, forgeAction: true, x: s.interaction.x, y: s.interaction.y, radius: FORGE_INTERACTION_RADIUS, available: s.stationId === station?.stationId, label: "Use Forge" });
         const nearest = visible3.filter((a) => a.alive && a.team === "hostile").sort((a, b) => clearHullGap(local5, a) - clearHullGap(local5, b))[0], tomeTarget = !nearest ? "NO TARGET" : clearHullGap(local5, nearest) > 128 ? "OUT OF RANGE" : visible3.some((a) => a.alive && a.team === "hostile" && clearHullGap(local5, a) <= 128 && subweaponLineClear(c, local5, a)) ? "READY" : "LOS BLOCKED";
         const plannedPosition = state.d9World?.plannedWorld && inOverworld ? localFramePositionD9(local5.position, state.d9World.runtime.frames) : null, plannedRegion = plannedPosition ? state.d9World.runtime.chunks.find((c2) => c2.chunkX === plannedPosition.chunkX && c2.chunkY === plannedPosition.chunkY)?.region : null;
@@ -25523,6 +25557,7 @@ function createActivityClientPort({ authority, localPlayerId, measure = (_n, fn)
           worldTime: worldTimeAtTick(state.tick),
           localPlayerId,
           inventory,
+          potions: Object.freeze({ count: potionCount(player), capacity: potionCapacity(player), healPercent: potionHealPercent(player), cooldownTicks: potionCooldownTicks(state, player), cooldownTotal: POTION_BELT_POLICY.cooldownTicks, enabled: Boolean(player.inventory?.services) }),
           forgeAccess: forgeAccess(state, player, m),
           loot: freezeProjection(loot),
           resources: freezeProjection(resources),
@@ -25844,6 +25879,187 @@ async function createLocalWorldSession({
   return Object.freeze({ clientPort, generationDiagnostics, step: () => {
     if (["safe", "encounter"].includes(authority.getPersistenceStatus().phase)) authority.advanceCommandTick();
   } });
+}
+
+// src/client/level_up_celebration_v4.js
+var LEVEL_UP_CELEBRATION_V4 = Object.freeze({ durationMs: 3200, sparks: 22 });
+function createLevelUpCelebrationV4(doc) {
+  let root = null, timer = null;
+  function clear2() {
+    clearTimeout(timer);
+    root?.remove();
+    root = null;
+  }
+  function play(level, detail = "") {
+    clear2();
+    root = doc.createElement("div");
+    root.className = "level-up-v4";
+    root.setAttribute("role", "status");
+    root.setAttribute("aria-live", "assertive");
+    const flash = doc.createElement("div");
+    flash.className = "level-up-v4-flash";
+    const stage2 = doc.createElement("div");
+    stage2.className = "level-up-v4-stage";
+    const rays = doc.createElement("div");
+    rays.className = "level-up-v4-rays";
+    const burst = doc.createElement("div");
+    burst.className = "level-up-v4-burst";
+    for (let i = 0; i < LEVEL_UP_CELEBRATION_V4.sparks; i++) {
+      const s = doc.createElement("i"), a = i / LEVEL_UP_CELEBRATION_V4.sparks * Math.PI * 2 + i % 3 * 0.17, d = 90 + i % 5 * 26;
+      s.style.setProperty("--dx", Math.cos(a) * d + "px");
+      s.style.setProperty("--dy", Math.sin(a) * d * 0.8 + "px");
+      s.style.animationDelay = i % 4 * 40 + "ms";
+      burst.append(s);
+    }
+    const emblem = doc.createElement("div");
+    emblem.className = "level-up-v4-emblem";
+    const kicker = doc.createElement("small");
+    kicker.textContent = "LEVEL UP";
+    const number2 = doc.createElement("strong");
+    number2.textContent = String(level);
+    const sub = doc.createElement("span");
+    sub.textContent = detail;
+    emblem.append(kicker, number2);
+    stage2.append(rays, burst, emblem, sub);
+    root.append(flash, stage2);
+    doc.body.append(root);
+    timer = setTimeout(clear2, LEVEL_UP_CELEBRATION_V4.durationMs);
+  }
+  return Object.freeze({ play, destroy: clear2 });
+}
+
+// src/client/toast_v1.js
+var MAX_VISIBLE = 3;
+var DEFAULT_MS = 2600;
+var SVG = "http://www.w3.org/2000/svg";
+var ICONS = {
+  level: '<path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/>',
+  mastery: '<path d="M12 2l2 6h6l-5 4 2 7-5-4-5 4 2-7-5-4h6z" opacity=".35"/><circle cx="12" cy="12" r="4"/>',
+  potion: '<path d="M9 2h6v2h-1v4.2a7 7 0 1 1-4 0V4H9z"/>',
+  loot: '<path d="M4 8h16l-1 12H5zM8 8V6a4 4 0 0 1 8 0v2"/>',
+  soul: '<path d="M12 2c3 4 6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 3-7 6-11z"/>',
+  event: '<path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm-1 5h2v6h-2zm0 8h2v2h-2z"/>'
+};
+var ACCENTS = { level: "#f5c451", mastery: "#e2b65c", potion: "#ff6a5c", loot: "#cfd8e3", soul: "#9fd6ff", event: "#c59cf0" };
+var lanes = /* @__PURE__ */ new WeakMap();
+function laneFor(doc) {
+  let lane = lanes.get(doc);
+  if (lane) return lane;
+  const root = doc.createElement("div");
+  root.className = "toast-lane-v1";
+  root.setAttribute("role", "status");
+  root.setAttribute("aria-live", "polite");
+  root.dataset.gameplayHud = "";
+  doc.body.append(root);
+  const cards = /* @__PURE__ */ new Map();
+  function remove(card, how = "fade") {
+    if (!card.isConnected) return;
+    clearTimeout(card.timer);
+    cards.delete(card.dataset.key);
+    card.dataset.leaving = how;
+    setTimeout(() => card.remove(), 240);
+  }
+  function arm5(card, ms) {
+    clearTimeout(card.timer);
+    card.style.setProperty("--toast-ms", ms + "ms");
+    card.classList.remove("timing");
+    void card.offsetWidth;
+    card.classList.add("timing");
+    card.timer = setTimeout(() => remove(card), ms);
+  }
+  function swipe(card) {
+    let start = null, dx = 0, dy = 0;
+    card.addEventListener("pointerdown", (e) => {
+      start = { x: e.clientX, y: e.clientY };
+      dx = dy = 0;
+      card.style.transition = "none";
+      try {
+        card.setPointerCapture(e.pointerId);
+      } catch {
+      }
+    });
+    card.addEventListener("pointermove", (e) => {
+      if (!start) return;
+      dx = e.clientX - start.x;
+      dy = Math.min(0, e.clientY - start.y);
+      const sideways = Math.abs(dx) > Math.abs(dy);
+      card.style.transform = sideways ? `translateX(${dx}px)` : `translateY(${dy}px)`;
+      card.style.opacity = String(Math.max(0, 1 - (sideways ? Math.abs(dx) / 160 : -dy / 80)));
+    });
+    const end = () => {
+      if (!start) return;
+      start = null;
+      card.style.transition = "";
+      if (Math.abs(dx) > 48 || dy < -28) remove(card, Math.abs(dx) > Math.abs(dy) ? "side" : "up");
+      else {
+        card.style.transform = "";
+        card.style.opacity = "";
+      }
+    };
+    card.addEventListener("pointerup", end);
+    card.addEventListener("pointercancel", end);
+  }
+  function show({ kind = "loot", title, sub = "", accent = null, image = null, key: key2 = null, ms = DEFAULT_MS }) {
+    const id = key2 ?? kind + "/" + title, prior = cards.get(id);
+    if (prior) {
+      const n = Number(prior.dataset.count || 1) + 1;
+      prior.dataset.count = String(n);
+      prior.querySelector(".toast-count").textContent = "\xD7" + n;
+      if (sub) prior.querySelector(".toast-sub").textContent = sub;
+      prior.classList.remove("bump");
+      void prior.offsetWidth;
+      prior.classList.add("bump");
+      arm5(prior, ms);
+      return prior;
+    }
+    const card = doc.createElement("div");
+    card.className = "toast-v1";
+    card.dataset.kind = kind;
+    card.dataset.key = id;
+    card.style.setProperty("--toast-accent", accent ?? ACCENTS[kind] ?? ACCENTS.loot);
+    const badge = doc.createElement("div");
+    badge.className = "toast-badge";
+    if (image) {
+      const img = doc.createElement("img");
+      img.src = image;
+      img.alt = "";
+      badge.append(img);
+    } else {
+      const svg = doc.createElementNS(SVG, "svg");
+      svg.setAttribute("viewBox", "0 0 24 24");
+      svg.setAttribute("aria-hidden", "true");
+      svg.innerHTML = ICONS[kind] ?? ICONS.loot;
+      badge.append(svg);
+    }
+    const text2 = doc.createElement("div");
+    text2.className = "toast-text";
+    const t = doc.createElement("strong");
+    t.textContent = title;
+    const s = doc.createElement("small");
+    s.className = "toast-sub";
+    s.textContent = sub;
+    text2.append(t, s);
+    const count = doc.createElement("span");
+    count.className = "toast-count";
+    card.append(badge, text2, count);
+    root.prepend(card);
+    cards.set(id, card);
+    swipe(card);
+    arm5(card, ms);
+    const visible3 = [...root.querySelectorAll(".toast-v1:not([data-leaving])")];
+    for (const old2 of visible3.slice(MAX_VISIBLE)) remove(old2);
+    return card;
+  }
+  lane = { show, destroy() {
+    for (const c of cards.values()) clearTimeout(c.timer);
+    root.remove();
+    lanes.delete(doc);
+  } };
+  lanes.set(doc, lane);
+  return lane;
+}
+function toastV1(doc, options) {
+  return laneFor(doc).show(options);
 }
 
 // src/client/interaction_target_v2.js
@@ -26244,6 +26460,7 @@ function createProgressionPresentation({ document, readModel, issue }) {
         const t = ["shield", "dagger", "tome"].find((t2) => integerBigInt(d[t2].level) > integerBigInt(previous[t2]));
         message = `${CONSTELLATIONS[t].name}: Level ${formatLarge(d[t].level)} \xB7 +${formatLarge(integerWire(integerBigInt(d[t].level) - integerBigInt(previous[t])))} SP`;
         messageUntil = now2 + 1800;
+        toastV1(document, { kind: "mastery", title: `${CONSTELLATIONS[t].name} \xB7 Level ${formatLarge(d[t].level)}`, sub: `+${formatLarge(integerWire(integerBigInt(d[t].level) - integerBigInt(previous[t])))} skill point${integerBigInt(d[t].level) - integerBigInt(previous[t]) === 1n ? "" : "s"} to spend`, accent: CONSTELLATIONS[t].color, key: "mastery/" + t });
       } else if (d.lastChange?.authorityOrder !== previous.change && d.lastChange) {
         message = "Progression updated";
         messageUntil = now2 + 1200;
@@ -26263,8 +26480,8 @@ function createProgressionPresentation({ document, readModel, issue }) {
     const key2 = `${statsVisible}/${identity2}/${d.revision}/${m.inventory.revision}/${selected}/${tree}/${attribute}/${Object.values(draft).join()}/${confirm}/${m.persistence.phase}`;
     if (key2 === viewKey) return;
     viewKey = key2;
-    const points = pointBalances(d), remaining = points.attributeUnspent - Object.values(draft).reduce((a, b) => a + b, 0), ready = m.persistence.phase === "encounter";
-    attrTitle.replaceChildren(el("strong", "ATTRIBUTES"), el("strong", `${points.attributeUnspent} unspent AP`));
+    const points2 = pointBalances(d), remaining = points2.attributeUnspent - Object.values(draft).reduce((a, b) => a + b, 0), ready = m.persistence.phase === "encounter";
+    attrTitle.replaceChildren(el("strong", "ATTRIBUTES"), el("strong", `${points2.attributeUnspent} unspent AP`));
     attrRows.replaceChildren();
     for (const name of ["str", "dex", "int"]) {
       const b = button("", () => {
@@ -26309,7 +26526,7 @@ function createProgressionPresentation({ document, readModel, issue }) {
     if (!visible3) return;
     for (const [name, b] of Object.entries(tabButtons)) b.setAttribute("aria-pressed", String(name === tree));
     level.textContent = tree === "utility" ? "Utility" : `Mastery Lv. ${formatLarge(d[tree].level)}`;
-    balance.textContent = `${formatLarge(points[tree].unspent)} ${tree === "utility" ? "Utility" : "Mastery"} SP`;
+    balance.textContent = `${formatLarge(points2[tree].unspent)} ${tree === "utility" ? "Utility" : "Mastery"} SP`;
     xp.hidden = bar.hidden = tree === "utility";
     if (tree !== "utility") {
       const req = masteryRequirement(d[tree].level);
@@ -27213,7 +27430,8 @@ function createInventoryPresentation({ document, environment, readModel, adapter
     if (observed?.identity === identity2) {
       const added2 = Object.values(inv.itemsById).find((i) => !observed.ids.has(i.itemId));
       if (added2) {
-        document.getElementById("world-loot-notice").replaceChildren(icon(itemArtKey(added2)), element("span", itemDefinition(added2).name));
+        const tier2 = added2.generated?.rarityTier ?? 0;
+        toastV1(document, { kind: "loot", title: itemDefinition(added2).name, sub: (RARITY_NAMES[tier2] ?? "") + " \xB7 added to your bag", image: EQUIPMENT_ART[itemArtKey(added2)]?.url, accent: tier2 ? RARITY_COLORS[tier2] : null, key: "item/" + added2.itemId });
         toastUntil = time + 1800;
       }
     } else if (observed?.identity !== identity2) {
@@ -27223,7 +27441,7 @@ function createInventoryPresentation({ document, environment, readModel, adapter
     if (observed?.identity === identity2 && observed.revision !== inv.revision) {
       const gained = (inv.economy?.materials["Monster Soul"] ?? 0) - (observed.souls ?? 0);
       if (gained > 0) {
-        document.getElementById("world-loot-notice").replaceChildren(element("span", `+${gained} Monster Soul${gained === 1 ? "" : "s"}`));
+        toastV1(document, { kind: "soul", title: "Monster Soul", sub: `+${gained} \xB7 ${inv.economy?.materials["Monster Soul"] ?? 0} carried`, key: "soul" });
         toastUntil = time + 1600;
       }
     }
@@ -27651,6 +27869,20 @@ function createInventoryPresentation({ document, environment, readModel, adapter
       }
     }
   };
+  const crest = document.getElementById("world-level"), crestKey = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggle();
+    }
+  };
+  if (crest) {
+    crest.classList.add("bag-crest");
+    crest.setAttribute("role", "button");
+    crest.tabIndex = 0;
+    crest.setAttribute("aria-label", "Open bag");
+    crest.addEventListener("click", toggle);
+    crest.addEventListener("keydown", crestKey);
+  }
   openButton.addEventListener("click", toggle);
   closeButton.addEventListener("click", close);
   environment.addEventListener("keydown", keyboard);
@@ -27663,6 +27895,8 @@ function createInventoryPresentation({ document, environment, readModel, adapter
     panel.removeEventListener("pointerdown", outside);
     environment.removeEventListener("resize", resized);
     openButton.removeEventListener("click", toggle);
+    crest?.removeEventListener("click", toggle);
+    crest?.removeEventListener("keydown", crestKey);
     closeButton.removeEventListener("click", close);
     environment.removeEventListener("keydown", keyboard);
   } });
@@ -27759,6 +27993,11 @@ function createWorldEventHudV3(document, onActivate = () => {
   style.textContent = `#world-event-hud-v3{position:absolute;z-index:7;top:76px;left:12px;width:min(258px,52vw);padding:10px 13px;border:1px solid #8863a6;border-left:3px solid #b282d7;border-radius:3px 8px 8px 3px;background:linear-gradient(120deg,#152330f2,#17212ae8);color:#eef4f4;font:12px/1.4 system-ui;pointer-events:none;box-sizing:border-box}#world-event-hud-v3 button{pointer-events:auto;touch-action:manipulation;margin-top:8px;padding:7px 10px;font:600 12px system-ui;border:1px solid #ab87cc;border-radius:4px;background:#32404f;color:#f0e7fa}#world-event-hud-v3 button:disabled{opacity:.6}#world-event-hud-v3[hidden]{display:none!important}#world-event-hud-v3 small{display:block;color:#ceabea;letter-spacing:.14em;font-size:9px;font-weight:800}#world-event-hud-v3 strong{display:block;font-size:16px;margin:2px 0 5px}#world-event-hud-v3 p{margin:4px 0 7px}#world-event-hud-v3>span{display:block;margin-top:7px;font-size:11px;color:#bbcfd4}#world-event-hud-v3>div>div{display:flex;align-items:center;gap:8px;margin:3px 0}#world-event-hud-v3 progress{width:100%;height:7px;accent-color:#afdf9d}#world-event-hud-v3 div span{min-width:47px;font-size:10px}#world-event-hud-v3[data-state=completed]{border-color:#7fbd95}#world-event-hud-v3[data-state=dormant]>div{display:none}@media(max-width:600px){#world-event-hud-v3{top:68px;left:8px;width:min(210px,51vw);padding:7px 9px;font-size:11px}#world-event-hud-v3 strong{font-size:14px}}@media(max-height:450px){#world-event-hud-v3{top:62px;padding:5px 9px}#world-event-hud-v3>div{display:none}}`;
   document.head.append(style);
   (document.getElementById("world-view")?.parentElement ?? document.body).append(root);
+  root.dataset.expanded = "false";
+  root.addEventListener?.("click", (e) => {
+    if (e.target === action2) return;
+    root.dataset.expanded = String(root.dataset.expanded !== "true");
+  });
   let previous = "", selected = null, enteredTick = 0, currentGroup = null;
   function refresh(model, visible3 = true) {
     const hero = model.entitiesById[model.playersById[model.localPlayerId].entityId];
@@ -28025,7 +28264,7 @@ function createSettlementServicesMenu2(options) {
     if (cls) e.className = cls;
     return e;
   };
-  let npcId = null, mode = "gear", selected = null, line11 = 0, materialQuantity = 1, key2 = null, busy = false, notice = "", confirm = null;
+  let lastPotionCount = null, npcId = null, mode = "gear", selected = null, line11 = 0, materialQuantity = 1, key2 = null, busy = false, notice = "", confirm = null;
   const close = () => {
     if (busy) return;
     panel.close();
@@ -28045,8 +28284,13 @@ function createSettlementServicesMenu2(options) {
     i.alt = "";
     return i;
   };
-  const supplyButton = button("", () => open(null), "supplies");
+  const supplyButton = button("", () => {
+    const m = readModel();
+    if (!m.potions?.count || m.potions.cooldownTicks > 0 || busy) return;
+    issue("supply.use", {});
+  }, "drink-potion");
   supplyButton.id = "carried-rations";
+  supplyButton.classList.add("potion-button");
   supplyButton.style.cssText = "position:absolute;left:78px;top:12px;z-index:8;padding:10px;background:#282033;color:#f2db9d;border:1px solid #ad9359;border-radius:6px";
   supplyButton.setAttribute("data-gameplay-hud", "");
   doc.getElementById("world-bag").after(supplyButton);
@@ -28128,7 +28372,7 @@ function createSettlementServicesMenu2(options) {
     wallet.firstChild.width = 22;
     wallet.firstChild.height = 22;
     shell.append(wallet);
-    const tabs = el("nav", void 0, "forge-mode-bar"), modes = isAltar ? [["enchant", "Enchantment"], ["purge", "Purge"], ["resonance", "Resonance"], ["shatter", "Shatter"], ["materials", "Materials"]] : isSmith ? [["attune", "Attunement"], ["reforge", "Reforge"], ["awaken", "Awaken"], ["gear", "Trade"], ["materials", "Materials"]] : npc?.role === "innkeeper" ? [["rest", "Rest"]] : [["gear", "Equipment"], ["supplies", "Supplies"], ["sell", "Sell"]];
+    const tabs = el("nav", void 0, "forge-mode-bar"), modes = isAltar ? [["enchant", "Enchantment"], ["purge", "Purge"], ["resonance", "Resonance"], ["shatter", "Shatter"], ["materials", "Materials"]] : isSmith ? [["attune", "Attunement"], ["reforge", "Reforge"], ["awaken", "Awaken"], ["gear", "Trade"], ["materials", "Materials"]] : npc?.role === "innkeeper" ? [["rest", "Rest"]] : [["gear", "Equipment"], ["supplies", "Potions"], ["sell", "Sell"]];
     if (!npcId) modes.splice(0, modes.length, ["supplies", "Supplies"]);
     for (const [id, label3] of modes) {
       const b = button(label3, () => change(id), "tab:" + id, "forge-mode-btn");
@@ -28179,9 +28423,14 @@ function createSettlementServicesMenu2(options) {
         }, "sell:" + i.itemId));
       }
     } else if (mode === "supplies") {
-      body4.append(el("h3", "Field rations \xB7 " + supplyCount(p) + " / " + SETTLEMENT_LIFE_POLICY.supply.maximum));
-      if (npc?.role === "general") body4.append(button("Buy ration \xB7 2 Gold \xB7 restores 15% max HP", () => issue("service.buy", { npcId, offerId: "field-ration" }), "buy:field-ration"));
-      body4.append(button("Use one ration \xB7 recover 15% max HP", () => issue("supply.use", {}), "use-ration"));
+      const belt = m.potions;
+      body4.append(el("h3", "Health potions \xB7 " + belt.count + " / " + belt.capacity), el("p", "Each potion heals " + belt.healPercent + "% of max HP. Enemies drop potions (elites often, bosses always) and your belt refills for free in town."));
+      if (npc?.role === "general") for (const offerId of Object.values(POTION_BELT_POLICY.offers)) {
+        const u = potionUpgrade(p, offerId), b = button(u.price ? u.label + " \xB7 " + u.price + " Gold" : u.label + " \xB7 fully upgraded", () => issue("service.buy", { npcId, offerId }), "buy:" + offerId);
+        b.disabled = busy || !u.price || compareAmount(inv.gold, u.price) < 0;
+        body4.append(b);
+      }
+      else body4.append(el("p", "Visit a general merchant to carry more potions or make them stronger."));
     } else if (mode === "rest") {
       body4.append(el("h3", "A safe rest"), el("p", SETTLEMENT_LIFE_POLICY.rest.effect), el("p", "Cost: 5 Gold \xB7 no time skipping, revival, reset or status cure."));
       body4.append(button("Rest \xB7 recover all missing HP \xB7 5 Gold", () => issue("service.rest", { npcId }), "rest"));
@@ -28289,9 +28538,21 @@ function createSettlementServicesMenu2(options) {
     }
   }
   function refresh(m) {
-    supplyButton.hidden = !m.inventory?.services;
+    supplyButton.hidden = !m.potions?.enabled;
     if (supplyButton.hidden) return;
-    supplyButton.textContent = "Rations \xB7 " + supplyCount({ inventory: m.inventory });
+    const belt = m.potions, cooling = belt.cooldownTicks > 0, label3 = cooling ? "Potion \xB7 " + Math.ceil(belt.cooldownTicks / 60) + "s" : "Potion \xB7 " + belt.count + "/" + belt.capacity;
+    if (supplyButton.textContent !== label3) supplyButton.textContent = label3;
+    supplyButton.dataset.empty = String(belt.count < 1);
+    if (lastPotionCount !== null && belt.count > lastPotionCount) {
+      supplyButton.classList.remove("potion-gained");
+      void supplyButton.offsetWidth;
+      supplyButton.classList.add("potion-gained");
+      toastV1(doc, { kind: "potion", title: "Health potion", sub: belt.count + " / " + belt.capacity + " on your belt", key: "potion" });
+    }
+    lastPotionCount = belt.count;
+    supplyButton.dataset.cooling = String(cooling);
+    supplyButton.style.setProperty("--potion-cooldown", String(cooling ? belt.cooldownTicks / belt.cooldownTotal : 0));
+    supplyButton.setAttribute("aria-label", "Drink health potion, " + belt.count + " of " + belt.capacity + ", heals " + belt.healPercent + " percent");
     const next = m.localPlayerId + "/" + m.inventory.revision + "/" + m.playersById[m.localPlayerId].progression.level + "/" + npcId + "/" + mode + "/" + selected + "/" + line11 + "/" + materialQuantity + "/" + busy + "/" + notice + "/" + confirm + "/" + (m.serviceNpcs?.find((n) => n.id === npcId)?.available ?? false);
     if (panel.open && key2 !== next) {
       const focus = doc.activeElement?.dataset.serviceAction;
@@ -28704,7 +28965,7 @@ function paintChartRaster(canvas, raster, meta, filters, cssWidth, cssHeight) {
   c.imageSmoothingEnabled = false;
   c.drawImage(raw, 0, 0, canvas.width, canvas.height);
   const ratio = canvas.width / cssWidth, view = raster.view, point13 = (p) => projectChart(p, view, canvas.width, canvas.height);
-  const line11 = (points, color28, width, dash = []) => {
+  const line11 = (points2, color28, width, dash = []) => {
     c.strokeStyle = color28;
     c.lineWidth = width * ratio;
     c.setLineDash(dash.map((n) => n * ratio));
@@ -28712,7 +28973,7 @@ function paintChartRaster(canvas, raster, meta, filters, cssWidth, cssHeight) {
     c.lineCap = "round";
     c.beginPath();
     let first = true;
-    for (const p of points) {
+    for (const p of points2) {
       const q = point13(p);
       if (first) c.moveTo(q.x, q.y);
       else c.lineTo(q.x, q.y);
@@ -30286,9 +30547,13 @@ function createDiagnosticOverlays({ document, environment, releaseInput = () => 
       if (!w.enabled) continue;
       let text2;
       if (kind === "fps") {
+        if (w.collapsed) {
+          const compact = Math.round(frames.read(time).fps) + " FPS";
+          if (w.status.textContent !== compact) w.status.textContent = compact;
+          continue;
+        }
         const recording = performanceProbe?.isRecording?.() ?? false, status2 = performanceProbe ? recording ? "\u25CF REC" : "\u25CB Capture frozen" : "\u25CB Sample off";
         if (w.status.textContent !== status2) w.status.textContent = status2;
-        if (w.collapsed) continue;
         const legacy = frames.read(time), snapshot = performanceProbe?.snapshot?.() ?? null, f = snapshot?.frameStats ?? null, m = snapshot?.metrics ?? {}, q = snapshot?.samples ?? {}, g = snapshot?.gauges ?? {}, runtime = readRuntimeDiagnostics?.() ?? {}, stream = runtime.d9Streaming ?? {}, worker = runtime.d9Worker ?? {}, presentation = readPresentationDiagnostics?.() ?? {}, block = runtime.movementBlocks?.last ?? runtime.movementBlocks ?? runtime.activity?.movementBlocks?.last;
         text2 = f ? `LIVE ${legacy.fps.toFixed(1)} FPS \xB7 frame ${legacy.frameMs.toFixed(1)} ms \xB7 worst 5s ${legacy.worstMs.toFixed(1)} ms
 CAPTURE ${recording ? "recording" : "frozen"} \xB7 mean ${f.recentFps.toFixed(1)} FPS \xB7 median ${(f.medianFps ?? (f.p50Ms ? 1e3 / f.p50Ms : 0)).toFixed(1)} FPS
@@ -30425,8 +30690,285 @@ function createClientCommandAdapter({ port, nextCommandToken }) {
   } });
 }
 
+// src/client/depth_focus_v1.js
+var DEPTH_FOCUS_MAX_ACTORS = 24;
+var points = [];
+function setDepthFocusPointsV1(next) {
+  points = next;
+}
+function depthFocusPointsV1(fallback = null) {
+  return points.length ? points : fallback ? [fallback] : [];
+}
+function enemyDepthFocusPointsV1(model, view, pad = 96) {
+  const out = [];
+  for (const actor of Object.values(model.entitiesById ?? {})) {
+    if (out.length >= DEPTH_FOCUS_MAX_ACTORS) break;
+    if (!actor.alive || actor.team !== "hostile") continue;
+    const { x, y } = actor.position;
+    if (x < view.x - pad || y < view.y - pad || x > view.x + view.width + pad || y > view.y + view.height + pad) continue;
+    out.push({ x, y: y - Math.min(24, (actor.hullRadius ?? 10) * 1.2) });
+  }
+  return out;
+}
+
+// src/client/ground_item_presentation.js
+var LOOT_VISUAL_BUDGET = Object.freeze({ rich: 12, motes: 24, labels: 4 });
+function groundItemPresentation(drop, time, establish = 1, collapse = 0) {
+  const artKey = itemArtKey(drop), art = EQUIPMENT_ART[artKey], center2 = art?.visibleCenter ?? { x: 17, y: 17 }, pivot2 = art?.pivot ?? { x: 17, y: 31 }, seed2 = gearHash(drop.itemId ?? drop.sourceEntityId), phase = seed2 % 6283 / 1e3, scale = 26 / 34 * (1 - collapse * 0.3), bob = Math.sin(time / 430 + phase) * 1.1 * establish;
+  const origin = { x: drop.position.x - center2.x * scale, y: drop.position.y - pivot2.y * scale - 3 + bob + (1 - establish) * 5 };
+  return { artKey, origin, scale, visibleCenter: { x: origin.x + center2.x * scale, y: origin.y + center2.y * scale }, contact: { x: origin.x + pivot2.x * scale, y: drop.position.y }, phase, alpha: establish * (1 - collapse), growth: establish, rarity: itemDefinition(drop)?.rarityTier ?? 0 };
+}
+function createGroundItemPresentation() {
+  let identity2 = null, records = /* @__PURE__ */ new Map(), sprites = /* @__PURE__ */ new Map(), counts = { rich: 0, motes: 0, labels: 0 };
+  function lightSprites(ctx, tier2) {
+    if (sprites.has(tier2)) return sprites.get(tier2);
+    const doc = ctx.canvas.ownerDocument, color28 = RARITY_COLORS[tier2], beam2 = doc.createElement("canvas"), contact = doc.createElement("canvas");
+    beam2.width = 64;
+    beam2.height = 128;
+    contact.width = 64;
+    contact.height = 24;
+    const b = beam2.getContext("2d"), g = contact.getContext("2d"), width = [0, 4, 5.5, 7, 9, 11][tier2];
+    const outer = b.createLinearGradient(0, 7, 0, 121);
+    outer.addColorStop(0, color28 + "00");
+    outer.addColorStop(0.28, color28 + "20");
+    outer.addColorStop(0.7, color28 + ["00", "38", "50", "68", "80", "95"][tier2]);
+    outer.addColorStop(1, color28 + "00");
+    b.fillStyle = outer;
+    b.beginPath();
+    b.moveTo(32, 7);
+    b.lineTo(32 - width * 0.45, 22);
+    b.lineTo(32 - width * 0.65, 98);
+    b.quadraticCurveTo(32 - width, 115, 32, 121);
+    b.quadraticCurveTo(32 + width, 115, 32 + width * 0.65, 98);
+    b.lineTo(32 + width * 0.45, 22);
+    b.lineTo(32, 7);
+    b.fill();
+    if (tier2 >= 2) {
+      const inner = b.createLinearGradient(0, 10, 0, 120);
+      inner.addColorStop(0, color28 + "00");
+      inner.addColorStop(0.5, color28 + "48");
+      inner.addColorStop(0.88, color28 + "80");
+      inner.addColorStop(1, color28 + "00");
+      b.fillStyle = inner;
+      b.beginPath();
+      b.moveTo(32, 12);
+      b.lineTo(32 - width * 0.32, 113);
+      b.quadraticCurveTo(32, 120, 32 + width * 0.32, 113);
+      b.closePath();
+      b.fill();
+    }
+    const core5 = b.createLinearGradient(0, 5, 0, 120);
+    core5.addColorStop(0, color28 + "00");
+    core5.addColorStop(0.22, color28 + "65");
+    core5.addColorStop(0.6, color28 + "cc");
+    core5.addColorStop(0.88, "#ffffffdd");
+    core5.addColorStop(1, color28 + "00");
+    b.strokeStyle = core5;
+    b.lineWidth = [0, 1.2, 1.5, 1.8, 2.1, 2.4][tier2];
+    b.beginPath();
+    b.moveTo(32, 5);
+    b.lineTo(32, 120);
+    b.stroke();
+    const bloom = g.createRadialGradient(32, 12, 0, 32, 12, 26);
+    bloom.addColorStop(0, "#ffffff" + ["00", "35", "45", "55", "70", "7a"][tier2]);
+    bloom.addColorStop(0.18, color28 + "99");
+    bloom.addColorStop(0.55, color28 + ["00", "20", "30", "45", "60", "68"][tier2]);
+    bloom.addColorStop(1, color28 + "00");
+    g.save();
+    g.translate(0, 8);
+    g.scale(1, 0.35);
+    g.fillStyle = bloom;
+    g.fillRect(0, -20, 64, 64);
+    g.restore();
+    const result = { beam: beam2, contact };
+    sprites.set(tier2, result);
+    return result;
+  }
+  function update(model, time) {
+    const next = `${model.context.campaignId}/${model.localPlayerId}/${model.context.spaceInstanceId}`, first = next !== identity2;
+    if (first) {
+      records.clear();
+      identity2 = next;
+    }
+    const live = /* @__PURE__ */ new Set();
+    for (const drop of model.loot ?? []) {
+      const id = drop.itemId ?? drop.sourceEntityId;
+      live.add(id);
+      const previous = records.get(id);
+      if (!previous || previous.removed !== null) records.set(id, { drop, born: first ? time - 150 : time, removed: null });
+      else previous.drop = drop;
+    }
+    for (const [id, r] of records) if (!live.has(id)) {
+      if (r.removed === null) r.removed = time;
+      if (time - r.removed >= 120) records.delete(id);
+    }
+  }
+  function draw(ctx, model, time, viewport, art) {
+    update(model, time);
+    counts = { rich: 0, motes: 0, labels: 0 };
+    const actor = model.entitiesById[model.playersById[model.localPlayerId].entityId];
+    const visible3 = [...records.values()].filter((r) => r.drop.position.x >= viewport.x - 20 && r.drop.position.y >= viewport.y - 80 && r.drop.position.x <= viewport.x + viewport.width + 20 && r.drop.position.y <= viewport.y + viewport.height + 30).sort((a, b) => Number(b.drop.canPickUp) - Number(a.drop.canPickUp) || Math.hypot(a.drop.position.x - actor.position.x, a.drop.position.y - actor.position.y) - Math.hypot(b.drop.position.x - actor.position.x, b.drop.position.y - actor.position.y) || (itemDefinition(b.drop)?.rarityTier ?? 0) - (itemDefinition(a.drop)?.rarityTier ?? 0));
+    for (const r of visible3) {
+      const drop = r.drop, t = groundItemPresentation(drop, time, Math.min(1, (time - r.born) / 150), r.removed === null ? 0 : (time - r.removed) / 120), color28 = RARITY_COLORS[t.rarity], rich = t.rarity > 0 && counts.rich < LOOT_VISUAL_BUDGET.rich;
+      ctx.save();
+      ctx.globalAlpha = t.alpha;
+      ctx.fillStyle = "#0005";
+      ctx.beginPath();
+      ctx.ellipse(t.contact.x, t.contact.y + 2, 10, 3.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = color28;
+      ctx.lineWidth = drop.canPickUp ? 1.4 : 0.8;
+      ctx.globalAlpha = t.alpha * (drop.canPickUp ? 0.75 : 0.35);
+      ctx.beginPath();
+      ctx.ellipse(t.contact.x, t.contact.y + 1, 10, 3.2, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = t.alpha;
+      if (rich) {
+        counts.rich++;
+        const x = t.visibleCenter.x, y = t.visibleCenter.y + 7, height = [0, 49, 60, 71, 83, 94][t.rarity] * t.growth, pulse = 0.9 + 0.1 * Math.sin(time / 900 + t.phase), stamp2 = lightSprites(ctx, t.rarity);
+        ctx.save();
+        ctx.globalAlpha = t.alpha * pulse;
+        ctx.drawImage(stamp2.beam, x - 32, y - height, 64, height + 10);
+        ctx.drawImage(stamp2.contact, t.contact.x - 32, t.contact.y - 10, 64, 24);
+        ctx.translate(x, y);
+        ctx.lineCap = "round";
+        if (t.rarity >= 2) {
+          for (const side of [-1, 1]) {
+            ctx.strokeStyle = color28;
+            ctx.lineWidth = 0.65;
+            for (let n = 0; n < 8; n++) {
+              const q = n / 8;
+              ctx.globalAlpha = t.alpha * pulse * (1 - q) * (0.25 + t.rarity * 0.06);
+              ctx.beginPath();
+              ctx.moveTo(side * (2.5 + t.rarity * 0.35) * (1 - q * 0.35), -height * q * 0.75);
+              ctx.lineTo(side * (2.5 + t.rarity * 0.35) * (1 - (q + 0.125) * 0.35), -height * (q + 0.125) * 0.75);
+              ctx.stroke();
+            }
+          }
+        }
+        if (t.rarity >= 3) {
+          ctx.globalAlpha = t.alpha * 0.4 * pulse;
+          ctx.fillStyle = color28;
+          ctx.beginPath();
+          ctx.ellipse(0, 5, 8 + t.rarity, 2.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (t.rarity >= 4) {
+          ctx.globalAlpha = t.alpha * (0.38 + 0.12 * Math.sin(time / 700 + t.phase));
+          ctx.strokeStyle = t.rarity === 5 ? "#ffd1c4" : "#fff0b9";
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(-6 - t.rarity, 2);
+          ctx.lineTo(6 + t.rarity, 2);
+          ctx.stroke();
+        }
+        ctx.restore();
+        const count = [0, 1, 2, 3, 4, 5][t.rarity];
+        for (let n = 0; n < count && counts.motes < LOOT_VISUAL_BUDGET.motes; n++) {
+          counts.motes++;
+          const progress8 = (time / (2100 - t.rarity * 90) + t.phase + n * 0.47) % 1, mx = t.visibleCenter.x + Math.sin(progress8 * 5 + t.phase + n) * (2 + t.rarity * 0.65), my = t.visibleCenter.y - progress8 * height;
+          ctx.globalAlpha = t.alpha * Math.sin(progress8 * Math.PI) * (0.5 + t.rarity * 0.065);
+          ctx.fillStyle = t.rarity >= 4 ? "#fff1c2" : color28;
+          const radius = t.rarity >= 4 ? 1.2 : 0.85;
+          if (t.rarity >= 4) {
+            ctx.beginPath();
+            ctx.moveTo(mx, my - radius * 2);
+            ctx.lineTo(mx + radius * 0.6, my - radius * 0.5);
+            ctx.lineTo(mx + radius * 2, my);
+            ctx.lineTo(mx + radius * 0.6, my + radius * 0.5);
+            ctx.lineTo(mx, my + radius * 2);
+            ctx.lineTo(mx - radius * 0.6, my + radius * 0.5);
+            ctx.lineTo(mx - radius * 2, my);
+            ctx.lineTo(mx - radius * 0.6, my - radius * 0.5);
+            ctx.closePath();
+            ctx.fill();
+          } else {
+            ctx.beginPath();
+            ctx.arc(mx, my, radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+        ctx.globalAlpha = t.alpha;
+      }
+      const image = art(t.artKey);
+      if (image) ctx.drawImage(image, t.origin.x, t.origin.y, 34 * t.scale, 34 * t.scale);
+      if (drop.canPickUp && counts.labels < LOOT_VISUAL_BUDGET.labels && r.removed === null) {
+        counts.labels++;
+        ctx.font = "bold 10px Georgia";
+        ctx.textAlign = "center";
+        const name = itemDefinition(drop)?.name ?? "Gear", w = ctx.measureText(name).width;
+        ctx.fillStyle = "#101018d0";
+        ctx.fillRect(t.contact.x - w / 2 - 4, t.contact.y + 8, w + 8, 15);
+        ctx.fillStyle = color28;
+        ctx.fillText(name, t.contact.x, t.contact.y + 19);
+      }
+      ctx.restore();
+    }
+    return { ...counts };
+  }
+  return { draw, clear() {
+    records.clear();
+    identity2 = null;
+  }, inspect: () => ({ ...counts, records: records.size }) };
+}
+
+// src/client/dynamic_world_lights_v1.js
+var DYNAMIC_WORLD_LIGHTS_VERSION = "dynamic-world-lights-v1";
+var PORTAL_OUTER = "#67e8f9";
+var PORTAL_INNER = "#c4b5fd";
+var PLAYER = "#ffe9c4";
+var MAX_LOOT_LIGHTS = 12;
+function createDynamicWorldLightsV1(doc) {
+  const stamps = /* @__PURE__ */ new Map();
+  let drawn = 0;
+  function stamp2(color28) {
+    let c = stamps.get(color28);
+    if (c) return c;
+    c = doc.createElement("canvas");
+    c.width = c.height = 128;
+    const g = c.getContext("2d"), gradient = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gradient.addColorStop(0, color28 + "d0");
+    gradient.addColorStop(0.35, color28 + "60");
+    gradient.addColorStop(1, color28 + "00");
+    g.fillStyle = gradient;
+    g.fillRect(0, 0, 128, 128);
+    stamps.set(color28, c);
+    return c;
+  }
+  function draw(ctx, model, view, frame, time, player) {
+    drawn = 0;
+    if (!frame?.enabled) return;
+    const [r, g, b] = frame.ambient, darkness = Math.max(0, 1 - (r + g + b) / 765), interior2 = frame.profile === "interior", strength = Math.min(1, (interior2 ? 0.55 : 0) + darkness * 1.6);
+    if (strength < 0.04) return;
+    const pool = (x, y, radius, color28, alpha) => {
+      if (x + radius < view.x || y + radius < view.y || x - radius > view.x + view.width || y - radius > view.y + view.height) return;
+      ctx.globalAlpha = Math.min(1, alpha * strength);
+      ctx.drawImage(stamp2(color28), x - radius, y - radius, radius * 2, radius * 2);
+      drawn++;
+    };
+    ctx.save();
+    ctx.globalCompositeOperation = "screen";
+    const pulse = 0.9 + 0.1 * Math.sin(time * 4e-3);
+    for (const portal of model.space.exits ?? []) {
+      if (!portal.extractionPortal?.visible) continue;
+      pool(portal.x, portal.y, 160 * pulse, PORTAL_OUTER, 0.7);
+      pool(portal.x, portal.y - 6, 80, PORTAL_INNER, 0.55);
+    }
+    let loot = 0;
+    for (const drop of model.loot ?? []) {
+      if (loot >= MAX_LOOT_LIGHTS) break;
+      const tier2 = Math.max(0, Math.min(RARITY_COLORS.length - 1, groundItemPresentation(drop, time).rarity));
+      pool(drop.position.x, drop.position.y - 4, 56 + tier2 * 14, RARITY_COLORS[tier2], 0.32 + tier2 * 0.08);
+      loot++;
+    }
+    if (player?.alive && !interior2) pool(player.position.x, player.position.y - 6, 120, PLAYER, 0.5);
+    ctx.restore();
+  }
+  return Object.freeze({ draw, resources: () => ({ dynamicWorldLights: { version: DYNAMIC_WORLD_LIGHTS_VERSION, drawn } }) });
+}
+
 // src/client/hero_level_up_v3.js
-var HERO_LEVEL_UP_V3 = Object.freeze({ durationMs: 2100, maximumParticles: 18 });
+var HERO_LEVEL_UP_V3 = Object.freeze({ durationMs: 2600, maximumParticles: 32 });
 function createHeroLevelUpV3() {
   let identity2 = null, level = 0n, active = null;
   function observe(model, now2) {
@@ -30438,6 +30980,9 @@ function createHeroLevelUpV3() {
     identity2 = key2;
     level = next;
   }
+  function trigger(entityId2) {
+    active = { id: entityId2, elapsed: 0, last: null };
+  }
   function state(actor, now2) {
     if (!active || active.id !== actor.entityId || !actor.alive) return null;
     if (active.last !== null) active.elapsed += Math.min(50, Math.max(0, now2 - active.last));
@@ -30446,50 +30991,94 @@ function createHeroLevelUpV3() {
       active = null;
       return null;
     }
-    return { u: active.elapsed / HERO_LEVEL_UP_V3.durationMs, fade: Math.min(1, active.elapsed / 140 + 0.08) * Math.min(1, (HERO_LEVEL_UP_V3.durationMs - active.elapsed) / 400) };
+    return { u: active.elapsed / HERO_LEVEL_UP_V3.durationMs, fade: Math.min(1, active.elapsed / 140 + 0.08) * Math.min(1, (HERO_LEVEL_UP_V3.durationMs - active.elapsed) / 450) };
   }
-  function draw(ctx, actor, now2) {
+  const RINGS = [[0, 0.8, 24], [0.12, 0.8, 21], [0.24, 0.76, 18]];
+  function ring4(ctx, u, [delay, span, radius], half) {
+    const t = (u - delay) / span;
+    if (t <= 0 || t >= 1) return;
+    const ease15 = t * t * (3 - 2 * t), y = 5 - 44 * ease15, r = radius + 6 * Math.sin(t * Math.PI), alpha = Math.min(1, t / 0.12) * (1 - t) ** 0.6;
+    const [a, b] = half === "back" ? [Math.PI, Math.PI * 2] : [0, Math.PI];
+    ctx.save();
+    ctx.globalAlpha *= alpha;
+    ctx.strokeStyle = "#4a3410";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.ellipse(0, y, r, r * 0.34, 0, a, b);
+    ctx.stroke();
+    ctx.strokeStyle = half === "back" ? "#e9b94c" : "#fff1b8";
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawBack(ctx, actor, now2) {
     const s = state(actor, now2);
     if (!s) return false;
     const { u, fade } = s;
     ctx.save();
     ctx.translate(actor.position.x, actor.position.y);
     ctx.globalAlpha = fade;
-    const radius = 22 + 8 * Math.sin(u * Math.PI);
-    for (const [a, b, color28] of [[Math.PI, Math.PI * 2, "#93cfe1"], [0, Math.PI, "#d2faff"]]) {
-      ctx.strokeStyle = "#223b54";
-      ctx.lineWidth = 5;
+    const rise = Math.min(1, u / 0.18), pillarH = 170 * rise, width = 34 * (1 - u * 0.55);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (const [w, a] of [[width * 1.9, 0.22], [width, 0.5], [width * 0.38, 0.9]]) {
+      const g = ctx.createLinearGradient(0, 6, 0, 6 - pillarH);
+      g.addColorStop(0, `rgba(255,214,110,${a})`);
+      g.addColorStop(0.55, `rgba(255,236,170,${a * 0.6})`);
+      g.addColorStop(1, "rgba(255,248,220,0)");
+      ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.ellipse(0, 5, radius, 8, 0, a, b);
-      ctx.stroke();
-      ctx.strokeStyle = color28;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-    for (let i = 0; i < 18; i++) {
-      const angle3 = i * 2.399 + u * 0.8, r = 16 + i % 4 * 7, x = Math.cos(angle3) * r, y = 5 - Math.sin(Math.PI * ((u + i / 18) % 1)) * 64;
-      ctx.fillStyle = i % 3 ? "#c6edff" : "#c8b8f4";
-      ctx.beginPath();
-      ctx.moveTo(x, y - 2.2);
-      ctx.lineTo(x + 1.6, y);
-      ctx.lineTo(x, y + 2.2);
-      ctx.lineTo(x - 1.6, y);
+      ctx.ellipse(0, 6, w / 2, w / 5, 0, 0, Math.PI);
+      ctx.lineTo(-w / 2 * 0.6, 6 - pillarH);
+      ctx.lineTo(w / 2 * 0.6, 6 - pillarH);
       ctx.closePath();
       ctx.fill();
     }
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.font = "900 12px system-ui";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "#203546";
-    ctx.lineWidth = 4;
-    ctx.strokeText("LEVEL UP", 0, -58 - u * 8);
-    ctx.fillStyle = "#e4faff";
-    ctx.fillText("LEVEL UP", 0, -58 - u * 8);
+    for (const [delay, speed, alpha] of [[0, 1, 0.85], [0.12, 0.8, 0.5]]) {
+      const t = Math.max(0, Math.min(1, (u - delay) / 0.45 * speed));
+      if (t > 0 && t < 1) {
+        ctx.strokeStyle = `rgba(255,215,120,${alpha * (1 - t)})`;
+        ctx.lineWidth = 5 * (1 - t) + 1;
+        ctx.beginPath();
+        ctx.ellipse(0, 6, 18 + 95 * t, 6 + 30 * t, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+    for (const r of RINGS) ring4(ctx, u, r, "back");
     ctx.restore();
     return true;
   }
-  return { observe, draw, inspect: () => ({ activeEffects: active ? 1 : 0, maximumParticles: 18, durationMs: HERO_LEVEL_UP_V3.durationMs, elapsedMs: active?.elapsed ?? 0 }) };
+  function drawFront(ctx, actor, now2) {
+    const s = state(actor, now2);
+    if (!s) return false;
+    const { u, fade } = s;
+    ctx.save();
+    ctx.translate(actor.position.x, actor.position.y);
+    ctx.globalAlpha = fade;
+    for (const r of RINGS) ring4(ctx, u, r, "front");
+    for (let i = 0; i < HERO_LEVEL_UP_V3.maximumParticles; i++) {
+      const angle3 = i * 2.399 + u * 3, climb = (u * 1.4 + i / HERO_LEVEL_UP_V3.maximumParticles) % 1, r = (10 + i % 5 * 6) * (1 - climb * 0.5), x = Math.cos(angle3) * r, y = 5 - climb * 150, size = 1.4 + i % 3 * 0.8;
+      if (Math.sin(angle3) < 0 && climb < 0.35) continue;
+      ctx.globalAlpha = fade * (1 - climb);
+      ctx.fillStyle = i % 4 ? "#ffe9a8" : "#fff8e6";
+      ctx.beginPath();
+      ctx.moveTo(x, y - size * 1.6);
+      ctx.lineTo(x + size, y);
+      ctx.lineTo(x, y + size * 1.6);
+      ctx.lineTo(x - size, y);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+    return true;
+  }
+  function draw(ctx, actor, now2) {
+    const drawn = drawBack(ctx, actor, now2);
+    if (drawn) drawFront(ctx, actor, now2);
+    return drawn;
+  }
+  return { observe, trigger, draw, drawBack, drawFront, inspect: () => ({ activeEffects: active ? 1 : 0, maximumParticles: HERO_LEVEL_UP_V3.maximumParticles, durationMs: HERO_LEVEL_UP_V3.durationMs, elapsedMs: active?.elapsed ?? 0 }) };
 }
 
 // src/client/creature_presentation_arachnid_treant_v4.js
@@ -30531,14 +31120,14 @@ function arachnidTreantAnatomyV4(tick, moving = false) {
   }
   return { legs: legs2, eyes: EYES };
 }
-function path2(c, points) {
+function path2(c, points2) {
   c.beginPath();
-  c.moveTo(points[0].x, points[0].y);
-  for (const p of points.slice(1)) c.lineTo(p.x, p.y);
+  c.moveTo(points2[0].x, points2[0].y);
+  for (const p of points2.slice(1)) c.lineTo(p.x, p.y);
   c.closePath();
 }
-function polygon15(c, points, fill4, outline2 = true) {
-  path2(c, points);
+function polygon15(c, points2, fill4, outline2 = true) {
+  path2(c, points2);
   c.fillStyle = fill4;
   c.fill();
   if (outline2) {
@@ -30805,10 +31394,10 @@ var SLAM_CRACKS = Object.freeze([
   [[-3, 11], [-14, 22], [-21, 39], [-37, 45]],
   [[12, 20], [27, 26], [42, 22], [53, 31]],
   [[-15, 23], [-33, 20], [-48, 28]]
-].map((points, index) => {
+].map((points2, index) => {
   let length = 0;
-  for (let i = 1; i < points.length; i++) length += Math.hypot(points[i][0] - points[i - 1][0], points[i][1] - points[i - 1][1]);
-  return Object.freeze({ delay: index % 4 * 0.045, length, points: Object.freeze(points.map(Object.freeze)) });
+  for (let i = 1; i < points2.length; i++) length += Math.hypot(points2[i][0] - points2[i - 1][0], points2[i][1] - points2[i - 1][1]);
+  return Object.freeze({ delay: index % 4 * 0.045, length, points: Object.freeze(points2.map(Object.freeze)) });
 }));
 var arc = (c, front2, rx, ry, y = 7) => {
   const overlap = 0.035, start = front2 ? -overlap : Math.PI - overlap, end = front2 ? Math.PI + overlap : TAU34 + overlap;
@@ -31015,11 +31604,11 @@ function drawTreantCocoonD12_5A(c, actor, tick) {
 }
 function traceSlamCrack(c, crack, reveal) {
   let remaining = crack.length * Math.max(0, Math.min(1, reveal));
-  const points = crack.points;
+  const points2 = crack.points;
   c.beginPath();
-  c.moveTo(points[0][0], points[0][1]);
-  for (let i = 1; i < points.length && remaining > 0; i++) {
-    const previous = points[i - 1], next = points[i], length = Math.hypot(next[0] - previous[0], next[1] - previous[1]);
+  c.moveTo(points2[0][0], points2[0][1]);
+  for (let i = 1; i < points2.length && remaining > 0; i++) {
+    const previous = points2[i - 1], next = points2[i], length = Math.hypot(next[0] - previous[0], next[1] - previous[1]);
     if (remaining >= length) c.lineTo(next[0], next[1]);
     else {
       const ratio = remaining / length;
@@ -31414,15 +32003,15 @@ function rootVine(c, row2, angle3, amount, growth) {
   c.save();
   c.translate(row2.position.x, row2.position.y);
   c.globalAlpha *= amount;
-  const points = [];
+  const points2 = [];
   for (let i = 0; i <= 8; i++) {
     const q = i / 8 * growth;
-    points.push([Math.cos(angle3) * rx * q + Math.sin(q * Math.PI * 3 + angle3) * 3 * q, Math.sin(angle3) * ry * q]);
+    points2.push([Math.cos(angle3) * rx * q + Math.sin(q * Math.PI * 3 + angle3) * 3 * q, Math.sin(angle3) * ry * q]);
   }
-  stroke(c, points, DARK_BARK, 4);
-  stroke(c, points, LIGHT_BARK, 1.6);
+  stroke(c, points2, DARK_BARK, 4);
+  stroke(c, points2, LIGHT_BARK, 1.6);
   if (growth > 0.4) for (let i = 3; i < 8; i += 3) {
-    const p = points[i], side = i % 2 ? 1 : -1;
+    const p = points2[i], side = i % 2 ? 1 : -1;
     poly(c, [[p[0], p[1]], [p[0] + side * 6, p[1] - 3], [p[0] + side * 8, p[1] + 1], [p[0] + side * 3, p[1] + 3]], LEAF, INK29, 0.8);
   }
   c.restore();
@@ -32043,36 +32632,36 @@ function footprint(c, rows) {
   for (const r of rows) capsule(c, r.from, r.to, r.radius);
 }
 function sampleChain(rows) {
-  const points = [];
+  const points2 = [];
   let length = 0;
   for (const row2 of rows) {
     const d = distance6(row2.from, row2.to), steps = Math.max(1, Math.ceil(d / 7));
-    if (!points.length) points.push({ ...row2.from, s: 0, r: row2.radius, expiresTick: row2.expiresTick });
-    for (let i = 1; i <= steps; i++) points.push({ x: mix15(row2.from.x, row2.to.x, i / steps), y: mix15(row2.from.y, row2.to.y, i / steps), s: length + d * i / steps, r: row2.radius, expiresTick: row2.expiresTick });
+    if (!points2.length) points2.push({ ...row2.from, s: 0, r: row2.radius, expiresTick: row2.expiresTick });
+    for (let i = 1; i <= steps; i++) points2.push({ x: mix15(row2.from.x, row2.to.x, i / steps), y: mix15(row2.from.y, row2.to.y, i / steps), s: length + d * i / steps, r: row2.radius, expiresTick: row2.expiresTick });
     length += d;
   }
-  for (let i = 0; i < points.length; i++) {
-    const a = points[Math.max(0, i - 1)], b = points[Math.min(points.length - 1, i + 1)], u = unit4(b.x - a.x, b.y - a.y);
-    points[i].nx = -u.y;
-    points[i].ny = u.x;
+  for (let i = 0; i < points2.length; i++) {
+    const a = points2[Math.max(0, i - 1)], b = points2[Math.min(points2.length - 1, i + 1)], u = unit4(b.x - a.x, b.y - a.y);
+    points2[i].nx = -u.y;
+    points2[i].ny = u.x;
   }
-  return points;
+  return points2;
 }
-function bankPath(c, points, width, offset2, seed2) {
-  if (points.length < 2) return;
+function bankPath(c, points2, width, offset2, seed2) {
+  if (points2.length < 2) return;
   const edge = (p, side) => {
     const irregular = 0.88 + 0.075 * Math.sin(p.x * 0.065 + p.y * 0.049 + seed2) + 0.045 * Math.sin(p.x * 0.14 - p.y * 0.08);
     const w = p.r * width * irregular, shift = p.r * offset2;
     return point7(p.x + p.nx * (shift + side * w), p.y + p.ny * (shift + side * w));
   };
-  const left = points.map((p) => edge(p, 1)), right = points.map((p) => edge(p, -1));
+  const left = points2.map((p) => edge(p, 1)), right = points2.map((p) => edge(p, -1));
   c.beginPath();
   c.moveTo(left[0].x, left[0].y);
   for (let i = 1; i < left.length; i++) c.lineTo(left[i].x, left[i].y);
-  const end = points.at(-1), u = unit4(end.x - points.at(-2).x, end.y - points.at(-2).y), tip = point7(end.x + u.x * end.r * 0.7, end.y + u.y * end.r * 0.7);
+  const end = points2.at(-1), u = unit4(end.x - points2.at(-2).x, end.y - points2.at(-2).y), tip = point7(end.x + u.x * end.r * 0.7, end.y + u.y * end.r * 0.7);
   c.quadraticCurveTo(tip.x, tip.y, right.at(-1).x, right.at(-1).y);
   for (let i = right.length - 2; i >= 0; i--) c.lineTo(right[i].x, right[i].y);
-  const start = points[0], v = unit4(points[1].x - start.x, points[1].y - start.y);
+  const start = points2[0], v = unit4(points2[1].x - start.x, points2[1].y - start.y);
   c.quadraticCurveTo(start.x - v.x * start.r * 0.7, start.y - v.y * start.r * 0.7, left[0].x, left[0].y);
   c.closePath();
 }
@@ -32102,8 +32691,8 @@ function ageGradient(c, chain, tick, rgb, minimum, maximum, span = 90) {
 function drawCorrosiveTrails(c, rows, tick) {
   const live = rows.flatMap((block) => (block.segments ?? []).map((segment8) => ({ ...segment8, id: block.id + "/" + segment8.sequence, sourceEntityId: block.sourceEntityId, kind: block.kind, radius: block.radius }))).filter((r) => r.createdTick <= tick && r.expiresTick > tick && r.from && r.to && r.radius > 0);
   for (const chain of chains(live)) {
-    const slag2 = chain[0].kind === "slag", points = sampleChain(chain), seed2 = hash10(chain[0].chainId ?? chain[0].sourceEntityId) % 97;
-    if (points.length < 2) continue;
+    const slag2 = chain[0].kind === "slag", points2 = sampleChain(chain), seed2 = hash10(chain[0].chainId ?? chain[0].sourceEntityId) % 97;
+    if (points2.length < 2) continue;
     c.save();
     footprint(c, chain);
     c.clip();
@@ -32113,9 +32702,9 @@ function drawCorrosiveTrails(c, rows, tick) {
     fill2(c, ageGradient(c, chain, tick, slag2 ? "121,80,45" : "63,96,50", 0.05, 0.32));
     {
       c.save();
-      bankPath(c, points, 0.96, -0.045, seed2);
+      bankPath(c, points2, 0.96, -0.045, seed2);
       fill2(c, ageGradient(c, chain, tick, slag2 ? "151,102,46" : "84,126,60", 0, 0.34));
-      bankPath(c, points, 0.48, -0.12, seed2 + 2);
+      bankPath(c, points2, 0.48, -0.12, seed2 + 2);
       fill2(c, ageGradient(c, chain, tick, slag2 ? "184,137,64" : "114,154,73", 0, 0.28));
       c.strokeStyle = ageGradient(c, chain, tick, slag2 ? "205,161,92" : "164,195,118", 0, 0.58);
       c.lineWidth = 0.68;
@@ -32123,7 +32712,7 @@ function drawCorrosiveTrails(c, rows, tick) {
       for (const offset2 of [-0.34, 0.23]) {
         let open = false, streak = -1;
         c.beginPath();
-        for (const p of points) {
+        for (const p of points2) {
           const period = offset2 < 0 ? 46 : 61, start = p.s + seed2 * 2 + (offset2 < 0 ? 0 : 23), run = Math.floor(start / period), on = start % period < (offset2 < 0 ? 29 : 18);
           if (!on) {
             open = false;
@@ -32139,8 +32728,8 @@ function drawCorrosiveTrails(c, rows, tick) {
         c.stroke();
       }
       c.globalAlpha *= 0.58;
-      for (let i = 4; i < points.length; i += 19) {
-        const p = points[i];
+      for (let i = 4; i < points2.length; i += 19) {
+        const p = points2[i];
         if (p.expiresTick - tick < 72) continue;
         const pulse = 0.75 + 0.15 * Math.sin(tick * 0.06 + i), w = p.r * 0.45;
         ellipse3(c, p.x + p.nx * w, p.y + p.ny * w, 0.72 * pulse, 0.48 * pulse, slag2 ? "#e8b970" : "#c9e399");
@@ -32837,9 +33426,9 @@ function ellipse5(c, x, y, rx, ry, color28, outline2 = false, width = 1.26) {
     c.stroke();
   }
 }
-function polygon16(c, points, color28, outline2 = true, width = 1.26) {
+function polygon16(c, points2, color28, outline2 = true, width = 1.26) {
   c.beginPath();
-  for (const [i, p] of points.entries()) i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]);
+  for (const [i, p] of points2.entries()) i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]);
   c.closePath();
   c.fillStyle = color28;
   c.fill();
@@ -32945,7 +33534,7 @@ function eye2(c, x, y, r, look, charge, flash, pulse = 0) {
   }
 }
 function core4(c, pose, flash) {
-  const sx = pose.scaleX, sy = pose.scaleY, shape2 = (points) => points.map(([x, y]) => [x * sx, y * sy]);
+  const sx = pose.scaleX, sy = pose.scaleY, shape2 = (points2) => points2.map(([x, y]) => [x * sx, y * sy]);
   polygon16(c, shape2([[0, -33], [32, 0], [4, 37], [-28, 3]]), flash ? "#fff" : DARK5);
   polygon16(c, shape2([[0, -34], [29, 0], [0, 34], [-29, 0]]), flash ? "#fff" : STONE2);
   if (!flash) {
@@ -33535,9 +34124,9 @@ function disk2(c, radius, color28) {
   c.fillStyle = color28;
   c.fill();
 }
-function polygon17(c, points, color28, width = 1.5) {
+function polygon17(c, points2, color28, width = 1.5) {
   c.beginPath();
-  points.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
+  points2.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
   c.closePath();
   c.fillStyle = color28;
   c.fill();
@@ -33545,9 +34134,9 @@ function polygon17(c, points, color28, width = 1.5) {
   c.lineWidth = width;
   c.stroke();
 }
-function line3(c, points, color28, width) {
+function line3(c, points2, color28, width) {
   c.beginPath();
-  points.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
+  points2.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
   c.strokeStyle = color28;
   c.lineWidth = width;
   c.stroke();
@@ -33813,9 +34402,9 @@ function circle3(c, x, y, r, color82, width = 1) {
   c.lineWidth = width;
   c.stroke();
 }
-function polygon18(c, points, fill4, outline2 = true, width = 1.26) {
+function polygon18(c, points2, fill4, outline2 = true, width = 1.26) {
   c.beginPath();
-  for (const [i, [x, y]] of points.entries()) i ? c.lineTo(x, y) : c.moveTo(x, y);
+  for (const [i, [x, y]] of points2.entries()) i ? c.lineTo(x, y) : c.moveTo(x, y);
   c.closePath();
   c.fillStyle = fill4;
   c.fill();
@@ -34207,13 +34796,13 @@ function circle4(c, x, y, r, color82, width = 1) {
   c.lineWidth = width;
   c.stroke();
 }
-function path3(c, points, close = false) {
+function path3(c, points2, close = false) {
   c.beginPath();
-  for (const [i, p] of points.entries()) i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]);
+  for (const [i, p] of points2.entries()) i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]);
   if (close) c.closePath();
 }
-function polygon19(c, points, fill4, outline2 = true, width = 1.26) {
-  path3(c, points, true);
+function polygon19(c, points2, fill4, outline2 = true, width = 1.26) {
+  path3(c, points2, true);
   c.fillStyle = fill4;
   c.fill();
   if (outline2) {
@@ -34222,8 +34811,8 @@ function polygon19(c, points, fill4, outline2 = true, width = 1.26) {
     c.stroke();
   }
 }
-function wire(c, points, color82, width = 1.1, backing = true, close = false) {
-  path3(c, points, close);
+function wire(c, points2, color82, width = 1.1, backing = true, close = false) {
+  path3(c, points2, close);
   if (backing) {
     c.strokeStyle = INK36;
     c.lineWidth = width + 1.26;
@@ -34776,9 +35365,9 @@ function hash14(s) {
   for (const x of String(s)) h = Math.imul(h ^ x.charCodeAt(0), 16777619);
   return h >>> 0;
 }
-function path4(c, points, closed = false) {
+function path4(c, points2, closed = false) {
   c.beginPath();
-  for (const [i, p] of points.entries()) i ? c.lineTo(...p) : c.moveTo(...p);
+  for (const [i, p] of points2.entries()) i ? c.lineTo(...p) : c.moveTo(...p);
   if (closed) c.closePath();
 }
 function polygon20(c, p, fill4, outline2 = true, width = 1.3) {
@@ -34924,11 +35513,11 @@ function smoothBoundary(c, nodes) {
     }
     sides.push(out);
   }
-  const points = [...sides[0], ...sides[1].reverse()];
+  const points2 = [...sides[0], ...sides[1].reverse()];
   c.beginPath();
-  c.moveTo((points[0][0] + points.at(-1)[0]) / 2, (points[0][1] + points.at(-1)[1]) / 2);
-  for (let i = 0; i < points.length; i++) {
-    const a = points[i], b = points[(i + 1) % points.length];
+  c.moveTo((points2[0][0] + points2.at(-1)[0]) / 2, (points2[0][1] + points2.at(-1)[1]) / 2);
+  for (let i = 0; i < points2.length; i++) {
+    const a = points2[i], b = points2[(i + 1) % points2.length];
     c.quadraticCurveTo(a[0], a[1], (a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
   }
   c.closePath();
@@ -35276,9 +35865,9 @@ function slamGround3(c, row2, tick) {
     circle5(c, p.x, p.y, r, "#f9c08b", 1.4 * (1 - ease9(age / 12)) + 0.2);
   }
   for (let i = 0; i < 9; i++) {
-    const a = i * TAU45 / 9 + 0.15, rr = r * (0.45 + i % 3 * 0.16) * (0.82 + 0.18 * u), points = [[p.x, p.y], [p.x + Math.cos(a + 0.09) * rr * 0.38, p.y + Math.sin(a + 0.09) * rr * 0.38], [p.x + Math.cos(a - 0.07) * rr * 0.68, p.y + Math.sin(a - 0.07) * rr * 0.68], [p.x + Math.cos(a) * rr, p.y + Math.sin(a) * rr]];
-    line4(c, points, INK37, 3);
-    line4(c, points, age < 18 ? "#cf633d" : "#513e46", 1);
+    const a = i * TAU45 / 9 + 0.15, rr = r * (0.45 + i % 3 * 0.16) * (0.82 + 0.18 * u), points2 = [[p.x, p.y], [p.x + Math.cos(a + 0.09) * rr * 0.38, p.y + Math.sin(a + 0.09) * rr * 0.38], [p.x + Math.cos(a - 0.07) * rr * 0.68, p.y + Math.sin(a - 0.07) * rr * 0.68], [p.x + Math.cos(a) * rr, p.y + Math.sin(a) * rr]];
+    line4(c, points2, INK37, 3);
+    line4(c, points2, age < 18 ? "#cf633d" : "#513e46", 1);
   }
   if (age < 22) circle5(c, p.x, p.y, r * (0.12 + 0.88 * u), "#c67e5a", 1.3 * (1 - ease9(age / 22)) + 0.1);
   c.restore();
@@ -35406,13 +35995,13 @@ function hash15(value2) {
   for (const ch of String(value2)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
   return h >>> 0;
 }
-function path5(c, points, closed = false) {
+function path5(c, points2, closed = false) {
   c.beginPath();
-  for (const [i, p] of points.entries()) i ? c.lineTo(...p) : c.moveTo(...p);
+  for (const [i, p] of points2.entries()) i ? c.lineTo(...p) : c.moveTo(...p);
   if (closed) c.closePath();
 }
-function polygon21(c, points, fill4, edge = INK38, width = 1.15) {
-  path5(c, points, true);
+function polygon21(c, points2, fill4, edge = INK38, width = 1.15) {
+  path5(c, points2, true);
   c.fillStyle = fill4;
   c.fill();
   if (edge) {
@@ -35421,8 +36010,8 @@ function polygon21(c, points, fill4, edge = INK38, width = 1.15) {
     c.stroke();
   }
 }
-function line5(c, points, color82, width = 1) {
-  path5(c, points);
+function line5(c, points2, color82, width = 1) {
+  path5(c, points2);
   c.strokeStyle = color82;
   c.lineWidth = width;
   c.stroke();
@@ -35575,10 +36164,10 @@ function antler(c, far, heat, tick, flash) {
     [[-36, -36], [-49, -35], [-57, -41]]
   ];
   for (let i = 0; i < branches.length; i++) {
-    const points = branches[i], width = i ? 2.9 : 5.6;
-    line5(c, points, INK38, width + 2.3);
-    line5(c, points, flash ? HOT2 : far ? "#49413c" : "#75604b", width);
-    if (!flash) line5(c, points, heat > 0.65 ? "#ffc277" : far ? "#945234" : "#c4763d", i ? 0.7 : 1.35);
+    const points2 = branches[i], width = i ? 2.9 : 5.6;
+    line5(c, points2, INK38, width + 2.3);
+    line5(c, points2, flash ? HOT2 : far ? "#49413c" : "#75604b", width);
+    if (!flash) line5(c, points2, heat > 0.65 ? "#ffc277" : far ? "#945234" : "#c4763d", i ? 0.7 : 1.35);
   }
   if (!flash) {
     for (const [i, branch] of branches.entries()) {
@@ -36362,12 +36951,12 @@ function stroke2(c, color28, width) {
   c.lineWidth = width;
   c.stroke();
 }
-function closedCurve(c, points) {
-  const last = points[points.length - 1], first = points[0];
+function closedCurve(c, points2) {
+  const last = points2[points2.length - 1], first = points2[0];
   c.beginPath();
   c.moveTo((last[0] + first[0]) / 2, (last[1] + first[1]) / 2);
-  for (let i = 0; i < points.length; i++) {
-    const p = points[i], next = points[(i + 1) % points.length];
+  for (let i = 0; i < points2.length; i++) {
+    const p = points2[i], next = points2[(i + 1) % points2.length];
     c.quadraticCurveTo(p[0], p[1], (p[0] + next[0]) / 2, (p[1] + next[1]) / 2);
   }
   c.closePath();
@@ -36400,13 +36989,13 @@ function drawMarcusMoltenPoolV5(c, row2, tick) {
   c.beginPath();
   c.arc(0, 0, Math.max(0.25, r - 2.4), 0, TAU48);
   c.clip();
-  const points = [];
+  const points2 = [];
   for (let i = 0; i < 12; i++) {
     const a = i * TAU48 / 12, wave = Math.sin(i * 1.93 + phase) * 0.045 + Math.sin(age * 0.022 + i * 1.31 + phase) * 0.018;
     const rr = r * (0.83 + wave);
-    points.push([Math.cos(a) * rr, Math.sin(a) * rr - r * 0.035]);
+    points2.push([Math.cos(a) * rr, Math.sin(a) * rr - r * 0.035]);
   }
-  closedCurve(c, points);
+  closedCurve(c, points2);
   c.fillStyle = "#efbc49";
   c.fill();
   stroke2(c, "#9c5c20", small ? 0.8 : 1.25);
@@ -36601,13 +37190,13 @@ function bounded(value2, max) {
   const a = asCombatAmount(value2 ?? 0), n = BigInt(a.n) / BigInt(a.d);
   return Number(n > BigInt(max) ? BigInt(max) : n);
 }
-function path6(c, points, close = false) {
+function path6(c, points2, close = false) {
   c.beginPath();
-  for (const [i, p] of points.entries()) i ? c.lineTo(...p) : c.moveTo(...p);
+  for (const [i, p] of points2.entries()) i ? c.lineTo(...p) : c.moveTo(...p);
   if (close) c.closePath();
 }
-function polygon22(c, points, fill4, outline2 = true, width = 1.26) {
-  path6(c, points, true);
+function polygon22(c, points2, fill4, outline2 = true, width = 1.26) {
+  path6(c, points2, true);
   c.fillStyle = fill4;
   c.fill();
   if (outline2) {
@@ -36616,8 +37205,8 @@ function polygon22(c, points, fill4, outline2 = true, width = 1.26) {
     c.stroke();
   }
 }
-function line6(c, points, stroke3, width = 1) {
-  path6(c, points);
+function line6(c, points2, stroke3, width = 1) {
+  path6(c, points2);
   c.strokeStyle = stroke3;
   c.lineWidth = width;
   c.stroke();
@@ -37413,13 +38002,13 @@ function ellipse12(c, x, y, rx, ry, fill4, outline2 = false, width = 1.26) {
     c.stroke();
   }
 }
-function path7(c, points, close = false) {
+function path7(c, points2, close = false) {
   c.beginPath();
-  for (const [i, [x, y]] of points.entries()) i ? c.lineTo(x, y) : c.moveTo(x, y);
+  for (const [i, [x, y]] of points2.entries()) i ? c.lineTo(x, y) : c.moveTo(x, y);
   if (close) c.closePath();
 }
-function polygon23(c, points, fill4, outline2 = true, width = 1.26) {
-  path7(c, points, true);
+function polygon23(c, points2, fill4, outline2 = true, width = 1.26) {
+  path7(c, points2, true);
   c.fillStyle = fill4;
   c.fill();
   if (outline2) {
@@ -37428,8 +38017,8 @@ function polygon23(c, points, fill4, outline2 = true, width = 1.26) {
     c.stroke();
   }
 }
-function line7(c, points, stroke3, width = 1) {
-  path7(c, points);
+function line7(c, points2, stroke3, width = 1) {
+  path7(c, points2);
   c.strokeStyle = stroke3;
   c.lineWidth = width;
   c.stroke();
@@ -38979,10 +39568,10 @@ function disc(c, x, y, r, fill4) {
   c.arc(x, y, r, 0, TAU52);
   c.fill();
 }
-function line9(c, points, color28, width) {
+function line9(c, points2, color28, width) {
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.strokeStyle = color28;
   c.lineWidth = width;
   c.lineCap = "round";
@@ -39300,10 +39889,10 @@ function brimstoneEffectDepthItems(model, tick, viewport = null) {
     }
     const age = tick - v.detonatesTick, duration = (v.presentationUntilTick ?? v.expiresTick ?? v.detonatesTick + 18) - v.detonatesTick;
     if (age < 0 || age >= duration) continue;
-    const points = [{ ...v.position, ordinal: 0, center: true }];
+    const points2 = [{ ...v.position, ordinal: 0, center: true }];
     let ordinal = 1;
-    for (const a of armSpecs(v)) for (let d = 22; d <= a.length - 3; d += 29) points.push({ x: v.position.x + a.x * d, y: v.position.y + a.y * d, ordinal: ordinal++, center: false });
-    for (const p of points) add(v.id + "/jet/" + p.ordinal, p, (c) => {
+    for (const a of armSpecs(v)) for (let d = 22; d <= a.length - 3; d += 29) points2.push({ x: v.position.x + a.x * d, y: v.position.y + a.y * d, ordinal: ordinal++, center: false });
+    for (const p of points2) add(v.id + "/jet/" + p.ordinal, p, (c) => {
       const envelope = brimstoneEruptionEnvelope(v, tick, Math.hypot(p.x - v.position.x, p.y - v.position.y));
       c.save();
       if (envelope.localAge >= 0 && envelope.height > 0) {
@@ -39979,10 +40568,10 @@ function drawTavernEntrance(c, b, frontage2) {
 }
 
 // src/client/settlement_building_presentation.js
-function polygon25(c, points, color28) {
+function polygon25(c, points2, color28) {
   c.fillStyle = color28;
   c.beginPath();
-  points.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
+  points2.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
   c.closePath();
   c.fill();
   c.stroke();
@@ -41238,207 +41827,6 @@ function drawFrostStatus(ctx, e, target, tick) {
   ctx.restore();
 }
 
-// src/client/ground_item_presentation.js
-var LOOT_VISUAL_BUDGET = Object.freeze({ rich: 12, motes: 24, labels: 4 });
-function groundItemPresentation(drop, time, establish = 1, collapse = 0) {
-  const artKey = itemArtKey(drop), art = EQUIPMENT_ART[artKey], center2 = art?.visibleCenter ?? { x: 17, y: 17 }, pivot2 = art?.pivot ?? { x: 17, y: 31 }, seed2 = gearHash(drop.itemId ?? drop.sourceEntityId), phase = seed2 % 6283 / 1e3, scale = 26 / 34 * (1 - collapse * 0.3), bob = Math.sin(time / 430 + phase) * 1.1 * establish;
-  const origin = { x: drop.position.x - center2.x * scale, y: drop.position.y - pivot2.y * scale - 3 + bob + (1 - establish) * 5 };
-  return { artKey, origin, scale, visibleCenter: { x: origin.x + center2.x * scale, y: origin.y + center2.y * scale }, contact: { x: origin.x + pivot2.x * scale, y: drop.position.y }, phase, alpha: establish * (1 - collapse), growth: establish, rarity: itemDefinition(drop)?.rarityTier ?? 0 };
-}
-function createGroundItemPresentation() {
-  let identity2 = null, records = /* @__PURE__ */ new Map(), sprites = /* @__PURE__ */ new Map(), counts = { rich: 0, motes: 0, labels: 0 };
-  function lightSprites(ctx, tier2) {
-    if (sprites.has(tier2)) return sprites.get(tier2);
-    const doc = ctx.canvas.ownerDocument, color28 = RARITY_COLORS[tier2], beam2 = doc.createElement("canvas"), contact = doc.createElement("canvas");
-    beam2.width = 64;
-    beam2.height = 128;
-    contact.width = 64;
-    contact.height = 24;
-    const b = beam2.getContext("2d"), g = contact.getContext("2d"), width = [0, 4, 5.5, 7, 9, 11][tier2];
-    const outer = b.createLinearGradient(0, 7, 0, 121);
-    outer.addColorStop(0, color28 + "00");
-    outer.addColorStop(0.28, color28 + "20");
-    outer.addColorStop(0.7, color28 + ["00", "38", "50", "68", "80", "95"][tier2]);
-    outer.addColorStop(1, color28 + "00");
-    b.fillStyle = outer;
-    b.beginPath();
-    b.moveTo(32, 7);
-    b.lineTo(32 - width * 0.45, 22);
-    b.lineTo(32 - width * 0.65, 98);
-    b.quadraticCurveTo(32 - width, 115, 32, 121);
-    b.quadraticCurveTo(32 + width, 115, 32 + width * 0.65, 98);
-    b.lineTo(32 + width * 0.45, 22);
-    b.lineTo(32, 7);
-    b.fill();
-    if (tier2 >= 2) {
-      const inner = b.createLinearGradient(0, 10, 0, 120);
-      inner.addColorStop(0, color28 + "00");
-      inner.addColorStop(0.5, color28 + "48");
-      inner.addColorStop(0.88, color28 + "80");
-      inner.addColorStop(1, color28 + "00");
-      b.fillStyle = inner;
-      b.beginPath();
-      b.moveTo(32, 12);
-      b.lineTo(32 - width * 0.32, 113);
-      b.quadraticCurveTo(32, 120, 32 + width * 0.32, 113);
-      b.closePath();
-      b.fill();
-    }
-    const core5 = b.createLinearGradient(0, 5, 0, 120);
-    core5.addColorStop(0, color28 + "00");
-    core5.addColorStop(0.22, color28 + "65");
-    core5.addColorStop(0.6, color28 + "cc");
-    core5.addColorStop(0.88, "#ffffffdd");
-    core5.addColorStop(1, color28 + "00");
-    b.strokeStyle = core5;
-    b.lineWidth = [0, 1.2, 1.5, 1.8, 2.1, 2.4][tier2];
-    b.beginPath();
-    b.moveTo(32, 5);
-    b.lineTo(32, 120);
-    b.stroke();
-    const bloom = g.createRadialGradient(32, 12, 0, 32, 12, 26);
-    bloom.addColorStop(0, "#ffffff" + ["00", "35", "45", "55", "70", "7a"][tier2]);
-    bloom.addColorStop(0.18, color28 + "99");
-    bloom.addColorStop(0.55, color28 + ["00", "20", "30", "45", "60", "68"][tier2]);
-    bloom.addColorStop(1, color28 + "00");
-    g.save();
-    g.translate(0, 8);
-    g.scale(1, 0.35);
-    g.fillStyle = bloom;
-    g.fillRect(0, -20, 64, 64);
-    g.restore();
-    const result = { beam: beam2, contact };
-    sprites.set(tier2, result);
-    return result;
-  }
-  function update(model, time) {
-    const next = `${model.context.campaignId}/${model.localPlayerId}/${model.context.spaceInstanceId}`, first = next !== identity2;
-    if (first) {
-      records.clear();
-      identity2 = next;
-    }
-    const live = /* @__PURE__ */ new Set();
-    for (const drop of model.loot ?? []) {
-      const id = drop.itemId ?? drop.sourceEntityId;
-      live.add(id);
-      const previous = records.get(id);
-      if (!previous || previous.removed !== null) records.set(id, { drop, born: first ? time - 150 : time, removed: null });
-      else previous.drop = drop;
-    }
-    for (const [id, r] of records) if (!live.has(id)) {
-      if (r.removed === null) r.removed = time;
-      if (time - r.removed >= 120) records.delete(id);
-    }
-  }
-  function draw(ctx, model, time, viewport, art) {
-    update(model, time);
-    counts = { rich: 0, motes: 0, labels: 0 };
-    const actor = model.entitiesById[model.playersById[model.localPlayerId].entityId];
-    const visible3 = [...records.values()].filter((r) => r.drop.position.x >= viewport.x - 20 && r.drop.position.y >= viewport.y - 80 && r.drop.position.x <= viewport.x + viewport.width + 20 && r.drop.position.y <= viewport.y + viewport.height + 30).sort((a, b) => Number(b.drop.canPickUp) - Number(a.drop.canPickUp) || Math.hypot(a.drop.position.x - actor.position.x, a.drop.position.y - actor.position.y) - Math.hypot(b.drop.position.x - actor.position.x, b.drop.position.y - actor.position.y) || (itemDefinition(b.drop)?.rarityTier ?? 0) - (itemDefinition(a.drop)?.rarityTier ?? 0));
-    for (const r of visible3) {
-      const drop = r.drop, t = groundItemPresentation(drop, time, Math.min(1, (time - r.born) / 150), r.removed === null ? 0 : (time - r.removed) / 120), color28 = RARITY_COLORS[t.rarity], rich = t.rarity > 0 && counts.rich < LOOT_VISUAL_BUDGET.rich;
-      ctx.save();
-      ctx.globalAlpha = t.alpha;
-      ctx.fillStyle = "#0005";
-      ctx.beginPath();
-      ctx.ellipse(t.contact.x, t.contact.y + 2, 10, 3.5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = color28;
-      ctx.lineWidth = drop.canPickUp ? 1.4 : 0.8;
-      ctx.globalAlpha = t.alpha * (drop.canPickUp ? 0.75 : 0.35);
-      ctx.beginPath();
-      ctx.ellipse(t.contact.x, t.contact.y + 1, 10, 3.2, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.globalAlpha = t.alpha;
-      if (rich) {
-        counts.rich++;
-        const x = t.visibleCenter.x, y = t.visibleCenter.y + 7, height = [0, 49, 60, 71, 83, 94][t.rarity] * t.growth, pulse = 0.9 + 0.1 * Math.sin(time / 900 + t.phase), stamp2 = lightSprites(ctx, t.rarity);
-        ctx.save();
-        ctx.globalAlpha = t.alpha * pulse;
-        ctx.drawImage(stamp2.beam, x - 32, y - height, 64, height + 10);
-        ctx.drawImage(stamp2.contact, t.contact.x - 32, t.contact.y - 10, 64, 24);
-        ctx.translate(x, y);
-        ctx.lineCap = "round";
-        if (t.rarity >= 2) {
-          for (const side of [-1, 1]) {
-            ctx.strokeStyle = color28;
-            ctx.lineWidth = 0.65;
-            for (let n = 0; n < 8; n++) {
-              const q = n / 8;
-              ctx.globalAlpha = t.alpha * pulse * (1 - q) * (0.25 + t.rarity * 0.06);
-              ctx.beginPath();
-              ctx.moveTo(side * (2.5 + t.rarity * 0.35) * (1 - q * 0.35), -height * q * 0.75);
-              ctx.lineTo(side * (2.5 + t.rarity * 0.35) * (1 - (q + 0.125) * 0.35), -height * (q + 0.125) * 0.75);
-              ctx.stroke();
-            }
-          }
-        }
-        if (t.rarity >= 3) {
-          ctx.globalAlpha = t.alpha * 0.4 * pulse;
-          ctx.fillStyle = color28;
-          ctx.beginPath();
-          ctx.ellipse(0, 5, 8 + t.rarity, 2.5, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        if (t.rarity >= 4) {
-          ctx.globalAlpha = t.alpha * (0.38 + 0.12 * Math.sin(time / 700 + t.phase));
-          ctx.strokeStyle = t.rarity === 5 ? "#ffd1c4" : "#fff0b9";
-          ctx.lineWidth = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(-6 - t.rarity, 2);
-          ctx.lineTo(6 + t.rarity, 2);
-          ctx.stroke();
-        }
-        ctx.restore();
-        const count = [0, 1, 2, 3, 4, 5][t.rarity];
-        for (let n = 0; n < count && counts.motes < LOOT_VISUAL_BUDGET.motes; n++) {
-          counts.motes++;
-          const progress8 = (time / (2100 - t.rarity * 90) + t.phase + n * 0.47) % 1, mx = t.visibleCenter.x + Math.sin(progress8 * 5 + t.phase + n) * (2 + t.rarity * 0.65), my = t.visibleCenter.y - progress8 * height;
-          ctx.globalAlpha = t.alpha * Math.sin(progress8 * Math.PI) * (0.5 + t.rarity * 0.065);
-          ctx.fillStyle = t.rarity >= 4 ? "#fff1c2" : color28;
-          const radius = t.rarity >= 4 ? 1.2 : 0.85;
-          if (t.rarity >= 4) {
-            ctx.beginPath();
-            ctx.moveTo(mx, my - radius * 2);
-            ctx.lineTo(mx + radius * 0.6, my - radius * 0.5);
-            ctx.lineTo(mx + radius * 2, my);
-            ctx.lineTo(mx + radius * 0.6, my + radius * 0.5);
-            ctx.lineTo(mx, my + radius * 2);
-            ctx.lineTo(mx - radius * 0.6, my + radius * 0.5);
-            ctx.lineTo(mx - radius * 2, my);
-            ctx.lineTo(mx - radius * 0.6, my - radius * 0.5);
-            ctx.closePath();
-            ctx.fill();
-          } else {
-            ctx.beginPath();
-            ctx.arc(mx, my, radius, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-        ctx.globalAlpha = t.alpha;
-      }
-      const image = art(t.artKey);
-      if (image) ctx.drawImage(image, t.origin.x, t.origin.y, 34 * t.scale, 34 * t.scale);
-      if (drop.canPickUp && counts.labels < LOOT_VISUAL_BUDGET.labels && r.removed === null) {
-        counts.labels++;
-        ctx.font = "bold 10px Georgia";
-        ctx.textAlign = "center";
-        const name = itemDefinition(drop)?.name ?? "Gear", w = ctx.measureText(name).width;
-        ctx.fillStyle = "#101018d0";
-        ctx.fillRect(t.contact.x - w / 2 - 4, t.contact.y + 8, w + 8, 15);
-        ctx.fillStyle = color28;
-        ctx.fillText(name, t.contact.x, t.contact.y + 19);
-      }
-      ctx.restore();
-    }
-    return { ...counts };
-  }
-  return { draw, clear() {
-    records.clear();
-    identity2 = null;
-  }, inspect: () => ({ ...counts, records: records.size }) };
-}
-
 // src/client/night_readability_v1.js
 var NIGHT_READABILITY_LIMITS = Object.freeze({ players: 4, enemies: 8, clipPages: 32, clipCells: 49 });
 var GLOW_GROUND = /* @__PURE__ */ new Set(["1", "f", "g", "p", "r", "C", "K", "H", "V"]);
@@ -42030,13 +42418,13 @@ function drawBaseSubweapon(ctx, type, time, bounce, art, guard = null, facing2 =
     ctx.rotate(Math.PI / 12);
     ctx.rotate(Math.PI / 12);
     const img = art(itemArtKey(item) ?? "starter-tome");
-    const points = Array.from({ length: stars }, (_, i) => {
+    const points2 = Array.from({ length: stars }, (_, i) => {
       const a = time / 1200 + i * Math.PI * 2 / stars;
       return { x: Math.cos(a) * 15, y: Math.sin(a) * 6 };
     });
     const orbit2 = (front2) => {
       ctx.fillStyle = tierColor;
-      for (const p2 of points) if (p2.y >= 0 === front2) {
+      for (const p2 of points2) if (p2.y >= 0 === front2) {
         ctx.globalAlpha = 0.65;
         ctx.beginPath();
         ctx.arc(p2.x, p2.y, 1.4, 0, Math.PI * 2);
@@ -43524,8 +43912,8 @@ function drawAmbientV1(ctx, view, frame) {
   ctx.fillRect(view.x, view.y, view.width, view.height);
   ctx.restore();
 }
-function hull(points) {
-  const p = points.sort((a, b) => a.x - b.x || a.y - b.y), cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x), low = [], high = [];
+function hull(points2) {
+  const p = points2.sort((a, b) => a.x - b.x || a.y - b.y), cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x), low = [], high = [];
   for (const q of p) {
     while (low.length > 1 && cross(low.at(-2), low.at(-1), q) <= 0) low.pop();
     low.push(q);
@@ -43537,14 +43925,14 @@ function hull(points) {
   return [...low.slice(0, -1), ...high.slice(0, -1)];
 }
 function shadowPolygonV1(caster2, frame) {
-  const scale = clamp43(caster2.height / 96, 0.12, 1.2), length = Math.hypot(frame.vector.x, frame.vector.y) * scale, cap = length > 160 ? 160 / length : 1, vx = frame.vector.x * scale * cap, vy = frame.vector.y * scale * cap, points = [];
+  const scale = clamp43(caster2.height / 96, 0.12, 1.2), length = Math.hypot(frame.vector.x, frame.vector.y) * scale, cap = length > 160 ? 160 / length : 1, vx = frame.vector.x * scale * cap, vy = frame.vector.y * scale * cap, points2 = [];
   if (caster2.round) {
     for (let i = 0; i < 8; i++) {
       const a = i * Math.PI / 4, x = caster2.x + caster2.w * 0.5 + Math.cos(a) * caster2.w * 0.44, y = caster2.y + caster2.h * 0.73 + Math.sin(a) * caster2.h * 0.22;
-      points.push({ x, y }, { x: x + vx, y: y + vy });
+      points2.push({ x, y }, { x: x + vx, y: y + vy });
     }
-  } else for (const [x, y] of [[caster2.x, caster2.y], [caster2.x + caster2.w, caster2.y], [caster2.x + caster2.w, caster2.y + caster2.h], [caster2.x, caster2.y + caster2.h]]) points.push({ x, y }, { x: x + vx, y: y + vy });
-  return hull(points);
+  } else for (const [x, y] of [[caster2.x, caster2.y], [caster2.x + caster2.w, caster2.y], [caster2.x + caster2.w, caster2.y + caster2.h], [caster2.x, caster2.y + caster2.h]]) points2.push({ x, y }, { x: x + vx, y: y + vy });
+  return hull(points2);
 }
 function casterFor(b, t, offset2) {
   const kind = b.kind, heights = { "fort-wall": 62, "fort-tower-base": 150, "fort-keep-base": 128, "fort-gatehouse-base": 100, "ruin-exterior-masonry": 48, "cave-rock-wall": 72, "civilian-building": 132, building: 132, fence: 26, trees: 70, thicket: 52, rock: 24 };
@@ -43572,7 +43960,7 @@ function outdoorLightClipV1(space, light) {
     if (angle3 >= start && angle3 <= end && angles.length + 3 <= DAY_NIGHT_LIMITS.outdoorLightRays) angles.push(Math.max(start, angle3 - 1e-4), angle3, Math.min(end, angle3 + 1e-4));
   }
   angles.sort((a, b) => a - b);
-  const points = [];
+  const points2 = [];
   for (const angle3 of angles) {
     const dx = Math.cos(angle3), dy = Math.sin(angle3);
     let reach = radius;
@@ -43594,14 +43982,14 @@ function outdoorLightClipV1(space, light) {
       if (hi >= Math.max(0, lo) && lo >= 0) reach = Math.min(reach, lo + 0.5);
       else if (lo < 0 && hi > 0) reach = Math.min(reach, hi + 0.5);
     }
-    points.push({ x: x + dx * reach, y: y + dy * reach });
+    points2.push({ x: x + dx * reach, y: y + dy * reach });
   }
   const path9 = new Path2D();
   if (facing2) path9.moveTo(x, y);
-  else if (points.length) path9.moveTo(points[0].x, points[0].y);
-  for (const p of points) path9.lineTo(p.x, p.y);
+  else if (points2.length) path9.moveTo(points2[0].x, points2[0].y);
+  for (const p of points2) path9.lineTo(p.x, p.y);
   path9.closePath();
-  return { path: path9, points, origin: { x, y }, blockers: rectangles.length, rays: angles.length, radius };
+  return { path: path9, points: points2, origin: { x, y }, blockers: rectangles.length, rays: angles.length, radius };
 }
 function createDayNightLightingV1({ review = null } = {}) {
   const pages = /* @__PURE__ */ new Map();
@@ -44418,9 +44806,9 @@ var STEEL_LIGHT = "#e2e8f0";
 var WOOD_DARK2 = "#2b1b12";
 var WOOD_LIGHT2 = "#ad7040";
 var FORT_RACK_PROP_SCALE = 0.54;
-var path8 = (ctx, points, fill4, line11 = OUT, width = 1.8) => {
+var path8 = (ctx, points2, fill4, line11 = OUT, width = 1.8) => {
   ctx.beginPath();
-  points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+  points2.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
   ctx.closePath();
   ctx.fillStyle = fill4;
   ctx.fill();
@@ -44734,7 +45122,7 @@ function drawCaveSurfaceD10(ctx, space) {
   ctx.fillStyle = "#222e2a";
   ctx.fill(band);
   const faces = [[[[5.5, 4.4], [8.2, 2.8], [14.6, 2.7], [18.1, 4.6], [17.4, 5.5], [9.1, 4.7]], "#3d4b45"], [[[3.1, 7], [4.3, 5.5], [5.1, 6.4], [4.2, 12.3], [6.2, 14.2], [5, 15.1], [3.2, 12.6]], "#34413c"], [[[6.2, 13.4], [8.8, 14.6], [11.2, 13.8], [13, 14.8], [12.2, 15.8], [7.1, 15.8]], "#3b4842"], [[[20.3, 4.8], [22.1, 3.4], [25.3, 3.7], [27, 5.7], [26.7, 9.8], [25.6, 10.9], [25.4, 5.3]], "#3a4842"], [[[19.3, 10], [22, 10.3], [24.7, 11.2], [26.1, 10], [26.7, 11.1], [24.9, 12.1], [21.1, 11.4]], "#303d38"]];
-  for (const [points, color28] of faces) poly4(ctx, points.map(([x, y]) => [x * t, y * t]), color28, null);
+  for (const [points2, color28] of faces) poly4(ctx, points2.map(([x, y]) => [x * t, y * t]), color28, null);
   for (const b of boundary2) {
     const n = hash20(b.x, b.y, 3), near = Number(rows[b.y]?.[b.x - 1] === "1") + Number(rows[b.y]?.[b.x + 1] === "1") + Number(rows[b.y - 1]?.[b.x] === "1") + Number(rows[b.y + 1]?.[b.x] === "1");
     if (hash20(b.x, b.y, 113) % 100 >= 54 && near < 3) continue;
@@ -45302,9 +45690,9 @@ var hash21 = (x, y, s = 0) => {
   n = Math.imul(n ^ n >>> 13, 1274126177) >>> 0;
   return n ^ n >>> 16;
 };
-var poly5 = (ctx, points, fill4, stroke3 = INK45, width = 2) => {
+var poly5 = (ctx, points2, fill4, stroke3 = INK45, width = 2) => {
   ctx.beginPath();
-  points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+  points2.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
   ctx.closePath();
   ctx.fillStyle = fill4;
   ctx.fill();
@@ -45340,16 +45728,16 @@ function weeds(ctx, x, y, seed2, count = 6) {
   }
 }
 function organicBlob(ctx, x, y, rx, ry, seed2, fill4, stroke3 = null, width = 1) {
-  const count = 8 + hash21(seed2, 17, 3) % 4, points = [];
+  const count = 8 + hash21(seed2, 17, 3) % 4, points2 = [];
   for (let i = 0; i < count; i++) {
     const a = TAU59 * i / count, n = hash21(seed2, i, 43), radius = 0.7 + n % 29 / 100;
-    points.push([x + Math.cos(a) * rx * radius, y + Math.sin(a) * ry * (0.72 + (n >>> 7) % 35 / 100)]);
+    points2.push([x + Math.cos(a) * rx * radius, y + Math.sin(a) * ry * (0.72 + (n >>> 7) % 35 / 100)]);
   }
   ctx.beginPath();
-  const last = points.at(-1), first = points[0];
+  const last = points2.at(-1), first = points2[0];
   ctx.moveTo((last[0] + first[0]) / 2, (last[1] + first[1]) / 2);
   for (let i = 0; i < count; i++) {
-    const p = points[i], next = points[(i + 1) % count];
+    const p = points2[i], next = points2[(i + 1) % count];
     ctx.quadraticCurveTo(p[0], p[1], (p[0] + next[0]) / 2, (p[1] + next[1]) / 2);
   }
   ctx.closePath();
@@ -45389,14 +45777,14 @@ function moss2(ctx, x, y, scale, seed2, spread = 1) {
   }
   ctx.restore();
 }
-function bentPath(ctx, points) {
+function bentPath(ctx, points2) {
   ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length - 1; i++) {
-    const p = points[i], next = points[i + 1];
+  ctx.moveTo(points2[0].x, points2[0].y);
+  for (let i = 1; i < points2.length - 1; i++) {
+    const p = points2[i], next = points2[i + 1];
     ctx.quadraticCurveTo(p.x, p.y, (p.x + next.x) / 2, (p.y + next.y) / 2);
   }
-  ctx.lineTo(points.at(-1).x, points.at(-1).y);
+  ctx.lineTo(points2.at(-1).x, points2.at(-1).y);
 }
 function leaf(ctx, x, y, size, angle3, fill4) {
   ctx.save();
@@ -45418,16 +45806,16 @@ function vine(ctx, x, y, height, seed2) {
   ctx.save();
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  const side = hash21(seed2, 3, 311) % 2 ? -1 : 1, n1 = hash21(seed2, 5, 317), n2 = hash21(seed2, 7, 331), points = [{ x, y }, { x: x + side * (11 + n1 % 7), y: y - height * 0.27 }, { x: x - side * (8 + n2 % 8), y: y - height * 0.52 }, { x: x + side * (12 + (n1 >>> 7) % 8), y: y - height * 0.76 }, { x: x + side * ((n2 >>> 8) % 9 - 4), y: y - height }];
-  bentPath(ctx, points);
+  const side = hash21(seed2, 3, 311) % 2 ? -1 : 1, n1 = hash21(seed2, 5, 317), n2 = hash21(seed2, 7, 331), points2 = [{ x, y }, { x: x + side * (11 + n1 % 7), y: y - height * 0.27 }, { x: x - side * (8 + n2 % 8), y: y - height * 0.52 }, { x: x + side * (12 + (n1 >>> 7) % 8), y: y - height * 0.76 }, { x: x + side * ((n2 >>> 8) % 9 - 4), y: y - height }];
+  bentPath(ctx, points2);
   ctx.strokeStyle = INK45;
   ctx.lineWidth = 9;
   ctx.stroke();
-  bentPath(ctx, points);
+  bentPath(ctx, points2);
   ctx.strokeStyle = "#35633b";
   ctx.lineWidth = 5.5;
   ctx.stroke();
-  const branches = [{ from: points[1], side: -side, length: 18 + (n1 >>> 13) % 7 }, { from: points[2], side, length: 16 + (n2 >>> 14) % 8 }];
+  const branches = [{ from: points2[1], side: -side, length: 18 + (n1 >>> 13) % 7 }, { from: points2[2], side, length: 16 + (n2 >>> 14) % 8 }];
   for (const [i, b] of branches.entries()) {
     const end = { x: b.from.x + b.side * b.length, y: b.from.y - 8 - i * 4 }, branch = [b.from, { x: b.from.x + b.side * b.length * 0.55, y: b.from.y - 4 }, end];
     bentPath(ctx, branch);
@@ -45440,7 +45828,7 @@ function vine(ctx, x, y, height, seed2) {
     ctx.stroke();
     leaf(ctx, end.x, end.y, 9 + i, b.side * 0.55, i ? MOSS_LIGHT2 : MOSS3);
   }
-  const leaves = [{ p: points[1], side }, { p: points[2], side: -side }, { p: points[3], side }, { p: points[4], side: -side }];
+  const leaves = [{ p: points2[1], side }, { p: points2[2], side: -side }, { p: points2[3], side }, { p: points2[4], side: -side }];
   for (let i = 0; i < leaves.length; i++) {
     const row2 = leaves[i], n = hash21(seed2, i, 347), dx = row2.side * (6 + n % 4), dy = -2 - (n >>> 5) % 5;
     leaf(ctx, row2.p.x + dx, row2.p.y + dy, 9 + (n >>> 9) % 4, row2.side * (0.48 + (n >>> 13) % 18 / 100), i % 2 ? MOSS_LIGHT2 : MOSS3);
@@ -45451,20 +45839,20 @@ function rootCluster(ctx, x, y, height, seed2, bend = 0, scale = 1) {
   ctx.save();
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  const n1 = hash21(seed2, 1, 401), n2 = hash21(seed2, 2, 409), side = n1 % 2 ? -1 : 1, swing = Math.max(0.9, scale), points = [{ x, y }, { x: x + side * (14 + n1 % 7) * swing + bend * 0.12, y: y + height * 0.28 }, { x: x - side * (16 + n2 % 8) * swing + bend * 0.52, y: y + height * 0.61 }, { x: x + bend, y: y + height }], main = Math.max(9, 17 * scale);
-  bentPath(ctx, points.map((p) => ({ x: p.x + 3, y: p.y + 3 })));
+  const n1 = hash21(seed2, 1, 401), n2 = hash21(seed2, 2, 409), side = n1 % 2 ? -1 : 1, swing = Math.max(0.9, scale), points2 = [{ x, y }, { x: x + side * (14 + n1 % 7) * swing + bend * 0.12, y: y + height * 0.28 }, { x: x - side * (16 + n2 % 8) * swing + bend * 0.52, y: y + height * 0.61 }, { x: x + bend, y: y + height }], main = Math.max(9, 17 * scale);
+  bentPath(ctx, points2.map((p) => ({ x: p.x + 3, y: p.y + 3 })));
   ctx.strokeStyle = "rgba(8,13,10,.52)";
   ctx.lineWidth = main + 6;
   ctx.stroke();
-  bentPath(ctx, points);
+  bentPath(ctx, points2);
   ctx.strokeStyle = INK45;
   ctx.lineWidth = main + 4;
   ctx.stroke();
-  bentPath(ctx, points);
+  bentPath(ctx, points2);
   ctx.strokeStyle = "#72492d";
   ctx.lineWidth = main;
   ctx.stroke();
-  const branches = [{ from: points[1], side: -side, length: (24 + (n1 >>> 8) % 9) * Math.max(0.78, scale), drop: height * 0.2, width: main * 0.68 }, { from: points[2], side, length: (20 + (n2 >>> 9) % 8) * Math.max(0.78, scale), drop: height * 0.18, width: main * 0.56 }];
+  const branches = [{ from: points2[1], side: -side, length: (24 + (n1 >>> 8) % 9) * Math.max(0.78, scale), drop: height * 0.2, width: main * 0.68 }, { from: points2[2], side, length: (20 + (n2 >>> 9) % 8) * Math.max(0.78, scale), drop: height * 0.18, width: main * 0.56 }];
   for (const b of branches) {
     const end = { x: b.from.x + b.side * b.length, y: b.from.y + b.drop }, branch = [b.from, { x: b.from.x + b.side * b.length * 0.58, y: b.from.y + b.drop * 0.28 }, end];
     bentPath(ctx, branch);
@@ -45476,28 +45864,28 @@ function rootCluster(ctx, x, y, height, seed2, bend = 0, scale = 1) {
     ctx.lineWidth = b.width;
     ctx.stroke();
   }
-  const highlight = [points[0], { x: (points[0].x + points[1].x) / 2 - 1, y: (points[0].y + points[1].y) / 2 }, { x: points[1].x - 1, y: points[1].y }];
+  const highlight = [points2[0], { x: (points2[0].x + points2[1].x) / 2 - 1, y: (points2[0].y + points2[1].y) / 2 }, { x: points2[1].x - 1, y: points2[1].y }];
   bentPath(ctx, highlight);
   ctx.strokeStyle = "#a66e40";
   ctx.lineWidth = Math.max(2, main * 0.24);
   ctx.stroke();
   ctx.restore();
 }
-function taperedMass(points, widths, extra = 0, ox = 0, oy = 0) {
+function taperedMass(points2, widths, extra = 0, ox = 0, oy = 0) {
   const left = [], right = [];
-  for (let i = 0; i < points.length; i++) {
-    const prev = points[Math.max(0, i - 1)], next = points[Math.min(points.length - 1, i + 1)], dx = next.x - prev.x, dy = next.y - prev.y, length = Math.hypot(dx, dy) || 1, nx = -dy / length, ny = dx / length, w = Math.max(0.5, widths[i] + extra);
-    left.push([points[i].x + nx * w + ox, points[i].y + ny * w + oy]);
-    right.push([points[i].x - nx * w + ox, points[i].y - ny * w + oy]);
+  for (let i = 0; i < points2.length; i++) {
+    const prev = points2[Math.max(0, i - 1)], next = points2[Math.min(points2.length - 1, i + 1)], dx = next.x - prev.x, dy = next.y - prev.y, length = Math.hypot(dx, dy) || 1, nx = -dy / length, ny = dx / length, w = Math.max(0.5, widths[i] + extra);
+    left.push([points2[i].x + nx * w + ox, points2[i].y + ny * w + oy]);
+    right.push([points2[i].x - nx * w + ox, points2[i].y - ny * w + oy]);
   }
   return [...left, ...right.reverse()];
 }
-function roundedMass(ctx, points, fill4) {
+function roundedMass(ctx, points2, fill4) {
   ctx.beginPath();
-  const last = points.at(-1), first = points[0];
+  const last = points2.at(-1), first = points2[0];
   ctx.moveTo((last[0] + first[0]) / 2, (last[1] + first[1]) / 2);
-  for (let i = 0; i < points.length; i++) {
-    const point13 = points[i], next = points[(i + 1) % points.length];
+  for (let i = 0; i < points2.length; i++) {
+    const point13 = points2[i], next = points2[(i + 1) % points2.length];
     ctx.quadraticCurveTo(point13[0], point13[1], (point13[0] + next[0]) / 2, (point13[1] + next[1]) / 2);
   }
   ctx.closePath();
@@ -46664,9 +47052,9 @@ function edgePoints(x, y, t, side, depth, n) {
   }
   return p;
 }
-function line10(c, points, color28, width) {
+function line10(c, points2, color28, width) {
   c.beginPath();
-  points.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
+  points2.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
   c.strokeStyle = color28;
   c.lineWidth = width;
   c.stroke();
@@ -47743,7 +48131,7 @@ function createEnvironmentCache(canvas, { diagnostics = null, prepareDrawing, pr
       created++;
       emit("allocate", { id });
     }
-    const pixels = Math.ceil(SIZE * scale);
+    const pixels = Math.max(1, Math.round(32 * scale)) * (SIZE / 32);
     if (raster.width !== pixels || raster.height !== pixels) {
       raster.width = pixels;
       raster.height = pixels;
@@ -48190,9 +48578,9 @@ function nearestRoadAnchor(space, exit, radius = 5) {
   };
   return nearest("r") ?? nearest("p");
 }
-function polygon26(ctx, points, fill4, stroke3 = "#162e27") {
+function polygon26(ctx, points2, fill4, stroke3 = "#162e27") {
   ctx.beginPath();
-  points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+  points2.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
   ctx.closePath();
   ctx.fillStyle = fill4;
   ctx.fill();
@@ -48283,13 +48671,13 @@ function drawGrassGround(ctx, bounds2, seed2, offset2 = { x: 0, y: 0 }, biomeAt 
       const rx = 48 + (n >>> 14) % 29, ry = 35 + (n >>> 20) % 25;
       ctx.fillStyle = palette(biomeAt(cx, cy) ?? "w")[n % 2 ? 1 : 2];
       ctx.beginPath();
-      const points = Array.from({ length: 10 }, (_, i) => {
+      const points2 = Array.from({ length: 10 }, (_, i) => {
         const angle3 = i * TAU61 / 10, r = 0.78 + terrainHash(gx + i, gy, seed2 + 71) % 24 / 100;
         return [cx + Math.cos(angle3) * rx * r, cy + Math.sin(angle3) * ry * r];
       });
       const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-      ctx.moveTo(...mid(points[9], points[0]));
-      for (let i = 0; i < 10; i++) ctx.quadraticCurveTo(...points[i], ...mid(points[i], points[(i + 1) % 10]));
+      ctx.moveTo(...mid(points2[9], points2[0]));
+      for (let i = 0; i < 10; i++) ctx.quadraticCurveTo(...points2[i], ...mid(points2[i], points2[(i + 1) % 10]));
       ctx.closePath();
       ctx.fill();
       if ((biomeAt(cx, cy) ?? "w") === "w" && n % 4 !== 0) {
@@ -48884,7 +49272,7 @@ function prepareEnvironmentDepthItems(space, view, layout, art, time, pilot = nu
     const { x, y, size, n } = tree;
     if (!inside3(x + size / 2, y + size * 0.65, size) || pilot?.hasTree && !pilot.hasTree(space, x, y, size, n)) continue;
     items.push(depthItem({ id: "tree/" + tree.id, anchorX: x + size / 2, anchorY: y + size * 0.78, draw: (ctx) => {
-      if (!pilot?.tree(ctx, space, x, y, size, n, tree, focus)) {
+      if (!pilot?.tree(ctx, space, x, y, size, n, tree, depthFocusPointsV1(focus))) {
         if (art?.tree) art.tree(ctx, x, y, size, n);
         else drawCanopy(ctx, x, y, size, n);
       }
@@ -48979,10 +49367,10 @@ var BLUE3 = "#298eaa";
 var STONE6 = "#405469";
 var DARK7 = "#233346";
 var clamp45 = (v) => Math.max(0, Math.min(1, v));
-function plate3(c, points, color28, outline2 = true) {
+function plate3(c, points2, color28, outline2 = true) {
   c.beginPath();
-  c.moveTo(...points[0]);
-  for (const p of points.slice(1)) c.lineTo(...p);
+  c.moveTo(...points2[0]);
+  for (const p of points2.slice(1)) c.lineTo(...p);
   c.closePath();
   c.fillStyle = color28;
   c.fill();
@@ -48994,12 +49382,12 @@ function plate3(c, points, color28, outline2 = true) {
   }
 }
 function hex(c, r) {
-  const points = [];
+  const points2 = [];
   for (let i = 0; i < 6; i++) {
     const a = i * TAU63 / 6 - Math.PI / 6;
-    points.push([Math.cos(a) * r, Math.sin(a) * r]);
+    points2.push([Math.cos(a) * r, Math.sin(a) * r]);
   }
-  return points;
+  return points2;
 }
 function rune(c, x, y, scale = 1) {
   c.save();
@@ -49278,7 +49666,9 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
     if (event.kind === "build") performanceProbe.record("environment.rasterBuild", event.ms ?? 0);
     if (event.kind === "compose") performanceProbe.record("environment.rasterDraw", event.ms ?? 0);
   } }), lighting = createLighting(canvas, { presentation: environmentArt?.worldLightsV1 }), dayNight = createDayNightLightingV1({ review: environmentArt?.dayNightReview });
+  const dynamicLights = createDynamicWorldLightsV1(canvas.ownerDocument);
   const camera = createCamera(), prompt = createPaintedPrompt(), actorMotion = createActorMotionPresentationV1({ collisionProbe: actorCollisionProbe });
+  const seamDebug = new URLSearchParams(canvas.ownerDocument.defaultView?.location?.search ?? "").get("debugSeams") === "1";
   const collisionDebug = new URLSearchParams(canvas.ownerDocument.defaultView?.location?.search ?? "").get("collisionDebug") === "1";
   const heroFacing = createHeroFacing(), siteEnvironment = createSiteEnvironment(canvas, { authoredArt: environmentArt });
   let invalidations = 0, lastInvalidationReason = "none", resizeEvents = 0, resizeChanges = 0, resizeNoops = 0, lastResize = null;
@@ -49379,6 +49769,25 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
       if (!authoredSite2) siteEnvironment.clear();
       const paint = () => authoredSite2 ? siteEnvironment.draw(ctx, model.space, viewport) : seamless ? environmentCache.draw(ctx, model.space, viewport, cam.zoom) : drawEnvironment(ctx, model.space, null);
       lastEnvironment = performanceProbe ? performanceProbe.measure("drawEnvironment", paint) : paint();
+      if (seamDebug && !authoredSite2) {
+        ctx.save();
+        ctx.lineWidth = 1 / cam.zoom;
+        for (const [step, color28] of [[256, "#3b82f6aa"], [null, "#ff2020"]]) {
+          ctx.strokeStyle = color28;
+          ctx.beginPath();
+          const sx = step ?? 1024, sy = step ?? 832;
+          for (let x = Math.floor(viewport.x / sx) * sx; x <= viewport.x + viewport.width; x += sx) {
+            ctx.moveTo(x, viewport.y);
+            ctx.lineTo(x, viewport.y + viewport.height);
+          }
+          for (let y = Math.floor(viewport.y / sy) * sy; y <= viewport.y + viewport.height; y += sy) {
+            ctx.moveTo(viewport.x, y);
+            ctx.lineTo(viewport.x + viewport.width, y);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
       performanceProbe?.setGauge("paintedTerrainTiles", lastEnvironment.paintedTerrainTiles);
       performanceProbe?.setGauge("paintedBlockers", lastEnvironment.paintedBlockers);
     } else for (let row2 = 0; row2 < c.height; row2++) for (let col = 0; col < c.width; col++) {
@@ -49401,6 +49810,7 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
     }
     if (seamless && !model.space.site) {
       drawEnvironmentMarkers(ctx, model.space);
+      setDepthFocusPointsV1([...visualActor?.alive ? [{ x: visualActor.position.x, y: visualActor.position.y - 12 }] : [], ...enemyDepthFocusPointsV1(visualModel, viewport)]);
       depthItems2.push(...environmentCache.depthItems(model.space, viewport, time));
       if (seamless && !model.space.site) depthItems2.push(...woodlandPilotEventDepthItems(model, viewport, time));
     } else if (model.space.visual && (model.space.site || model.space.functionalSite)) depthItems2.push(...siteEnvironment.depthItems(model.space, viewport, time));
@@ -49515,7 +49925,10 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
           drawToxicPoisonRearD12_4F(ctx2, drawn, model.tick);
           drawNullifiedRearD12_4I(ctx2, drawn, model.tick);
           drawWebbedRearD12_4J(ctx2, drawn, model.tick);
+          const leveling = id === model.playersById[model.localPlayerId].entityId && !canvas.ownerDocument.hidden && !model.siteActivationPending;
+          if (leveling) heroLevelUp.drawBack(ctx2, { ...drawn, entityId: id }, time);
           drawWorldHero(ctx2, drawn, pose.facing, time, pose.primary, model.tick, Boolean(reaction?.flash), equipmentArt);
+          if (leveling) heroLevelUp.drawFront(ctx2, { ...drawn, entityId: id }, time);
           drawGlacialSnareFrontD12_4E(ctx2, drawn, model.tick);
           drawToxicPoisonFrontD12_4F(ctx2, drawn, model.tick);
           drawNullifiedFrontD12_4I(ctx2, drawn, model.tick);
@@ -49571,6 +49984,7 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
         if (performanceProbe) performanceProbe.measure("lighting", paintLight);
         else paintLight();
         lighting.emissive(ctx, model.space, lightView, time);
+        dynamicLights.draw(ctx, model, lightView, frame, time, visualActor);
       }
       nightActors.draw(ctx, visualModel, lightView, frame);
       groundItems.emission(ctx, model, time, viewport, { frame });
@@ -49598,8 +50012,6 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
       }
       groundItems.labels(ctx);
     }
-    const levelingActor = visualModel.entitiesById[model.playersById[model.localPlayerId].entityId];
-    if (!canvas.ownerDocument.hidden && !model.siteActivationPending) heroLevelUp.draw(ctx, levelingActor, time);
     combatVfx.draw(ctx, visualModel, time, viewport);
     if (performanceProbe) performanceProbe.measure("combatFeedback", () => feedback.draw(ctx, time, equipmentArt, viewport));
     else feedback.draw(ctx, time, equipmentArt, viewport);
@@ -49646,11 +50058,13 @@ function createWorldRenderer(canvas, { performanceProbe = null, developmentScene
     resize,
     invalidate,
     observeBossEffects,
+    previewLevelUp: (entityId2) => heroLevelUp.trigger(entityId2),
     observeActors: actorMotion.observe,
     resetActors: actorMotion.clear,
     camera,
     prompt,
     resources: () => Object.freeze({
+      ...dynamicLights.resources(),
       groundItems: groundItems.inspect(),
       resourceDebris: resourceArt.resources(),
       ...nightActors.resources(),
@@ -50278,6 +50692,12 @@ function createSpacePreparationGate(initialSpace) {
 var progressionText = (v) => formatLarge(integerWire(v));
 function mountPlayableClient({ port, environment, nextCommandToken, capabilities, performanceProbe = null, environmentArt = null, readRuntimeDiagnostics = () => null, readSaveStatus = () => null, evidenceMode = false, evidenceIntervalMs = 0, developerMode = false, actorCollisionProbe = null }) {
   const doc = environment.document, canvas = doc.getElementById("world-view"), status2 = doc.getElementById("world-status");
+  const levelUpCelebration = createLevelUpCelebrationV4(doc);
+  if (new URL(environment.location.href).searchParams.get("previewLevelUp") === "1") environment.setTimeout(() => {
+    levelUpCelebration.play("5", "+3 attribute points \xB7 +1 utility SP");
+    const m = port.getReadModel();
+    renderer?.previewLevelUp?.(m.playersById[m.localPlayerId].entityId);
+  }, 4e3);
   const playerHealthHudV3 = createPlayerHealthHudV3(doc);
   const woodlandClueHud = createWoodlandClueHudV3_8(doc), worldEventHud = createWorldEventHudV3(doc, (groupId) => {
     const exit = readModel().space.exits?.find((e) => e.eventAction?.groupId === groupId);
@@ -50541,6 +50961,7 @@ function mountPlayableClient({ port, environment, nextCommandToken, capabilities
       const identity2 = `${model.context.campaignId}/${model.localPlayerId}`;
       if (observedProgression?.identity === identity2 && progressionBigInt(displayProgress.level) > progressionBigInt(observedProgression.level)) {
         if (levelNotice) levelNotice.textContent = `LEVEL UP! \xB7 ${progressionText(displayProgress.level)} \xB7 +${3n * (progressionBigInt(displayProgress.level) - progressionBigInt(observedProgression.level))} AP \xB7 +${progressionBigInt(displayProgress.level) - progressionBigInt(observedProgression.level)} Utility SP`;
+        levelUpCelebration.play(progressionText(displayProgress.level), `+${3n * (progressionBigInt(displayProgress.level) - progressionBigInt(observedProgression.level))} attribute points \xB7 +${progressionBigInt(displayProgress.level) - progressionBigInt(observedProgression.level)} utility SP`);
         levelNoticeUntil = time + 3e3;
       } else if (observedProgression?.identity !== identity2) levelNoticeUntil = 0;
       observedProgression = { identity: identity2, level: displayProgress.level };
@@ -51318,7 +51739,8 @@ function applyWorldTransferPatchD9(state, patch) {
       parent = parent[key3];
     }
     const key2 = change.path.at(-1), exists = Object.hasOwn(parent, key2), bulk = revisionGuardedBulkPath(change.path);
-    requireContract(exists === change.before.exists && (!exists || bulk || same10(parent[key2], change.before.value)), "World state changed during preparation");
+    const unchanged = exists === change.before.exists && (!exists || bulk || same10(parent[key2], change.before.value));
+    requireContract(unchanged, unchanged ? "" : "World state changed during preparation: " + change.path.slice(0, 4).join("."));
     targets.push({ parent, key: key2, after: change.after, bulk });
   }
   const values = targets.map((t) => t.after.exists ? t.bulk ? t.after.value : copyWire(t.after.value) : null);
@@ -51437,9 +51859,9 @@ async function prepareGroundCoverageQueryV1(query, { readPage, sha256, stagedPag
   for (const p of Object.values(state.playersById)) {
     const window = groundOccupancyWindowD9(state, p, D9_RUNTIME_POLICY.occupancyRadius);
     const rows = await readParticipantGroundWindowD9(state, p, { readPage: read, sha256, radius: D9_RUNTIME_POLICY.occupancyRadius, center: window.center });
-    const points = [];
-    for (let i = 0; i < rows.length; i += 128) points.push(rows.slice(i, i + 128).map((row2) => copyWire(row2.row.location.position)));
-    coverage.push({ playerId: p.playerId, spaceInstanceId: state.overworldInstanceId, ...window, radius: D9_RUNTIME_POLICY.occupancyRadius, points });
+    const points2 = [];
+    for (let i = 0; i < rows.length; i += 128) points2.push(rows.slice(i, i + 128).map((row2) => copyWire(row2.row.location.position)));
+    coverage.push({ playerId: p.playerId, spaceInstanceId: state.overworldInstanceId, ...window, radius: D9_RUNTIME_POLICY.occupancyRadius, points: points2 });
   }
   const result = freezeWire({ root: query.root, coverage, pageReads: reads.size });
   preparedResults.add(result);
@@ -51800,18 +52222,38 @@ function actorFootprintPinsD9(s) {
   }
   return pinned;
 }
-function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap = null, ruinSocket = null, fortParcel = null, caveParcel = null, caveParcels = [], record: record2 = () => {
+function createWorldResidencyD9({ authority, worker: rawWorker, pageBuffer, siteBootstrap = null, ruinSocket = null, fortParcel = null, caveParcel = null, caveParcels = [], record: record2 = () => {
 }, measure = (_name, fn) => fn(), now: now2 = () => Date.now() }) {
+  const SOFT_RESIDENT_CHUNKS = 64;
+  const RELEASE_COOLDOWN_TICKS = 900, releaseCooldown = /* @__PURE__ */ new Map();
+  const coolRelease = (v, release) => {
+    for (const [key2, c] of v.resident) if (release.includes(c.id)) releaseCooldown.set(key2, v.tick + RELEASE_COOLDOWN_TICKS);
+  };
+  const farthestFirst = (rows, v) => {
+    const gap = (row2) => Math.min(...v.players.map((p) => Math.max(Math.abs(Number(BigInt(row2.chunkX) - BigInt(p.position.chunkX))), Math.abs(Number(BigInt(row2.chunkY) - BigInt(p.position.chunkY))))));
+    return v.players.length ? rows.map((r) => [r, gap(r[1])]).sort((a, b) => b[1] - a[1]).map(([r]) => r) : rows;
+  };
   const LIVE_HANDOFF_CHUNKS = 2, LIVE_EVICT_CHUNKS = 2, parcelKeys = fortParcel?.pages.map((p) => chunkAddressKey(p.chunkX, p.chunkY)) ?? [];
   const prepared = /* @__PURE__ */ new Map(), evaluatedCaveRegions = new Set(caveParcels.filter((p) => p.version === WOODLAND_CAVE_FAMILY_PARCEL_D12_2).map((p) => p.regionKey));
   let reservationsDirty = false, busy = false, closed = false, error = null, generated = 0, discarded = 0, retries = 0, running = null, destinationTarget = null, lastEncounterKey = null, encounterPendingKey = null, encounterPendingSinceTick = null, encounterOffers = 0, encounterCompletions = 0, encounterRetries = 0, encounterLastLatencyTicks = 0, encounterMaxLatencyTicks = 0, urgentEncounterStreak = 0, lastDeadlineTick = -60, lastGroundKey = null, lastCollectTick = -600, lastNavigationTick = -30, navigationPreparing = null, navigationOffers = 0, navigationCompletions = 0, navigationCoalesced = 0, navigationRetries = 0, navigationRowsPrepared = 0, lastNavigationError = null, wantedAdmissions = 0, lastWantedAdmissionTick = null, lastWantedAdmissionAt = null, wantedMissingSinceTick = null, progressState = "idle", progressDetail = null;
+  let workerCalls = 0, lastRunWorked = true;
+  const retryReasons = {};
+  const retry = (reason) => {
+    retries++;
+    const k = String(reason).replace(/ent:[0-9a-f]+/g, "ent").slice(0, 80);
+    retryReasons[k] = (retryReasons[k] ?? 0) + 1;
+  };
+  const worker = Object.freeze(Object.fromEntries(Object.entries(rawWorker).map(([k, f]) => [k, typeof f === "function" ? (...args) => {
+    workerCalls++;
+    return f(...args);
+  } : f])));
   const needsSave = () => reservationsDirty || pageBuffer.resources().dirtyPages > D9_RUNTIME_POLICY.flushPages;
   const borrow = (fn) => authority.withAuthority((a) => a.withAuthorityState(fn));
   const staleWorkerGeometry = (error2) => {
     if (error2?.code !== "WORLD_ACTOR_GEOMETRY_INVALID" && !/Invalid canonical actor geometry/.test(error2?.message ?? "")) return false;
     const live = borrow((s) => firstInvalidActorGeometryD9(s, { mutation: "stale worker result live-state probe", phase: "residency integration" }));
     if (live) return false;
-    retries++;
+    retry("stale-worker-geometry");
     progressState = "retrying";
     progressDetail = "stale-worker-geometry";
     record2("world.residencyRetry", { reason: "stale-worker-geometry" });
@@ -51920,7 +52362,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
       return true;
     } catch (e) {
       if (/changed|parent disappeared/.test(e.message)) {
-        retries++;
+        retry(e.message);
         encounterRetries++;
         return false;
       }
@@ -51930,6 +52372,8 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
   async function run() {
     if (closed || busy || error || authority.getStatus().phase !== "ready") return false;
     busy = true;
+    const callsBefore = workerCalls;
+    let rebased = false;
     try {
       authority.withReadyAuthority((a) => {
         let changed = false;
@@ -51951,7 +52395,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
               n.chunkY = old2.chunkY;
             }
           }
-          if (JSON.stringify(planned) !== JSON.stringify(w.runtime.frames)) {
+          if (canonicalStringify(planned) !== canonicalStringify(w.runtime.frames)) {
             try {
               rebaseWorldRuntimeD9(s, planned);
               changed = true;
@@ -51960,7 +52404,10 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
             }
           }
         });
-        if (changed) a.refreshWorldResidency();
+        if (changed) {
+          rebased = true;
+          a.refreshWorldResidency();
+        }
       });
       let v = observedView();
       cleanCache(v);
@@ -52042,7 +52489,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
           lastDeadlineTick = result.more ? v.tick - 60 : v.tick;
         } catch (e) {
           if (/changed|parent disappeared/.test(e.message)) {
-            retries++;
+            retry(e.message);
             return false;
           }
           throw e;
@@ -52054,7 +52501,8 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
       if (closed) return false;
       v = observedView();
       cleanCache(v);
-      const candidates = [...v.wanted].filter(([key2]) => !v.resident.has(key2) && prepared.has(key2)).sort((a, b) => priority(a[1], v) - priority(b[1], v) || a[1].distance - b[1].distance), free = Math.max(0, D9_RUNTIME_POLICY.residentChunks - v.resident.size), evictable = [...v.resident].filter(([key2]) => !v.wanted.has(key2) && !v.pinned.has(key2)), parcelWanted = parcelKeys.some((k) => v.wanted.has(k)), parcelResident = parcelKeys.filter((k) => v.resident.has(k)), parcelMissing = parcelKeys.filter((k) => !v.resident.has(k));
+      const candidates = [...v.wanted].filter(([key2]) => !v.resident.has(key2) && prepared.has(key2)).sort((a, b) => priority(a[1], v) - priority(b[1], v) || a[1].distance - b[1].distance), free = Math.max(0, D9_RUNTIME_POLICY.residentChunks - v.resident.size), evictable = farthestFirst([...v.resident].filter(([key2]) => !v.wanted.has(key2) && !v.pinned.has(key2) && !(releaseCooldown.get(key2) > v.tick)), v), parcelWanted = parcelKeys.some((k) => v.wanted.has(k)), parcelResident = parcelKeys.filter((k) => v.resident.has(k)), parcelMissing = parcelKeys.filter((k) => !v.resident.has(k));
+      for (const [key2, until] of releaseCooldown) if (until <= v.tick || !v.resident.has(key2)) releaseCooldown.delete(key2);
       let release = [], admit = [];
       if (parcelWanted && parcelMissing.length) {
         if (parcelMissing.every((k) => prepared.has(k))) {
@@ -52064,8 +52512,8 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
           else release = [];
         }
       } else {
-        const ordinaryCandidates = candidates.filter(([k]) => !parcelKeys.includes(k)), need = Math.max(0, Math.min(ordinaryCandidates.length, LIVE_HANDOFF_CHUNKS) - free), other = evictable.filter(([k]) => !parcelKeys.includes(k));
-        release = other.slice(0, Math.min(D9_RUNTIME_POLICY.evictChunks, LIVE_EVICT_CHUNKS, ordinaryCandidates.length ? need : pageBuffer.resources().dirtyPages > D9_RUNTIME_POLICY.flushPages ? 0 : LIVE_EVICT_CHUNKS)).map(([, c]) => c.id);
+        const ordinaryCandidates = candidates.filter(([k]) => !parcelKeys.includes(k)), need = Math.max(0, Math.min(ordinaryCandidates.length, LIVE_HANDOFF_CHUNKS) - free, pageBuffer.resources().dirtyPages > D9_RUNTIME_POLICY.flushPages ? 0 : Math.min(LIVE_EVICT_CHUNKS, v.resident.size - SOFT_RESIDENT_CHUNKS)), other = evictable.filter(([k]) => !parcelKeys.includes(k));
+        release = (ordinaryCandidates.length ? other : other.filter(([k]) => !v.preload.has(k))).slice(0, Math.min(D9_RUNTIME_POLICY.evictChunks, LIVE_EVICT_CHUNKS, ordinaryCandidates.length ? need : pageBuffer.resources().dirtyPages > D9_RUNTIME_POLICY.flushPages ? 0 : LIVE_EVICT_CHUNKS)).map(([, c]) => c.id);
         if (!release.length && parcelResident.length === parcelKeys.length && parcelKeys.every((k) => evictable.some(([id]) => id === k)) && (need > 0 || !ordinaryCandidates.length && pageBuffer.resources().dirtyPages <= D9_RUNTIME_POLICY.flushPages)) release = parcelKeys.map((k) => v.resident.get(k).id);
         admit = ordinaryCandidates.slice(0, Math.min(free + release.length, D9_RUNTIME_POLICY.handoffChunks - release.length, LIVE_HANDOFF_CHUNKS)).map(([k]) => prepared.get(k));
       }
@@ -52079,7 +52527,8 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
         if (closed) return false;
         const current = observedView();
         if (release.some((id) => [...current.resident].some(([key2, c]) => c.id === id && (current.wanted.has(key2) || current.pinned.has(key2)))) || admit.some((c) => !current.wanted.has(chunkAddressKey(c.chunkX, c.chunkY)))) {
-          retries++;
+          coolRelease(current, release);
+          retry("window moved during preparation");
           return false;
         }
         const installPages = pageBuffer.prepareStageDelta(result.pages, stagedPages);
@@ -52094,7 +52543,8 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
           }));
         } catch (e) {
           if (e.code === "WORLD_TRANSFER_STALE" || /changed|pins a prepared eviction|parent disappeared/.test(e.message)) {
-            retries++;
+            coolRelease(current, release);
+            retry(e.message);
             return false;
           }
           if (staleWorkerGeometry(e)) return false;
@@ -52125,7 +52575,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
           lastGroundKey = result.more ? null : v.groundKey;
         } catch (e) {
           if (/changed|parent disappeared/.test(e.message)) {
-            retries++;
+            retry(e.message);
             return false;
           }
           throw e;
@@ -52162,6 +52612,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
       return false;
     } finally {
       busy = false;
+      lastRunWorked = rebased || workerCalls !== callsBefore;
     }
   }
   function pump() {
@@ -52236,7 +52687,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
         return true;
       } catch (e) {
         if (/changed|parent disappeared/.test(e.message)) {
-          retries++;
+          retry(e.message);
           return false;
         }
         if (staleWorkerGeometry(e)) return false;
@@ -52282,7 +52733,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
   function finishDestinationPosition() {
     destinationTarget = null;
   }
-  return Object.freeze({ pump, prime, needsSave, prepareTravelPosition: prepareDestinationPosition, finishTravelPosition: finishDestinationPosition, prepareWorldPosition, prepareReviewPosition: prepareDestinationPosition, finishReviewPosition: finishDestinationPosition, syncPages, warmGround, acknowledgeSave() {
+  return Object.freeze({ pump, prime, needsSave, quiet: () => !lastRunWorked && !running && !destinationTarget, prepareTravelPosition: prepareDestinationPosition, finishTravelPosition: finishDestinationPosition, prepareWorldPosition, prepareReviewPosition: prepareDestinationPosition, finishReviewPosition: finishDestinationPosition, syncPages, warmGround, acknowledgeSave() {
     reservationsDirty = false;
   }, resume() {
     if (error && staleWorkerGeometry(error)) error = null;
@@ -52294,7 +52745,7 @@ function createWorldResidencyD9({ authority, worker, pageBuffer, siteBootstrap =
     return worker.mapWindow({ ...request, ...snapshot });
   }, settled: () => running ?? Promise.resolve(), failure: () => error, inspect: () => {
     const v = observedView(), wantedMissing = [...v.wanted.keys()].filter((k) => !v.resident.has(k)), page = pageBuffer.resources(), at3 = now2();
-    return { busy, closed, error: error?.message ?? null, errorCode: error?.code ?? null, errorStack: error?.stack ?? null, generated, discarded, retries, prepared: prepared.size, preparedKeys: [...prepared.keys()], wantedKeys: [...v.wanted.keys()], wantedMissing, wantedReady: wantedMissing.length === 0, wantedMissingSinceTick, wantedAdmissions, lastWantedAdmissionTick, timeSinceWantedAdmissionMs: lastWantedAdmissionAt === null ? null : Math.max(0, at3 - lastWantedAdmissionAt), progressState, progressDetail, reviewPreparing: v.reviewPreparing, interactionReady: !v.approach || hasWorldCombat(v.plannedWorld), navigationPreparation: { pendingRows: v.navigation, inFlight: Boolean(navigationPreparing), offers: navigationOffers, completions: navigationCompletions, coalesced: navigationCoalesced, retries: navigationRetries, rowsPrepared: navigationRowsPrepared, lastError: lastNavigationError }, encounterPreparation: { approachPending: v.approach, blocksInitialReadiness: v.approach && !hasWorldCombat(v.plannedWorld), pending: Boolean(v.approach && v.encounterKey !== lastEncounterKey), offers: encounterOffers, completions: encounterCompletions, retries: encounterRetries, lastLatencyTicks: encounterLastLatencyTicks, maxLatencyTicks: encounterMaxLatencyTicks, pendingSinceTick: encounterPendingSinceTick }, needsSave: reservationsDirty || page.dirtyPages > D9_RUNTIME_POLICY.flushPages, regionalReservations: { evaluated: evaluatedCaveRegions.size, dirty: reservationsDirty }, pagePressure: { dirtyPages: page.dirtyPages, flushPages: D9_RUNTIME_POLICY.flushPages, capacity: page.capacity, oldestDirtyPageAgeMs: page.oldestDirtyPageAgeMs }, resident: v.resident.size, residentKeys: [...v.resident.keys()] };
+    return { busy, closed, error: error?.message ?? null, errorCode: error?.code ?? null, errorStack: error?.stack ?? null, generated, discarded, retries, retryReasons: { ...retryReasons }, pinnedCount: v.pinned.size, evictableCount: [...v.resident.keys()].filter((k) => !v.wanted.has(k) && !v.pinned.has(k)).length, prepared: prepared.size, preparedKeys: [...prepared.keys()], wantedKeys: [...v.wanted.keys()], wantedMissing, wantedReady: wantedMissing.length === 0, wantedMissingSinceTick, wantedAdmissions, lastWantedAdmissionTick, timeSinceWantedAdmissionMs: lastWantedAdmissionAt === null ? null : Math.max(0, at3 - lastWantedAdmissionAt), progressState, progressDetail, reviewPreparing: v.reviewPreparing, interactionReady: !v.approach || hasWorldCombat(v.plannedWorld), navigationPreparation: { pendingRows: v.navigation, inFlight: Boolean(navigationPreparing), offers: navigationOffers, completions: navigationCompletions, coalesced: navigationCoalesced, retries: navigationRetries, rowsPrepared: navigationRowsPrepared, lastError: lastNavigationError }, encounterPreparation: { approachPending: v.approach, blocksInitialReadiness: v.approach && !hasWorldCombat(v.plannedWorld), pending: Boolean(v.approach && v.encounterKey !== lastEncounterKey), offers: encounterOffers, completions: encounterCompletions, retries: encounterRetries, lastLatencyTicks: encounterLastLatencyTicks, maxLatencyTicks: encounterMaxLatencyTicks, pendingSinceTick: encounterPendingSinceTick }, needsSave: reservationsDirty || page.dirtyPages > D9_RUNTIME_POLICY.flushPages, regionalReservations: { evaluated: evaluatedCaveRegions.size, dirty: reservationsDirty }, pagePressure: { dirtyPages: page.dirtyPages, flushPages: D9_RUNTIME_POLICY.flushPages, capacity: page.capacity, oldestDirtyPageAgeMs: page.oldestDirtyPageAgeMs }, resident: v.resident.size, residentKeys: [...v.resident.keys()] };
   }, close() {
     closed = true;
     destinationTarget = null;
@@ -52787,8 +53238,13 @@ async function createLocalEndlessSessionD9(options) {
   const stream = createWorldResidencyD9({ authority, worker, pageBuffer: pages, siteBootstrap, ruinSocket: ruinReservation?.socket ?? null, fortParcel, caveParcel, caveParcels, measure, now: now2 }), clientPort = createActivityClientPort({ authority, localPlayerId, measure });
   const store = storeFactory(opened.state.content.fingerprint, activityGeneration(opened.state), activityCampaignCodec);
   await store.writeLocalLauncher?.(proofCase, { campaignId: opened.state.campaign.campaignId, playerId: localPlayerId });
-  const GATE_TIMEOUT_MS = 15e3, RETRY_MS = 1e3, STREAM_SERVICE_MS = 100;
-  let saving = null, saveAgain = false, lastError = null, lastSavedTick = opened.state.tick, lastLife = null, savePhase = "idle", savePhaseAt = now2(), gateSince = null, gateTimedOut = false, durabilityFailed = false, fatalInvariant = null, failedCuts = 0, retriedCuts = 0, lastSuccessfulCommitAt = now2(), lastSaveAttemptAt = -Infinity, lastStreamServiceAt = -Infinity;
+  const GATE_TIMEOUT_MS = 15e3, RETRY_MS = 1e3, STREAM_SERVICE_MS = 100, STREAM_IDLE_SERVICE_MS = 500;
+  let lastStreamAnchor = null;
+  const streamAnchor = () => authority.withAuthority((a) => a.withAuthorityState((s) => Object.values(s.playersById).map((p) => {
+    const e = s.entitiesById[p.entityId];
+    return e.residency.spaceInstanceId + "/" + Math.floor(e.position.x / 64) + "," + Math.floor(e.position.y / 64);
+  }).join("|")));
+  let saving = null, saveAgain = false, lastError = null, lastSavedTick = opened.state.tick, lastLife = null, lastCritical = null, lastLifeSaveTick = -Infinity, savePhase = "idle", savePhaseAt = now2(), gateSince = null, gateTimedOut = false, durabilityFailed = false, fatalInvariant = null, failedCuts = 0, retriedCuts = 0, lastSuccessfulCommitAt = now2(), lastSaveAttemptAt = -Infinity, lastStreamServiceAt = -Infinity;
   const isGeometryFailure = (failure) => failure?.code === "WORLD_ACTOR_GEOMETRY_INVALID" || /Invalid canonical actor geometry/.test(failure?.reason ?? failure?.message ?? "");
   const liveGeometry = () => authority.withAuthority((a) => a.withAuthorityState((s) => firstInvalidActorGeometryD9(s, { mutation: "worker result live-state probe", phase: savePhase })));
   function discardStaleGeometry(failure, source3) {
@@ -52848,8 +53304,10 @@ async function createLocalEndlessSessionD9(options) {
       }
     }
   };
+  const LIFECYCLE_SAVE_TICKS = 300, criticalLifecycle = () => authority.withAuthority((a) => a.withAuthorityState((s) => s.session.playerIds.map((id) => `${s.entitiesById[s.playersById[id].entityId].alive}/${s.playerRespawnsById?.[id]?.count ?? 0}`).join("|")));
   const lifecycle = () => authority.withAuthority((a) => a.withAuthorityState((s) => s.session.playerIds.map((id) => `${s.entitiesById[s.playersById[id].entityId].alive}/${s.playerRespawnsById?.[id]?.count ?? 0}/${s.playersById[id].inventory.revision}/${s.playersById[id].d8.lastChange?.authorityOrder ?? 0}`).join("|") + "/" + s.encounterEconomy.revision));
   lastLife = lifecycle();
+  lastCritical = criticalLifecycle();
   if (opened.state.d9World.groundIndex) await stream.warmGround();
   else {
     const query = authority.withReadyAuthority((a) => a.withAuthorityState(captureGroundCoverageQueryV1)), result = await prepareGroundCoverageQueryV1(query, { sha256, readPage: store.worldPages?.readPage });
@@ -53235,8 +53693,12 @@ async function createLocalEndlessSessionD9(options) {
     }
     groundPrefetch.offer();
     if (!reviewTravelPending && !groundPreparation && authorityPhase === "ready" && savePhase !== "waiting-stream" && savePhase !== "preparing" && !functionalCommands.busy() && at3 - lastStreamServiceAt >= STREAM_SERVICE_MS) {
-      lastStreamServiceAt = at3;
-      void stream.pump();
+      const anchor = streamAnchor();
+      if (anchor !== lastStreamAnchor || !stream.quiet?.() || at3 - lastStreamServiceAt >= STREAM_IDLE_SERVICE_MS) {
+        lastStreamAnchor = anchor;
+        lastStreamServiceAt = at3;
+        void stream.pump();
+      }
     }
   }
   const plannedTravel = async (targetId) => {
@@ -53311,9 +53773,11 @@ async function createLocalEndlessSessionD9(options) {
       const tick = authority.withAuthority((a) => a.withAuthorityState((s) => s.tick));
       if (tick % 4 === 0) authority.withReadyAuthority((a) => a.withAuthorityState((s) => measure("explorationReveal", () => revealNavigationD9(s))));
       if (!saving && tick % 6 === 0) {
-        const life = lifecycle(), needsSave = stream.needsSave();
-        if ((life !== lastLife || needsSave || tick - lastSavedTick >= 600) && (!lastError || now2() - lastSaveAttemptAt >= RETRY_MS)) {
+        const life = lifecycle(), critical = criticalLifecycle(), needsSave = stream.needsSave(), lifeDue = life !== lastLife && (critical !== lastCritical || tick - lastLifeSaveTick >= LIFECYCLE_SAVE_TICKS);
+        if ((lifeDue || needsSave || tick - lastSavedTick >= 600) && (!lastError || now2() - lastSaveAttemptAt >= RETRY_MS)) {
           lastLife = life;
+          lastCritical = critical;
+          lastLifeSaveTick = tick;
           void save();
         }
       }
@@ -53333,12 +53797,15 @@ function measureWorldViewport(environment) {
   const viewport = environment.visualViewport, root = environment.document.documentElement;
   const visual = valid(viewport?.width) && valid(viewport?.height);
   const offset2 = (value2) => Number.isFinite(value2) ? Math.max(0, value2) : 0;
-  return Object.freeze({
-    left: visual ? offset2(viewport.offsetLeft) : 0,
-    top: visual ? offset2(viewport.offsetTop) : 0,
-    width: Math.max(1, Math.round(visual ? viewport.width : fallback(root.clientWidth, environment.innerWidth))),
-    height: Math.max(1, Math.round(visual ? viewport.height : fallback(root.clientHeight, environment.innerHeight)))
-  });
+  const width = Math.max(1, Math.round(visual ? viewport.width : fallback(root.clientWidth, environment.innerWidth)));
+  let height = Math.max(1, Math.round(visual ? viewport.height : fallback(root.clientHeight, environment.innerHeight)));
+  const standalone = environment.navigator?.standalone === true || environment.matchMedia?.("(display-mode: standalone)")?.matches === true, screen = environment.screen;
+  if (standalone && valid(screen?.width) && valid(screen?.height)) {
+    const landscape = width > height, fullWidth = landscape ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height), fullHeight = landscape ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
+    const scale = visual && valid(viewport.scale) ? viewport.scale : 1, shown = height * scale;
+    if (Math.abs(width * scale - fullWidth) <= 2 && fullHeight > shown && fullHeight - shown <= 80) height = Math.round(fullHeight / scale);
+  }
+  return Object.freeze({ left: visual ? offset2(viewport.offsetLeft) : 0, top: visual ? offset2(viewport.offsetTop) : 0, width, height });
 }
 function coordinateWorldViewport({ environment, shell, onResize = () => {
 } }) {
@@ -53444,10 +53911,47 @@ function cleanAndReload(environment, policy) {
   environment.history.replaceState(null, "", policy.cleanUrl().href);
   environment.location.reload();
 }
+function lockPageZoom(environment) {
+  const doc = environment.document, meta = doc.querySelector('meta[name="viewport"]'), vv = environment.visualViewport;
+  for (const type of ["gesturestart", "gesturechange", "gestureend"]) doc.addEventListener(type, (e) => e.preventDefault(), { passive: false });
+  doc.addEventListener("touchmove", (e) => {
+    if (e.touches?.length > 1) e.preventDefault();
+  }, { passive: false });
+  environment.addEventListener("wheel", (e) => {
+    if (e.ctrlKey || e.metaKey) e.preventDefault();
+  }, { passive: false });
+  environment.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && ["+", "=", "-", "_", "0"].includes(e.key)) e.preventDefault();
+  });
+  if (!meta || !vv?.addEventListener) return;
+  const content = meta.content;
+  vv.addEventListener("resize", () => {
+    if (Math.abs((vv.scale ?? 1) - 1) < 1e-3) return;
+    meta.content = content + ",";
+    meta.content = content;
+  });
+}
 async function startWorldClient(environment) {
   const startupLoading = environment.__SAQ_STARTUP_LOADING_V1__ ?? null;
   let client = null;
+  lockPageZoom(environment);
   coordinateWorldViewport({ environment, shell: environment.document.getElementById("world-app"), onResize: () => client?.resize() });
+  if (new URL(environment.location.href).searchParams.get("debugViewport") === "1") {
+    const doc = environment.document, box = doc.createElement("pre"), probe = doc.createElement("div");
+    box.style.cssText = "position:fixed;left:8px;top:40%;z-index:99999;margin:0;background:#000d;color:#8f8;font:11px/1.35 monospace;padding:6px 8px;pointer-events:none;white-space:pre";
+    probe.style.cssText = "position:fixed;top:0;left:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);visibility:hidden;pointer-events:none";
+    doc.body.append(box, probe);
+    const r = (e) => {
+      const b = e?.getBoundingClientRect();
+      return b ? Math.round(b.x) + "," + Math.round(b.y) + " " + Math.round(b.width) + "x" + Math.round(b.height) : "-";
+    };
+    const update = () => {
+      const c = environment.getComputedStyle(probe), vv = environment.visualViewport;
+      box.textContent = ["inner " + environment.innerWidth + "x" + environment.innerHeight, "visual " + Math.round(vv?.width ?? 0) + "x" + Math.round(vv?.height ?? 0) + " @" + Math.round(vv?.offsetTop ?? 0), "screen " + environment.screen.width + "x" + environment.screen.height + " dpr " + environment.devicePixelRatio, "standalone nav=" + environment.navigator.standalone + " mq=" + environment.matchMedia("(display-mode: standalone)").matches, "safe t" + c.paddingTop + " r" + c.paddingRight + " b" + c.paddingBottom + " l" + c.paddingLeft, "docEl " + doc.documentElement.clientWidth + "x" + doc.documentElement.clientHeight, "app " + r(doc.getElementById("world-app")), "canvas " + r(doc.getElementById("world-view"))].join(String.fromCharCode(10));
+    };
+    environment.setInterval(update, 1e3);
+    update();
+  }
   const sha256 = async (bytes) => Array.from(new Uint8Array(await environment.crypto.subtle.digest("SHA-256", new Uint8Array(bytes))));
   const nextToken = () => Array.from(environment.crypto.getRandomValues(new Uint8Array(16)), (v) => v.toString(16).padStart(2, "0")).join("");
   const location = new URL(environment.location.href);
@@ -53730,7 +54234,7 @@ async function startWorldClient(environment) {
       sample.onclick = () => {
         if (performanceProbe.isRecording()) performanceProbe.stop();
         else {
-          performanceProbe.start();
+          performanceProbe.start({ reset: false });
           performanceProbe.setGauge("batteryPresentationFpsCap", batteryPresentation ? 30 : 0);
         }
         syncSample();
@@ -53974,7 +54478,7 @@ async function startWorldClient(environment) {
   const clockLabel = environment.document.createElement("span");
   clockLabel.id = "world-time-clock";
   clockLabel.style.cssText = "font-size:12px;white-space:nowrap;color:#cbd8e8";
-  environment.document.getElementById("world-hud-title").append(clockLabel);
+  (environment.document.querySelector(".chart-mini") ?? environment.document.getElementById("world-hud-title")).append(clockLabel);
   function syncTime() {
     const m = clientPort.getReadModel(), t = m.worldTime, r = dayNightReview.read();
     if (!t) return;
@@ -54208,7 +54712,12 @@ async function startWorldClient(environment) {
   }
   environment.addEventListener("blur", suspend);
   environment.addEventListener("focus", resume);
-  environment.document.addEventListener("visibilitychange", () => environment.document.hidden ? suspend() : resume());
+  environment.document.addEventListener("visibilitychange", () => {
+    if (!environment.document.hidden) return resume();
+    suspend();
+    if (activity) session.save?.()?.catch?.(() => {
+    });
+  });
   environment.addEventListener("pagehide", (event) => {
     suspend();
     if (event.persisted) return;

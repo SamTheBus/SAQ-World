@@ -453,16 +453,24 @@ function validateHydrologyPlanV1(plan) {
 function createHydrologyGeometryV1(plan, parent) {
   validateHydrologyPlanV1(plan);
   const encoded = new Map(plan.pages.map((p) => [p.key, p.runs])), cache3 = /* @__PURE__ */ new Map();
-  let decodes = 0;
+  let decodes = 0, lastCx = NaN, lastCy = NaN, lastPage = null;
   function page(cx, cy) {
+    if (cx === lastCx && cy === lastCy) return lastPage;
     const key9 = cx + "," + cy, runs = encoded.get(key9);
-    if (!runs) return null;
-    if (cache3.has(key9)) return cache3.get(key9);
-    const data = new Uint8Array(832);
-    for (const [start, length, kind2] of runs) data.fill(kind2, start, start + length);
-    if (cache3.size >= 256) cache3.delete(cache3.keys().next().value);
-    cache3.set(key9, data);
-    decodes++;
+    let data = null;
+    if (runs) {
+      data = cache3.get(key9);
+      if (!data) {
+        data = new Uint8Array(832);
+        for (const [start, length, kind2] of runs) data.fill(kind2, start, start + length);
+        if (cache3.size >= 256) cache3.delete(cache3.keys().next().value);
+        cache3.set(key9, data);
+        decodes++;
+      }
+    }
+    lastCx = cx;
+    lastCy = cy;
+    lastPage = data;
     return data;
   }
   function kind(x, y) {
@@ -2889,11 +2897,18 @@ function createLocalWaterGeometry(p, macro, shoreline, riverSegments) {
     for (const [x, y] of cells3) lakeByCell.set(x + "," + y, basin);
   }
   Object.freeze(lakeBasins);
+  const protectedNear = /* @__PURE__ */ new Map();
   function protection(x, y) {
-    const cx = Math.floor(x / 32), cy = Math.floor(y / 26);
+    const cx = Math.floor(x / 32), cy = Math.floor(y / 26), id = cx * 65536 + cy;
+    let near = protectedNear.get(id);
+    if (!near) {
+      near = [];
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (protectedChunks.has(cx + dx + "," + (cy + dy))) near.push((cx + dx) * 32, (cy + dy) * 26);
+      protectedNear.set(id, near);
+    }
     let distance6 = Infinity;
-    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (protectedChunks.has(cx + dx + "," + (cy + dy))) {
-      const a = (cx + dx) * 32, b = (cy + dy) * 26;
+    for (let i = 0; i < near.length; i += 2) {
+      const a = near[i], b = near[i + 1];
       distance6 = Math.min(distance6, Math.hypot(Math.max(a - x, 0, x - a - 32), Math.max(b - y, 0, y - b - 26)));
     }
     const t = Math.min(1, distance6 / 9);
@@ -9850,6 +9865,55 @@ function validateWorldEventsProgress(a, b) {
   }
 }
 
+// src/shared/contracts/potion_belt_v1.js
+var POTION_BELT_POLICY = Object.freeze({
+  version: "potion-belt-v1",
+  baseCharges: 3,
+  maxCapacityUpgrades: 3,
+  capacityPrices: Object.freeze(["30", "80", "180"]),
+  baseHealPercent: 40,
+  potencyStep: 10,
+  maxPotencyUpgrades: 2,
+  potencyPrices: Object.freeze(["60", "160"]),
+  cooldownTicks: 240,
+  dropPercent: Object.freeze({ ordinary: 4, elite: 30, boss: 100 }),
+  bossBonusPercent: 25,
+  refillIntervalTicks: 60,
+  offers: Object.freeze({ capacity: "potion-capacity", potency: "potion-potency" }),
+  maximumGrants: 1e6
+});
+var B = POTION_BELT_POLICY;
+var EMPTY = Object.freeze({ grants: 0, capacityUpgrades: 0, potencyUpgrades: 0, lastUseTick: null });
+var potionBelt = (p) => p.inventory.services?.potions ?? EMPTY;
+var potionCapacity = (p) => B.baseCharges + potionBelt(p).capacityUpgrades;
+function potionCount(p) {
+  const l = p.inventory.services;
+  return l ? l.supplyPurchases + potionBelt(p).grants - l.suppliesUsed : 0;
+}
+function potionUpgradeSpent(p) {
+  const b = potionBelt(p);
+  let spent = "0";
+  for (let i = 0; i < b.capacityUpgrades; i++) spent = addAmount(spent, B.capacityPrices[i]);
+  for (let i = 0; i < b.potencyUpgrades; i++) spent = addAmount(spent, B.potencyPrices[i]);
+  return spent;
+}
+function validatePotionBelt(state, p, legacyMaximum) {
+  const r = p.inventory.services?.potions;
+  if (r) {
+    closedRecord(r, ["grants", "capacityUpgrades", "potencyUpgrades", "lastUseTick"]);
+    safeInteger(r.grants, 0, B.maximumGrants);
+    safeInteger(r.capacityUpgrades, 0, B.maxCapacityUpgrades);
+    safeInteger(r.potencyUpgrades, 0, B.maxPotencyUpgrades);
+    if (r.lastUseTick !== null) safeInteger(r.lastUseTick, 0, state.tick);
+  }
+  safeInteger(potionCount(p), 0, Math.max(potionCapacity(p), legacyMaximum));
+}
+function validatePotionProgress(x, y) {
+  const a = x?.potions ?? EMPTY, b = y?.potions ?? EMPTY;
+  requireContract(b.grants >= a.grants && b.capacityUpgrades >= a.capacityUpgrades && b.potencyUpgrades >= a.potencyUpgrades && (a.lastUseTick === null || b.lastUseTick !== null && b.lastUseTick >= a.lastUseTick), "Potion belt regressed");
+  return b.capacityUpgrades - a.capacityUpgrades + b.potencyUpgrades - a.potencyUpgrades;
+}
+
 // src/shared/contracts/settlement_services_v1.js
 var same = (a, b) => canonicalStringify(a) === canonicalStringify(b);
 var ordinary = new Set(REWARD_POOLS.flat());
@@ -9896,11 +9960,10 @@ function saleQuote(p, item) {
   const power2 = progressionBigInt(item.generated?.itemPower ?? 1), bounded = Number(power2 > BigInt(SETTLEMENT_LIFE_POLICY.sale.maximumValuationPower) ? BigInt(SETTLEMENT_LIFE_POLICY.sale.maximumValuationPower) : power2);
   return String(SETTLEMENT_LIFE_POLICY.sale.baseGold + bounded * SETTLEMENT_LIFE_POLICY.sale.perItemPower + (item.generated?.rarityTier ?? 0) * SETTLEMENT_LIFE_POLICY.sale.perRarityTier);
 }
-var supplyCount = (p) => (p.inventory.services?.supplyPurchases ?? 0) - (p.inventory.services?.suppliesUsed ?? 0);
 function serviceGoldAdjustment(p, gold) {
   const l = p.inventory.services;
   if (!l) return gold;
-  let income = l.retiredSaleGold, spent = addAmount(multiplyAmount(String(l.supplyPurchases), SETTLEMENT_LIFE_POLICY.supply.price), multiplyAmount(String(l.restCount), SETTLEMENT_LIFE_POLICY.rest.price));
+  let income = l.retiredSaleGold, spent = addAmount(addAmount(multiplyAmount(String(l.supplyPurchases), SETTLEMENT_LIFE_POLICY.supply.price), multiplyAmount(String(l.restCount), SETTLEMENT_LIFE_POLICY.rest.price)), potionUpgradeSpent(p));
   for (const r of Object.values(l.salesByItemId)) income = addAmount(income, r.gold);
   for (const r of Object.values(l.purchasesBySourceId)) {
     const n = ORDINARY_SERVICE_NPCS.find((n2) => n2.id === r.npcId), offer = SETTLEMENT_LIFE_POLICY.stockByRole[n?.role]?.find((q) => q.id === r.offerId);
@@ -9916,14 +9979,14 @@ function validateSettlementServices(s, p, validateCommand2) {
     return;
   }
   requireContract(l, "Missing service state");
-  closedRecord(l, ["version", "purchasesBySourceId", "salesByItemId", "retiredSaleGold", "supplyPurchases", "suppliesUsed", "restCount", "lastTransaction"], ["workshop", "combatHash"]);
+  closedRecord(l, ["version", "purchasesBySourceId", "salesByItemId", "retiredSaleGold", "supplyPurchases", "suppliesUsed", "restCount", "lastTransaction"], ["workshop", "combatHash", "potions"]);
   requireContract((l.combatHash ?? null) === (hasWorldCombat(s) ? WORLD_COMBAT_HASH : null), "Service combat policy drift");
   validateWorkshop(s, p, validateCommand2);
   requireContract(l.version === SETTLEMENT_LIFE_VERSION, "Unknown service version");
   amount(l.retiredSaleGold);
   safeInteger(l.supplyPurchases, 0, SETTLEMENT_LIFE_POLICY.maximumSupplyPurchases);
-  safeInteger(l.suppliesUsed, 0, l.supplyPurchases);
-  safeInteger(supplyCount(p), 0, SETTLEMENT_LIFE_POLICY.supply.maximum);
+  safeInteger(l.suppliesUsed, 0, l.supplyPurchases + (l.potions?.grants ?? 0));
+  validatePotionBelt(s, p, SETTLEMENT_LIFE_POLICY.supply.maximum);
   safeInteger(l.restCount, 0, SETTLEMENT_LIFE_POLICY.maximumRests);
   requireContract(Object.keys(l.purchasesBySourceId).length <= SETTLEMENT_LIFE_POLICY.maximumPurchaseRecords && Object.keys(l.salesByItemId).length <= SETTLEMENT_LIFE_POLICY.sale.retainedReceiptBound, "Service receipt bound");
   function receipt(r, kind) {
@@ -9978,6 +10041,7 @@ function validateServiceProgress(before, after, pid) {
   requireContract(Boolean(x) === Boolean(y), "Service state changed after genesis");
   if (!x) return;
   requireContract(y.supplyPurchases >= x.supplyPurchases && y.suppliesUsed >= x.suppliesUsed && y.restCount >= x.restCount, "Service counters regressed");
+  const upgrades = validatePotionProgress(x, y);
   for (const [id, r] of Object.entries(x.purchasesBySourceId)) requireContract(same(r, y.purchasesBySourceId[id]), "Purchase history rewritten");
   let retired = x.retiredSaleGold;
   for (const [id, r] of Object.entries(x.salesByItemId)) {
@@ -10005,7 +10069,7 @@ function validateServiceProgress(before, after, pid) {
     requireContract(known && r.authorityOrder > before.lastAppliedAuthorityOrder && r.revision > a.revision, "Sale lacks carried ancestry or later command");
     added++;
   }
-  const changes = added + y.supplyPurchases - x.supplyPurchases + y.suppliesUsed - x.suppliesUsed + y.restCount - x.restCount;
+  const changes = added + upgrades + y.supplyPurchases - x.supplyPurchases + y.suppliesUsed - x.suppliesUsed + y.restCount - x.restCount;
   requireContract(b.revision - a.revision >= changes, "Service changes lack inventory revisions");
   if (changes) requireContract(y.lastTransaction.authorityOrder > before.lastAppliedAuthorityOrder, "Service counters lack a later receipt");
   else requireContract(same(x.lastTransaction, y.lastTransaction), "Service receipt changed without transaction");
