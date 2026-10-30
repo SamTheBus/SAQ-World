@@ -1,3 +1,18 @@
+// src/storage/save_channel_v1.js
+var TEST_SAVE_PREFIX = "saq-test-site:";
+function saveChannelPrefix(location) {
+  return /\/SAQ-World-test\//i.test(location?.pathname ?? "") ? TEST_SAVE_PREFIX : "";
+}
+function channelIndexedDb(indexedDB, prefix2) {
+  if (!prefix2 || !indexedDB) return indexedDB;
+  return Object.freeze({
+    open: (name, ...version) => indexedDB.open(prefix2 + name, ...version),
+    deleteDatabase: (name) => indexedDB.deleteDatabase(prefix2 + name),
+    cmp: (a, b) => indexedDB.cmp(a, b),
+    ...typeof indexedDB.databases === "function" ? { databases: async () => (await indexedDB.databases()).filter((d) => d.name?.startsWith(prefix2)).map((d) => ({ ...d, name: d.name.slice(prefix2.length) })) } : {}
+  });
+}
+
 // src/shared/contracts/wire.js
 function requireContract(condition, message) {
   if (!condition) throw new TypeError(message);
@@ -7309,15 +7324,15 @@ function createPlannedChunkGenerator(asset, binding, sha256) {
 // src/storage/planned_world_assets_v1.js
 var plannedWorldAssetCacheKey = (binding) => binding.assetId + "/" + binding.assetHash + "/" + (binding.townPrototype ?? "terrain-only") + "/" + (binding.cavePrototype ?? "no-cave") + "/" + (binding.fortPrototype ?? "no-fort") + "/" + (binding.ruinPrototype ?? "no-ruin") + "/" + (binding.cryptPrototype ?? "no-crypt") + "/" + (binding.sitePopulationHash ?? "base-roster") + "/" + (binding.interiorGenerationHash ?? "legacy-interiors") + "/" + (binding.ferryHash ?? "no-ferry") + "/" + (binding.settlementLifeHash ?? "no-services") + "/" + (binding.settlementServicesHash ?? "no-specialists") + "/" + (binding.combatHash ?? "legacy-combat") + "/" + (binding.wildernessHash ?? "no-wilderness") + "/" + (binding.bossHostingHash ?? "legacy-boss-hosting") + (binding.startHash ? "/" + binding.startHash : "") + (binding.woodlandForestHash ? "/" + binding.woodlandForestHash : "") + (binding.hydrologyHash ? "/" + binding.hydrologyHash : "") + (binding.accessHash ? "/" + binding.accessHash : "") + (binding.roadsideHash ? "/" + binding.roadsideHash : "");
 function createPlannedWorldAssetStore({ readText, sha256 }) {
-  const cache3 = /* @__PURE__ */ new Map();
-  async function load(binding) {
+  const cache3 = /* @__PURE__ */ new Map(), prepared = /* @__PURE__ */ new Map();
+  async function prepare(binding) {
     validatePlannedBinding(binding);
     if (hasRoadsideEncounters(binding)) {
       const policy = await readText("assets/roadside-encounters-v1/policy.json");
       requirePlan(bytesToHex(await sha256(new TextEncoder().encode(policy))) === ROADSIDE_HASH, "Roadside policy commitment mismatch");
     }
     const key9 = plannedWorldAssetCacheKey(binding);
-    if (!cache3.has(key9)) cache3.set(key9, (async () => {
+    if (!prepared.has(key9)) prepared.set(key9, (async () => {
       const text = await readText(plannedAssetDirectory(binding) + "/" + binding.assetId + ".json");
       requirePlan(bytesToHex(await sha256(new TextEncoder().encode(text))) === binding.assetHash, "Planned asset commitment mismatch");
       let asset = JSON.parse(text);
@@ -7355,12 +7370,19 @@ function createPlannedWorldAssetStore({ readText, sha256 }) {
         validateRuntimePlan(asset);
       }
       freezePlan(asset);
+      return asset;
+    })());
+    return prepared.get(key9);
+  }
+  async function load(binding) {
+    const asset = await prepare(binding), key9 = plannedWorldAssetCacheKey(binding);
+    if (!cache3.has(key9)) cache3.set(key9, (async () => {
       const generator = createPlannedChunkGenerator(asset, binding, sha256);
       return { asset, generator, caveReservation: await generator.caveReservation(), caveReservations: await generator.caveReservations(), fortReservations: await generator.fortReservations(), ruinReservations: await generator.ruinReservations(), cryptReservations: await generator.cryptReservations() };
     })());
     return cache3.get(key9);
   }
-  return Object.freeze({ load, sha256, async generate(request) {
+  return Object.freeze({ load, prepare, sha256, async generate(request) {
     const { generator } = await load(request.plannedWorld);
     return generator.generate(request);
   } });
@@ -7369,6 +7391,50 @@ function createPlannedWorldAssetStore({ readText, sha256 }) {
 // src/shared/content/forge_review.js
 var FORGE_REVIEW_BUILD = false;
 var ACTIVITY_SAVE_NAMESPACE = FORGE_REVIEW_BUILD ? "saq-world-forge-review-v1" : "saq-world-activity-campaigns-v1";
+
+// src/shared/content/hero_classes_v1.js
+var HERO_CLASSES = freezeWire({
+  knight: { id: "knight", name: "Knight", offhand: "shield", signature: "shield_bash", move: { name: "Guard", description: "Hold to block everything from the front." }, color: "#73bedc", role: "The front line: guard, control space, then answer with a deliberate Bash." },
+  rogue: { id: "rogue", name: "Rogue", offhand: "dagger", signature: "flurry", move: { name: "Dash", description: "A quick dash out of trouble." }, color: "#b88cff", role: "Move through openings, focus targets and turn afflictions into crowd damage." },
+  mage: { id: "mage", name: "Mage", offhand: "tome", signature: "cast", move: { name: "Blink", description: "Step a short distance in a flash of arcane light." }, color: "#f0a35a", role: "Choose an elemental style, combine elements and spend Barrier tactically." }
+});
+var HERO_CLASS_IDS = Object.freeze(Object.keys(HERO_CLASSES));
+var CLASS_SKILLS = freezeWire({
+  shield_bash: { id: "shield_bash", name: "Shield Bash", classId: "knight", cooldownTicks: 360, description: "Shove a forward cone: Attack plus Shield damage, knockback and a short stun on ordinary enemies. Every block takes 1 second off its cooldown." },
+  flurry: { id: "flurry", name: "Flurry", classId: "rogue", cooldownTicks: 300, description: "Three quick offhand cuts in front of you. Each cut can crit and Bleed. Your offhand also stabs on every 2nd hit." },
+  cast: { id: "cast", name: "Cast", classId: "mage", cooldownTicks: 240, description: "A heavy bolt of your Tome\u2019s element at the nearest enemy in front of you. Your Tome also fires on every 3rd swing." }
+});
+var CLASS_SKILL_IDS = Object.freeze(Object.keys(CLASS_SKILLS));
+var SKILL_SLOT_COUNT = 8;
+var MOVE_SLOT = "move";
+var MAX_SKILL_COOLDOWN_TICKS = 1200;
+var heroClassOf = (d8) => HERO_CLASSES[d8?.heroClass] ?? null;
+var classSkillsFor = (d8) => {
+  const c = heroClassOf(d8);
+  return c ? [c.signature] : [];
+};
+var wheelEntriesFor = (d8) => heroClassOf(d8) ? [MOVE_SLOT, ...classSkillsFor(d8)] : [];
+
+// src/shared/content/hero_looks_v1.js
+var HAIR_STYLES = Object.freeze(["short", "buzz", "spiky", "swept", "shaggy", "undercut", "mullet", "curly", "bob", "long", "mane", "ponytail", "pigtails", "braid", "bun", "dreads", "mohawk", "bald"]);
+var FACIAL_HAIR = Object.freeze(["none", "stubble", "mustache", "handlebar", "goatee", "chinstrap", "chops", "short", "long", "bushy", "braided"]);
+var HAIR_COLORS = Object.freeze(["black", "soft-black", "dark-brown", "brown", "light-brown", "auburn", "copper", "strawberry", "dark-blonde", "blonde", "platinum", "gray", "silver", "white", "red", "pink", "blue", "teal", "green", "violet"]);
+var SKIN_TONES = Object.freeze(["porcelain", "fair", "light", "peach", "golden", "olive", "tan", "bronze", "brown", "chestnut", "deep", "ebony"]);
+var HERO_NAME_MAX = 16;
+var DEFAULT_LOOK = Object.freeze({ hair: "short", hairColor: "brown", skin: "light", facialHair: "none", helmet: true, name: "" });
+function validHeroName(name) {
+  return typeof name === "string" && name === name.trim() && [...name].length <= HERO_NAME_MAX && /^[\p{L}\p{M}\p{N} '’.-]*$/u.test(name) && !/\s\s/.test(name);
+}
+function validateHeroLook(look) {
+  closedRecord(look, ["hair", "hairColor", "skin", "facialHair", "helmet", "name"]);
+  requireContract(HAIR_STYLES.includes(look.hair), "Unknown hair style");
+  requireContract(HAIR_COLORS.includes(look.hairColor), "Unknown hair color");
+  requireContract(SKIN_TONES.includes(look.skin), "Unknown skin tone");
+  requireContract(FACIAL_HAIR.includes(look.facialHair), "Unknown facial hair");
+  requireContract(typeof look.helmet === "boolean", "Invalid helmet setting");
+  requireContract(validHeroName(look.name), "Names use up to 16 letters, numbers, spaces, hyphens or apostrophes");
+  return look;
+}
 
 // src/shared/content/constellations.js
 var CONSTELLATIONS = freezeWire({ "shield": { "id": "shield", "name": "Shield Mastery", "subtitle": "Bulwark & Counter Strike", "color": "#38bdf8", "nodes": [{ "id": "shield_starter", "name": "Vanguard Provision", "iconKey": "shield_starter", "x": 50, "y": 88, "tier": 1, "maxRank": 1, "costPerRank": 0, "isStarterToggle": true, "starterType": "shield", "prereqs": [], "desc": "Unlock this base combat constellation. Requires Hero Level 2. Base equipment claims remain separate and one-time.", "active": true }, { "id": "shield_hp", "name": "Ironclad Resilience", "iconKey": "shield_hp", "x": 25, "y": 72, "tier": 1, "maxRank": 3, "costPerRank": 1, "prereqs": ["shield_starter"], "desc": "Increases Maximum HP by +4% per rank.", "active": true }, { "id": "shield_def", "name": "Heavy Plating", "iconKey": "shield_def", "x": 75, "y": 72, "tier": 1, "maxRank": 3, "costPerRank": 1, "prereqs": ["shield_starter"], "desc": "Increases Defense by +3% per rank.", "active": true }, { "id": "shield_iron_wall", "name": "Iron Wall", "iconKey": "shield_block", "x": 15, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["shield_hp"], "desc": "Increases base Block Rate by +1% and maximum Block Cap by +2% per rank.", "active": true }, { "id": "shield_fortified_guard", "name": "Fortified Guard", "iconKey": "shield_def", "x": 35, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["shield_hp"], "desc": "Taking damage builds Fortitude (+4%/+8%/+12% Defense per stack, max 5 stacks, 6s duration).", "active": true }, { "id": "shield_impact_tremor", "name": "Resonant Aegis", "iconKey": "shield_starter", "x": 65, "y": 48, "tier": 2, "maxRank": 2, "costPerRank": 1, "prereqs": ["shield_def"], "desc": "Blocking has a 20%/40% chance to trigger Resonant Aegis, releasing a vibrational ring dealing 120% Defense as AoE physical damage and pushing enemies back.", "active": true }, { "id": "shield_fortitude", "name": "Fortified Stance", "iconKey": "shield_fortitude", "x": 85, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["shield_def"], "desc": "Reduces incoming damage taken when Blocking by +10% per rank.", "active": true }, { "id": "shield_retaliatory_strike", "name": "Retaliatory Strike", "iconKey": "shield_fortitude", "x": 15, "y": 28, "tier": 3, "maxRank": 1, "costPerRank": 2, "prereqs": ["shield_fortified_guard"], "desc": "Successful blocks guarantee a Critical Strike on your next main-hand attack.", "active": true }, { "id": "shield_aegis_pulse", "name": "Aegis Pulse", "iconKey": "shield_hp", "x": 35, "y": 28, "tier": 3, "maxRank": 2, "costPerRank": 2, "prereqs": ["shield_fortified_guard"], "desc": "Every 5th successful block emits a wave restoring 3%/6% Max HP.", "active": true }, { "id": "shield_earth_breaker_bash", "name": "Earth-Breaker Bash", "iconKey": "shield_bash", "x": 65, "y": 28, "tier": 3, "maxRank": 2, "costPerRank": 2, "prereqs": ["shield_impact_tremor"], "desc": "Shield Bashes trigger ground tremors, expanding your bash into a 45-degree frontal cone and granting a 15%/30% chance to stun enemies for 1.5s.", "active": true }, { "id": "shield_retaliation", "name": "Spike Retaliation", "iconKey": "shield_bash", "x": 85, "y": 28, "tier": 3, "maxRank": 3, "costPerRank": 2, "prereqs": ["shield_fortitude"], "desc": "Shield Bashes deal +15% base damage and additional +12% Defense-scaling counter damage per rank.", "active": true }, { "id": "shield_stalwart_bastion", "name": "Stalwart Bastion", "iconKey": "shield_block", "x": 50, "y": 28, "tier": 3, "maxRank": 3, "costPerRank": 2, "prereqs": ["shield_fortified_guard", "shield_impact_tremor"], "desc": "Increases base Block Mitigation by +5% per rank (base block mitigation increases from 70% up to 85%).", "active": true }, { "id": "shield_keystone_colossus", "name": "Bulwark Colossus", "iconKey": "shield_keystone", "x": 30, "y": 12, "tier": 4, "maxRank": 1, "costPerRank": 5, "isKeystone": true, "prereqs": ["shield_retaliatory_strike"], "desc": "Blocking mitigates 100% of damage (instead of 70%). Converts 10% of blocked damage into bonus Attack Power for 10s.", "active": true }, { "id": "shield_keystone_reflect", "name": "Reflective Singularity", "iconKey": "shield_keystone", "x": 70, "y": 12, "tier": 4, "maxRank": 1, "costPerRank": 5, "isKeystone": true, "prereqs": ["shield_earth_breaker_bash"], "desc": "Adds 40% of total Defense directly to main weapon Attack Power, and Shield Bash reflects 180% Defense on block.", "active": true }, { "id": "shield_filler_hp_flat", "name": "Bastion's Grace", "iconKey": "shield_hp", "x": 50, "y": 58, "maxRank": 3, "costPerRank": 1, "tier": 2, "prereqs": ["shield_starter"], "desc": "Augments the shield arm with physical conditioning, increasing Maximum HP by +4% and Defense by +3% per rank.", "active": true }, { "id": "shield_filler_flat_def", "name": "Unyielding Fortitude", "iconKey": "shield_def", "x": 50, "y": 38, "maxRank": 3, "costPerRank": 2, "tier": 3, "prereqs": ["shield_filler_hp_flat"], "desc": "Forges thick defensive resilience, granting +5 flat Defense and +25 flat Max HP per rank.", "active": true }, { "id": "shield_inf_defense", "name": "Endless Bastion", "iconKey": "shield_def", "x": 30, "y": 3, "maxRank": "infinite", "isInfinite": true, "tier": 5, "prereqs": ["shield_keystone_colossus"], "desc": "Ascend with the Endless Bastion to infinitely compound your total Defense.", "active": true }, { "id": "shield_inf_bash", "name": "Spike Resonance", "iconKey": "shield_bash", "x": 70, "y": 3, "maxRank": "infinite", "isInfinite": true, "tier": 5, "prereqs": ["shield_keystone_reflect"], "desc": "Ascend with the Spike Resonance to infinitely compound your Shield Bash & Counter-Attack damage.", "active": true }] }, "dagger": { "id": "dagger", "name": "Dagger Mastery", "subtitle": "Lethality & Riposte", "color": "#a855f7", "nodes": [{ "id": "dagger_starter", "name": "Shadow Blade Provision", "iconKey": "dagger_starter", "x": 50, "y": 88, "tier": 1, "maxRank": 1, "costPerRank": 0, "isStarterToggle": true, "starterType": "dagger", "prereqs": [], "desc": "Unlock this base combat constellation. Requires Hero Level 2. Base equipment claims remain separate and one-time.", "active": true }, { "id": "dagger_crit_chance", "name": "Lethal Precision", "iconKey": "dagger_crit", "x": 25, "y": 72, "tier": 1, "maxRank": 3, "costPerRank": 1, "prereqs": ["dagger_starter"], "desc": "Increases Critical Strike Chance by +1.5% per rank.", "active": true }, { "id": "dagger_crit_dmg", "name": "Critical Ferocity", "iconKey": "dagger_crit_dmg", "x": 75, "y": 72, "tier": 1, "maxRank": 3, "costPerRank": 1, "prereqs": ["dagger_starter"], "desc": "Increases Critical Strike Damage multiplier by +6% per rank.", "active": true }, { "id": "dagger_offhand_precision", "name": "Offhand Precision", "iconKey": "dagger_starter", "x": 15, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["dagger_crit_chance"], "desc": "Offhand strikes deal +8% damage, and increase offhand flurry double-strike damage by +10% per rank.", "active": true }, { "id": "dagger_vipers_coating", "name": "Viper's Coating", "iconKey": "dagger_bleed", "x": 35, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["dagger_crit_chance"], "desc": "Offhand Strikes apply stacking Poison (10%/20%/30% Atk/sec) and have a +5% chance per rank to cause Sanguine Bleeding.", "active": true }, { "id": "dagger_parry", "name": "Nimble Reflexes", "iconKey": "dagger_parry", "x": 65, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["dagger_crit_dmg"], "desc": "Increases base Parry Rate by +1% and maximum Parry Cap by +2% per rank.", "active": true }, { "id": "dagger_expose_weakness", "name": "Expose Weakness", "iconKey": "dagger_crit", "x": 85, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["dagger_crit_dmg"], "desc": "Offhand strikes shred 4%/8%/12% of enemy Defense for 5s.", "active": true }, { "id": "dagger_shadow_flurry", "name": "Shadow Flurry", "iconKey": "dagger_riposte", "x": 15, "y": 28, "tier": 3, "maxRank": 1, "costPerRank": 2, "prereqs": ["dagger_offhand_precision"], "desc": "Main weapon Critical Strikes trigger a guaranteed Offhand Strike with +50% Critical Damage.", "active": true }, { "id": "dagger_shadow_step", "name": "Shadow Step", "iconKey": "dagger_parry", "x": 35, "y": 28, "tier": 3, "maxRank": 2, "costPerRank": 2, "prereqs": ["dagger_parry"], "desc": "Parrying increases Movement Speed by +15%/+30% and Attack Speed by +10%/+20% for 4s. Boosts Riposte damage by +20% per rank.", "active": true }, { "id": "dagger_noxious_bloom", "name": "Noxious Bloom", "iconKey": "dagger_bleed", "x": 50, "y": 28, "tier": 3, "maxRank": 2, "costPerRank": 2, "prereqs": ["dagger_vipers_coating", "dagger_parry"], "desc": "Slaying an enemy suffering from Bleed or Poison triggers a Noxious Bloom, releasing a toxic gas cloud that reduces adjacent enemy Defenses by 15% and ticks damage.", "active": true }, { "id": "dagger_sanguine_rupture", "name": "Sanguine Rupture", "iconKey": "dagger_bleed", "x": 65, "y": 28, "tier": 3, "maxRank": 2, "costPerRank": 2, "prereqs": ["dagger_expose_weakness"], "desc": "Parrying a poisoned or bleeding target detonates DoTs for 150%/300% remaining damage instantly.", "active": true }, { "id": "dagger_wind_razor_flurry", "name": "Wind-Razor Flurry", "iconKey": "dagger_riposte", "x": 85, "y": 28, "tier": 3, "maxRank": 2, "costPerRank": 2, "prereqs": ["dagger_parry"], "desc": "Landing 3 critical strikes in a row or executing a perfect parry unleashes a forward-flying Crescent Wind Razor that pierces through all enemies.", "active": true }, { "id": "dagger_keystone_assassin", "name": "Shadow Assassin", "iconKey": "dagger_keystone", "x": 30, "y": 12, "tier": 4, "maxRank": 1, "costPerRank": 5, "isKeystone": true, "prereqs": ["dagger_shadow_flurry"], "desc": "Reaching 5 Poison stacks triggers a 3-strike Shadow Flurry (100% Attack Power per strike, bypassing 50% Defense).", "active": true }, { "id": "dagger_keystone_duellist", "name": "Master Duellist", "iconKey": "dagger_keystone", "x": 70, "y": 12, "tier": 4, "maxRank": 1, "costPerRank": 5, "isKeystone": true, "prereqs": ["dagger_shadow_step"], "desc": "Raises Parry Cap to 40%. Parries negate 100% damage AND spawn a Shadow Decoy that attacks alongside you for 4 seconds.", "active": true }, { "id": "dagger_filler_haste", "name": "Fleetfoot", "iconKey": "dagger_parry", "x": 50, "y": 58, "maxRank": 3, "costPerRank": 1, "tier": 2, "prereqs": ["dagger_starter"], "desc": "Develops swift offensive movements, increasing Movement Speed by +4 and Parry Rate by +1% per rank.", "active": true }, { "id": "dagger_filler_armor_pen", "name": "Serrated Blades", "iconKey": "dagger_crit", "x": 50, "y": 38, "maxRank": 3, "costPerRank": 2, "tier": 3, "prereqs": ["dagger_filler_haste"], "desc": "Sharpens blade edges to locate anatomical weaknesses, increasing Attack Power by +4% and Critical Strike Damage multiplier by +3% per rank.", "active": true }, { "id": "dagger_inf_crit", "name": "Lethal Infinitum", "iconKey": "dagger_crit_dmg", "x": 30, "y": 3, "maxRank": "infinite", "isInfinite": true, "tier": 5, "prereqs": ["dagger_keystone_assassin"], "desc": "Ascend with the Lethal Infinitum to infinitely compound your Critical Strike Damage multiplier.", "active": true }, { "id": "dagger_inf_poison", "name": "Toxic Osmosis", "iconKey": "dagger_bleed", "x": 70, "y": 3, "maxRank": "infinite", "isInfinite": true, "tier": 5, "prereqs": ["dagger_keystone_duellist"], "desc": "Ascend with the Toxic Osmosis to infinitely compound your Poison and Bleed DoT tick damage.", "active": true }] }, "tome": { "id": "tome", "name": "Tome Mastery", "subtitle": "Arcane & Spellcraft", "color": "#3498db", "nodes": [{ "id": "tome_starter", "name": "Codex Apprentice Provision", "iconKey": "tome_starter", "x": 50, "y": 88, "tier": 1, "maxRank": 1, "costPerRank": 0, "isStarterToggle": true, "starterType": "tome", "prereqs": [], "desc": "Unlock this base combat constellation. Requires Hero Level 2. Base equipment claims remain separate and one-time.", "active": true }, { "id": "tome_atk", "name": "Arcane Focus", "iconKey": "tome_atk", "x": 25, "y": 70, "tier": 1, "maxRank": 3, "costPerRank": 1, "prereqs": ["tome_starter"], "desc": "Increases All Attack and Spell Power by +3.5% per rank.", "active": true }, { "id": "tome_exp", "name": "Mind Expansion", "iconKey": "tome_exp", "x": 75, "y": 70, "tier": 1, "maxRank": 3, "costPerRank": 1, "prereqs": ["tome_starter"], "desc": "Increases experience gained from defeated monsters by +3% per rank.", "active": true }, { "id": "tome_empowered_catalysts", "name": "Empowered Catalysts", "iconKey": "tome_starter", "x": 15, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["tome_atk"], "desc": "Increases Tome Spell Proc Chance to 40%/45%/50% and Spell Power to 175%/200%/225% Attack.", "active": true }, { "id": "tome_runic_barrier", "name": "Runic Shielding", "iconKey": "tome_barrier", "x": 38, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["tome_atk"], "desc": "Grants +10%/+20%/+30% Max HP as Arcane Shield Capacity.", "active": true }, { "id": "tome_elemental_overload", "name": "Elemental Overload", "iconKey": "tome_proc", "x": 62, "y": 48, "tier": 2, "maxRank": 2, "costPerRank": 1, "prereqs": ["tome_exp"], "desc": "Fireball deals 35%/70% splash; Chain Zap bounces +1/+2 times; Frost Nova applies a non-stacking 20%/40% slow (80%/60% movement). Repeated Frost procs reapply the same rank magnitude but do not deepen it. Increases Area Radius by +20% per rank.", "active": true }, { "id": "tome_arcane_syphon", "name": "Arcane Syphon", "iconKey": "tome_power", "x": 85, "y": 48, "tier": 2, "maxRank": 3, "costPerRank": 1, "prereqs": ["tome_exp"], "desc": "Spell procs recharge 1.5%/3.0%/4.5% Arcane Shield (50% overflows to HP if Shield is full) & grant +4%/+8%/+12% INT for 6s.", "active": true }, { "id": "tome_barrier_shatter", "name": "Shield Shatter", "iconKey": "tome_keystone", "x": 20, "y": 28, "tier": 3, "maxRank": 1, "costPerRank": 2, "prereqs": ["tome_runic_barrier"], "desc": "When Arcane Shield is fully depleted by an attack, it detonates an Arcane Nova dealing 250% INT as AoE Magic Damage.", "active": true }, { "id": "tome_spell_weaving", "name": "Spell Weaving", "iconKey": "tome_proc", "x": 50, "y": 28, "tier": 3, "maxRank": 2, "costPerRank": 2, "prereqs": ["tome_elemental_overload"], "desc": "Shifting between different elemental spell casts boosts Spell Power by +15%/+30% per shift.", "active": true }, { "id": "tome_resilience", "name": "Mana Shielding", "iconKey": "tome_power", "x": 80, "y": 28, "tier": 3, "maxRank": 3, "costPerRank": 2, "prereqs": ["tome_arcane_syphon"], "desc": "Casting any spell instantly recharges 1%/2%/3% Arcane Shield.", "active": true }, { "id": "tome_keystone_triad", "name": "Triad Convergence", "iconKey": "tome_keystone", "x": 35, "y": 12, "tier": 4, "maxRank": 1, "costPerRank": 5, "isKeystone": true, "prereqs": ["tome_spell_weaving"], "desc": "Each successful Tome spell proc is one cast that produces exactly three packets: Fire + Lightning + Frost.", "active": true }, { "id": "tome_keystone_singularity", "name": "Aetheric Singularity", "iconKey": "tome_keystone", "x": 65, "y": 12, "tier": 4, "maxRank": 1, "costPerRank": 5, "isKeystone": true, "prereqs": ["tome_barrier_shatter"], "desc": "Grants +50% Max HP as Arcane Shield Capacity. 80% of total INT is added directly to Attack Power.", "active": true }, { "id": "tome_filler_barrier_regen", "name": "Aether Flow", "iconKey": "tome_barrier", "x": 50, "y": 58, "maxRank": 3, "costPerRank": 1, "tier": 2, "prereqs": ["tome_starter"], "desc": "Refines mana channels to stabilize spell output, increasing Spell Power by +4%, Arcane Barrier by +1%, and Area Radius by +5% per rank.", "active": true }, { "id": "tome_filler_spell_crit", "name": "Runic Spark", "iconKey": "tome_proc", "x": 50, "y": 38, "maxRank": 3, "costPerRank": 2, "tier": 3, "prereqs": ["tome_filler_barrier_regen"], "desc": "Engraves unstable elemental runes, increasing Critical Strike Chance by +1.5% and Attack Power by +2% per rank.", "active": true }, { "id": "tome_inf_spell", "name": "Arcane Singularity", "iconKey": "tome_atk", "x": 35, "y": 3, "maxRank": "infinite", "isInfinite": true, "tier": 5, "prereqs": ["tome_keystone_triad"], "desc": "Ascend with the Arcane Singularity to infinitely compound your overall Spell Power.", "active": true }, { "id": "tome_inf_intel", "name": "Aetheric Infusion", "iconKey": "tome_power", "x": 65, "y": 3, "maxRank": "infinite", "isInfinite": true, "tier": 5, "prereqs": ["tome_keystone_singularity"], "desc": "Ascend with the Aetheric Infusion to infinitely compound your Intelligence & Magic damage.", "active": true }] }, "utility": { "id": "utility", "name": "Utility & Survival", "subtitle": "Explorer & Adventurer", "color": "#2ecc71", "nodes": [{ "id": "utility_pioneer", "name": "Pioneer's Instinct", "iconKey": "utility_pioneer", "x": 50, "y": 88, "currency": "global", "maxRank": 1, "costPerRank": 2, "prereqs": [], "desc": "Grants +5% Gold Multiplier and +5% to eligible random monster equipment, material, sigil, and card chance multiplier. Each chance caps at 100%; guaranteed and direct rewards are unchanged.", "active": true }, { "id": "utility_start_weapon", "name": "Blade Provisioner", "iconKey": "utility_start_weapon", "x": 18, "y": 68, "currency": "global", "maxRank": 3, "prereqs": ["utility_pioneer"], "desc": "Start dungeon runs with a Main Hand Weapon if empty (Rank 1: 0\u2605 Common, Rank 2: 1\u2605 Rare, Rank 3: 2\u2605 Magic).", "active": false }, { "id": "utility_start_armor", "name": "Armorsmith Provisioner", "iconKey": "utility_start_armor", "x": 36, "y": 68, "currency": "global", "maxRank": 3, "prereqs": ["utility_pioneer"], "desc": "Start dungeon runs with Chest/Overall Armor if empty (Rank 1: 0\u2605 Common, Rank 2: 1\u2605 Rare, Rank 3: 2\u2605 Magic).", "active": false }, { "id": "utility_start_head_feet", "name": "Vanguard Helm & Greaves", "iconKey": "utility_start_head_feet", "x": 64, "y": 68, "currency": "global", "maxRank": 3, "prereqs": ["utility_pioneer"], "desc": "Start dungeon runs with Helmet and Boots if empty (Rank 1: 0\u2605 Common, Rank 2: 1\u2605 Rare, Rank 3: 2\u2605 Magic).", "active": false }, { "id": "utility_start_ring", "name": "Signet Provisioner", "iconKey": "utility_start_ring", "x": 82, "y": 68, "currency": "global", "maxRank": 3, "prereqs": ["utility_pioneer"], "desc": "Start dungeon runs with Ring(s) if empty (Rank 1: 0\u2605 Common, Rank 2: 1\u2605 Rare, Rank 3: 2\u2605 Magic).", "active": false }, { "id": "utility_gold", "name": "Scavenger's Avarice", "iconKey": "utility_gold", "x": 22, "y": 46, "currency": "global", "maxRank": 5, "costPerRank": 2, "prereqs": ["utility_pioneer"], "desc": "Increases Gold Multiplier by +5% per rank.", "active": true }, { "id": "utility_quality", "name": "Scavenger's Eye", "iconKey": "utility_quality", "x": 40, "y": 46, "currency": "global", "maxRank": 5, "costPerRank": 2, "prereqs": ["utility_pioneer"], "desc": "Adds +2% Drop Quality per rank, improving higher equipment-rarity odds among tiers already unlocked. Does not unlock rarity tiers.", "active": true }, { "id": "utility_vitality", "name": "Pioneer's Vigor", "iconKey": "utility_vitality", "x": 60, "y": 46, "currency": "global", "maxRank": 5, "costPerRank": 2, "prereqs": ["utility_pioneer"], "desc": "Increases Max Health by +3% and Movement Speed by +2 per rank.", "active": true }, { "id": "utility_elixir", "name": "Field Medic", "iconKey": "utility_elixir", "x": 78, "y": 46, "currency": "global", "maxRank": 3, "costPerRank": 4, "prereqs": ["utility_start_head_feet", "utility_start_ring"], "desc": "Start every run with active Basic Elixir effects (+10% Atk/HP/Def/Speed) for the entire run duration.", "active": false }, { "id": "utility_bag", "name": "Satchel Expansion", "iconKey": "utility_bag", "x": 32, "y": 28, "currency": "global", "maxRank": 3, "costPerRank": 4, "prereqs": ["utility_quality"], "desc": "Increases carried expedition-item capacity by +5 slots per rank.", "active": true }, { "id": "utility_soul_beacon", "name": "Soul Beacon", "iconKey": "utility_vitality", "x": 50, "y": 28, "currency": "global", "maxRank": 1, "costPerRank": 5, "prereqs": ["utility_quality", "utility_vitality"], "desc": "Guarantees that your dropped Recovery Chest always spawns safely inside the exit Portal Room, farthest from the portal.", "active": false }, { "id": "utility_insurance", "name": "Insurance Underwriter", "iconKey": "utility_insurance", "x": 68, "y": 28, "currency": "global", "maxRank": 3, "costPerRank": 4, "prereqs": ["utility_vitality", "utility_elixir"], "desc": "Reduces Gold insurance premium costs by -10% per rank.", "active": false }, { "id": "utility_emergency_salvage", "name": "Emergency Evac", "iconKey": "utility_insurance", "x": 18, "y": 28, "currency": "global", "maxRank": 5, "costPerRank": 1, "prereqs": ["utility_gold", "utility_quality"], "desc": "Retains a portion of carried Run Gold, Scraps, and Monster Souls upon defeat in dungeons.", "active": false }, { "id": "utility_fairy_sanctuary", "name": "Fairy Sanctuary", "iconKey": "utility_pioneer", "x": 82, "y": 28, "currency": "global", "maxRank": 5, "costPerRank": 1, "prereqs": ["utility_vitality", "utility_elixir"], "desc": "Grants a chance for a Glimmering Fairy to spawn on each dungeon floor.", "active": false }, { "id": "utility_treasure_hunter", "name": "Relic Hunter", "iconKey": "utility_quality", "x": 32, "y": 12, "currency": "global", "maxRank": 3, "prereqs": ["utility_bag"], "desc": "Increases the chance for chests found in runs to spawn as prestigious Gilded Reliquaries or Astral Vaults.", "active": false }, { "id": "utility_keystone", "name": "Fortune's Favor", "iconKey": "utility_keystone", "x": 50, "y": 12, "currency": "global", "maxRank": 1, "costPerRank": 10, "isKeystone": true, "prereqs": ["utility_treasure_hunter", "utility_insurance"], "desc": "Slaying a Rare or Boss monster grants +50% Gold Multiplier for 15 seconds.", "active": false }, { "id": "utility_inf_gold", "name": "Gilded Emperor", "iconKey": "utility_gold", "x": 35, "y": 3, "currency": "global", "maxRank": "infinite", "isInfinite": true, "tier": 5, "prereqs": ["utility_keystone"], "desc": "Ascend with the Gilded Emperor to infinitely scale your Gold Multiplier with a soft-cap curve.", "active": false }, { "id": "utility_inf_drop", "name": "Astral Prospector", "iconKey": "utility_quality", "x": 65, "y": 3, "currency": "global", "maxRank": "infinite", "isInfinite": true, "tier": 5, "prereqs": ["utility_keystone"], "desc": "Infinitely scales overall Drop Quality with a soft-cap curve. Quality improves higher equipment-rarity odds only among tiers already unlocked; named minimums and guarantees remain separate.", "active": false }] } });
@@ -7434,7 +7500,10 @@ function pointBalances(state) {
 }
 function validateD8Progression(state, heroLevel) {
   validateWire(state);
-  closedRecord(state, ["version", "highestHeroLevel", "revision", "attributeResetCount", "lastChange", "causalXp", "transient", "allocated", "utility", ...MASTERY_FAMILIES]);
+  closedRecord(state, ["version", "highestHeroLevel", "revision", "attributeResetCount", "lastChange", "causalXp", "transient", "allocated", "utility", ...MASTERY_FAMILIES], ["heroClass", "skillSlots", "look"]);
+  if (state.heroClass !== void 0) requireContract(HERO_CLASS_IDS.includes(state.heroClass), "Unknown hero class");
+  if (state.look !== void 0) validateHeroLook(state.look);
+  if (state.skillSlots !== void 0) validateSkillSlots(state, state.skillSlots);
   requireContract(state.version === D8_PROGRESSION_VERSION || state.version === D9_PARTICIPANT_VERSION, "Progression version");
   if (!isD9Progression(state)) safeInteger(state.highestHeroLevel, heroLevel, 50);
   safeInteger(state.revision);
@@ -7490,6 +7559,12 @@ function validateD8Progression(state, heroLevel) {
   }
   pointBalances(state);
   return state;
+}
+function validateSkillSlots(state, slots2) {
+  requireContract(state.heroClass && Array.isArray(slots2) && slots2.length === SKILL_SLOT_COUNT, "Skill wheel needs a class and eight slots");
+  const known = wheelEntriesFor(state), placed = slots2.filter((s) => s !== null);
+  requireContract(placed.every((s) => typeof s === "string" && known.includes(s)) && new Set(placed).size === placed.length, "Skill wheel holds known skills once");
+  requireContract(placed.includes(MOVE_SLOT), "Skill wheel keeps the class move");
 }
 var D8_OWNERSHIP_BOUND = 79;
 function emptyMasteryTransient() {
@@ -7553,6 +7628,7 @@ function installSubweaponInventory(p) {
   i.equipped.subweapon = null;
   i.economy.slotLevels.subweapon = 0;
 }
+var provisionLevelAllowed = (p, type) => p.progression.level >= 2 || heroClassOf(p.d8)?.offhand === type;
 function validateProvisions(p, s, validateCommand2) {
   const i = p.inventory, b = i.subweapons;
   closedRecord(b, ["version", "claims"]);
@@ -7563,7 +7639,7 @@ function validateProvisions(p, s, validateCommand2) {
     requireContract(/^ent:[0-9a-f]{32}$/.test(r.sourceEntityId) && BigInt("0x" + r.sourceEntityId.slice(4)) <= BigInt(s.identitySequence), "Invalid provision identity fence");
     validateCommand2(r.command);
     const c = r.command;
-    requireContract(c.kind === "subweapon.claim" && c.payload.subType === type && c.playerId === p.playerId && c.sessionId === s.session.sessionId && c.campaignId === s.campaign.campaignId && p.progression.level >= 2, "Invalid provision receipt");
+    requireContract(c.kind === "subweapon.claim" && c.payload.subType === type && c.playerId === p.playerId && c.sessionId === s.session.sessionId && c.campaignId === s.campaign.campaignId && provisionLevelAllowed(p, type), "Invalid provision receipt");
     safeInteger(r.authorityOrder, 1, s.lastAppliedAuthorityOrder);
     safeInteger(r.tick, 0, s.tick);
     safeInteger(r.revision, 1, i.revision);
@@ -9648,6 +9724,32 @@ function effectiveEquipmentBonuses(definition, slot, level = 0, combat = false) 
   return bonus;
 }
 
+// src/shared/content/class_kits_v1.js
+var CLASS_KIT_VERSION = "class-kit-v1";
+var CLASS_KIT_PIECES = Object.freeze(["weapon", "helmet", "overall", "gloves", "boots"]);
+var CLASS_KITS = Object.freeze({
+  knight: Object.freeze({ weapon: "kit-knight-longsword", helmet: "kit-knight-coif", overall: "kit-knight-hauberk", gloves: "kit-knight-gauntlets", boots: "kit-knight-treads" }),
+  rogue: Object.freeze({ weapon: "kit-rogue-saber", helmet: "kit-rogue-bandana", overall: "kit-rogue-doublet", gloves: "kit-rogue-gloves", boots: "kit-rogue-boots" }),
+  mage: Object.freeze({ weapon: "kit-mage-staff", helmet: "kit-mage-cowl", overall: "kit-mage-robe", gloves: "kit-mage-wraps", boots: "kit-mage-slippers" })
+});
+var CLASS_KIT_EQUIPMENT = Object.freeze([
+  ["kit-knight-longsword", "Squire\u2019s Longsword", "weapon", 1, 0, 0, "iron"],
+  ["kit-knight-coif", "Squire\u2019s Coif", "helmet", 0, 5, 0, null],
+  ["kit-knight-hauberk", "Squire\u2019s Hauberk", "overall", 0, 10, 1, null],
+  ["kit-knight-gauntlets", "Squire\u2019s Gauntlets", "gloves", 0, 3, 0, null],
+  ["kit-knight-treads", "Squire\u2019s Treads", "boots", 0, 0, 1, null],
+  ["kit-rogue-saber", "Footpad\u2019s Saber", "weapon", 1, 0, 0, "iron"],
+  ["kit-rogue-bandana", "Footpad\u2019s Bandana", "helmet", 0, 5, 0, null],
+  ["kit-rogue-doublet", "Footpad\u2019s Doublet", "overall", 0, 10, 1, null],
+  ["kit-rogue-gloves", "Footpad\u2019s Gloves", "gloves", 0, 3, 0, null],
+  ["kit-rogue-boots", "Footpad\u2019s Boots", "boots", 0, 0, 1, null],
+  ["kit-mage-staff", "Apprentice\u2019s Staff", "weapon", 1, 0, 0, "iron"],
+  ["kit-mage-cowl", "Apprentice\u2019s Cowl", "helmet", 0, 5, 0, null],
+  ["kit-mage-robe", "Apprentice\u2019s Robe", "overall", 0, 10, 1, null],
+  ["kit-mage-wraps", "Apprentice\u2019s Wraps", "gloves", 0, 3, 0, null],
+  ["kit-mage-slippers", "Apprentice\u2019s Slippers", "boots", 0, 0, 1, null]
+]);
+
 // src/shared/content/equipment.js
 var itemDefinition = (item) => item?.workshop ? workshopResult(item).definition : item?.generated?.definition ?? EQUIPMENT[item?.definitionId];
 var equipmentRequiredLevel = (player, item) => combatPlayer(player) && item?.generated?.progression?.combatHash ? item.generated.itemPower : null;
@@ -9670,12 +9772,13 @@ var EQUIPMENT = freezeWire({ ...SUBWEAPON_CATALOG(), ...Object.fromEntries([
   ["greaves", "Greaves", "leggings", 0, 12, 1, null],
   ["sabatons", "Sabatons", "boots", 0, 0, 1, null],
   ["full-plate", "Full Plate Armor", "overall", 0, 45, 4, null],
-  ["sun-charm", "Sun Signet Ring", "ring", 3, 0, 3, null]
+  ["sun-charm", "Sun Signet Ring", "ring", 3, 0, 3, null],
+  ...CLASS_KIT_EQUIPMENT
 ].map(([definitionId, name, slot, attack, maxHp, defense, weaponVisual]) => [definitionId, { definitionId, name, slot, bonuses: { attack, maxHp, defense }, weaponVisual }])) });
 function SUBWEAPON_CATALOG() {
   return Object.fromEntries(Object.values(SUBWEAPONS).map((d) => [d.definitionId, d]));
 }
-var equipmentSlots = (inv) => inv?.subweapons ? [...EQUIPMENT_SLOTS, "subweapon"] : EQUIPMENT_SLOTS;
+var equipmentSlots = (inv) => inv?.subweapons || inv?.classKit ? [...EQUIPMENT_SLOTS, ...inv.subweapons ? ["subweapon"] : [], ...inv.classKit ? ["gloves"] : []] : EQUIPMENT_SLOTS;
 var REWARD_POOLS = freezeWire([
   ["iron-sword", "padded-armor", "copper-charm", "coif", "greaves", "sabatons", "full-plate"],
   ["guard-sword", "chain-armor", "silver-charm", "coif", "greaves", "sabatons", "full-plate"],
@@ -9865,6 +9968,40 @@ function validateWorldEventsProgress(a, b) {
   }
 }
 
+// src/shared/contracts/class_kit_inventory.js
+var isClassKitSource = (p, sourceEntityId) => Boolean(sourceEntityId) && Boolean(p.inventory?.classKit?.sourceEntityIds.includes(sourceEntityId));
+var classKitPiece = (p, sourceEntityId) => {
+  const ids = p.inventory?.classKit?.sourceEntityIds, i = ids ? ids.indexOf(sourceEntityId) : -1;
+  return i < 0 ? null : CLASS_KIT_PIECES[i];
+};
+function validateClassKit(p, s, validateCommand2) {
+  const i = p.inventory, k = i.classKit;
+  closedRecord(k, ["version", "heroClass", "sourceEntityIds", "command", "authorityOrder", "tick", "revision"]);
+  requireContract(s.format === D6_ACTIVITY_FORMAT && k.version === CLASS_KIT_VERSION && i.subweapons, "Invalid class kit version");
+  requireContract(heroClassOf(p.d8)?.id === k.heroClass && Boolean(CLASS_KITS[k.heroClass]), "Class kit for another class");
+  requireContract(Array.isArray(k.sourceEntityIds) && k.sourceEntityIds.length === CLASS_KIT_PIECES.length && new Set(k.sourceEntityIds).size === CLASS_KIT_PIECES.length, "Invalid class kit pieces");
+  for (const [n, id] of k.sourceEntityIds.entries()) {
+    requireContract(/^ent:[0-9a-f]{32}$/.test(id) && BigInt("0x" + id.slice(4)) <= BigInt(s.identitySequence), "Invalid class kit identity fence");
+    const item = i.itemsById[`item:${p.playerId}:${id}`] ?? i.renewal.groundBySourceId[id]?.item;
+    requireContract(item?.definitionId === CLASS_KITS[k.heroClass][CLASS_KIT_PIECES[n]], "Class kit piece lost or replaced");
+  }
+  validateCommand2(k.command);
+  const c = k.command;
+  requireContract(c.kind === "classkit.claim" && c.playerId === p.playerId && c.sessionId === s.session.sessionId && c.campaignId === s.campaign.campaignId, "Invalid class kit receipt");
+  safeInteger(k.authorityOrder, 1, s.lastAppliedAuthorityOrder);
+  safeInteger(k.tick, 0, s.tick);
+  safeInteger(k.revision, 1, i.revision);
+  requireContract(c.payload.inventoryRevision + 1 === k.revision, "Class kit revision mismatch");
+  safeInteger(c.clientSequence, 1, s.appliedClientSequences[p.playerId]);
+  safeInteger(c.residencyRevision, 1, s.entitiesById[p.entityId].residency.residencyRevision);
+  requireContract(s.spacesByInstanceId[c.spaceInstanceId]?.spaceRevision === c.spaceRevision, "Invalid class kit space");
+  const applied = s.appliedCommandsById[c.commandId];
+  if (applied) requireContract(applied.status === "applied" && applied.commandCanonical === canonicalStringify(c) && applied.authorityOrder === k.authorityOrder && applied.tick === k.tick, "Class kit applied receipt mismatch");
+}
+function validateClassKitProgress(a, b) {
+  if (a.classKit) requireContract(canonicalStringify(a.classKit) === canonicalStringify(b.classKit), "Class kit history rewritten");
+}
+
 // src/shared/contracts/potion_belt_v1.js
 var POTION_BELT_POLICY = Object.freeze({
   version: "potion-belt-v1",
@@ -9955,7 +10092,7 @@ function validateServiceItem(s, p, item) {
 }
 function saleQuote(p, item) {
   const d = itemDefinition(item), o = p.inventory.renewal?.originsByItemId[item?.itemId];
-  if (!item || item.ownerPlayerId !== p.playerId || !o || item.sourceEntityId === null || !ordinary.has(item.definitionId) || item.locked || item.protected || item.unique || d?.unique || d?.classification === "unique-landmark" || Object.values(p.inventory.equipped).includes(item.itemId) || Object.values(p.inventory.subweapons?.claims ?? {}).some((c) => c.sourceEntityId === item.sourceEntityId) || (item.generated?.rarityTier ?? 0) > SETTLEMENT_LIFE_POLICY.sale.maximumRarity) return null;
+  if (!item || item.ownerPlayerId !== p.playerId || !o || item.sourceEntityId === null || !ordinary.has(item.definitionId) || item.locked || item.protected || item.unique || d?.unique || d?.classification === "unique-landmark" || Object.values(p.inventory.equipped).includes(item.itemId) || Object.values(p.inventory.subweapons?.claims ?? {}).some((c) => c.sourceEntityId === item.sourceEntityId) || isClassKitSource(p, item.sourceEntityId) || (item.generated?.rarityTier ?? 0) > SETTLEMENT_LIFE_POLICY.sale.maximumRarity) return null;
   if (!o.servicePurchase && !o.groupId) return null;
   const power2 = progressionBigInt(item.generated?.itemPower ?? 1), bounded = Number(power2 > BigInt(SETTLEMENT_LIFE_POLICY.sale.maximumValuationPower) ? BigInt(SETTLEMENT_LIFE_POLICY.sale.maximumValuationPower) : power2);
   return String(SETTLEMENT_LIFE_POLICY.sale.baseGold + bounded * SETTLEMENT_LIFE_POLICY.sale.perItemPower + (item.generated?.rarityTier ?? 0) * SETTLEMENT_LIFE_POLICY.sale.perRarityTier);
@@ -10253,7 +10390,7 @@ function workshopQuote(p, item, op, line = 0) {
   if (!item?.generated) return { problem: "Select ordinary generated equipment" };
   const r = workshopResult(item), materials3 = {};
   let gold = "0", problem = null;
-  if (item.locked || item.protected || item.unique || item.generated.definition.unique || item.sourceEntityId === null || Object.values(p.inventory.subweapons?.claims ?? {}).some((c) => c.sourceEntityId === item.sourceEntityId)) problem = "Protected equipment cannot be modified or shattered";
+  if (item.locked || item.protected || item.unique || item.generated.definition.unique || item.sourceEntityId === null || Object.values(p.inventory.subweapons?.claims ?? {}).some((c) => c.sourceEntityId === item.sourceEntityId) || isClassKitSource(p, item.sourceEntityId)) problem = "Protected equipment cannot be modified or shattered";
   if (op === "awaken") {
     if (r.tier >= 5) problem = "Maximum five-star rarity";
     if (r.enchants) problem = "Purge enchantments before awakening";
@@ -15842,7 +15979,7 @@ function retireEncounterRewards(state, groupId) {
 }
 function validateRenewableInventory(p, state, validateCommand2, legacyDefeatReward) {
   const inv = p.inventory, n = inv.renewal;
-  closedRecord(inv, ["version", "economy", "revision", "gold", "goldAwardsByEntityId", "itemsById", "equipped", "rewardsByEntityId", "lastEquipmentChange", "topologyMigration", "renewal"], ["subweapons", "d7", "services"]);
+  closedRecord(inv, ["version", "economy", "revision", "gold", "goldAwardsByEntityId", "itemsById", "equipped", "rewardsByEntityId", "lastEquipmentChange", "topologyMigration", "renewal"], ["subweapons", "d7", "services", "classKit"]);
   validateSettlementServices(state, p, validateCommand2);
   closedRecord(n, ["version", "baseGold", "baseSouls", "retiredGold", "retiredSouls", "defeats", "groundBySourceId", "originsByItemId", "lastDrop", "lastGroundPickup"]);
   requireContract(n.version === "renewable-inventory-d5-v1", "Unsupported renewable inventory");
@@ -15854,11 +15991,18 @@ function validateRenewableInventory(p, state, validateCommand2, legacyDefeatRewa
   safeInteger(n.defeats);
   closedRecord(inv.equipped, equipmentSlots(inv));
   if (inv.subweapons) validateProvisions(p, state, validateCommand2);
+  if (inv.classKit) validateClassKit(p, state, validateCommand2);
   const items = Object.values(inv.itemsById), drops = Object.values(n.groundBySourceId), starter = itemId(p, null);
   requireContract(items.length >= 1 && items.length <= (p.d8 ? D8_OWNERSHIP_BOUND : 64) && inv.itemsById[starter]?.definitionId === "worn-sword", "Owned inventory/starter bound");
   function origin2(o, id) {
     if (o?.servicePurchase) {
       validateServiceOrigin(p, o, id);
+      return;
+    }
+    const kit = classKitPiece(p, id);
+    if (kit) {
+      closedRecord(o, ["kit", "sourceEntityId"]);
+      requireContract(o.kit === kit && o.sourceEntityId === id, "Unknown class kit provenance");
       return;
     }
     const t = provisionType(p, id);
@@ -16021,6 +16165,7 @@ function validateRenewableInventoryProgress(before, after, pid) {
   if (!a.subweapons && b.subweapons) installSubweaponInventory({ inventory: a });
   const x = a.renewal, y = b.renewal;
   if (a.subweapons) validateProvisionProgress(a, b);
+  validateClassKitProgress(a, b);
   requireContract(same19(x.baseGold, y.baseGold) && x.baseSouls === y.baseSouls && compareAmount(y.retiredGold, x.retiredGold) >= 0 && y.retiredSouls >= x.retiredSouls && y.defeats >= x.defeats && b.revision >= a.revision, "Economy baseline/counters regressed");
   for (const [id, item] of Object.entries(a.itemsById)) {
     const terminal = b.d7?.salvaged[id] ?? b.services?.salesByItemId[id], next = b.itemsById[id] ?? b.renewal.groundBySourceId[item.sourceEntityId]?.item ?? terminal?.item;
@@ -16599,7 +16744,7 @@ function validateForgeProgress(a, b, before) {
   if (!a.renewal) for (const [id, q] of Object.entries(a.economy.soulAwardsByEntityId)) requireContract(b.economy.soulAwardsByEntityId[id] === q, "Material history changed");
   let delta = 0;
   for (const slot of equipmentSlots(b)) {
-    const x = slot === "subweapon" && !a.subweapons ? 0 : a.economy.slotLevels[slot], y = b.economy.slotLevels[slot];
+    const x = slot === "subweapon" && !a.subweapons || slot === "gloves" && !a.classKit ? 0 : a.economy.slotLevels[slot], y = b.economy.slotLevels[slot];
     requireContract(y >= x, "Attunement regressed");
     delta += y - x;
     const r = b.economy.lastAttunementsBySlot[slot];
@@ -17354,6 +17499,15 @@ function validateCommand(command) {
     } else if (a.kind === "node.purchase") {
       closedRecord(a, ["kind", "nodeId"]);
       requireContract(typeof a.nodeId === "string" && a.nodeId.length <= 80, "Invalid node");
+    } else if (a.kind === "skills.arrange") {
+      closedRecord(a, ["kind", "slots"]);
+      requireContract(Array.isArray(a.slots) && a.slots.length === SKILL_SLOT_COUNT && a.slots.every((s) => s === null || s === MOVE_SLOT || CLASS_SKILL_IDS.includes(s)), "Invalid skill wheel");
+    } else if (a.kind === "look.set") {
+      closedRecord(a, ["kind", "look"]);
+      validateHeroLook(a.look);
+    } else if (a.kind === "class.choose") {
+      closedRecord(a, ["kind", "heroClass"]);
+      requireContract(HERO_CLASS_IDS.includes(a.heroClass), "Unknown hero class");
     } else if (a.kind === "tree.reset") {
       closedRecord(a, ["kind", "tree"]);
       requireContract(["shield", "dagger", "tome", "utility"].includes(a.tree), "Invalid constellation");
@@ -17365,17 +17519,20 @@ function validateCommand(command) {
     }
   } else if (command.kind === "forge.attune") {
     closedRecord(command.payload, ["slot", "expectedLevel", "inventoryRevision"]);
-    requireContract(["weapon", "helmet", "chest", "leggings", "overall", "boots", "ring1", "ring2", "subweapon"].includes(command.payload.slot), "Unknown Forge slot");
+    requireContract(["weapon", "helmet", "chest", "leggings", "overall", "boots", "ring1", "ring2", "subweapon", "gloves"].includes(command.payload.slot), "Unknown Forge slot");
     safeInteger(command.payload.expectedLevel, 0, 99);
     safeInteger(command.payload.inventoryRevision);
   } else if (command.kind === "equipment.equip") {
     closedRecord(command.payload, ["itemId", "inventoryRevision"], ["slot"]);
-    if (command.payload.slot !== void 0) requireContract(["weapon", "helmet", "chest", "leggings", "overall", "boots", "ring1", "ring2", "subweapon"].includes(command.payload.slot), "Unknown equipment slot");
+    if (command.payload.slot !== void 0) requireContract(["weapon", "helmet", "chest", "leggings", "overall", "boots", "ring1", "ring2", "subweapon", "gloves"].includes(command.payload.slot), "Unknown equipment slot");
     requireContract(typeof command.payload.itemId === "string" && /^item:ply:[0-9a-f]{32}:(?:ent:[0-9a-f]{32}|starter)$/.test(command.payload.itemId), "Invalid item ID");
     safeInteger(command.payload.inventoryRevision);
   } else if (command.kind === "equipment.unequip") {
     closedRecord(command.payload, ["slot", "inventoryRevision"]);
-    requireContract(["weapon", "helmet", "chest", "leggings", "overall", "boots", "ring1", "ring2", "subweapon", "armor", "charm"].includes(command.payload.slot), "Unknown equipment slot");
+    requireContract(["weapon", "helmet", "chest", "leggings", "overall", "boots", "ring1", "ring2", "subweapon", "gloves", "armor", "charm"].includes(command.payload.slot), "Unknown equipment slot");
+    safeInteger(command.payload.inventoryRevision);
+  } else if (command.kind === "classkit.claim") {
+    closedRecord(command.payload, ["inventoryRevision"]);
     safeInteger(command.payload.inventoryRevision);
   } else if (command.kind === "subweapon.claim") {
     closedRecord(command.payload, ["subType", "inventoryRevision"]);
@@ -17386,6 +17543,10 @@ function validateCommand(command) {
     requireContract(typeof command.payload.pressed === "boolean", "Guard press must be boolean");
   } else if (command.kind === "combat.shadowDash") {
     closedRecord(command.payload, ["aim"]);
+    validatePrimaryAim(command.payload.aim);
+  } else if (command.kind === "combat.skill") {
+    closedRecord(command.payload, ["skillId", "aim"]);
+    requireContract(CLASS_SKILL_IDS.includes(command.payload.skillId), "Unknown skill");
     validatePrimaryAim(command.payload.aim);
   } else if (command.kind === "player.respawn") {
     closedRecord(command.payload, []);
@@ -17592,6 +17753,31 @@ function createCampaignStoreTransactions({
     decideTransaction: decideTransaction2,
     verifyPersistedEnvelope: verifyPersistedEnvelope2
   });
+}
+
+// src/shared/contracts/class_skills_v1.js
+var FLURRY_CUTS = 3;
+var FLURRY_GAP_TICKS = 7;
+var SKILL_LAST_TICKS = 45;
+function validateClassSkillState(s, combat, actor) {
+  const k = combat.skills;
+  if (k === void 0) return;
+  closedRecord(k, ["cooldowns"], ["last", "flurry"]);
+  closedRecord(k.cooldowns, [], CLASS_SKILL_IDS);
+  for (const [id, left] of Object.entries(k.cooldowns)) safeInteger(left, 1, Math.min(MAX_SKILL_COOLDOWN_TICKS, CLASS_SKILLS[id].cooldownTicks));
+  const unit2 = (v) => Number.isFinite(v.x) && Number.isFinite(v.y) && Math.abs(Math.hypot(v.x, v.y) - 1) < 1e-9;
+  if (k.last) {
+    closedRecord(k.last, ["skillId", "tick", "x", "y"]);
+    requireContract(CLASS_SKILL_IDS.includes(k.last.skillId) && unit2(k.last), "Invalid skill use record");
+    safeInteger(k.last.tick, Math.max(0, s.tick - SKILL_LAST_TICKS - 2), s.tick);
+  }
+  if (k.flurry) {
+    closedRecord(k.flurry, ["cutsLeft", "nextTick", "x", "y"]);
+    safeInteger(k.flurry.cutsLeft, 1, FLURRY_CUTS - 1);
+    safeInteger(k.flurry.nextTick, Math.max(0, s.tick - 1), s.tick + FLURRY_GAP_TICKS);
+    requireContract(unit2(k.flurry) && actor.alive, "Invalid Flurry");
+  }
+  requireContract(Object.keys(k.cooldowns).length || k.last || k.flurry, "Empty skill record");
 }
 
 // src/shared/contracts/map_discovery_v1.js
@@ -18933,6 +19119,38 @@ function validateD8Receipt(state, player, validateCommand2) {
   if (a) requireContract(a.status === "applied" && a.commandCanonical === canonicalStringify(c) && a.authorityOrder === r.authorityOrder, "Progression command receipt");
 }
 
+// src/shared/contracts/shield_guard.js
+var GUARD_POLICY = Object.freeze({ version: "shield-guard-v1", capacity: 32, minimum: 8, delay: 60, riposteNumerator: 1, riposteDenominator: 4 });
+var createShieldGuard = (alive = true) => ({ integrity: String(alive ? 32 : 0), guardRechargeRemainder: 0, delay: 60, requested: false, raised: false, mustRelease: false, direction: { x: 1, y: 0 } });
+function validateShieldGuard(g, actor, stats, primary, legacy = false) {
+  closedRecord(g, ["integrity", "delay", "requested", "raised", "mustRelease", "direction", ...!legacy ? ["guardRechargeRemainder"] : []]);
+  if (legacy) validateCombatAmount(g.integrity);
+  else {
+    validateInteger(g.integrity);
+    safeInteger(g.guardRechargeRemainder, 0, 14);
+    requireContract(compareCombat(g.integrity, 32) !== 0 || g.guardRechargeRemainder === 0, "Full Guard remainder");
+  }
+  requireContract(compareCombat(g.integrity, 32) <= 0, "Guard capacity");
+  safeInteger(g.delay, 0, 60);
+  for (const k of ["requested", "raised", "mustRelease"]) requireContract(typeof g[k] === "boolean", "Guard boolean");
+  closedRecord(g.direction, ["x", "y"]);
+  requireContract(Number.isFinite(g.direction.x) && Number.isFinite(g.direction.y) && Math.abs(Math.hypot(g.direction.x, g.direction.y) - 1) < 1e-9, "Guard direction");
+  requireContract(!g.raised || g.requested && !g.mustRelease && actor.alive && stats.subType === "shield" && !primary?.current && compareCombat(g.integrity, 0) > 0, "Invalid raised Guard");
+  requireContract(actor.alive || compareCombat(g.integrity, 0) === 0, "Dead Guard resource");
+}
+function lowerShield(g, forceRelease = false) {
+  if (!g) return;
+  const held = g.raised || g.requested;
+  if (held) g.delay = 60;
+  g.raised = false;
+  g.requested = false;
+  if (forceRelease && held) g.mustRelease = true;
+}
+
+// src/simulation/subweapon_rules.js
+var CLASS_MOVES = Object.freeze({ dagger: Object.freeze({ name: "Dash", frames: 8, distance: 64, cooldown: 90 }), tome: Object.freeze({ name: "Blink", frames: 6, distance: 72, cooldown: 150 }) });
+var MAX_CLASS_MOVE = Object.freeze({ frames: 8, distance: 72, cooldown: 150 });
+
 // src/shared/contracts/tome_cast.js
 function validateTomeRecipe(r) {
   const balanced = r.version === "tome-cast-world-build-v2";
@@ -18992,34 +19210,6 @@ function migrateIntegerCombat(s) {
   return s;
 }
 
-// src/shared/contracts/shield_guard.js
-var GUARD_POLICY = Object.freeze({ version: "shield-guard-v1", capacity: 32, minimum: 8, delay: 60, riposteNumerator: 1, riposteDenominator: 4 });
-var createShieldGuard = (alive = true) => ({ integrity: String(alive ? 32 : 0), guardRechargeRemainder: 0, delay: 60, requested: false, raised: false, mustRelease: false, direction: { x: 1, y: 0 } });
-function validateShieldGuard(g, actor, stats, primary, legacy = false) {
-  closedRecord(g, ["integrity", "delay", "requested", "raised", "mustRelease", "direction", ...!legacy ? ["guardRechargeRemainder"] : []]);
-  if (legacy) validateCombatAmount(g.integrity);
-  else {
-    validateInteger(g.integrity);
-    safeInteger(g.guardRechargeRemainder, 0, 14);
-    requireContract(compareCombat(g.integrity, 32) !== 0 || g.guardRechargeRemainder === 0, "Full Guard remainder");
-  }
-  requireContract(compareCombat(g.integrity, 32) <= 0, "Guard capacity");
-  safeInteger(g.delay, 0, 60);
-  for (const k of ["requested", "raised", "mustRelease"]) requireContract(typeof g[k] === "boolean", "Guard boolean");
-  closedRecord(g.direction, ["x", "y"]);
-  requireContract(Number.isFinite(g.direction.x) && Number.isFinite(g.direction.y) && Math.abs(Math.hypot(g.direction.x, g.direction.y) - 1) < 1e-9, "Guard direction");
-  requireContract(!g.raised || g.requested && !g.mustRelease && actor.alive && stats.subType === "shield" && !primary?.current && compareCombat(g.integrity, 0) > 0, "Invalid raised Guard");
-  requireContract(actor.alive || compareCombat(g.integrity, 0) === 0, "Dead Guard resource");
-}
-function lowerShield(g, forceRelease = false) {
-  if (!g) return;
-  const held = g.raised || g.requested;
-  if (held) g.delay = 60;
-  g.raised = false;
-  g.requested = false;
-  if (forceRelease && held) g.mustRelease = true;
-}
-
 // src/shared/contracts/subweapon_combat.js
 function seedWords(text) {
   let h = 2166136261;
@@ -19069,7 +19259,8 @@ function validateSubweaponCombat(s) {
   requireContract(Object.keys(c.actors).sort().join() === Object.values(s.playersById).map((p) => p.entityId).sort().join(), "Combat owners: " + Object.keys(c.actors).join() + " versus " + Object.values(s.playersById).map((p) => p.entityId).join());
   for (const p of Object.values(s.playersById)) {
     const a = s.entitiesById[p.entityId], v = c.actors[p.entityId], stats = resolvePlayerStats(p, { legacyMigration: !integer2 });
-    closedRecord(v, ["rng", "delivery", "pressure", "fatigue", "counterCooldown", "barrier", "dash", ...integer2 || c.version === "subweapon-combat-d6-v3" ? ["guard"] : [], ...integer2 ? ["barrierRechargeRemainder"] : []]);
+    closedRecord(v, ["rng", "delivery", "pressure", "fatigue", "counterCooldown", "barrier", "dash", ...integer2 || c.version === "subweapon-combat-d6-v3" ? ["guard"] : [], ...integer2 ? ["barrierRechargeRemainder"] : []], ["skills"]);
+    validateClassSkillState(s, v, a);
     if (integer2 || c.version === "subweapon-combat-d6-v3") validateShieldGuard(v.guard, a, stats, s.primary.actorsById[p.entityId], !integer2);
     if (integer2) {
       safeInteger(v.barrierRechargeRemainder, 0, 599);
@@ -19086,10 +19277,10 @@ function validateSubweaponCombat(s) {
     requireContract(compareCombat(v.barrier, stats.maxBarrier) <= 0, "Barrier exceeds resolved capacity");
     const d = v.dash;
     closedRecord(d, ["frames", "cooldown", "remaining", "x", "y"]);
-    safeInteger(d.frames, 0, 8);
-    safeInteger(d.cooldown, 0, 90);
-    requireContract(Number.isFinite(d.remaining) && d.remaining >= 0 && d.remaining <= 64 && Number.isFinite(d.x) && Number.isFinite(d.y) && Math.abs(Math.hypot(d.x, d.y) - 1) < 1e-9, "Invalid Dash geometry");
-    requireContract(!d.frames || a.alive && stats.subType === "dagger" && d.cooldown > 0 && d.remaining > 0, "Invalid active Dash");
+    safeInteger(d.frames, 0, MAX_CLASS_MOVE.frames);
+    safeInteger(d.cooldown, 0, MAX_CLASS_MOVE.cooldown);
+    requireContract(Number.isFinite(d.remaining) && d.remaining >= 0 && d.remaining <= MAX_CLASS_MOVE.distance && Number.isFinite(d.x) && Number.isFinite(d.y) && Math.abs(Math.hypot(d.x, d.y) - 1) < 1e-9, "Invalid Dash geometry");
+    requireContract(!d.frames || a.alive && Boolean(CLASS_MOVES[stats.subType]) && d.cooldown > 0 && d.remaining > 0, "Invalid active Dash");
     requireContract(stats.subType === "shield" || v.pressure === 0, "Pressure without Shield");
     requireContract(a.alive || compareCombat(v.barrier, 0) === 0, "Dead Barrier");
   }
@@ -19102,7 +19293,7 @@ function validateSubweaponCombat(s) {
       requireContract(BASE_TOME_ELEMENTS.includes(b.delivery), "Unsupported Tome delivery");
       validateDamageSourceItem(b.sourceItem);
     }
-    requireContract(combatTargetV4(s, b.intendedTargetId)?.team === "hostile", "Invalid bolt target");
+    requireContract(b.intendedTargetId === null || combatTargetV4(s, b.intendedTargetId)?.team === "hostile", "Invalid bolt target");
     requireContract(id === b.id && c.actors[b.sourceId] && s.entitiesById[b.sourceId].alive && s.entitiesById[b.sourceId].residency.spaceInstanceId === b.spaceInstanceId && s.entitiesById[b.sourceId].residency.residencyRevision === b.residencyRevision, "Projectile owner/residency");
     safeInteger(b.frames, 1, 20);
     requireContract(Number.isFinite(b.remaining) && b.remaining > 0 && b.remaining <= 137, "Projectile range");
@@ -21654,7 +21845,7 @@ function validateActivityCommand(command) {
   const { residencyRevision, ...legacy } = command;
   safeInteger(residencyRevision, 1);
   validateCommand(legacy);
-  requireContract(["worldEvent.activate", "discovery.readNote", "movement.setIntent", "combat.primaryIntent", "combat.guardIntent", "combat.shadowDash", "subweapon.claim", "service.modify", "service.material", "service.buy", "service.sell", "service.rest", "supply.use", "ferry.travel", "site.transition", "player.respawn", "loot.pickup", "gear.salvage", "gear.drop", "resource.interact", "progression.change", "forge.attune", "equipment.equip", "equipment.unequip"].includes(command.kind), "Unsupported activity command");
+  requireContract(["worldEvent.activate", "discovery.readNote", "movement.setIntent", "combat.primaryIntent", "combat.guardIntent", "combat.shadowDash", "combat.skill", "subweapon.claim", "classkit.claim", "service.modify", "service.material", "service.buy", "service.sell", "service.rest", "supply.use", "ferry.travel", "site.transition", "player.respawn", "loot.pickup", "gear.salvage", "gear.drop", "resource.interact", "progression.change", "forge.attune", "equipment.equip", "equipment.unequip"].includes(command.kind), "Unsupported activity command");
   return command;
 }
 var same30 = (a, b) => canonicalStringify(a) === canonicalStringify(b);
@@ -25496,6 +25687,7 @@ function resolveWildernessV3WorkerDatabaseName(workerUrl, legacyDatabaseName) {
   return `saq-world-wilderness-v3-${plan}`;
 }
 function startActivitySaveWorker(environment) {
+  const saveIndexedDb = channelIndexedDb(environment.indexedDB, saveChannelPrefix(environment.location));
   const population = new URL(environment.location.href).searchParams.get("sitePopulation") === "1";
   const review = new URL(environment.location.href).searchParams.get("plannedReview") === "1", databaseName = review ? (population ? new URL(environment.location.href).searchParams.get("worldCombat") === "1" ? "saq-world-combat-v2-" : new URL(environment.location.href).searchParams.get("settlementServices") === "2" ? "saq-world-settlement-services-v2-" : new URL(environment.location.href).searchParams.get("settlementLife") === "1" ? "saq-world-settlement-life-v1-" : new URL(environment.location.href).searchParams.get("ferryReview") === "1" ? "saq-world-ferry-v1-" : new URL(environment.location.href).searchParams.get("multiroom") === "1" ? "saq-world-multiroom-v1-" : "saq-world-alpha-site-population-v1-" : new URL(environment.location.href).searchParams.get("cryptReview") === "1" ? new URL(environment.location.href).searchParams.get("cryptVersion") === "2" ? "saq-world-planned-crypts-v2-" : "saq-world-planned-small-crypt-v1-" : new URL(environment.location.href).searchParams.get("ruinReview") === "1" ? new URL(environment.location.href).searchParams.get("ruinVersion") === "2" ? "saq-world-planned-ruins-v2-" : "saq-world-planned-ruins-v1-" : new URL(environment.location.href).searchParams.get("fortReview") === "1" ? new URL(environment.location.href).searchParams.get("fortVersion") === "2" ? "saq-world-planned-forts-v2-" : "saq-world-planned-forts-v1-" : new URL(environment.location.href).searchParams.get("cavePopulation") === "1" ? "saq-world-planned-caves-v2-" : new URL(environment.location.href).searchParams.get("caveReview") === "1" ? "saq-world-planned-cave-v1-" : new URL(environment.location.href).searchParams.get("townReview") === "1" ? "saq-world-town-start-art-v2-" : new URL(environment.location.href).searchParams.get("artV2") === "1" ? "saq-world-art-v2-" : new URL(environment.location.href).searchParams.get("artPilot") === "1" ? "saq-world-art-pilot-v1-" : new URL(environment.location.href).searchParams.get("waterReview") === "1" ? "saq-world-water-v3-" : new URL(environment.location.href).searchParams.get("shorelineReview") === "1" ? "saq-world-shoreline-v2-" : "saq-world-planned-foundation-v1-") + new URL(environment.location.href).searchParams.get("plan") : ACTIVITY_SAVE_NAMESPACE;
   const workerDatabaseName = resolveWildernessV3WorkerDatabaseName(environment.location.href, databaseName);
@@ -25534,7 +25726,7 @@ function startActivitySaveWorker(environment) {
   };
   const task = createActivitySaveTask({ sha256, measure, measureAsync, storeFactory: (options) => createLocalIndexedDbCampaignStore({
     ...options,
-    indexedDB: environment.indexedDB,
+    indexedDB: saveIndexedDb,
     databaseName: workerDatabaseName,
     codec: activityCampaignCodec,
     observe: timing,
@@ -25545,7 +25737,7 @@ function startActivitySaveWorker(environment) {
     if (!response.ok) throw new Error("Missing planned world asset");
     return response.text();
   } });
-  const worldTask = createWorldWorkerTaskD9({ sha256, plannedAssets, store: createLocalIndexedDbCampaignStore({ indexedDB: environment.indexedDB, sha256, databaseName: workerDatabaseName, codec: activityCampaignCodec }) });
+  const worldTask = createWorldWorkerTaskD9({ sha256, plannedAssets, store: createLocalIndexedDbCampaignStore({ indexedDB: saveIndexedDb, sha256, databaseName: workerDatabaseName, codec: activityCampaignCodec }) });
   let tail = Promise.resolve();
   environment.onmessage = ({ data }) => {
     tail = tail.then(async () => {
