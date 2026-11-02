@@ -1,6 +1,6 @@
 {
-  "runtimeId": "47dfb010120a1dfd",
-  "runtimeSha256": "47dfb010120a1dfd211e62a4ee2ff8f5744dc83ef04db4751681eff6d47f7cd0",
+  "runtimeId": "2104759c1d14859d",
+  "runtimeSha256": "2104759c1d14859dde14b26b5c78e0a7eeff978a957ea71a7009f29d8a7b7181",
   "files": [
     {
       "path": ".nojekyll",
@@ -28,6 +28,31 @@
       "sha256": "3fabc992a42a50308f933f725793bb4d831b6770512e49cd1e09787d64deac6e"
     },
     {
+      "path": "assets/desert-nature-v1/accents.webp",
+      "bytes": 14188,
+      "sha256": "19205470757bc909766caa0afd3605264e8b1177761ef6a4dfc8ab846f735b76"
+    },
+    {
+      "path": "assets/desert-nature-v1/kit-manifest.json",
+      "bytes": 7515,
+      "sha256": "6b1cb5b5289897263de26eda4beafe337908977911d2d5b40ba7ff0cc4afad9d"
+    },
+    {
+      "path": "assets/desert-nature-v1/rocks.webp",
+      "bytes": 24962,
+      "sha256": "6307af7cbba56860660a0e2491b60ce6c957e9b6a2a95cf7c685d8de968e32f2"
+    },
+    {
+      "path": "assets/desert-nature-v1/trees.webp",
+      "bytes": 117544,
+      "sha256": "c181ca6947794dc1217ca88e46020800d7fca68a8c84dab0d5e0c986850c875f"
+    },
+    {
+      "path": "assets/desert-nature-v1/understory.webp",
+      "bytes": 67748,
+      "sha256": "7ce53abcacdb9782c16cd5fcb1ac4a887c60a2abb99c4cdd941c5b1b819ec65c"
+    },
+    {
       "path": "assets/fort-art-pilot-v1/floor-v1.webp",
       "bytes": 29546,
       "sha256": "bda04884326685dd12cbf65ad45856c8a84a0b6a2e338575bd52745fdf72519b"
@@ -51,6 +76,56 @@
       "path": "assets/fort-art-pilot-v1/tower-v1.webp",
       "bytes": 161324,
       "sha256": "64be2b17e32db4f9b1326ddd84b768d82fcd15311166dfa2676668ffb2db2172"
+    },
+    {
+      "path": "assets/frostland-nature-v1/accents.webp",
+      "bytes": 12978,
+      "sha256": "dc6c13ad973850a461caf0a7b49be7ac7c8fae9e926e723580a6d2dd49d7f263"
+    },
+    {
+      "path": "assets/frostland-nature-v1/kit-manifest.json",
+      "bytes": 7021,
+      "sha256": "af91f2944519ed894c64c56e91c782e1502a7069be13abace59e1065e32463e0"
+    },
+    {
+      "path": "assets/frostland-nature-v1/rocks.webp",
+      "bytes": 50342,
+      "sha256": "a6d15d9e8ef1dd3014809eae6134e7dd50ee3752536ad28af1dd4047cf2e45f7"
+    },
+    {
+      "path": "assets/frostland-nature-v1/trees.webp",
+      "bytes": 155920,
+      "sha256": "edcea2e32524792507bb18febb5bdde2f52b69dfa39421b615009ce0d07e80b7"
+    },
+    {
+      "path": "assets/frostland-nature-v1/understory.webp",
+      "bytes": 50374,
+      "sha256": "a9ff93ae25a88c6c652cc3e223639c304016ddf1a68887e675c6ef4aa1076b3c"
+    },
+    {
+      "path": "assets/grassland-nature-v1/accents.webp",
+      "bytes": 31454,
+      "sha256": "f07c823ffaa25405da3f674fcde34dc72ea4474b2b304a71de443e50d0d7159d"
+    },
+    {
+      "path": "assets/grassland-nature-v1/kit-manifest.json",
+      "bytes": 7497,
+      "sha256": "8a8f72703b02c81dd2c34852adfb84ff2fd7f8bd38618e8e9809d5634f47b0e5"
+    },
+    {
+      "path": "assets/grassland-nature-v1/rocks.webp",
+      "bytes": 25894,
+      "sha256": "16cb2ee503c049f8c21bf5e0bb5ec47be48c51fb05bc0c0cc2c05ac2cd840a23"
+    },
+    {
+      "path": "assets/grassland-nature-v1/trees.webp",
+      "bytes": 224046,
+      "sha256": "abf293a11b97d8b99e4447ee96654ec2951ad66c30d1b05ccc91a7b535372d84"
+    },
+    {
+      "path": "assets/grassland-nature-v1/understory.webp",
+      "bytes": 83758,
+      "sha256": "8f21d44e44cdcab65ce4c791f873e8b4c7fe93fb9a05243dedcf8714a990f59a"
     },
     {
       "path": "assets/hidden-hollow-v1/hidden-hollow.webp",
@@ -233,6 +308,101 @@
       "sha256": "f959ddab9e34d5d4ecc0dfab50446bef0cd1ca9c7da60b3c207453100e10ba5d"
     },
     {
+      "path": "assets/tropical-nature-v1/kit-manifest.json",
+      "bytes": 6534,
+      "sha256": "c4e37eebef363db9d8ac846667dfc0fba909b1e38f7b913a034b48dd519af9e7"
+    },
+    {
+      "path": "assets/tropical-nature-v1/rocks.webp",
+      "bytes": 14298,
+      "sha256": "1f2b7123aeed86c03d5f64c8f24e0d4f81ca9a603bc9c3565cd019ac110b75c9"
+    },
+    {
+      "path": "assets/tropical-nature-v1/trees.webp",
+      "bytes": 258354,
+      "sha256": "4b383ad64379b43ca1743fdf69ae1651a189d559e8cf4555142cfd1a7f201e82"
+    },
+    {
+      "path": "assets/tropical-nature-v1/understory.webp",
+      "bytes": 63058,
+      "sha256": "2439a7dd54260a921edb56bfaed4770d8776647bf9b9ef58e9a6963a886951e1"
+    },
+    {
+      "path": "assets/upland-nature-v1/accents.webp",
+      "bytes": 12726,
+      "sha256": "275f1ecfdd4828f4a676a3f804ebc76137e6f0c5ea8e9e99f7d3a626213da0b0"
+    },
+    {
+      "path": "assets/upland-nature-v1/kit-manifest.json",
+      "bytes": 7018,
+      "sha256": "db61dd127edd107929163140005e6f20c5ed8dac156d5058a3a6c01588009779"
+    },
+    {
+      "path": "assets/upland-nature-v1/rocks.webp",
+      "bytes": 49676,
+      "sha256": "e3efa7922878dac95c466716bee5f300fee54aea4e102cd573f30ccf6b93907d"
+    },
+    {
+      "path": "assets/upland-nature-v1/trees.webp",
+      "bytes": 160886,
+      "sha256": "948e782834df235768896cc2a508d6fc0ac53e453cbee572f98a203998ed63b0"
+    },
+    {
+      "path": "assets/upland-nature-v1/understory.webp",
+      "bytes": 53876,
+      "sha256": "7ad67317589a4f3a7a2894efae8a39406900495187e588275468e828b3160197"
+    },
+    {
+      "path": "assets/volcanic-nature-v1/accents.webp",
+      "bytes": 66936,
+      "sha256": "61dca366f736b556407889ecef92be7621d6b9fbc45b9cdf0ddc7ea937276a9b"
+    },
+    {
+      "path": "assets/volcanic-nature-v1/kit-manifest.json",
+      "bytes": 6291,
+      "sha256": "16b82d1ce69aa7fae604610427936f1ee13fd3e68b95011732a5a62409e7c759"
+    },
+    {
+      "path": "assets/volcanic-nature-v1/rocks.webp",
+      "bytes": 16556,
+      "sha256": "7742c2cdaa78f5432835910ab5e547e40e3860af7fe97acc6b6379a260cf1d58"
+    },
+    {
+      "path": "assets/volcanic-nature-v1/trees.webp",
+      "bytes": 54590,
+      "sha256": "e226d3773ba7cafdd29983bcbf90389f6153c127f3b41182e291942b5281e531"
+    },
+    {
+      "path": "assets/volcanic-nature-v1/understory.webp",
+      "bytes": 53474,
+      "sha256": "41530a93bf393d9d97a79dd57995f96c68b250dfba01a99ebd158b77e6c1cd56"
+    },
+    {
+      "path": "assets/wetland-nature-v1/accents.webp",
+      "bytes": 36302,
+      "sha256": "7a725b95e258232b322642d77f719caa6118e870fd051ad6d10ded2ebe9117dc"
+    },
+    {
+      "path": "assets/wetland-nature-v1/kit-manifest.json",
+      "bytes": 7516,
+      "sha256": "e25bf7a9db990a8ec0725aefff1b255673f58e04dd532e75d148d3b2757229fe"
+    },
+    {
+      "path": "assets/wetland-nature-v1/rocks.webp",
+      "bytes": 12738,
+      "sha256": "6fd2d9dce94e602e7885287dc0d4aab5fd286a63a1d5d735aa9c53edc8d731c7"
+    },
+    {
+      "path": "assets/wetland-nature-v1/trees.webp",
+      "bytes": 241510,
+      "sha256": "69555e507214725d639c7746c38cb10915389029f7a4f80e2cf59b15733cadae"
+    },
+    {
+      "path": "assets/wetland-nature-v1/understory.webp",
+      "bytes": 75688,
+      "sha256": "b97ecc0646cd2bf8bf1aece0df8610680aecce4c65da8af167e0e7cc85f3951b"
+    },
+    {
       "path": "assets/wilderness-v2/alpha.json",
       "bytes": 1472485,
       "sha256": "ed2f7fcafeac4305b6658242d232d8d79dade9ecb6b43ea74125fc1318cc282f"
@@ -298,6 +468,31 @@
       "sha256": "d58c63c96268a65b9a90619adcff3047cc897c61d77f1f7bf09f85b47eed3945"
     },
     {
+      "path": "assets/woodland-nature-v1/accents.webp",
+      "bytes": 42964,
+      "sha256": "794700fa93b37b10c27a707b3c15cc5db43b1f0863bce5b2bc6f516b822e7b56"
+    },
+    {
+      "path": "assets/woodland-nature-v1/kit-manifest.json",
+      "bytes": 9791,
+      "sha256": "c217e6e2d3790e5c170196ebfe3bcd2c89f66f78fafcbc1010cef78a6af8126d"
+    },
+    {
+      "path": "assets/woodland-nature-v1/rocks.webp",
+      "bytes": 27514,
+      "sha256": "9d44001d01ff72b5045315cf1df537326e5d97c22d11bc91b22ad5aa258fd62d"
+    },
+    {
+      "path": "assets/woodland-nature-v1/trees.webp",
+      "bytes": 289128,
+      "sha256": "077413e1b217adf2481beb1871df34e2219942e369a8d3f83d75813b9b97fa05"
+    },
+    {
+      "path": "assets/woodland-nature-v1/understory.webp",
+      "bytes": 94918,
+      "sha256": "5be4b5f98866c1519b0e1bae0db49e39531532bff227daa3d6aab01234e26895"
+    },
+    {
       "path": "assets/woodland-prop-clarity-v1/kit-manifest.json",
       "bytes": 1313,
       "sha256": "682b06a672e778b19fa8d108e522898c905f0354c14e3d0e9522967fa38aa2e0"
@@ -308,9 +503,24 @@
       "sha256": "3b3d3acdd0e4c96f30db116cd65675fa7b1484affb1f756a602515b4516170bd"
     },
     {
+      "path": "assets/world-maker-v1/catalog.json",
+      "bytes": 66205,
+      "sha256": "541a3982167b6b5ef43d3d690f72655626991e3195160acf149fa749402e99f2"
+    },
+    {
+      "path": "assets/world-reshape-v2/alpha.json",
+      "bytes": 209054,
+      "sha256": "ac15d856c2dbbe38203480172b32aae7d19ccdd61cef10eee16aade24a0900d2"
+    },
+    {
+      "path": "assets/world-reshape-v2/hydrology.json",
+      "bytes": 697115,
+      "sha256": "e12fd26221c55e0357b674d4beaf28cc522ef5f9dde420b073373f0ef7be1b65"
+    },
+    {
       "path": "index.html",
-      "bytes": 12010,
-      "sha256": "7546f35290d2d9cb01ea69e9fe7d9325adc0d755e80a7a204796a0f5a6791183"
+      "bytes": 13674,
+      "sha256": "21bfbb1645e58aa16c399a337258c5fb5f1b6910911993725fadb550aa8b5ec1"
     },
     {
       "path": "manifest.webmanifest",
@@ -319,28 +529,28 @@
     },
     {
       "path": "save-worker.js",
-      "bytes": 2246760,
-      "sha256": "7c6026457c0e4ba8360cae0c5d3d25c6d1b570539453fa9e4fd77ad5db59a349"
+      "bytes": 2764123,
+      "sha256": "8f0eab706a5708aa0d985d253e1be2f35220cbd2b4bd2f3aeb8e357ad535583f"
     },
     {
-      "path": "src/chunks/chunk-LVPM734K.js",
-      "bytes": 1960598,
-      "sha256": "05d68a0e309e47889025a0e0eb60dc14334ba7df8d6293d0f0453d1046b33042"
+      "path": "src/chunks/chunk-LNIGIJ54.js",
+      "bytes": 2474080,
+      "sha256": "40e7c32407af497fc9954098b2482f69bfd4d13dead64afc3a6d0f321f57b33c"
     },
     {
-      "path": "src/chunks/playable_browser-NTUFAHNQ.js",
-      "bytes": 4255363,
-      "sha256": "4eee82c2e35d897c3a9d6a0a27c3380e2f10de15b5bd734be33a90fc15ff32fc"
+      "path": "src/chunks/playable_browser-RK6MXCKO.js",
+      "bytes": 4879315,
+      "sha256": "631b93153ed8839a3bd4244f81d5f991716589a967a88f1b9ab7ea6e18456e5f"
     },
     {
-      "path": "src/chunks/world_browser-MGN3TB5M.js",
+      "path": "src/chunks/world_browser-XFIT2ISO.js",
       "bytes": 1416,
-      "sha256": "2888abc2cbd157298315ab9c9ca1fa19bfff39975c0028318f69d5287f29b154"
+      "sha256": "4d665a5a5182d454c87be50fee98ff5762615b8be78340e15e019293c9bad835"
     },
     {
       "path": "src/client/startup_camp_v1.js",
-      "bytes": 70496,
-      "sha256": "3bed39c34848edb0f12f77ff47dc89a4a6b2720835915248162e26aaa3cd1740"
+      "bytes": 91749,
+      "sha256": "750a5298cbacb4e4f289bbd856ab24fda82314e408c2053e629df910bae1434f"
     },
     {
       "path": "src/client/startup_loading_v1.js",
@@ -350,12 +560,12 @@
     {
       "path": "src/entrypoints/browser_boot.js",
       "bytes": 2158,
-      "sha256": "398dd2999674ee2c176b412f32f456726b4dc3b80e6c32d599c0d151a1acedf0"
+      "sha256": "9106ccc2fdb0fbf36ada4a2b537651c68307e488993fab9c93a190b5706bc998"
     },
     {
       "path": "world.css",
-      "bytes": 155717,
-      "sha256": "37f22345865e09c8a77d3c17c7ac95e508a84a5b60d09d7e93976fb77659ec56"
+      "bytes": 191029,
+      "sha256": "d7ac9a7c997d17221f7fb58342f2f189417938855e83c7e1b8de1a2d1ee64163"
     }
   ]
 }

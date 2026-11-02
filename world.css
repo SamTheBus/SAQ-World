@@ -743,13 +743,31 @@ body #world-death #world-death-download{margin:12px 0 0;background:none;border:0
 body #world-death button:disabled{opacity:.5;}
 @media(max-height:500px){body #world-death{padding:14px 24px;}body #world-death .death-emblem,body #world-death .death-intro{display:none;}body #world-death h2{font-size:27px;}body #world-death .death-eyebrow{margin:2px 0 6px;}body #world-death p{margin:6px 0;}body #world-death .death-policy{padding:6px 0;margin:8px 0;}}
 
-/* Potion belt: one-tap health potion in the old rations slot. */
-body #carried-rations.potion-button{overflow:hidden;color:#ffe3e0!important;border-color:#c0574f!important;background:linear-gradient(180deg,#5a2430f2,#3a1820f5)!important;font-weight:700;}
-body #carried-rations.potion-button::before{content:"";display:inline-block;width:10px;height:13px;margin-right:6px;vertical-align:-2px;border-radius:2px 2px 5px 5px;background:linear-gradient(180deg,#ffd6d0 0 22%,#e2463f 22%);box-shadow:0 0 6px #ff5b4f;}
-body #carried-rations.potion-button::after{content:"";position:absolute;inset:0;background:#0b0f16b8;transform-origin:bottom;transform:scaleY(var(--potion-cooldown,0));pointer-events:none;}
-body #carried-rations.potion-button[data-empty=true]{opacity:.55;filter:saturate(.4);}
+/* Potion belt: one-tap health potion in the old rations slot. A flask sits in a dark
+ socket and its liquid shows how full the belt is (--potion-fill); while the potion
+ cools down a shade sweeps around the socket (--potion-cooldown) over the seconds left. */
+body #carried-rations.potion-button{display:flex;align-items:center;justify-content:flex-start;gap:7px;padding:0 11px 0 6px!important;color:#fff1ea!important;border:2px solid #14080c!important;border-radius:8px!important;background:radial-gradient(130% 100% at 28% 0%,#9c3445 0,#6a1d2c 48%,#3a0f19 100%)!important;box-shadow:inset 0 0 0 1px #d9b77a,inset 0 2px 0 1px #ffe2b833,inset 0 -8px 12px #1c050c99,0 3px 0 #0b1119,0 6px 14px #0006!important;text-shadow:0 1px 0 #2a0710;font-weight:700;transition:filter .2s,transform .08s;}
+body #carried-rations.potion-button[hidden]{display:none!important;}
+body #carried-rations.potion-button::before{content:"";position:absolute;left:3px;right:3px;top:3px;height:42%;border-radius:5px 5px 12px 12px/5px 5px 6px 6px;background:linear-gradient(#ffffff24,#ffffff00);pointer-events:none;}
+body #carried-rations.potion-button::after{content:"";position:absolute;inset:-2px;border-radius:9px;pointer-events:none;}
+body #carried-rations .potion-socket{position:relative;flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:radial-gradient(circle at 50% 62%,#3a1018,#14060a 70%);box-shadow:inset 0 0 0 1px #050203,inset 0 3px 5px #000b,0 1px 0 #ffd9a833;}
+body #carried-rations .potion-socket svg{width:24px;height:31px;margin-top:-2px;overflow:visible;filter:drop-shadow(0 0 4px #ff4d5a66);}
+body #carried-rations .potion-liquid{transform:translateY(calc((1 - var(--potion-fill,1))*12px));transition:transform .45s cubic-bezier(.3,1.35,.5,1);}
+body #carried-rations .potion-socket::after{content:"";position:absolute;inset:0;border-radius:inherit;background:conic-gradient(#06080dd0 calc(var(--potion-cooldown,0)*360deg),#0000 0);pointer-events:none;}
+body #carried-rations .potion-socket b{position:absolute;inset:0;z-index:1;display:grid;place-items:center;font:800 15px/1 var(--rpg-ui);color:#fff;text-shadow:0 0 3px #000,0 1px 0 #000;}
+body #carried-rations .potion-socket b:empty{display:none;}
+body #carried-rations .potion-copy{display:grid;gap:4px;line-height:1;text-align:left;white-space:nowrap;}
+body #carried-rations .potion-copy small{font:700 8px/1 var(--rpg-ui);letter-spacing:.16em;text-transform:uppercase;color:#f1c9a4;}
+body #carried-rations .potion-copy strong{font:800 16px/1 var(--rpg-ui);letter-spacing:.01em;color:#fff4ee;}
+body #carried-rations .potion-copy strong span+span{font-size:11px;font-weight:700;color:#e8b3a8;}
+@media(hover:hover) and (pointer:fine){body #carried-rations.potion-button:hover{filter:brightness(1.12);border-color:#14080c!important;background:radial-gradient(130% 100% at 28% 0%,#b03c4f 0,#76202f 48%,#3f101b 100%)!important;}}
+body #carried-rations.potion-button:active{transform:translateY(1px);}
+body #carried-rations.potion-button[data-empty=true]{filter:saturate(.35) brightness(.78);}
+body #carried-rations.potion-button[data-empty=true] .potion-socket svg{filter:none;}
 body #carried-rations.potion-button.potion-gained{animation:potion-gained .7s ease-out;}
-@keyframes potion-gained{0%{box-shadow:0 0 0 0 #ff6b5fcc;transform:scale(1.12);}100%{box-shadow:0 0 0 14px #ff6b5f00;transform:scale(1);}}
+body #carried-rations.potion-button.potion-gained::after{animation:potion-gained-ring .7s ease-out;}
+@keyframes potion-gained{0%{transform:scale(1.1);filter:brightness(1.45);}100%{transform:scale(1);filter:none;}}
+@keyframes potion-gained-ring{0%{box-shadow:0 0 0 0 #ff7a6acc;}100%{box-shadow:0 0 0 12px #ff7a6a00;}}
 
 /* HUD layout v2: the minimap is a framed map with the clock hanging from its bottom edge;
  BAG and MENU sit as a pair just under it on phones (MENU alone in landscape); the area tab hangs right under the HP/XP panel. */
@@ -869,7 +887,7 @@ body #world-hud-vitals #world-xp-bar{height:6px}
 .vbar{position:absolute;left:0;right:0;overflow:hidden;pointer-events:none;border-radius:999px;z-index:0}
 .vbar>i,.vbar-fill>i{position:absolute;inset:0;display:block;transform-origin:left center}
 .vbar-hp{top:0;bottom:0;background:linear-gradient(180deg,#14090e,#28121b);box-shadow:inset 0 1px 3px #000d,0 0 0 1px #0b1017,0 0 0 2px #8a5b62}
-.vbar-hp .vbar-trail{background:linear-gradient(180deg,#fff0b8,#ff9a3a)}
+.vbar-hp .vbar-trail{border-radius:999px;background:linear-gradient(180deg,#fff0b8,#ff9a3a)}
 .vbar-hp.flash .vbar-trail{background:#fff}
 .vbar-hp .vbar-fill{border-radius:999px;background:linear-gradient(180deg,#ff9a92 0%,#f44a5c 42%,#c2213f 78%,#8e1530 100%);box-shadow:inset 0 -2px 0 #00000030,0 0 10px #ff4d6a70}
 .vbar-hp .vbar-ticks{background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),#1a0a1066 calc(25% - 1px) 25%)}
@@ -1083,7 +1101,9 @@ body.skill-arc-v1 .shadow-dash[data-cooling=true] svg{opacity:.4}
 body.skill-arc-v1 .shadow-dash .move-label{display:none}
 body.skill-arc-v1 .shadow-dash .move-time{grid-area:1/1;z-index:1;font:800 13px/1 var(--rpg-ui);color:#fff;text-shadow:0 1px 2px #000,0 0 4px #000}
 body.skill-arc-v1 .subweapon-hud{left:calc(12px + var(--world-safe-left));right:auto;bottom:calc(80px + var(--world-safe-bottom));max-width:min(300px,calc(100vw - 250px))}
-@media(max-width:600px){body.skill-arc-v1 #rpg-interaction-v2{bottom:calc(252px + var(--world-safe-bottom))!important}}
+/* Phone portrait: the wheel fills the lower right, so the pickup prompt sits low
+   on the left, just above the Potion button, clear of the hero and the slots. */
+@media(max-width:600px){body.skill-arc-v1 #rpg-interaction-v2{left:calc(12px + var(--world-safe-left));transform:none;bottom:calc(120px + var(--world-safe-bottom))!important;min-width:0;max-width:calc(100vw - 172px - var(--world-safe-left) - var(--world-safe-right))}}
 .vbar-barrier{position:absolute;left:8px;right:8px;top:-6px;height:4px;border-radius:2px;background:#0c161dd9;overflow:hidden;pointer-events:none;box-shadow:0 0 0 1px #0b1017}
 .vbar-barrier[hidden]{display:none}
 .vbar-barrier .vbar-fill{position:absolute;inset:0;transform-origin:0 50%;background:linear-gradient(90deg,#8fd8ff,#e6f8ff);box-shadow:0 0 6px #8fd8ff;transition:transform .25s ease-out}
@@ -1159,3 +1179,300 @@ body.skill-arc-v1 .subweapon-hud{left:calc(12px + var(--world-safe-left));right:
 body #world-inventory .hero-slots button{min-height:40px;padding:0 16px;border:1px solid #6d5a3c;border-radius:999px;background:linear-gradient(#3a3222,#241f16);color:#fff3cf;font:600 13px var(--rpg-ui)}
 body #world-inventory .hero-slots button.is-quiet{border-color:#3a4652;background:transparent;color:#c9d0d3}
 body #world-inventory .hero-slots button.is-danger{border-color:#b34e57;background:linear-gradient(#5a2228,#2e1215);color:#fff}
+
+/* Gear screen v2 (gear_screen_v2.js, inventory_presentation.js). Mockup: claude.ai/artifact/VLkAtCyFHGUFcrnUZXxHkT */
+#world-inventory[data-section=equipment] #world-bag-browse>section,#world-inventory[data-section=bag] #world-bag-browse>section{max-width:560px;margin:0 auto}
+#world-inventory[data-section=equipment] #world-bag-browse,#world-inventory[data-section=bag] #world-bag-browse{width:100%;box-sizing:border-box;background:transparent;border:0;padding:4px 2px 16px}
+#world-inventory[data-section=equipment] #world-bag-stats,#world-inventory[data-section=bag] #world-bag-stats{display:none}
+#world-inventory #world-bag-browse>section>h3{display:none}
+body #world-inventory #world-equipment,body #world-inventory #world-items{display:flex;flex-direction:column;gap:12px}
+#world-inventory .gx-doll{display:grid;grid-template-columns:76px minmax(0,1fr) 76px;align-items:center;gap:6px;background:#151d26;border:1px solid #26313d;border-radius:18px;padding:16px 10px}
+#world-inventory .gx-col{display:flex;flex-direction:column;align-items:center;gap:12px}
+/* Five slots tall with the cape: the doll's tiles and spacing are a little tighter so it still fits a short window. */
+#world-inventory .gx-doll{padding:10px}#world-inventory .gx-doll .gx-col{gap:7px}#world-inventory .gx-doll .gx-slotwrap{gap:3px}#world-inventory .gx-doll button.gx-slot{width:58px;height:58px}#world-inventory .gx-doll .gx-slot img{width:40px;height:40px}
+#world-inventory .gx-slotwrap{display:flex;flex-direction:column;align-items:center;gap:5px}
+#world-inventory button.gx-slot,#world-inventory button.gx-tile{position:relative;display:flex;align-items:center;justify-content:center;padding:0;width:66px;height:66px;min-height:0;border-radius:14px;border:2px solid var(--rarity,#3a4654);background:#1b2530;box-shadow:none}
+#world-inventory button.gx-slot.is-empty{border:2px dashed #3a4654;background:#121a22}
+#world-inventory button.gx-slot:hover,#world-inventory button.gx-tile:hover{background:#243140;border-color:var(--rarity,#c3ab7c)}
+#world-inventory .gx-slot img,#world-inventory .gx-tile img{width:44px;height:44px;image-rendering:pixelated;border:0;background:none;box-shadow:none;margin:0}
+#world-inventory .gx-stars,#world-inventory .gx-lv{position:absolute;left:4px;font:700 10px/1 system-ui,sans-serif;color:#eee7d9;background:#0c1219d9;border-radius:6px;padding:2px 4px;pointer-events:none}
+#world-inventory .gx-slot .gx-stars{bottom:3px}
+#world-inventory .gx-tile .gx-stars{top:4px}
+#world-inventory .gx-lv{bottom:4px;color:#cfd5d6}
+#world-inventory .gx-up,#world-inventory .gx-lock{position:absolute;top:-7px;right:-7px;width:20px;height:20px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #0c1219;pointer-events:none}
+#world-inventory .gx-up{background:#2f7d4a}
+#world-inventory .gx-lock{background:#3a4654}
+#world-inventory .gx-up.is-inline{position:static;width:16px;height:16px;border:0}
+#world-inventory .gx-slotlabel{font:600 11px/1 system-ui,sans-serif;color:#aeb5b6;letter-spacing:.04em}
+#world-inventory .gx-hero{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+#world-inventory .gx-stage{position:relative;width:170px;max-width:100%;height:166px;display:flex;align-items:flex-end;justify-content:center}
+#world-inventory .gx-pedestal{position:absolute;bottom:12px;width:120px;height:20px;border-radius:50%;background:#b7a07729;border:1px solid #b7a07747}
+#world-inventory .gx-portrait{position:relative;width:170px;height:167px;max-width:100%;image-rendering:pixelated}
+#world-inventory .gx-heroname{font:400 18px/1.2 Georgia,'Times New Roman',serif;color:#eee7d9;text-align:center}
+#world-inventory .gx-herosub{font-size:12px;color:#aeb5b6}
+#world-inventory .gx-keystats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#world-inventory .gx-keystat{background:#151d26;border:1px solid #26313d;border-radius:12px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+#world-inventory .gx-keystat b{font:700 16px/1 system-ui,sans-serif;color:#eee7d9}
+#world-inventory .gx-keystat span{font:600 10px/1 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#aeb5b6}
+#world-inventory .gx-retired{display:flex;align-items:center;gap:12px;background:#1a1214;border:1px solid #3a2226;border-radius:14px;padding:10px 12px}
+#world-inventory .gx-retired-tiles{display:flex;gap:10px}
+#world-inventory .gx-scrollhint{display:flex;flex-direction:column;align-items:center;gap:2px;color:#56636f;font:600 11px/1 system-ui,sans-serif;letter-spacing:.14em;padding-top:4px}
+#world-inventory .gx-card{background:#151d26;border:1px solid #26313d;border-radius:16px;padding:14px 16px 6px}
+#world-inventory .gx-cardtitle{margin:0 0 6px;font:700 11px/1 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#b7a077}
+#world-inventory .gx-attrs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:6px 0 10px}
+#world-inventory .gx-attr{background:#1b2530;border-radius:12px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px}
+#world-inventory .gx-attr b{font:700 20px/1 system-ui,sans-serif;color:#eee7d9}
+#world-inventory .gx-attr span{font:700 11px/1 system-ui,sans-serif;letter-spacing:.1em;color:#aeb5b6}
+#world-inventory .gx-statrow{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #222c37;font:600 14px/1.2 system-ui,sans-serif;color:#aeb5b6}
+#world-inventory .gx-statrow:last-child{border-bottom:0}
+#world-inventory .gx-statrow b{color:#eee7d9;font-variant-numeric:tabular-nums}
+#world-inventory .gx-filters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+#world-inventory button.gx-chip{flex:none;min-height:36px;height:36px;padding:0 12px;border-radius:18px;border:1px solid #2c3846;background:#151d26;color:#aeb5b6;font:600 12px/1 system-ui,sans-serif;box-shadow:none}
+#world-inventory button.gx-chip[aria-pressed=true]{background:#2a2418;border-color:#b7a077;color:#eee7d9}
+#world-inventory .gx-chip i{font-style:normal;color:#7f8a93}
+#world-inventory .gx-bagmeta{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;color:#aeb5b6}
+#world-inventory .gx-legend{display:flex;align-items:center;gap:6px}
+#world-inventory .gx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:16px 6px;justify-items:center}
+#world-inventory .gx-cell{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;width:100%}
+#world-inventory button.gx-tile{width:76px;height:76px;background:color-mix(in srgb,var(--rarity,#fff) 10%,#151d26)}
+#world-inventory button.gx-tile img{width:50px;height:50px}
+#world-inventory button.gx-tile.is-locked img{opacity:.45}
+#world-inventory .gx-name{font:600 11px/1.25 system-ui,sans-serif;text-align:center;max-width:86px;color:color-mix(in srgb,var(--rarity,#eee7d9) 75%,#fff);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+#world-inventory .gx-hint,#world-inventory .gx-empty{margin:4px 0 0;text-align:center;font-size:13px;color:#7f8a93}
+#world-comparison.gx-sheet{position:fixed;z-index:12;right:auto;bottom:auto;max-width:none;transform:none;display:flex;flex-direction:column;background:#151d26;color:#eee7d9;border:1px solid #2f3a46;border-top:3px solid var(--rarity,#b7a077);border-radius:18px;box-shadow:0 0 0 100vmax #00000073,0 18px 40px #000c;padding:0;font-family:system-ui,sans-serif;overflow:visible}
+#world-inventory .gx-arrow{position:absolute;left:var(--arrow-x,50%);width:14px;height:14px;margin-left:-7px;box-sizing:border-box;background:#151d26;border:1px solid #2f3a46;transform:rotate(45deg);pointer-events:none}
+#world-comparison.gx-sheet[hidden]{display:none}
+#world-comparison.gx-sheet[data-side=below] .gx-arrow{top:-10px;border-color:var(--rarity,#2f3a46);border-right:0;border-bottom:0}
+#world-comparison.gx-sheet[data-side=above] .gx-arrow{bottom:-8px;border-left:0;border-top:0}
+#world-comparison.gx-sheet[data-side=right] .gx-arrow{left:-8px;top:var(--arrow-y,50%);margin:-7px 0 0;border-top:0;border-right:0}
+#world-comparison.gx-sheet[data-side=left] .gx-arrow{left:auto;right:-8px;top:var(--arrow-y,50%);margin:-7px 0 0;border-left:0;border-bottom:0}
+#world-comparison.gx-sheet[data-side=over] .gx-arrow{display:none}
+#world-comparison.gx-sheet.is-opening{animation:gx-pop .16s ease-out}
+@keyframes gx-pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+#world-inventory .gx-sheetscroll{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:14px;padding:14px 16px 14px;scrollbar-width:thin;scrollbar-color:#3a4654 transparent;border-radius:18px 18px 0 0}
+#world-inventory .gx-sheettop{display:flex;align-items:center;gap:8px}
+#world-inventory .gx-compareto{font-size:12px;color:#aeb5b6;flex:none}
+#world-inventory button.gx-ringtab{flex:1;min-height:48px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;border:1px solid #2c3846;background:#1b2530;color:#aeb5b6;font:600 13px/1 system-ui,sans-serif;box-shadow:none;padding:0 8px}
+#world-inventory button.gx-ringtab[aria-pressed=true]{border:2px solid #b7a077;background:#211d15;color:#eee7d9}
+#world-inventory .gx-ringtab img{width:24px;height:24px;image-rendering:pixelated;border:0;background:none;margin:0}
+#world-inventory .gx-dash{width:22px;height:22px;box-sizing:border-box;border-radius:7px;border:2px dashed #56636f}
+#world-inventory .gx-compareline{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px;color:#8e979c}
+#world-inventory .gx-compareline img{width:18px;height:18px;image-rendering:pixelated;border:0;background:none;margin:0}
+#world-inventory .gx-compareline b{color:color-mix(in srgb,var(--rarity,#eee7d9) 75%,#fff);font-weight:600}
+#world-inventory button.gx-close{flex:none;margin-left:auto;width:44px;height:44px;min-height:44px;padding:0;border-radius:12px;border:1px solid #3a4654;background:#1b2530;color:#eee7d9;display:flex;align-items:center;justify-content:center;box-shadow:none}
+#world-inventory .gx-itemicon{width:54px;height:54px;flex:none;box-sizing:border-box;border-radius:12px;border:2px solid var(--rarity,#3a4654);background:color-mix(in srgb,var(--rarity,#fff) 10%,#151d26);display:flex;align-items:center;justify-content:center}
+#world-inventory .gx-itemicon img{width:38px;height:38px;image-rendering:pixelated;border:0;background:none;margin:0}
+#world-inventory .gx-iteminfo{display:flex;flex-direction:column;gap:4px;min-width:0}
+#world-inventory .gx-itemname{margin:0;font:400 20px/1.15 Georgia,'Times New Roman',serif;color:color-mix(in srgb,var(--rarity,#eee7d9) 80%,#fff);text-transform:none;letter-spacing:0}
+#world-inventory .gx-itemsub{font-size:12px;color:#aeb5b6}
+#world-inventory .gx-itemnote{margin:8px 0 2px;font-size:12px;color:#aeb5b6;font-style:italic}
+#world-inventory .gx-linewrap{display:flex;flex-direction:column;gap:4px;padding:6px 0}
+#world-inventory .gx-line{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;font:600 14px/1.25 system-ui,sans-serif;color:#eee7d9}
+#world-inventory .gx-mark{display:flex;align-items:center;gap:4px;font:800 12px/1 system-ui,sans-serif;flex:none;font-variant-numeric:tabular-nums}
+#world-inventory .gx-mark.is-up,#world-inventory .gx-mark.is-new{color:#86d9a0}
+#world-inventory .gx-mark.is-down{color:#f0a0a6}
+#world-inventory .gx-mark.is-same{color:#7f8a93}
+#world-inventory .gx-divider{height:1px;background:#222c37;margin:4px 0}
+#world-inventory .gx-roll{height:4px;border-radius:2px;background:#26313d;overflow:hidden}
+#world-inventory .gx-roll>span{position:relative;display:block;height:100%;border-radius:2px;background:#b7a077;overflow:hidden}
+#world-inventory .gx-roll.is-max{background:#3a1a16}
+#world-inventory .gx-roll.is-max>span{background:#e0533d;box-shadow:0 0 8px #e0533d8c}
+#world-inventory .gx-linewrap:has(.gx-roll.is-max) .gx-linetext{color:#ff8a70}
+#world-inventory .gx-roll.is-max>span::after{content:"";position:absolute;top:0;bottom:0;width:45%;left:-45%;background:linear-gradient(90deg,#ffe2ce00,#ffe2cee6,#ffe2ce00);animation:gx-sweep 3.6s ease-in-out infinite}
+#world-comparison.gx-sheet.is-perfect .gx-itemicon{animation:gx-ember 3.6s ease-in-out infinite}
+@keyframes gx-sweep{0%{left:-45%}40%{left:105%}100%{left:105%}}
+@keyframes gx-ember{0%,100%{box-shadow:0 0 0 1px #e0533d73,0 0 10px #e0533d33}50%{box-shadow:0 0 0 1px #e0533dd9,0 0 22px #e0533d80}}
+@media(prefers-reduced-motion:reduce){#world-inventory .gx-roll.is-max>span::after{display:none}#world-comparison.gx-sheet.is-opening{animation:none}#world-comparison.gx-sheet.is-perfect .gx-itemicon{animation:none;box-shadow:0 0 0 1px #e0533db3,0 0 14px #e0533d59}}
+#world-inventory .gx-lost{background:#1a1214;border:1px solid #3a2226;border-radius:14px;padding:8px 14px}
+#world-inventory .gx-lost h5{margin:4px 0 2px;font:700 11px/1.3 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#d98c93}
+#world-inventory .gx-lost .gx-line{padding:6px 0;color:#cfd5d6}
+#world-inventory .gx-worn{background:#141c24;border:1px solid #26313d;border-radius:14px;padding:8px 14px}
+#world-inventory .gx-worntitle{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0 2px;font:700 11px/1.3 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#b7a077}
+#world-inventory .gx-worntitle img{width:18px;height:18px;image-rendering:pixelated;border:0;background:none;margin:0}
+#world-inventory .gx-worntitle b{letter-spacing:0;text-transform:none;font:600 12px/1.3 system-ui,sans-serif;color:color-mix(in srgb,var(--rarity,#eee7d9) 75%,#fff)}
+#world-inventory .gx-worn .gx-line{padding:6px 0}
+#world-inventory .gx-worn .gx-linetext{color:#cfd5d6}
+#world-inventory button.gx-switch{align-self:flex-end;display:flex;align-items:center;gap:8px;min-height:44px;height:44px;margin:-6px 0 -8px;padding:0 2px;border:0;background:none;box-shadow:none;color:#aeb5b6;font:600 12px/1 system-ui,sans-serif}
+#world-inventory button.gx-switch:hover{background:none;color:#eee7d9}
+#world-inventory button.gx-switch.is-row{align-self:stretch;justify-content:space-between;margin:0;padding:0 12px;border-radius:12px;background:#1b2530}
+#world-inventory .gx-knob{position:relative;width:34px;height:20px;box-sizing:border-box;border-radius:10px;border:1px solid #3a4654;background:#1b2530;flex:none}
+#world-inventory .gx-knob::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#7f8a93;transition:left .15s}
+#world-inventory .gx-switch[aria-pressed=true] .gx-knob{background:#5c4d33}
+#world-inventory .gx-switch[aria-pressed=true] .gx-knob::after{left:16px;background:#e9d6a8}
+#world-inventory .gx-herostrip{border:1px solid #b7a07759;border-radius:14px;padding:4px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:18px}
+#world-inventory .gx-herorow{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 6px;padding:9px 0;border-bottom:1px solid #1d2631;font:600 13px/1 system-ui,sans-serif;color:#aeb5b6;font-variant-numeric:tabular-nums;min-width:0}
+#world-inventory .gx-herorow:last-child,#world-inventory .gx-herorow:nth-last-child(2):nth-child(odd){border-bottom:0}
+#world-inventory .gx-was{font-size:12px;color:#6f7a83;margin-right:4px}
+#world-inventory .gx-herorow>span:first-child{white-space:nowrap}
+#world-inventory .gx-heroval{margin-left:auto;white-space:nowrap}
+#world-inventory .gx-heroval b{font-size:15px;font-weight:800}
+#world-inventory .gx-heroval .is-up{color:#86d9a0}
+#world-inventory .gx-heroval .is-down{color:#f0a0a6}
+#world-inventory .gx-attune{display:flex;align-items:center;gap:10px;background:#1b2530;border-radius:12px;padding:10px 12px;font-size:12px;color:#aeb5b6}
+#world-inventory .gx-attune>span:first-child{flex:1}
+#world-inventory .gx-attunebar{width:70px;height:5px;border-radius:3px;background:#26313d;overflow:hidden}
+#world-inventory .gx-attunebar>span{display:block;height:100%;background:#b7a077}
+#world-inventory .gx-attune b{color:#eee7d9}
+#world-inventory .gx-locknote{margin:0;font-size:13px;color:#f0c08a;text-align:center}
+#world-inventory .gx-more{display:flex;flex-direction:column;gap:8px}
+#world-inventory .gx-morerow{display:flex;gap:8px}
+#world-inventory .gx-note{font-size:12px;color:#8e979c;margin:0}
+#world-inventory .gx-confirm{background:#1a1214;border:1px solid #3a2226;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+#world-inventory .gx-confirm h4{margin:0;font:700 13px/1.2 system-ui,sans-serif;color:#f0a0a6}
+#world-inventory .gx-confirm p{margin:0;font-size:13px;color:#cfd5d6}
+#world-inventory .gx-sheetfoot{display:flex;gap:8px;flex:none;padding:12px 16px 14px;border-top:1px solid #26313d;background:#151d26;border-radius:0 0 18px 18px}
+#world-inventory button.gx-btn{flex:1;min-height:46px;height:46px;border-radius:12px;border:1px solid #3a4654;background:#1b2530;color:#eee7d9;font:600 14px/1 system-ui,sans-serif;box-shadow:none;padding:0 10px}
+#world-inventory button.gx-btn:hover{background:#243140;border-color:#56636f}
+#world-inventory button.gx-btn.is-primary{flex:2.4;border:0;background:#b7a077;color:#14100a;font-weight:700}
+#world-inventory button.gx-btn.is-primary:hover{background:#c9b48a}
+#world-inventory button.gx-btn.is-danger{color:#f0a0a6}
+#world-inventory button.gx-btn:disabled{opacity:.5}
+#world-comparison.gx-sheet.is-perfect{border-top-color:#e0533d}
+#world-inventory .gx-sheetscroll::-webkit-scrollbar,#world-inventory[data-section=equipment] #world-bag-browse::-webkit-scrollbar,#world-inventory[data-section=bag] #world-bag-browse::-webkit-scrollbar{width:6px}
+#world-inventory .gx-sheetscroll::-webkit-scrollbar-thumb,#world-inventory[data-section=equipment] #world-bag-browse::-webkit-scrollbar-thumb,#world-inventory[data-section=bag] #world-bag-browse::-webkit-scrollbar-thumb{background:#3a4654;border-radius:3px}
+#world-inventory .gx-sheetscroll::-webkit-scrollbar-track,#world-inventory[data-section=equipment] #world-bag-browse::-webkit-scrollbar-track,#world-inventory[data-section=bag] #world-bag-browse::-webkit-scrollbar-track{background:transparent}
+#world-inventory[data-section=equipment] #world-bag-browse,#world-inventory[data-section=bag] #world-bag-browse{scrollbar-width:thin;scrollbar-color:#3a4654 transparent}
+#world-inventory .gx-head{display:flex;align-items:center;gap:12px}
+#world-inventory .gx-head .gx-close{align-self:flex-start;width:40px;height:40px;min-height:40px;border-color:transparent;background:#1b2530}
+#world-inventory .gx-ringtabs{display:flex;align-items:center;gap:8px}
+#world-inventory .gx-section{display:flex;flex-direction:column;gap:2px;padding-top:12px;border-top:1px solid #222c37}
+#world-inventory .gx-sectiontitle{margin:0 0 6px;font:700 11px/1 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#b7a077}
+#world-inventory .gx-basegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-bottom:4px}
+#world-inventory .gx-base{display:flex;flex-direction:column;align-items:center;gap:4px;background:#111820;border:1px solid #222c37;border-radius:12px;padding:10px 6px 9px}
+#world-inventory .gx-base b{font:800 18px/1 system-ui,sans-serif;color:#eee7d9;font-variant-numeric:tabular-nums}
+#world-inventory .gx-base small{font:700 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8e979c}
+#world-inventory .gx-base .gx-mark{font-size:11px;margin-top:1px}
+#world-inventory .gx-linetext{display:flex;align-items:center;gap:8px;min-width:0}
+#world-inventory .gx-ic{flex:none;display:block}
+#world-inventory .gx-tag{font:600 10px/1 system-ui,sans-serif;letter-spacing:.06em;color:#7f8a93;text-transform:uppercase;margin-left:2px}
+#world-inventory .gx-linewrap .gx-roll{margin-left:24px}
+#world-inventory .gx-keystat .gx-ic,#world-inventory .gx-attr .gx-ic{margin-bottom:1px}
+#world-inventory .gx-statrow>span,#world-inventory .gx-herorow>span:first-child{display:flex;align-items:center;gap:8px}
+#world-inventory .gx-lost .gx-linetext{color:#cfd5d6}
+/* Short landscape screens: the title and gold share one slim row and the tabs shrink, so the bag gets the height. */
+@media(orientation:landscape) and (max-height:560px){
+ body #world-inventory{gap:6px;padding-top:6px;padding-bottom:6px}
+ body #world-inventory .bag-heading{min-height:0;padding:0 2px;border-bottom:0}
+ body #world-inventory .bag-heading>div>small{display:none}
+ body #world-inventory .bag-heading h2{font-size:18px;letter-spacing:.04em}
+ body #world-inventory #world-bag-close{min-height:34px;height:34px;padding:0 12px}
+ body #world-inventory #world-bag-summary{position:absolute;top:6px;right:84px;height:34px;margin:0;gap:12px}
+ body #world-inventory #world-bag-summary>span{margin-left:0}
+ body #world-inventory .bag-section-tabs{padding:2px}
+ body #world-inventory .bag-section-tabs button{min-height:32px;padding:4px 10px}
+ #world-inventory .gx-sheetscroll{gap:10px;padding:10px 14px}
+ #world-inventory .gx-itemicon{width:44px;height:44px}
+ #world-inventory .gx-itemicon img{width:32px;height:32px}
+ #world-inventory .gx-itemname{font-size:18px}
+ #world-inventory .gx-base{flex-direction:row;justify-content:center;gap:6px;padding:7px 6px}
+ #world-inventory .gx-base small{display:none}
+ #world-inventory .gx-base b{font-size:15px}
+ #world-inventory .gx-sheetfoot{padding:8px 14px 10px}
+ #world-inventory button.gx-btn{min-height:40px;height:40px}
+}
+
+/* Class Skills screen v1 (src/client/class_skills_view_v1.js): three class trees behind tabs,
+   a 300px grid of five rows of three skills and a capstone, link lines behind the tiles and a
+   bubble that opens beside the tapped skill's row. */
+.cs-view{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;color:#eee7d9;font-family:system-ui,sans-serif}
+#world-inventory #world-progression-view .cs-view[hidden],#world-inventory #world-progression-view .skills-v2[hidden]{display:none}
+.cs-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.cs-points{flex:none;display:flex;align-items:baseline;gap:4px;padding:6px 12px;border-radius:999px;background:#151d26;border:1px solid #2f3a46;font-size:13px;color:#aeb5b6}
+.cs-points b{font-size:16px;color:#eee7d9}
+.cs-points small{font-size:12px;color:#7f8a93}
+.cs-points.has{background:#2a2418;border-color:#b7a077;color:#f2dfae}
+.cs-points.has b{color:#fff3cf}
+.cs-tabs{flex:1 1 320px;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+#world-inventory #world-progression-view .cs-tab{flex:1 0 auto;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;border-radius:12px;border:1px solid #2f3a46;background:#151d26;color:#aeb5b6;font:600 13px/1 system-ui,sans-serif;box-shadow:none}
+#world-inventory #world-progression-view .cs-tab[aria-pressed=true]{color:#eee7d9;border-color:var(--tree);background:#1b232c;box-shadow:inset 0 -3px 0 var(--tree)}
+.cs-tab b{min-width:18px;padding:2px 5px;border-radius:8px;background:var(--tree);color:#0c1219;font:800 11px/1 system-ui,sans-serif}
+.cs-tab b[hidden]{display:none}
+.cs-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain}
+.cs-tree{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 16px;background:#121a22;border:1px solid #1f2933;border-radius:16px}
+.cs-tagline{margin:0;font-size:12px;color:#8e979c;text-align:center;text-wrap:balance}
+.cs-grid{position:relative;left:15px;width:300px;flex:none}
+.cs-links{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.cs-links line{stroke:#2a3440;stroke-width:3;stroke-linecap:round}
+.cs-links line.lit{stroke:var(--tree)}
+#world-inventory #world-progression-view .cs-skill{position:absolute;z-index:1;width:78px;min-height:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:0;border:0;border-radius:0;background:none;color:#cfd5d6;font:600 11px/1.15 system-ui,sans-serif;text-align:center;cursor:pointer;box-shadow:none}
+.cs-tile{position:relative;width:54px;height:54px;flex:none;border-radius:12px;border:2px solid #3a4654;background:#151d26;display:flex;align-items:center;justify-content:center;box-sizing:border-box;color:#aeb5b6}
+.cs-tile svg{width:24px;height:24px}
+.cs-name{padding:1px 4px;border-radius:4px;background:#121a22}
+.cs-skill[data-kind=active] .cs-tile{border-radius:50%}
+.cs-skill[data-kind=active] .cs-tile::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px dashed var(--tree);opacity:.6}
+.cs-skill[data-kind=capstone] .cs-tile{width:52px;height:52px;margin:2px 0 11px;transform:rotate(45deg)}
+.cs-skill[data-kind=capstone] .cs-tile svg{transform:rotate(-45deg)}
+.cs-rank{position:absolute;right:-9px;bottom:-7px;min-width:26px;padding:2px 4px;border-radius:6px;background:#0c1219;border:1px solid #3a4654;font:800 10px/1 system-ui,sans-serif;color:#aeb5b6;text-align:center;box-sizing:border-box}
+.cs-skill[data-kind=capstone] .cs-rank{transform:rotate(-45deg);top:-10px;right:-14px;bottom:auto}
+.cs-skill[data-state=available] .cs-tile{border-color:#8e979c;color:#eee7d9}
+.cs-skill[data-state=learned] .cs-tile,.cs-skill[data-state=maxed] .cs-tile{border-color:var(--tree);background:#1b1f22;color:var(--tree)}
+.cs-skill[data-state=learned] .cs-rank{border-color:var(--tree);color:#eee7d9}
+.cs-skill[data-state=maxed] .cs-rank{border-color:var(--tree);background:var(--tree);color:#0c1219}
+.cs-skill[data-state=soon] .cs-tile{border-style:dashed}
+.cs-skill[data-state=soon] .cs-rank{font-size:9px;letter-spacing:.04em;color:#7f8a93}
+#world-inventory #world-progression-view .cs-skill.closed{color:#66717b}
+.cs-skill.closed .cs-tile{border-color:#2a3440;background:#121921;color:#56636f}
+.cs-skill.closed .cs-rank{border-color:#2a3440;color:#56636f}
+.cs-skill.selected .cs-tile{box-shadow:0 0 0 3px #f2dfaed9}
+.cs-skill.learned .cs-tile{animation:cs-learn .55s ease-out}
+@keyframes cs-learn{from{box-shadow:0 0 0 0 var(--tree)}to{box-shadow:0 0 0 16px transparent}}
+.cs-gate{position:absolute;left:-34px;transform:translateY(-50%);font:700 10px/1 system-ui,sans-serif;color:#8e979c;white-space:nowrap}
+.cs-gate::after{content:" pts"}
+.cs-gate.open{color:#3a4654}
+.cs-bubble{position:absolute;left:-36px;right:-6px;z-index:3;display:flex;flex-direction:column;gap:8px;padding:12px 14px 14px;background:#151d26;border:1px solid #2f3a46;border-top:3px solid var(--tree);border-radius:14px;box-shadow:0 14px 32px #000000a6;box-sizing:border-box}
+.cs-bubble[hidden]{display:none}
+.cs-bubble::before{content:"";position:absolute;left:calc(var(--arrow) + 29px);width:14px;height:14px;background:#151d26;transform:rotate(45deg);box-sizing:border-box}
+.cs-bubble.below::before{top:-10px;border-top:1px solid var(--tree);border-left:1px solid var(--tree)}
+.cs-bubble:not(.below)::before{bottom:-8px;border-right:1px solid #2f3a46;border-bottom:1px solid #2f3a46}
+.cs-bubble-head{display:flex;align-items:center;gap:8px}
+.cs-kind{padding:4px 7px;border-radius:6px;border:1px solid #3a4654;background:#1b2530;color:#cfd5d6;font:800 9px/1 system-ui,sans-serif;letter-spacing:.1em}
+.cs-kind.active{border-color:#b7a077;background:#2a2418;color:#f2dfae}
+.cs-bubble-head strong{flex:1;min-width:0;font:400 18px/1.1 Georgia,"Times New Roman",serif}
+.cs-bubble-head em{font:700 12px/1 system-ui,sans-serif;font-style:normal;color:#d9c49a}
+#world-inventory #world-progression-view .cs-close{width:32px;height:32px;min-height:0;padding:0;border:0;border-radius:10px;background:#1b2530;color:#eee7d9;font-size:18px;line-height:1;box-shadow:none}
+.cs-meta,.cs-req,.cs-desc,.cs-note,.cs-why{margin:0}
+.cs-meta{font:600 11px/1.3 system-ui,sans-serif;color:#8e979c}
+.cs-req{font:700 11px/1.2 system-ui,sans-serif;color:#d9c49a}
+.cs-req.met{color:#86d9a0}
+.cs-desc{font-size:13px;line-height:1.45;color:#dfe3e4}
+.cs-note,.cs-why{font-size:12px;color:#aeb5b6}
+#world-inventory #world-progression-view .cs-learn{min-height:44px;border:0;border-radius:12px;background:#b7a077;color:#14100a;font:700 14px/1 system-ui,sans-serif;box-shadow:none}
+#world-inventory #world-progression-view .cs-learn:disabled{border:1px solid #2f3a46;background:#1b2530;color:#8e979c;opacity:1;cursor:default}
+.cs-foot{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:4px}
+.cs-reset-row{display:flex;gap:8px}
+#world-inventory #world-progression-view .cs-reset{min-height:40px;border-radius:12px;border:1px solid #2f3a46;background:#151d26;color:#aeb5b6;box-shadow:none}
+#world-inventory #world-progression-view .cs-reset.danger{border-color:#8a3a3a;background:#2a1414;color:#f0a0a6}
+.cs-utility{display:flex;flex-direction:column;min-height:100%}
+#world-inventory #world-progression-view .skills-v2.only .skills-tabs{display:none}
+
+/* Skill wheel with one page (five slots): no page dots on the spin button. A skill on the Attack
+   button shows its icon and cooldown over Attack; presses pass through to the button. */
+.skill-wheel-v1[data-pages="1"] .skill-wheel-spin i{display:none}
+.skill-wheel-attack{position:absolute;z-index:8;pointer-events:none;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle,#1b2530 0 58%,#0b1015 59%);box-shadow:inset 0 0 0 3px var(--class,#c9b58b)}
+.skill-wheel-attack[hidden]{display:none}
+.skill-wheel-attack .skill-slot-icon{width:62%;height:62%;position:relative;z-index:1}
+.skill-wheel-attack .skill-slot-icon svg{width:100%;height:100%}
+.skill-wheel-attack .skill-slot-sweep{position:absolute;inset:0;transform-origin:50% 0;transform:scaleY(0);background:#05080bc0;z-index:2}
+.skill-wheel-attack .skill-slot-time{position:absolute;z-index:3;font:800 18px var(--rpg-ui);color:#fff;text-shadow:0 1px 2px #000,0 0 5px #000}
+
+/* Skills screen: augments in an active's bubble, the Attack button toggle, the trade-off tag. */
+.cs-kind.trade{border-color:#e8848c;background:#2a1418;color:#ffd0d8}
+.cs-augs{display:flex;flex-direction:column;gap:6px}
+.cs-augh{display:flex;justify-content:space-between;align-items:baseline;font:800 10px/1 system-ui,sans-serif;letter-spacing:.1em;color:#b7a077}
+.cs-augh small{font-weight:600;letter-spacing:0;color:#8e979c}
+#world-inventory #world-progression-view .cs-aug{display:flex;gap:9px;align-items:flex-start;min-height:0;padding:7px 10px;border-radius:10px;border:1px solid #2f3a46;background:#111820;color:#cfd5d6;text-align:left;font:400 12px/1.35 system-ui,sans-serif;box-shadow:none}
+#world-inventory #world-progression-view .cs-aug[data-on="true"]{border-color:#b7a077;background:#2a2418}
+#world-inventory #world-progression-view .cs-aug:disabled{opacity:1;cursor:default}
+#world-inventory #world-progression-view .cs-aug[data-open="false"]{opacity:.5}
+.cs-aug i{width:14px;height:14px;flex:none;margin-top:1px;border-radius:4px;border:1.5px solid #56636f;box-sizing:border-box}
+.cs-aug[data-on="true"] i{background:#b7a077;border-color:#f2dfae}
+.cs-aug b{display:block;font:700 12px/1.2 system-ui,sans-serif;color:#eee7d9}
+.cs-aug em{display:block;margin-top:2px;font:600 10.5px/1.2 system-ui,sans-serif;font-style:normal;color:#d9c49a}
+#world-inventory #world-progression-view .cs-attack{min-height:40px;border-radius:12px;border:1px dashed #b7a077;background:#151d26;color:#f2dfae;font:600 13px/1 system-ui,sans-serif;box-shadow:none}
+/* Uniques (uniques_v1.js): the name in unique gold with a tag, the effect in its own box, the flavor line in red. */
+#world-inventory .gx-name.is-unique{color:#e8c37a}
+#world-inventory .gx-itemname.is-unique{color:#e8c37a}
+#world-inventory .gx-uniquetag{display:inline-block;margin-left:8px;padding:2px 6px;border-radius:4px;background:#e8c37a;color:#1a1408;font:800 10px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;vertical-align:middle}
+#world-inventory .gx-unique{margin:8px 0 6px;padding:10px 12px;border-radius:10px;background:rgba(232,195,122,.08);border:1px solid rgba(232,195,122,.3)}
+#world-inventory .gx-uniqueeffect{margin:0;color:#f1e6c8;font:500 13px/1.45 system-ui,sans-serif}
+#world-inventory .gx-flavor{margin:6px 0 0;color:#ff6b5b;font:italic 500 12.5px/1.4 system-ui,sans-serif}
